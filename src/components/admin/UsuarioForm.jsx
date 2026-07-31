@@ -5,11 +5,15 @@ function UsuarioForm({ usuario, onClose, onGuardado }) {
   const esEdicion = Boolean(usuario)
 
   const [email, setEmail] = useState(usuario?.email || '')
-  const [nombre, setNombre] = useState(usuario?.nombre || '')
-  const [etiqueta, setEtiqueta] = useState(usuario?.etiqueta || '')
   const [password, setPassword] = useState('')
+  const [nombre, setNombre] = useState(usuario?.nombre || '')
+  const [etiqueta, setEtiqueta] = useState(usuario?.etiqueta || 'distribuidor')
+  const [rifCedula, setRifCedula] = useState(usuario?.rif_cedula || '')
+  const [direccionFiscal, setDireccionFiscal] = useState(usuario?.direccion_fiscal || '')
+  const [direccionEntrega, setDireccionEntrega] = useState(usuario?.direccion_entrega || '')
+  const [telefono, setTelefono] = useState(usuario?.telefono || '')
+  const [lineaCredito, setLineaCredito] = useState(usuario?.linea_credito || '')
   const [activo, setActivo] = useState(usuario?.activo ?? true)
-  const [lineaCredito, setLineaCredito] = useState(usuario?.linea_credito ?? 0)
   const [guardando, setGuardando] = useState(false)
   const [error, setError] = useState('')
 
@@ -18,22 +22,39 @@ function UsuarioForm({ usuario, onClose, onGuardado }) {
     setError('')
     setGuardando(true)
 
+    const payload = {
+      email,
+      nombre,
+      etiqueta,
+      rif_cedula: rifCedula || null,
+      direccion_fiscal: direccionFiscal || null,
+      direccion_entrega: direccionEntrega || null,
+      telefono: telefono || null,
+      linea_credito: Number(lineaCredito) || 0,
+      ...(esEdicion && { activo })
+    }
+
+    // Solo enviar password si se está creando o si se cambió en edición
+    if (!esEdicion) {
+      if (!password) {
+        setError('La contraseña es requerida para nuevos usuarios')
+        setGuardando(false)
+        return
+      }
+      payload.password = password
+    } else if (password) {
+      payload.password = password
+    }
+
     try {
       if (esEdicion) {
-        const payload = {
-          nombre,
-          etiqueta,
-          activo,
-          linea_credito: Number(lineaCredito),
-          ...(password && { password }),
-        }
         await api.patch(`/users/${usuario.id}`, payload)
       } else {
-        await api.post('/users', { email, password, nombre, etiqueta })
+        await api.post('/users', payload)
       }
       onGuardado()
     } catch (err) {
-      setError(err.response?.data?.message || 'Error al guardar el usuario')
+      setError(err.response?.data?.error || 'Error al guardar el usuario')
     } finally {
       setGuardando(false)
     }
@@ -48,60 +69,107 @@ function UsuarioForm({ usuario, onClose, onGuardado }) {
 
         {error && <p style={{ color: 'red' }}>{error}</p>}
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           <label>
-            Email
+            Email *
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              disabled={esEdicion}
               required
             />
           </label>
 
           <label>
-            Nombre
-            <input value={nombre} onChange={(e) => setNombre(e.target.value)} required />
-          </label>
-
-          <label>
-            Etiqueta
-            <input value={etiqueta} onChange={(e) => setEtiqueta(e.target.value)} />
-          </label>
-
-          <label>
-            {esEdicion ? 'Nueva contraseña (dejar vacío para no cambiar)' : 'Contraseña'}
+            Contraseña {esEdicion && '(dejar vacío para mantener)'}
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required={!esEdicion}
+              minLength="6"
+            />
+          </label>
+
+          <label>
+            Nombre completo
+            <input
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
+            />
+          </label>
+
+          <label>
+            Etiqueta / Rol
+            <select 
+              value={etiqueta} 
+              onChange={(e) => setEtiqueta(e.target.value)}
+            >
+              <option value="distribuidor">Distribuidor</option>
+              <option value="admin">Administrador</option>
+              <option value="cliente">Cliente</option>
+            </select>
+          </label>
+
+          <label>
+            RIF / Cédula
+            <input
+              value={rifCedula}
+              onChange={(e) => setRifCedula(e.target.value)}
+              placeholder="J-12345678-9"
+            />
+          </label>
+
+          <label>
+            Dirección Fiscal
+            <textarea
+              value={direccionFiscal}
+              onChange={(e) => setDireccionFiscal(e.target.value)}
+              rows="2"
+              placeholder="Dirección principal de la empresa"
+            />
+          </label>
+
+          <label>
+            Dirección de Entrega
+            <textarea
+              value={direccionEntrega}
+              onChange={(e) => setDireccionEntrega(e.target.value)}
+              rows="2"
+              placeholder="Dirección para envíos"
+            />
+          </label>
+
+          <label>
+            Teléfono
+            <input
+              value={telefono}
+              onChange={(e) => setTelefono(e.target.value)}
+              placeholder="+58 212-555-1234"
+            />
+          </label>
+
+          <label>
+            Línea de Crédito (USD)
+            <input
+              type="number"
+              step="0.01"
+              min="0"
+              value={lineaCredito}
+              onChange={(e) => setLineaCredito(e.target.value)}
+              placeholder="0.00"
             />
           </label>
 
           {esEdicion && (
-            <>
-              <label>
-                Línea de crédito (USD)
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value={lineaCredito}
-                  onChange={(e) => setLineaCredito(e.target.value)}
-                />
-              </label>
-
-              <label>
-                <input
-                  type="checkbox"
-                  checked={activo}
-                  onChange={(e) => setActivo(e.target.checked)}
-                />
-                Activo
-              </label>
-            </>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <input
+                type="checkbox"
+                checked={activo}
+                onChange={(e) => setActivo(e.target.checked)}
+              />
+              Usuario activo
+            </label>
           )}
 
           <button type="submit" disabled={guardando}>

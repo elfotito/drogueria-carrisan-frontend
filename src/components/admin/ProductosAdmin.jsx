@@ -51,12 +51,14 @@ function ProductosAdmin() {
     await cargarDatos()
   }
 
-  // Filtro en memoria: por nombre o por nombre de marca, sin distinguir mayúsculas/minúsculas
+  // Filtro mejorado: busca en nombre_comercial, laboratorio, molecula y marca
   const productosFiltrados = productos.filter((producto) => {
     const texto = busqueda.toLowerCase()
     return (
-      producto.nombre.toLowerCase().includes(texto) ||
-      producto.marcas?.nombre.toLowerCase().includes(texto)
+      producto.nombre_comercial?.toLowerCase().includes(texto) ||
+      producto.laboratorio?.toLowerCase().includes(texto) ||
+      producto.molecula?.toLowerCase().includes(texto) ||
+      producto.marcas?.nombre?.toLowerCase().includes(texto)
     )
   })
 
@@ -67,36 +69,41 @@ function ProductosAdmin() {
     <div>
       <h2>Productos</h2>
 
-      <div className="productos-toolbar">
+      <div className="productos-toolbar" style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
         <input
           type="text"
-          placeholder="Buscar por nombre o marca..."
+          placeholder="Buscar por nombre, laboratorio, molécula o marca..."
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
+          style={{ flex: 1, padding: '8px' }}
         />
         <button onClick={abrirNuevo}>+ Nuevo producto</button>
       </div>
 
       <p>{productosFiltrados.length} de {productos.length} productos</p>
 
-      <table>
+      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
         <thead>
           <tr>
-            <th>Nombre</th>
-            <th>Marca</th>
-            <th>Precio</th>
-            <th>Activo</th>
-            <th></th>
+            <th style={{ textAlign: 'left', padding: '8px', borderBottom: '1px solid #ddd' }}>Nombre</th>
+            <th style={{ textAlign: 'left', padding: '8px', borderBottom: '1px solid #ddd' }}>Marca</th>
+            <th style={{ textAlign: 'left', padding: '8px', borderBottom: '1px solid #ddd' }}>Laboratorio</th>
+            <th style={{ textAlign: 'left', padding: '8px', borderBottom: '1px solid #ddd' }}>Molécula</th>
+            <th style={{ textAlign: 'left', padding: '8px', borderBottom: '1px solid #ddd' }}>Precio</th>
+            <th style={{ textAlign: 'left', padding: '8px', borderBottom: '1px solid #ddd' }}>Disponible</th>
+            <th style={{ textAlign: 'left', padding: '8px', borderBottom: '1px solid #ddd' }}></th>
           </tr>
         </thead>
         <tbody>
           {productosFiltrados.map((producto) => (
             <tr key={producto.id}>
-              <td>{producto.nombre}</td>
-              <td>{producto.marcas?.nombre}</td>
-              <td>${producto.precio_usd.toFixed(2)}</td>
-              <td>{producto.activo ? 'Sí' : 'No'}</td>
-              <td>
+              <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{producto.nombre_comercial}</td>
+              <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{producto.marcas?.nombre || '-'}</td>
+              <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{producto.laboratorio || '-'}</td>
+              <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{producto.molecula || '-'}</td>
+              <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>${producto.precio_usd?.toFixed(2)}</td>
+              <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{producto.disponible ? '✅ Sí' : '❌ No'}</td>
+              <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>
                 <button onClick={() => abrirEdicion(producto)}>Editar</button>
               </td>
             </tr>

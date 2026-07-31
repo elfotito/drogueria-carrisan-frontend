@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import api from '../../api/axios'
-import { useAuth } from '../../context/AuthContext'
 import UsuarioForm from './UsuarioForm'
 
 function UsuariosAdmin() {
@@ -10,7 +9,6 @@ function UsuariosAdmin() {
   const [error, setError] = useState('')
   const [usuarioEnEdicion, setUsuarioEnEdicion] = useState(null)
   const [mostrarForm, setMostrarForm] = useState(false)
-  const { user } = useAuth() // para saber quién soy y no dejarme auto-eliminar
 
   useEffect(() => {
     cargarUsuarios()
@@ -18,8 +16,8 @@ function UsuariosAdmin() {
 
   async function cargarUsuarios() {
     try {
-      const { data } = await api.get('/users')
-      setUsuarios(data)
+      const response = await api.get('/users')
+      setUsuarios(response.data)
     } catch (err) {
       setError('No se pudieron cargar los usuarios')
       console.error(err)
@@ -48,23 +46,12 @@ function UsuariosAdmin() {
     await cargarUsuarios()
   }
 
-  async function handleEliminar(usuarioId) {
-    const confirmado = window.confirm('¿Seguro que querés eliminar este usuario?')
-    if (!confirmado) return
-
-    try {
-      await api.delete(`/users/${usuarioId}`)
-      setUsuarios((prev) => prev.filter((u) => u.id !== usuarioId))
-    } catch (err) {
-      alert(err.response?.data?.message || 'No se pudo eliminar el usuario')
-    }
-  }
-
-  const usuariosFiltrados = usuarios.filter((u) => {
+  const usuariosFiltrados = usuarios.filter((usuario) => {
     const texto = busqueda.toLowerCase()
     return (
-      u.nombre?.toLowerCase().includes(texto) ||
-      u.email.toLowerCase().includes(texto)
+      usuario.nombre?.toLowerCase().includes(texto) ||
+      usuario.email?.toLowerCase().includes(texto) ||
+      usuario.rif_cedula?.toLowerCase().includes(texto)
     )
   })
 
@@ -75,40 +62,57 @@ function UsuariosAdmin() {
     <div>
       <h2>Usuarios</h2>
 
-      <div className="usuarios-toolbar">
+      <div className="usuarios-toolbar" style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
         <input
           type="text"
-          placeholder="Buscar por nombre o email..."
+          placeholder="Buscar por nombre, email o RIF/Cédula..."
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
+          style={{ flex: 1, padding: '8px' }}
         />
         <button onClick={abrirNuevo}>+ Nuevo usuario</button>
       </div>
 
-      <table>
+      <p>{usuariosFiltrados.length} de {usuarios.length} usuarios</p>
+
+      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
         <thead>
           <tr>
-            <th>Nombre</th>
-            <th>Email</th>
-            <th>Etiqueta</th>
-            <th>Admin</th>
-            <th>Activo</th>
-            <th></th>
+            <th style={{ textAlign: 'left', padding: '8px', borderBottom: '1px solid #ddd' }}>Nombre</th>
+            <th style={{ textAlign: 'left', padding: '8px', borderBottom: '1px solid #ddd' }}>Email</th>
+            <th style={{ textAlign: 'left', padding: '8px', borderBottom: '1px solid #ddd' }}>RIF/Cédula</th>
+            <th style={{ textAlign: 'left', padding: '8px', borderBottom: '1px solid #ddd' }}>Etiqueta</th>
+            <th style={{ textAlign: 'left', padding: '8px', borderBottom: '1px solid #ddd' }}>Teléfono</th>
+            <th style={{ textAlign: 'left', padding: '8px', borderBottom: '1px solid #ddd' }}>Crédito</th>
+            <th style={{ textAlign: 'left', padding: '8px', borderBottom: '1px solid #ddd' }}>Estado</th>
+            <th style={{ textAlign: 'left', padding: '8px', borderBottom: '1px solid #ddd' }}></th>
           </tr>
         </thead>
         <tbody>
-          {usuariosFiltrados.map((u) => (
-            <tr key={u.id}>
-              <td>{u.nombre}</td>
-              <td>{u.email}</td>
-              <td>{u.etiqueta}</td>
-              <td>{u.es_admin ? 'Sí' : 'No'}</td>
-              <td>{u.activo ? 'Sí' : 'No'}</td>
-              <td>
-                <button onClick={() => abrirEdicion(u)}>Editar</button>
-                {u.id !== user.id && (
-                  <button onClick={() => handleEliminar(u.id)}>Eliminar</button>
-                )}
+          {usuariosFiltrados.map((usuario) => (
+            <tr key={usuario.id}>
+              <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{usuario.nombre || '-'}</td>
+              <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{usuario.email}</td>
+              <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{usuario.rif_cedula || '-'}</td>
+              <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>
+                <span style={{
+                  background: usuario.etiqueta === 'admin' ? '#ff6b6b' : 
+                             usuario.etiqueta === 'distribuidor' ? '#4ecdc4' : '#45b7d1',
+                  color: 'white',
+                  padding: '2px 8px',
+                  borderRadius: '12px',
+                  fontSize: '12px'
+                }}>
+                  {usuario.etiqueta || 'distribuidor'}
+                </span>
+              </td>
+              <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{usuario.telefono || '-'}</td>
+              <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>${usuario.linea_credito?.toFixed(2) || '0.00'}</td>
+              <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>
+                {usuario.activo !== false ? '✅ Activo' : '❌ Inactivo'}
+              </td>
+              <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>
+                <button onClick={() => abrirEdicion(usuario)}>Editar</button>
               </td>
             </tr>
           ))}
