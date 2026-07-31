@@ -12,7 +12,7 @@ function Navbar() {
 
   return (
     <nav>
-      <Link to="/">Catálogo</Link>
+      <Link to="/catalogo">Catálogo</Link>
 
       {user ? (
         <>
