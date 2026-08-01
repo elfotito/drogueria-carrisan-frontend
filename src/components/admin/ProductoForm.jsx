@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import api from '../../api/axios'
+
+const LINEAS = ['Linea Hospitalaria', 'Linea Farmacia', 'Material Medico']
+const FORMAS = ['Ampollas', 'Tabletas', 'Jarabes']
 
 function ProductoForm({ producto, marcas, onClose, onGuardado }) {
   const esEdicion = Boolean(producto)
 
-  // Estado con todos los campos nuevos
   const [nombreComercial, setNombreComercial] = useState(producto?.nombre_comercial || '')
   const [descripcion, setDescripcion] = useState(producto?.descripcion || '')
   const [marcaId, setMarcaId] = useState(producto?.marca_id || '')
@@ -16,6 +18,7 @@ function ProductoForm({ producto, marcas, onClose, onGuardado }) {
   const [linea, setLinea] = useState(producto?.linea || '')
   const [forma, setForma] = useState(producto?.forma || '')
   const [disponible, setDisponible] = useState(producto?.disponible ?? true)
+  const [activo, setActivo] = useState(producto?.activo ?? true)
   const [guardando, setGuardando] = useState(false)
   const [error, setError] = useState('')
 
@@ -27,15 +30,16 @@ function ProductoForm({ producto, marcas, onClose, onGuardado }) {
     const payload = {
       nombre_comercial: nombreComercial,
       descripcion,
-      marca_id: marcaId || null, // Permitir null si no se selecciona
+      marca_id: marcaId,
       precio_usd: Number(precioUsd),
-      foto_url: fotoUrl || null,
-      laboratorio: laboratorio || null,
-      pais_origen: paisOrigen || null,
-      molecula: molecula || null,
+      foto_url: fotoUrl,
+      laboratorio,
+      pais_origen: paisOrigen,
+      molecula,
       linea: linea || null,
       forma: forma || null,
-      disponible
+      disponible,
+      ...(esEdicion && { activo }), // solo mandamos "activo" si estamos editando
     }
 
     try {
@@ -46,7 +50,7 @@ function ProductoForm({ producto, marcas, onClose, onGuardado }) {
       }
       onGuardado()
     } catch (err) {
-      setError(err.response?.data?.message || 'Error al guardar el producto')
+      setError(err.response?.data?.error || 'Error al guardar el producto')
     } finally {
       setGuardando(false)
     }
@@ -61,19 +65,76 @@ function ProductoForm({ producto, marcas, onClose, onGuardado }) {
 
         {error && <p style={{ color: 'red' }}>{error}</p>}
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          {/* Campos requeridos */}
+        <form onSubmit={handleSubmit}>
           <label>
-            Nombre Comercial *
-            <input 
-              value={nombreComercial} 
-              onChange={(e) => setNombreComercial(e.target.value)} 
-              required 
+            Nombre comercial
+            <input
+              value={nombreComercial}
+              onChange={(e) => setNombreComercial(e.target.value)}
+              required
             />
           </label>
 
           <label>
-            Precio (USD) *
+            Descripción
+            <textarea value={descripcion} onChange={(e) => setDescripcion(e.target.value)} />
+          </label>
+
+          <label>
+            Marca
+            <select value={marcaId} onChange={(e) => setMarcaId(e.target.value)} required>
+              <option value="">Seleccionar marca</option>
+              {marcas.map((marca) => (
+                <option key={marca.id} value={marca.id}>{marca.nombre}</option>
+              ))}
+            </select>
+          </label>
+
+          <div className="form-row">
+            <label>
+              Laboratorio
+              <input value={laboratorio} onChange={(e) => setLaboratorio(e.target.value)} />
+            </label>
+
+            <label>
+              País de origen
+              <input value={paisOrigen} onChange={(e) => setPaisOrigen(e.target.value)} />
+            </label>
+          </div>
+
+          <label>
+            Molécula(s)
+            <input
+              value={molecula}
+              onChange={(e) => setMolecula(e.target.value)}
+              placeholder="Ej: Paracetamol+Cafeina"
+            />
+          </label>
+
+          <div className="form-row">
+            <label>
+              Línea
+              <select value={linea} onChange={(e) => setLinea(e.target.value)}>
+                <option value="">Seleccionar línea</option>
+                {LINEAS.map((l) => (
+                  <option key={l} value={l}>{l}</option>
+                ))}
+              </select>
+            </label>
+
+            <label>
+              Forma
+              <select value={forma} onChange={(e) => setForma(e.target.value)}>
+                <option value="">Seleccionar forma</option>
+                {FORMAS.map((f) => (
+                  <option key={f} value={f}>{f}</option>
+                ))}
+              </select>
+            </label>
+          </div>
+
+          <label>
+            Precio (USD)
             <input
               type="number"
               step="0.01"
@@ -85,83 +146,29 @@ function ProductoForm({ producto, marcas, onClose, onGuardado }) {
           </label>
 
           <label>
-            Marca
-            <select value={marcaId} onChange={(e) => setMarcaId(e.target.value)}>
-              <option value="">Sin marca</option>
-              {marcas.map((marca) => (
-                <option key={marca.id} value={marca.id}>{marca.nombre}</option>
-              ))}
-            </select>
-          </label>
-
-          {/* Campos nuevos */}
-          <label>
-            Laboratorio
-            <input 
-              value={laboratorio} 
-              onChange={(e) => setLaboratorio(e.target.value)} 
-            />
-          </label>
-
-          <label>
-            País de Origen
-            <input 
-              value={paisOrigen} 
-              onChange={(e) => setPaisOrigen(e.target.value)} 
-            />
-          </label>
-
-          <label>
-            Molécula
-            <input 
-              value={molecula} 
-              onChange={(e) => setMolecula(e.target.value)} 
-            />
-          </label>
-
-          <label>
-            Línea
-            <input 
-              value={linea} 
-              onChange={(e) => setLinea(e.target.value)} 
-            />
-          </label>
-
-          <label>
-            Forma
-            <input 
-              value={forma} 
-              onChange={(e) => setForma(e.target.value)} 
-            />
-          </label>
-
-          <label>
-            Descripción
-            <textarea 
-              value={descripcion} 
-              onChange={(e) => setDescripcion(e.target.value)} 
-              rows="3"
-            />
-          </label>
-
-          <label>
             URL de la foto
-            <input 
-              value={fotoUrl} 
-              onChange={(e) => setFotoUrl(e.target.value)} 
-              placeholder="https://ejemplo.com/imagen.jpg"
-            />
+            <input value={fotoUrl} onChange={(e) => setFotoUrl(e.target.value)} />
           </label>
 
-          {/* Checkbox de disponibilidad */}
-          <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <label>
             <input
               type="checkbox"
               checked={disponible}
               onChange={(e) => setDisponible(e.target.checked)}
             />
-            Disponible
+            Disponible (si se desmarca, el catálogo oculta el precio y muestra "Pedir cotización")
           </label>
+
+          {esEdicion && (
+            <label>
+              <input
+                type="checkbox"
+                checked={activo}
+                onChange={(e) => setActivo(e.target.checked)}
+              />
+              Activo
+            </label>
+          )}
 
           <button type="submit" disabled={guardando}>
             {guardando ? 'Guardando...' : esEdicion ? 'Guardar cambios' : 'Crear producto'}

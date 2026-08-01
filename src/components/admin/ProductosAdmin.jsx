@@ -2,10 +2,15 @@ import { useState, useEffect } from 'react'
 import api from '../../api/axios'
 import ProductoForm from './ProductoForm'
 
+const LINEAS = ['Linea Hospitalaria', 'Linea Farmacia', 'Material Medico']
+const FORMAS = ['Ampollas', 'Tabletas', 'Jarabes']
+
 function ProductosAdmin() {
   const [productos, setProductos] = useState([])
   const [marcas, setMarcas] = useState([])
   const [busqueda, setBusqueda] = useState('')
+  const [filtroLinea, setFiltroLinea] = useState('')
+  const [filtroForma, setFiltroForma] = useState('')
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
   const [productoEnEdicion, setProductoEnEdicion] = useState(null)
@@ -51,15 +56,19 @@ function ProductosAdmin() {
     await cargarDatos()
   }
 
-  // Filtro mejorado: busca en nombre_comercial, laboratorio, molecula y marca
+  // Filtro en memoria: nombre comercial, marca, laboratorio, molécula + filtros de línea/forma
   const productosFiltrados = productos.filter((producto) => {
     const texto = busqueda.toLowerCase()
-    return (
+    const coincideTexto =
       producto.nombre_comercial?.toLowerCase().includes(texto) ||
+      producto.marcas?.nombre?.toLowerCase().includes(texto) ||
       producto.laboratorio?.toLowerCase().includes(texto) ||
-      producto.molecula?.toLowerCase().includes(texto) ||
-      producto.marcas?.nombre?.toLowerCase().includes(texto)
-    )
+      producto.molecula?.toLowerCase().includes(texto)
+
+    const coincideLinea = !filtroLinea || producto.linea === filtroLinea
+    const coincideForma = !filtroForma || producto.forma === filtroForma
+
+    return coincideTexto && coincideLinea && coincideForma
   })
 
   if (cargando) return <p>Cargando productos...</p>
@@ -69,41 +78,61 @@ function ProductosAdmin() {
     <div>
       <h2>Productos</h2>
 
-      <div className="productos-toolbar" style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+      <div className="productos-toolbar">
         <input
           type="text"
-          placeholder="Buscar por nombre, laboratorio, molécula o marca..."
+          placeholder="Buscar por nombre, marca, laboratorio o molécula..."
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
-          style={{ flex: 1, padding: '8px' }}
         />
+
+        <select value={filtroLinea} onChange={(e) => setFiltroLinea(e.target.value)}>
+          <option value="">Todas las líneas</option>
+          {LINEAS.map((l) => (
+            <option key={l} value={l}>{l}</option>
+          ))}
+        </select>
+
+        <select value={filtroForma} onChange={(e) => setFiltroForma(e.target.value)}>
+          <option value="">Todas las formas</option>
+          {FORMAS.map((f) => (
+            <option key={f} value={f}>{f}</option>
+          ))}
+        </select>
+
         <button onClick={abrirNuevo}>+ Nuevo producto</button>
       </div>
 
       <p>{productosFiltrados.length} de {productos.length} productos</p>
 
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+      <table>
         <thead>
           <tr>
-            <th style={{ textAlign: 'left', padding: '8px', borderBottom: '1px solid #ddd' }}>Nombre</th>
-            <th style={{ textAlign: 'left', padding: '8px', borderBottom: '1px solid #ddd' }}>Marca</th>
-            <th style={{ textAlign: 'left', padding: '8px', borderBottom: '1px solid #ddd' }}>Laboratorio</th>
-            <th style={{ textAlign: 'left', padding: '8px', borderBottom: '1px solid #ddd' }}>Molécula</th>
-            <th style={{ textAlign: 'left', padding: '8px', borderBottom: '1px solid #ddd' }}>Precio</th>
-            <th style={{ textAlign: 'left', padding: '8px', borderBottom: '1px solid #ddd' }}>Disponible</th>
-            <th style={{ textAlign: 'left', padding: '8px', borderBottom: '1px solid #ddd' }}></th>
+            <th>Nombre comercial</th>
+            <th>Marca</th>
+            <th>Laboratorio</th>
+            <th>País</th>
+            <th>Línea</th>
+            <th>Forma</th>
+            <th>Precio</th>
+            <th>Disponible</th>
+            <th>Activo</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
           {productosFiltrados.map((producto) => (
             <tr key={producto.id}>
-              <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{producto.nombre_comercial}</td>
-              <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{producto.marcas?.nombre || '-'}</td>
-              <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{producto.laboratorio || '-'}</td>
-              <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{producto.molecula || '-'}</td>
-              <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>${producto.precio_usd?.toFixed(2)}</td>
-              <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{producto.disponible ? '✅ Sí' : '❌ No'}</td>
-              <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>
+              <td>{producto.nombre_comercial}</td>
+              <td>{producto.marcas?.nombre}</td>
+              <td>{producto.laboratorio}</td>
+              <td>{producto.pais_origen}</td>
+              <td>{producto.linea}</td>
+              <td>{producto.forma}</td>
+              <td>${Number(producto.precio_usd).toFixed(2)}</td>
+              <td>{producto.disponible ? 'Sí' : 'No'}</td>
+              <td>{producto.activo ? 'Sí' : 'No'}</td>
+              <td>
                 <button onClick={() => abrirEdicion(producto)}>Editar</button>
               </td>
             </tr>
