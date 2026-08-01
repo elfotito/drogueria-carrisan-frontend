@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import api from '../api/axios'
 import ProductCard from '../components/ProductCard'
-import ProductCardSkeleton from '../components/ProductcardSkeleton'
+import ProductCardSkeleton from '../components/Productcardskeleton'
 import BuscadorFiltro from '../components/BuscadorFiltro'
 import './Catalogo.css'
 
