@@ -1,4 +1,3 @@
-
 function ProductCardSkeleton() {
   return (
     <div className="product-card product-card-skeleton" aria-hidden="true">
