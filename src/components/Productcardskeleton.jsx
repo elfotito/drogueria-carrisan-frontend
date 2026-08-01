@@ -11,5 +11,4 @@ function ProductCardSkeleton() {
     </div>
   )
 }
-
 export default ProductCardSkeleton
