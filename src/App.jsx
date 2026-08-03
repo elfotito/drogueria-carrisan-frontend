@@ -10,6 +10,15 @@ import Registro from './pages/Registro'
 import Carrito from './pages/Carrito'
 import MisOrdenes from './pages/MisOrdenes'
 import Admin from './pages/Admin'
+import QuienesSomos from './pages/QuienesSomos'
+import FAQ from './pages/FAQ'
+import Ayuda from './pages/Ayuda'
+import Contacto from './pages/Contacto'
+import MiCuenta from './pages/MiCuenta'
+import MisItems from './pages/MisItems'
+import Notificaciones from './pages/Notificaciones'
+import Terminos from './pages/Terminos'
+import Privacidad from './pages/Privacidad'
 
 function App() {
   return (
@@ -21,10 +30,18 @@ function App() {
           <Route path="/catalogo" element={<Catalogo />} />
           <Route path="/login" element={<Login />} />
           <Route path="/registro" element={<Registro />} />
-
           <Route path="/carrito" element={<PrivateRoute><Carrito /></PrivateRoute>} />
           <Route path="/orders" element={<PrivateRoute><MisOrdenes /></PrivateRoute>} />
           <Route path="/admin" element={<PrivateRoute adminOnly><Admin /></PrivateRoute>} />
+          <Route path="/quienes-somos" element={<QuienesSomos />} />
+          <Route path="/faq" element={<FAQ />} />
+          <Route path="/ayuda" element={<Ayuda />} />
+          <Route path="/contacto" element={<Contacto />} />
+          <Route path="/cuenta" element={<PrivateRoute><MiCuenta /></PrivateRoute>} />
+          <Route path="/mis-items" element={<PrivateRoute><MisItems /></PrivateRoute>} />
+          <Route path="/notificaciones" element={<PrivateRoute><Notificaciones /></PrivateRoute>} />
+          <Route path="/terminos" element={<Terminos />} />
+          <Route path="/privacidad" element={<Privacidad />} />
         </Routes>
       </CartProvider>
     </AuthProvider>
