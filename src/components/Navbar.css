@@ -1,0 +1,173 @@
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: #FBFAF7;
+  border-bottom: 1px solid rgba(35, 43, 69, 0.08);
+  padding: 10px 16px;
+}
+
+.navbar__fila-principal {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ---------- Botones de ícono (menú y carrito) ---------- */
+.navbar__icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: none;
+  background: transparent;
+  color: #232B45;
+  cursor: pointer;
+  border-radius: 8px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.navbar__icon-btn:hover {
+  background: rgba(35, 43, 69, 0.05);
+}
+
+.navbar__cart-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background: #12A594;
+  color: #fff;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  font-weight: 700;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+}
+
+/* ---------- Logo ---------- */
+.navbar__logo {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: #232B45;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.navbar__logo-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.navbar__logo-dot--teal {
+  background: #12A594;
+}
+
+.navbar__logo-dot--indigo {
+  background: #232B45;
+  margin-left: -3px;
+  margin-right: 6px;
+}
+
+/* ---------- Buscador ---------- */
+.navbar__search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  border: 1px solid rgba(35, 43, 69, 0.12);
+  border-radius: 10px;
+  padding: 8px 12px;
+  flex: 1 1 auto;
+}
+
+.navbar__search input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.88rem;
+  color: #14182A;
+  min-width: 0;
+}
+
+.navbar__search input::placeholder {
+  color: rgba(20, 24, 42, 0.4);
+}
+
+.navbar__search button {
+  border: none;
+  background: none;
+  color: #1B4B8F;
+  display: flex;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   MOBILE (<=768px): buscador pasa a su propia fila
+   ============================================ */
+@media (max-width: 768px) {
+  .navbar__menu-btn {
+    order: 1;
+  }
+
+  .navbar__logo {
+    order: 2;
+    margin-right: auto;
+  }
+
+  .navbar__cart-btn {
+    order: 3;
+  }
+
+  .navbar__search {
+    order: 4;
+    flex-basis: 100%;
+  }
+}
+
+/* ============================================
+   DESKTOP (>=769px): todo en una sola fila
+   ============================================ */
+@media (min-width: 769px) {
+  .navbar {
+    padding: 12px 24px;
+  }
+
+  .navbar__menu-btn {
+    order: 1;
+  }
+
+  .navbar__logo {
+    order: 2;
+    margin-right: 4px;
+  }
+
+  .navbar__search {
+    order: 3;
+    max-width: 480px;
+  }
+
+  .navbar__cart-btn {
+    order: 4;
+    margin-left: 4px;
+  }
+}

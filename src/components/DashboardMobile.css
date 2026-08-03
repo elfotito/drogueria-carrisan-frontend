@@ -9,7 +9,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 26px;
 }
 
 .dashboard__saludo {
@@ -70,41 +70,6 @@
   font-size: 0.95rem;
   font-weight: 600;
   color: #12A594;
-}
-
-/* ---------- Buscador ---------- */
-.dashboard__buscador {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: #fff;
-  border: 1px solid rgba(35, 43, 69, 0.12);
-  border-radius: 14px;
-  padding: 12px 16px;
-  margin-bottom: 28px;
-}
-
-.dashboard__buscador input {
-  flex: 1;
-  border: none;
-  outline: none;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.95rem;
-  color: #14182A;
-  background: transparent;
-}
-
-.dashboard__buscador input::placeholder {
-  color: rgba(20, 24, 42, 0.4);
-}
-
-.dashboard__buscador button {
-  border: none;
-  background: none;
-  color: #1B4B8F;
-  display: flex;
-  cursor: pointer;
-  padding: 0;
 }
 
 /* ---------- Accesos rápidos ---------- */
