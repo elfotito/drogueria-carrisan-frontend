@@ -1,153 +1,218 @@
 /* ============================================
-   Catálogo — layout sidebar + grid (estilo Amazon/Walmart)
+   Catálogo — Layout y Tipografía
    ============================================ */
 
 .catalogo-layout {
-  max-width: 1400px;
+  max-width: 1600px; /* Un poco más ancho para dar respiro al grid */
   margin: 0 auto;
-  padding: 32px 24px 64px;
+  padding: 24px;
+  font-family: 'Inter', sans-serif;
+  color: #000000;
 }
 
-/* ---------- Header ---------- */
-.catalogo-header {
+/* ---------- 1. Categorías Rápidas (Top Bar) ---------- */
+.catalogo-quick-links {
   display: flex;
-  align-items: baseline;
-  gap: 16px;
+  align-items: center;
+  gap: 32px;
+  padding-bottom: 24px;
+  overflow-x: auto;
+  scrollbar-width: none; /* Oculta scroll en Firefox */
+}
+
+.catalogo-quick-links::-webkit-scrollbar {
+  display: none; /* Oculta scroll en Chrome/Safari */
+}
+
+.quick-link-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  min-width: max-content;
+}
+
+.quick-link-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #f4f6f8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  transition: box-shadow 0.2s;
+}
+
+.quick-link-item:hover .quick-link-icon {
+  box-shadow: 0 0 0 2px #000;
+}
+
+.quick-link-text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #2e2f32;
+}
+
+.catalogo-divider {
+  width: 100%;
+  height: 1px;
+  background: #e3e4e5;
   margin-bottom: 24px;
 }
 
-.catalogo-header h1 {
-  font-family: 'Manrope', sans-serif;
-  font-weight: 800;
-  font-size: 2rem;
-  color: #232B45;
+/* ---------- Body: Sidebar + Main Content ---------- */
+.catalogo-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 40px;
+  position: relative;
+}
+
+/* ---------- 2. Sidebar de Filtros ---------- */
+.catalogo-filtros {
+  flex: 0 0 240px;
+  position: sticky;
+  top: 90px;
+  background: #ffffff;
+  padding-right: 10px;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+}
+
+/* Secciones del sidebar */
+.filtro-seccion {
+  padding: 16px 0;
+  border-bottom: 1px solid #e3e4e5;
+}
+
+.filtro-seccion:first-child {
+  padding-top: 0;
+}
+
+.filtro-titulo {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 16px 0;
+  color: #000;
+}
+
+/* Píldoras sugeridas */
+.filtro-pills-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.filtro-pill {
+  background: #ffffff;
+  border: 1px solid #74767c;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  font-family: 'Inter', sans-serif;
+  color: #000;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filtro-pill:hover {
+  border-color: #000;
+  background: #f4f6f8;
+}
+
+/* Acordeones */
+.filtro-accordion-btn {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #000;
+  cursor: pointer;
+}
+
+/* ---------- 3. Main Content y Header ---------- */
+.catalogo-main-content {
+  flex: 1;
+  min-width: 0; 
+}
+
+.catalogo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.header-titles h1 {
+  font-size: 1.25rem;
+  font-weight: 400;
+  margin: 0 0 4px 0;
+  color: #000;
+}
+
+.header-titles h1 strong {
+  font-weight: 700;
+}
+
+.header-titles h1 span {
+  color: #74767c;
+  font-size: 1rem;
+}
+
+.header-subtitle {
+  font-size: 0.75rem;
+  color: #74767c;
   margin: 0;
 }
 
-.catalogo-contador {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.85rem;
-  color: #12A594;
-  background: rgba(18, 165, 148, 0.08);
-  padding: 4px 10px;
-  border-radius: 6px;
-  white-space: nowrap;
+/* Controles de orden */
+.catalogo-controles {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-/* ---------- Botón filtros mobile (oculto en desktop) ---------- */
+.catalogo-sort-select {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 8px 32px 8px 16px;
+  border: 1px solid #000;
+  border-radius: 999px;
+  background: #fff;
+  color: #000;
+  cursor: pointer;
+  appearance: none;
+  /* Icono de chevron básico incrustado en el select */
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+
 .btn-filtros-mobile {
   display: none;
 }
 
-/* ---------- Body: sidebar + grid ---------- */
-.catalogo-body {
-  display: flex;
-  align-items: flex-start;
-  gap: 32px;
-  position: relative;
-}
-
-.catalogo-overlay {
-  display: none;
-}
-
-/* ---------- Sidebar de filtros ---------- */
-.catalogo-filtros {
-  flex: 0 0 260px;
-  position: sticky;
-  top: 24px;
-  background: #FBFAF7;
-  border: 1px solid rgba(35, 43, 69, 0.1);
-  border-radius: 12px;
-  padding: 20px;
-}
-
-.buscador-filtro {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.buscador-filtro input,
-.buscador-filtro select {
-  width: 100%;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.9rem;
-  padding: 10px 12px;
-  border: 1px solid rgba(35, 43, 69, 0.15);
-  border-radius: 8px;
-  background: #fff;
-  color: #14182A;
-  transition: border-color 0.15s ease;
-  box-sizing: border-box;
-}
-
-.buscador-filtro input:focus,
-.buscador-filtro select:focus {
-  outline: none;
-  border-color: #1B4B8F;
-}
-
-.buscador-filtro input::placeholder {
-  color: rgba(20, 24, 42, 0.4);
-}
-
-/* ---------- Barra de controles (orden) ---------- */
-.catalogo-controles {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 16px;
-}
-
-.catalogo-orden-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.85rem;
-  color: rgba(20, 24, 42, 0.7);
-}
-
-.catalogo-orden-label select {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.85rem;
-  padding: 6px 10px;
-  border: 1px solid rgba(35, 43, 69, 0.15);
-  border-radius: 6px;
-  background: #fff;
-  color: #14182A;
-  cursor: pointer;
-}
-
-.catalogo-orden-label select:focus {
-  outline: none;
-  border-color: #1B4B8F;
-}
-
 /* ---------- Grid de productos ---------- */
-.catalogo-grid-wrapper {
-  flex: 1;
-  min-width: 0; /* evita overflow del grid en flex */
-}
-
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 24px;
 }
 
-.catalogo-vacio {
-  font-family: 'Inter', sans-serif;
-  color: rgba(20, 24, 42, 0.6);
+.catalogo-vacio, .catalogo-estado {
   text-align: center;
   padding: 60px 0;
-}
-
-.catalogo-estado {
-  font-family: 'Inter', sans-serif;
-  text-align: center;
-  padding: 80px 24px;
-  color: #232B45;
+  color: #74767c;
 }
 
 .catalogo-error {
@@ -155,171 +220,77 @@
 }
 
 /* ============================================
-   Skeleton loaders (ProductCardSkeleton)
+   Skeleton loaders (Se mantiene tu estilo original)
    ============================================ */
 .skeleton-block {
-  background: linear-gradient(
-    90deg,
-    rgba(35, 43, 69, 0.06) 25%,
-    rgba(35, 43, 69, 0.12) 37%,
-    rgba(35, 43, 69, 0.06) 63%
-  );
+  background: linear-gradient(90deg, rgba(35, 43, 69, 0.06) 25%, rgba(35, 43, 69, 0.12) 37%, rgba(35, 43, 69, 0.06) 63%);
   background-size: 400% 100%;
   animation: skeleton-shimmer 1.4s ease infinite;
   border-radius: 6px;
 }
-
 @keyframes skeleton-shimmer {
-  0% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-.product-card-skeleton {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  cursor: default;
-  pointer-events: none;
-}
-
-.skeleton-img {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  border-radius: 10px;
-}
-
-.skeleton-line {
-  height: 12px;
-}
-
-.skeleton-line--marca {
-  width: 40%;
-  height: 10px;
-}
-
-.skeleton-line--nombre {
-  width: 85%;
-  height: 16px;
-}
-
-.skeleton-line--desc {
-  width: 100%;
-}
-
-.skeleton-line--desc-corta {
-  width: 65%;
-}
-
-.skeleton-line--precio {
-  width: 50%;
-  height: 18px;
-  margin-top: 4px;
-}
-
-.skeleton-btn {
-  width: 100%;
-  height: 38px;
-  border-radius: 8px;
-  margin-top: 6px;
-}
-
-.skeleton-contador {
-  width: 160px;
-  height: 22px;
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 /* ============================================
-   MOBILE (< 768px): sidebar se convierte en drawer
+   MOBILE (< 768px)
    ============================================ */
 @media (max-width: 768px) {
   .catalogo-layout {
-    padding: 20px 16px 48px;
+    padding: 16px;
   }
 
   .catalogo-header {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-    margin-bottom: 16px;
+    gap: 16px;
   }
 
-  .catalogo-header h1 {
-    font-size: 1.5rem;
-  }
-
-  /* Botón toggle visible solo en mobile */
-  .btn-filtros-mobile {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  .catalogo-controles {
     width: 100%;
-    font-family: 'Manrope', sans-serif;
+    justify-content: space-between;
+  }
+
+  .btn-filtros-mobile {
+    display: inline-block;
+    font-family: 'Inter', sans-serif;
     font-weight: 600;
-    font-size: 0.95rem;
-    color: #232B45;
+    font-size: 0.9rem;
+    padding: 8px 16px;
     background: #fff;
-    border: 1px solid rgba(35, 43, 69, 0.15);
-    border-radius: 8px;
-    padding: 12px 16px;
-    margin-bottom: 16px;
+    border: 1px solid #000;
+    border-radius: 999px;
     cursor: pointer;
   }
 
-  .catalogo-body {
-    flex-direction: column;
-    gap: 0;
-  }
-
-  /* Overlay oscuro detrás del drawer */
-  .catalogo-overlay {
-    display: block;
-    position: fixed;
-    inset: 0;
-    background: rgba(20, 24, 42, 0.5);
-    z-index: 40;
-  }
-
-  /* El sidebar se convierte en drawer deslizante desde la izquierda */
+  /* El sidebar se convierte en drawer deslizante */
   .catalogo-filtros {
     position: fixed;
     top: 0;
     left: 0;
     height: 100vh;
-    width: 82%;
+    width: 85%;
     max-width: 320px;
-    border-radius: 0;
-    border: none;
-    box-shadow: 4px 0 24px rgba(20, 24, 42, 0.15);
+    z-index: 200;
+    padding: 24px;
     transform: translateX(-100%);
-    transition: transform 0.25s ease;
-    z-index: 50;
-    overflow-y: auto;
+    transition: transform 0.3s ease;
   }
 
   .catalogo-filtros--abierto {
     transform: translateX(0);
   }
 
+  .catalogo-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 190;
+  }
+
   .product-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 14px;
-  }
-
-  .catalogo-controles {
-    justify-content: stretch;
-  }
-
-  .catalogo-orden-label {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .catalogo-orden-label select {
-    flex: 1;
-    max-width: 60%;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
   }
 }
