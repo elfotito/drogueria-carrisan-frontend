@@ -1,10 +1,10 @@
-import { useState, useEffect, useContext } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../api/axios'
-import { AuthContext } from '../context/AuthContext'
+import { useAuth } from '../context/AuthContext'
 
 function MiCuenta() {
-  const { user } = useContext(AuthContext)
+  const { user } = useAuth()
   const [estadoCuenta, setEstadoCuenta] = useState(null)
   const [ultimasOrdenes, setUltimasOrdenes] = useState([])
   const [cargando, setCargando] = useState(true)

@@ -1,9 +1,9 @@
-import { useState, useEffect, useContext } from 'react'
+import { useState, useEffect } from 'react'
 import api from '../api/axios'
-import { CartContext } from '../context/CartContext'
+import { useCart } from '../context/CartContext'
 
 function MisItems() {
-  const { addItem } = useContext(CartContext)
+  const { addItem } = useCart()
   const [listas, setListas] = useState([])
   const [listaActiva, setListaActiva] = useState(null)
   const [items, setItems] = useState([])
