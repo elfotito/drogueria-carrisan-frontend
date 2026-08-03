@@ -4,8 +4,16 @@ import { useAuth } from '../context/AuthContext'
 import api from '../api/axios'
 import './Auth.css'
 
+// Validación básica de email
+function esEmailValido(email) {
+  // Debe contener @, terminar en .algo (mínimo 2 caracteres después del punto)
+  // y no tener espacios
+  const regex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/
+  return regex.test(email)
+}
+
 function Login() {
-  const [paso, setPaso] = useState('email') // 'email' | 'password'
+  const [paso, setPaso] = useState('email')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [honeypot, setHoneypot] = useState('')
@@ -17,12 +25,18 @@ function Login() {
   const [searchParams] = useSearchParams()
   const sesionExpirada = searchParams.get('expirado') === '1'
 
-  // Paso 1: solo confirmamos si el correo existe. Si no existe, mandamos
-  // directo a Registro con el correo precargado -- así el usuario no tiene
-  // que volver a tipearlo.
   async function handleContinuar(e) {
     e.preventDefault()
     setError('')
+
+    // Validación de email antes de llamar al backend
+    const emailLimpio = email.trim().toLowerCase()
+    setEmail(emailLimpio)
+
+    if (!esEmailValido(emailLimpio)) {
+      setError('Ingresá un correo electrónico válido (ejemplo@correo.com)')
+      return
+    }
 
     if (honeypot) {
       setError('No se pudo procesar la solicitud')
@@ -31,11 +45,11 @@ function Login() {
 
     setCargando(true)
     try {
-      const { data } = await api.post('/auth/check-email', { email })
+      const { data } = await api.post('/auth/check-email', { email: emailLimpio })
       if (data.existe) {
         setPaso('password')
       } else {
-        navigate(`/registro?email=${encodeURIComponent(email)}`)
+        navigate(`/registro?email=${encodeURIComponent(emailLimpio)}`)
       }
     } catch (err) {
       setError('No se pudo verificar el correo. Intentá de nuevo.')
