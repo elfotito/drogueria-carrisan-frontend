@@ -1,13 +1,13 @@
 import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import api from '../api/axios'
 import './Auth.css'
 
-const DIAS = ['L', 'M', 'M', 'J', 'V', 'S', 'D']
-
 function Registro() {
+  const [searchParams] = useSearchParams()
+  const [email, setEmail] = useState(searchParams.get('email') || '')
+  const [emailBloqueado, setEmailBloqueado] = useState(!!searchParams.get('email'))
   const [nombre, setNombre] = useState('')
-  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [honeypot, setHoneypot] = useState('')
   const [aceptaTerminos, setAceptaTerminos] = useState(false)
@@ -20,7 +20,6 @@ function Registro() {
     e.preventDefault()
     setError('')
 
-    // Honeypot: si un bot llenó este campo, cortamos acá sin llegar al backend.
     if (honeypot) {
       setError('No se pudo crear la cuenta. Intentá de nuevo.')
       return
@@ -38,7 +37,7 @@ function Registro() {
       await api.post('/auth/register', { email, password, nombre })
       navigate('/login')
     } catch (err) {
-      setError(err.response?.data?.message || 'Error al crear la cuenta')
+      setError(err.response?.data?.error || 'Error al crear la cuenta')
     } finally {
       setCargando(false)
     }
@@ -46,42 +45,46 @@ function Registro() {
 
   return (
     <div className="auth-page">
-      {/* ---------- Panel de marca ---------- */}
-      <div className="auth-brand">
-        <div className="auth-brand__content">
-          <span className="auth-brand__logo">
-            <span className="auth-brand__dot auth-brand__dot--teal" />
-            <span className="auth-brand__dot auth-brand__dot--indigo" />
-            Carrisán
-          </span>
-          <h1>Sumate como cliente.</h1>
-          <p>
-            Creá tu cuenta para ver precios, hacer pedidos y llevar el control
-            de tu historial con nosotros.
-          </p>
-        </div>
+      <div className="auth-card">
+        <Link to="/" className="auth-logo">
+          <span className="auth-logo-dot auth-logo-dot--teal" />
+          <span className="auth-logo-dot auth-logo-dot--indigo" />
+          Carrisán
+        </Link>
 
-        <div className="auth-pastillero" aria-hidden="true">
-          {DIAS.map((dia, i) => (
-            <div className="auth-pastillero__slot" key={i} style={{ '--i': i }}>
-              <span className="auth-pastillero__dia">{dia}</span>
-              {(i === 1 || i === 4) && <span className="auth-pastillero__pill" />}
-            </div>
-          ))}
-        </div>
+        <h1>Crear tu cuenta</h1>
+        <p className="auth-subtitulo">
+          Completá tus datos para solicitar acceso a la plataforma.
+        </p>
 
-        <span className="auth-brand__rif">RIF J-40068410-2</span>
-      </div>
+        {emailBloqueado ? (
+          <div className="auth-email-confirmado">
+            <span>{email}</span>
+            <button
+              type="button"
+              className="auth-link-btn"
+              onClick={() => setEmailBloqueado(false)}
+            >
+              Cambiar
+            </button>
+          </div>
+        ) : null}
 
-      {/* ---------- Panel de formulario ---------- */}
-      <div className="auth-form-panel">
+        {error && <div className="auth-error">{error}</div>}
+
         <form className="auth-form" onSubmit={handleSubmit}>
-          <h2>Crear cuenta</h2>
-          <p className="auth-form__subtitulo">
-            Completá tus datos para solicitar acceso.
-          </p>
-
-          {error && <div className="auth-error">{error}</div>}
+          {!emailBloqueado && (
+            <label className="auth-field">
+              Correo electrónico
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
+                required
+              />
+            </label>
+          )}
 
           <label className="auth-field">
             Nombre
@@ -90,17 +93,6 @@ function Registro() {
               value={nombre}
               onChange={(e) => setNombre(e.target.value)}
               autoComplete="name"
-              required
-            />
-          </label>
-
-          <label className="auth-field">
-            Correo electrónico
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              autoComplete="email"
               required
             />
           </label>
@@ -116,7 +108,6 @@ function Registro() {
             />
           </label>
 
-          {/* Honeypot */}
           <div className="auth-honeypot" aria-hidden="true">
             <label htmlFor="sitio_web">Sitio web</label>
             <input
@@ -130,7 +121,6 @@ function Registro() {
             />
           </div>
 
-          {/* Términos y condiciones */}
           <div className="auth-terminos">
             <label className="auth-terminos__check">
               <input
@@ -158,11 +148,6 @@ function Registro() {
                   procesar tus pedidos y facturación con Droguería Carrisán,
                   C.A. No se comparten con terceros ajenos a esta operación.
                 </p>
-                <p>
-                  Al registrarte, tu cuenta queda sujeta a activación por
-                  parte de un administrador antes de poder operar en la
-                  plataforma.
-                </p>
               </div>
             )}
           </div>
@@ -170,11 +155,13 @@ function Registro() {
           <button type="submit" className="auth-submit" disabled={cargando}>
             {cargando ? 'Creando cuenta...' : 'Crear cuenta'}
           </button>
-
-          <p className="auth-switch">
-            ¿Ya tenés cuenta? <Link to="/login">Iniciar sesión</Link>
-          </p>
         </form>
+
+        <p className="auth-switch">
+          ¿Ya tenés cuenta? <Link to="/login">Iniciar sesión</Link>
+        </p>
+
+        <p className="auth-footer-rif">RIF J-40068410-2</p>
       </div>
     </div>
   )

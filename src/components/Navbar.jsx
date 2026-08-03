@@ -1,14 +1,19 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useCart } from '../context/CartContext'
 import MenuDrawer from './MenuDrawer'
 import './Navbar.css'
 
+// Páginas donde el Navbar global no debe aparecer -- estas páginas manejan
+// su propia identidad visual completa (login por pasos, registro, recuperar).
+const RUTAS_SIN_NAVBAR = ['/login', '/registro', '/recuperar']
+
 function Navbar() {
   const { user, logout } = useAuth()
   const cartContext = useCart()
   const navigate = useNavigate()
+  const location = useLocation()
   const [menuAbierto, setMenuAbierto] = useState(false)
   const [busqueda, setBusqueda] = useState('')
 
@@ -16,6 +21,10 @@ function Navbar() {
   // en cuanto confirmes la forma real de CartContext.jsx. Con optional chaining
   // no rompe nada si el nombre es otro, simplemente muestra 0.
   const cantidadCarrito = cartContext?.items?.length ?? 0
+
+  if (RUTAS_SIN_NAVBAR.includes(location.pathname)) {
+    return null
+  }
 
   function handleLogout() {
     setMenuAbierto(false)

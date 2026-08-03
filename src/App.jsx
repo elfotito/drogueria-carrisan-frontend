@@ -19,6 +19,7 @@ import MisItems from './pages/MisItems'
 import Notificaciones from './pages/Notificaciones'
 import Terminos from './pages/Terminos'
 import Privacidad from './pages/Privacidad'
+import EstadoCuenta from './pages/EstadoCuenta'
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
           <Route path="/notificaciones" element={<PrivateRoute><Notificaciones /></PrivateRoute>} />
           <Route path="/terminos" element={<Terminos />} />
           <Route path="/privacidad" element={<Privacidad />} />
+          <Route path="/estado-cuenta" element={<PrivateRoute><EstadoCuenta /></PrivateRoute>} />
         </Routes>
       </CartProvider>
     </AuthProvider>

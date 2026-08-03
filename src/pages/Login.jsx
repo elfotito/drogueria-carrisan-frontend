@@ -1,14 +1,14 @@
 import { useState } from 'react'
 import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import api from '../api/axios'
 import './Auth.css'
 
-const DIAS = ['L', 'M', 'M', 'J', 'V', 'S', 'D']
-
 function Login() {
+  const [paso, setPaso] = useState('email') // 'email' | 'password'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [honeypot, setHoneypot] = useState('') // campo trampa, invisible para humanos
+  const [honeypot, setHoneypot] = useState('')
   const [error, setError] = useState('')
   const [cargando, setCargando] = useState(false)
 
@@ -17,24 +17,43 @@ function Login() {
   const [searchParams] = useSearchParams()
   const sesionExpirada = searchParams.get('expirado') === '1'
 
-  async function handleSubmit(e) {
+  // Paso 1: solo confirmamos si el correo existe. Si no existe, mandamos
+  // directo a Registro con el correo precargado -- así el usuario no tiene
+  // que volver a tipearlo.
+  async function handleContinuar(e) {
     e.preventDefault()
     setError('')
 
-    // Si el campo trampa viene lleno, lo llenó un bot (un humano nunca lo ve).
-    // Respondemos igual que credenciales incorrectas, sin pistas adicionales,
-    // y sin llegar a golpear el backend.
     if (honeypot) {
-      setError('Correo o contraseña incorrectos')
+      setError('No se pudo procesar la solicitud')
       return
     }
 
     setCargando(true)
     try {
+      const { data } = await api.post('/auth/check-email', { email })
+      if (data.existe) {
+        setPaso('password')
+      } else {
+        navigate(`/registro?email=${encodeURIComponent(email)}`)
+      }
+    } catch (err) {
+      setError('No se pudo verificar el correo. Intentá de nuevo.')
+    } finally {
+      setCargando(false)
+    }
+  }
+
+  async function handleIngresar(e) {
+    e.preventDefault()
+    setError('')
+    setCargando(true)
+
+    try {
       const user = await login(email, password)
       navigate(user.es_admin ? '/admin' : '/')
     } catch (err) {
-      setError(err.response?.data?.message || 'Correo o contraseña incorrectos')
+      setError(err.response?.data?.error || 'Correo o contraseña incorrectos')
     } finally {
       setCargando(false)
     }
@@ -42,91 +61,104 @@ function Login() {
 
   return (
     <div className="auth-page">
-      {/* ---------- Panel de marca ---------- */}
-      <div className="auth-brand">
-        <div className="auth-brand__content">
-          <span className="auth-brand__logo">
-            <span className="auth-brand__dot auth-brand__dot--teal" />
-            <span className="auth-brand__dot auth-brand__dot--indigo" />
-            Carrisán
-          </span>
-          <h1>Bienvenido de vuelta.</h1>
-          <p>
-            Accedé a tu catálogo, tus pedidos y tu cuenta con nosotros — todo
-            en un solo lugar.
-          </p>
-        </div>
+      <div className="auth-card">
+        <Link to="/" className="auth-logo">
+          <span className="auth-logo-dot auth-logo-dot--teal" />
+          <span className="auth-logo-dot auth-logo-dot--indigo" />
+          Carrisán
+        </Link>
 
-        <div className="auth-pastillero" aria-hidden="true">
-          {DIAS.map((dia, i) => (
-            <div className="auth-pastillero__slot" key={i} style={{ '--i': i }}>
-              <span className="auth-pastillero__dia">{dia}</span>
-              {(i === 1 || i === 4) && <span className="auth-pastillero__pill" />}
+        {paso === 'email' ? (
+          <>
+            <h1>Iniciar sesión o crear tu cuenta</h1>
+            <p className="auth-subtitulo">
+              Ingresá tu correo y vemos si ya tenés cuenta con nosotros.
+            </p>
+
+            {sesionExpirada && (
+              <div className="auth-banner">
+                Tu sesión expiró. Iniciá sesión de nuevo para continuar.
+              </div>
+            )}
+            {error && <div className="auth-error">{error}</div>}
+
+            <form className="auth-form" onSubmit={handleContinuar}>
+              <label className="auth-field">
+                Correo electrónico
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  autoComplete="email"
+                  autoFocus
+                  required
+                />
+              </label>
+
+              <div className="auth-honeypot" aria-hidden="true">
+                <label htmlFor="sitio_web">Sitio web</label>
+                <input
+                  id="sitio_web"
+                  name="sitio_web"
+                  type="text"
+                  tabIndex="-1"
+                  autoComplete="off"
+                  value={honeypot}
+                  onChange={(e) => setHoneypot(e.target.value)}
+                />
+              </div>
+
+              <button type="submit" className="auth-submit" disabled={cargando}>
+                {cargando ? 'Verificando...' : 'Continuar'}
+              </button>
+            </form>
+          </>
+        ) : (
+          <>
+            <h1>Ingresá tu contraseña</h1>
+
+            <div className="auth-email-confirmado">
+              <span>{email}</span>
+              <button
+                type="button"
+                className="auth-link-btn"
+                onClick={() => {
+                  setPaso('email')
+                  setPassword('')
+                  setError('')
+                }}
+              >
+                Cambiar
+              </button>
             </div>
-          ))}
-        </div>
 
-        <span className="auth-brand__rif">RIF J-40068410-2</span>
-      </div>
+            {error && <div className="auth-error">{error}</div>}
 
-      {/* ---------- Panel de formulario ---------- */}
-      <div className="auth-form-panel">
-        <form className="auth-form" onSubmit={handleSubmit}>
-          <h2>Iniciar sesión</h2>
-          <p className="auth-form__subtitulo">Ingresá con tu correo y contraseña.</p>
+            <form className="auth-form" onSubmit={handleIngresar}>
+              <label className="auth-field">
+                Contraseña
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  autoComplete="current-password"
+                  autoFocus
+                  required
+                />
+              </label>
 
-          {sesionExpirada && (
-            <div className="auth-banner">
-              Tu sesión expiró. Iniciá sesión de nuevo para continuar.
-            </div>
-          )}
+              <Link to="/recuperar" className="auth-olvido">
+                ¿Olvidaste tu contraseña?
+              </Link>
 
-          {error && <div className="auth-error">{error}</div>}
+              <button type="submit" className="auth-submit" disabled={cargando}>
+                {cargando ? 'Ingresando...' : 'Ingresar'}
+              </button>
+            </form>
+          </>
+        )}
 
-          <label className="auth-field">
-            Correo electrónico
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              autoComplete="email"
-              required
-            />
-          </label>
-
-          <label className="auth-field">
-            Contraseña
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              autoComplete="current-password"
-              required
-            />
-          </label>
-
-          {/* Honeypot: oculto por posición (no display:none), fuera del tab order */}
-          <div className="auth-honeypot" aria-hidden="true">
-            <label htmlFor="sitio_web">Sitio web</label>
-            <input
-              id="sitio_web"
-              name="sitio_web"
-              type="text"
-              tabIndex="-1"
-              autoComplete="off"
-              value={honeypot}
-              onChange={(e) => setHoneypot(e.target.value)}
-            />
-          </div>
-
-          <button type="submit" className="auth-submit" disabled={cargando}>
-            {cargando ? 'Ingresando...' : 'Ingresar'}
-          </button>
-
-          <p className="auth-switch">
-            ¿No tenés cuenta? <Link to="/registro">Solicitala acá</Link>
-          </p>
-        </form>
+        <p className="auth-footer-rif">RIF J-40068410-2</p>
       </div>
     </div>
   )
