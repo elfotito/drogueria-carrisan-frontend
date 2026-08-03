@@ -20,6 +20,7 @@ import Notificaciones from './pages/Notificaciones'
 import Terminos from './pages/Terminos'
 import Privacidad from './pages/Privacidad'
 import EstadoCuenta from './pages/EstadoCuenta'
+import ProductoDetalle from './pages/ProductoDetalle'
 
 function App() {
   return (
