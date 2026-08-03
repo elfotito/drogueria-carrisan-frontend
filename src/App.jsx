@@ -44,6 +44,7 @@ function App() {
           <Route path="/terminos" element={<Terminos />} />
           <Route path="/privacidad" element={<Privacidad />} />
           <Route path="/estado-cuenta" element={<PrivateRoute><EstadoCuenta /></PrivateRoute>} />
+          <Route path="/producto/:id" element={<ProductoDetalle />} />
         </Routes>
       </CartProvider>
     </AuthProvider>

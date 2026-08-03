@@ -58,25 +58,6 @@ function Navbar() {
             Carrisán
           </Link>
 
-          {/* Botón de Envío (Estilo de la imagen) */}
-          <button className="navbar__shipping">
-            <div className="shipping__icon-wrapper">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="1" y="3" width="15" height="13"></rect>
-                <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
-                <circle cx="5.5" cy="18.5" r="2.5"></circle>
-                <circle cx="18.5" cy="18.5" r="2.5"></circle>
-              </svg>
-            </div>
-            <div className="shipping__text">
-              <span className="shipping__label">Shipping</span>
-              <span className="shipping__address">Mississauga, L5P 1B2</span>
-            </div>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <polyline points="6 9 12 15 18 9"></polyline>
-            </svg>
-          </button>
-
           {/* Buscador Central */}
           <form className="navbar__search" onSubmit={handleBuscar}>
             <input
@@ -101,8 +82,8 @@ function Navbar() {
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
               </svg>
               <div className="action-btn__text">
-                <span className="text-light">Reorder</span>
-                <span className="text-bold">My Items</span>
+                <span className="text-light">Favoritos</span>
+                <span className="text-bold">Mis Items</span>
               </div>
             </button>
 
@@ -110,7 +91,7 @@ function Navbar() {
             <button
               className="navbar__action-btn"
               type="button"
-              onClick={() => user ? setMenuAbierto(true) : navigate('/login')}
+              onClick={() => user ? setMenuAbierto(true) : navigate('/cuenta')}
             >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -118,7 +99,7 @@ function Navbar() {
               </svg>
               <div className="action-btn__text">
                 <span className="text-light">{user ? 'Perfil' : 'Sign In'}</span>
-                <span className="text-bold">Account</span>
+                <span className="text-bold">Cuenta</span>
               </div>
             </button>
 
