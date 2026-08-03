@@ -1,0 +1,326 @@
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+}
+
+/* ============================================
+   Panel de marca (izquierda en desktop, arriba en mobile)
+   ============================================ */
+.auth-brand {
+  flex: 1;
+  background: #14182A;
+  color: #FBFAF7;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-brand__content h1 {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 2rem;
+  margin: 20px 0 12px;
+  max-width: 420px;
+}
+
+.auth-brand__content p {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  color: rgba(251, 250, 247, 0.7);
+  max-width: 380px;
+  line-height: 1.5;
+}
+
+.auth-brand__logo {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+
+.auth-brand__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.auth-brand__dot--teal {
+  background: #12A594;
+}
+
+.auth-brand__dot--indigo {
+  background: #FBFAF7;
+  margin-left: -3px;
+  margin-right: 7px;
+  opacity: 0.6;
+}
+
+.auth-brand__rif {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: rgba(251, 250, 247, 0.45);
+  position: relative;
+  z-index: 1;
+}
+
+/* ---------- Pastillero decorativo (versión compacta del hero) ---------- */
+.auth-pastillero {
+  display: flex;
+  gap: 10px;
+  margin: 24px 0;
+}
+
+.auth-pastillero__slot {
+  flex: 1;
+  aspect-ratio: 1 / 1.3;
+  max-width: 44px;
+  background: rgba(251, 250, 247, 0.06);
+  border: 1px solid rgba(251, 250, 247, 0.12);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 6px;
+  opacity: 0;
+  animation: auth-slot-in 0.5s ease forwards;
+  animation-delay: calc(var(--i) * 0.06s);
+}
+
+@keyframes auth-slot-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.auth-pastillero__dia {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  color: rgba(251, 250, 247, 0.4);
+}
+
+.auth-pastillero__pill {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #12A594;
+  margin-top: 6px;
+}
+
+/* ============================================
+   Panel de formulario
+   ============================================ */
+.auth-form-panel {
+  flex: 1;
+  background: #FBFAF7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+}
+
+.auth-form {
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.auth-form h2 {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.5rem;
+  color: #232B45;
+  margin: 0;
+}
+
+.auth-form__subtitulo {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.88rem;
+  color: rgba(20, 24, 42, 0.6);
+  margin: 0 0 6px;
+}
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #232B45;
+}
+
+.auth-field input {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 400;
+  padding: 11px 14px;
+  border: 1px solid rgba(35, 43, 69, 0.15);
+  border-radius: 10px;
+  background: #fff;
+  color: #14182A;
+  transition: border-color 0.15s ease;
+}
+
+.auth-field input:focus {
+  outline: none;
+  border-color: #1B4B8F;
+}
+
+/* ---------- Honeypot: oculto por posición, no display:none ---------- */
+.auth-honeypot {
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* ---------- Banners de estado ---------- */
+.auth-banner {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: #1B4B8F;
+  background: rgba(27, 75, 143, 0.08);
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+
+.auth-error {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: #c0392b;
+  background: rgba(192, 57, 43, 0.08);
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+
+/* ---------- Términos y condiciones ---------- */
+.auth-terminos {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.auth-terminos__check {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+  color: rgba(20, 24, 42, 0.75);
+  cursor: pointer;
+}
+
+.auth-terminos__check input {
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.auth-terminos__link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #1B4B8F;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: inherit;
+  font-family: inherit;
+}
+
+.auth-terminos__texto {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: rgba(20, 24, 42, 0.6);
+  background: rgba(35, 43, 69, 0.04);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.auth-terminos__texto p {
+  margin: 0 0 8px;
+}
+
+.auth-terminos__texto p:last-child {
+  margin-bottom: 0;
+}
+
+/* ---------- Botón submit ---------- */
+.auth-submit {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #fff;
+  background: #12A594;
+  border: none;
+  border-radius: 10px;
+  padding: 13px;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: opacity 0.15s ease;
+}
+
+.auth-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.auth-switch {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: rgba(20, 24, 42, 0.6);
+  text-align: center;
+  margin-top: 6px;
+}
+
+.auth-switch a {
+  color: #1B4B8F;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* ============================================
+   MOBILE: apilado, panel de marca colapsa
+   ============================================ */
+@media (max-width: 768px) {
+  .auth-page {
+    flex-direction: column;
+  }
+
+  .auth-brand {
+    flex: none;
+    padding: 32px 24px;
+  }
+
+  .auth-brand__content h1 {
+    font-size: 1.5rem;
+  }
+
+  .auth-pastillero {
+    margin: 18px 0;
+  }
+
+  .auth-pastillero__slot {
+    max-width: 36px;
+  }
+
+  .auth-form-panel {
+    padding: 32px 20px 48px;
+  }
+}

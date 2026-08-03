@@ -14,7 +14,20 @@ export function AuthProvider({ children }) {
     if (token) {
       try {
         const decoded = jwtDecode(token); // { id, email, es_admin, iat, exp }
-        setUser(decoded);
+
+        // jwtDecode solo lee el contenido, no valida si ya venció.
+        // Sin este chequeo, un token vencido se sigue tratando como sesión
+        // activa en el frontend hasta que algún request al backend falle
+        // con 401 -- lo cual explica el bug de "sesión abierta pero rota".
+        const yaVencio = decoded.exp * 1000 < Date.now();
+
+        if (yaVencio) {
+          localStorage.removeItem('token');
+          setToken(null);
+          setUser(null);
+        } else {
+          setUser(decoded);
+        }
       } catch (err) {
         // token corrupto o malformado -> lo tiramos
         console.error('Token inválido:', err);

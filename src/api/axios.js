@@ -13,4 +13,29 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Interceptor de respuesta: si el backend responde 401, el token venció o es
+// inválido a mitad de sesión (ej. el usuario estaba navegando y expiró).
+// Sin esto, cada página tiene que manejar el 401 por su cuenta y el usuario
+// queda en un estado raro de "sesión abierta pero rota" -- exactamente el bug
+// reportado con Mis Órdenes.
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const esNoAutorizado = error.response?.status === 401;
+    // No aplica esta lógica al propio intento de login: un 401 ahí significa
+    // "credenciales incorrectas", no "sesión expirada" -- eso ya lo maneja
+    // Login.jsx directamente con su propio mensaje de error.
+    const esRequestDeLogin = error.config?.url?.includes('/auth/login');
+
+    if (esNoAutorizado && !esRequestDeLogin) {
+      localStorage.removeItem('token');
+      if (!window.location.pathname.startsWith('/login')) {
+        window.location.href = '/login?expirado=1';
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
+
 export default api;
