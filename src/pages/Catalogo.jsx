@@ -1,11 +1,21 @@
-import { useState, useEffect, useCallback } from 'react'
-import { Link } from 'react-router-dom'
+import { useState, useEffect, useMemo } from 'react'
 import api from '../api/axios'
 import ProductCard from '../components/ProductCard'
 import ProductCardSkeleton from '../components/Productcardskeleton'
 // Importa tu BuscadorFiltro cuando estés listo para conectarlo
 // import BuscadorFiltro from '../components/BuscadorFiltro'
 import './Catalogo.css'
+
+// Categorías rápidas: cada una filtra por el campo `linea` del producto.
+// id: 'todos' es especial, no filtra nada.
+const categoriasRapidas = [
+  { id: 'todos', nombre: 'Todos', icon: '🗂️' },
+  { id: 'Analgésicos', nombre: 'Analgésicos', icon: '💊' },
+  { id: 'Cuidado Personal', nombre: 'Cuidado Personal', icon: '🧴' },
+  { id: 'Vitaminas', nombre: 'Vitaminas', icon: '🛡️' },
+  { id: 'Infantil', nombre: 'Infantil', icon: '👶' },
+  { id: 'Primeros Auxilios', nombre: 'Primeros Auxilios', icon: '🩹' },
+]
 
 function Catalogo() {
   const [productos, setProductos] = useState([])
@@ -14,18 +24,8 @@ function Catalogo() {
   const [error, setError] = useState('')
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(false)
   const [sort, setSort] = useState('nombre_asc')
+  const [categoriaActiva, setCategoriaActiva] = useState('todos')
 
-  // Datos mockeados para la barra superior de categorías rápidas
-  const categoriasRapidas = [
-    { id: 1, nombre: 'Analgésicos', icon: '💊' },
-    { id: 2, nombre: 'Cuidado Personal', icon: '🧴' },
-    { id: 3, nombre: 'Vitaminas', icon: '🛡️' },
-    { id: 4, nombre: 'Infantil', icon: '👶' },
-    { id: 5, nombre: 'Ofertas hoy', icon: '🏷️' },
-    { id: 6, nombre: 'Primeros Auxilios', icon: '🩹' },
-  ]
-
-  // Simulación de carga
   useEffect(() => {
     async function cargarDatos() {
       try {
@@ -45,15 +45,42 @@ function Catalogo() {
     cargarDatos()
   }, [])
 
+  const productosFiltrados = useMemo(() => {
+    let resultado = productos
+
+    if (categoriaActiva !== 'todos') {
+      resultado = resultado.filter((p) => p.linea === categoriaActiva)
+    }
+
+    const ordenado = [...resultado].sort((a, b) => {
+      switch (sort) {
+        case 'precio_asc':
+          return a.precio_usd - b.precio_usd
+        case 'precio_desc':
+          return b.precio_usd - a.precio_usd
+        case 'nombre_asc':
+          return a.nombre_comercial.localeCompare(b.nombre_comercial)
+        default:
+          return 0
+      }
+    })
+
+    return ordenado
+  }, [productos, categoriaActiva, sort])
+
   if (error) return <p className="catalogo-estado catalogo-error">{error}</p>
 
   return (
     <div className="catalogo-layout">
-      
-      {/* 1. Barra de Categorías Rápidas (Top) */}
+
+      {/* 1. Carrusel de Categorías Rápidas (scroll horizontal táctil, filtra) */}
       <section className="catalogo-quick-links">
-        {categoriasRapidas.map(cat => (
-          <button key={cat.id} className="quick-link-item">
+        {categoriasRapidas.map((cat) => (
+          <button
+            key={cat.id}
+            className={`quick-link-item ${categoriaActiva === cat.id ? 'quick-link-item--activo' : ''}`}
+            onClick={() => setCategoriaActiva(cat.id)}
+          >
             <div className="quick-link-icon">{cat.icon}</div>
             <span className="quick-link-text">{cat.nombre}</span>
           </button>
@@ -75,7 +102,7 @@ function Catalogo() {
         {/* 2. Barra Lateral de Filtros */}
         <aside className={`catalogo-filtros ${filtrosAbiertos ? 'catalogo-filtros--abierto' : ''}`}>
           {/* Aquí iría tu componente <BuscadorFiltro />, pero te dejo la maquetación visual */}
-          
+
           <div className="filtro-seccion">
             <h3 className="filtro-titulo">Sugeridos</h3>
             <div className="filtro-pills-container">
@@ -113,7 +140,7 @@ function Catalogo() {
               </svg>
             </button>
           </div>
-          
+
           <div className="filtro-seccion">
             <button className="filtro-accordion-btn">
               <span>Disponibilidad</span>
@@ -129,13 +156,14 @@ function Catalogo() {
           <header className="catalogo-header">
             <div className="header-titles">
               <h1>
-                Resultados para <strong>"búsqueda"</strong> <span>({productos.length})</span>
+                {categoriaActiva === 'todos' ? 'Catálogo' : categoriaActiva}{' '}
+                <span>({productosFiltrados.length})</span>
               </h1>
               <p className="header-subtitle">
                 Utiliza los detalles del artículo. Precio al comprar en línea.
               </p>
             </div>
-            
+
             {/* Controles de orden */}
             <div className="catalogo-controles">
                <button
@@ -164,11 +192,11 @@ function Catalogo() {
                 <ProductCardSkeleton key={i} />
               ))}
             </div>
-          ) : productos.length === 0 ? (
+          ) : productosFiltrados.length === 0 ? (
             <p className="catalogo-vacio">No encontramos productos para esta búsqueda.</p>
           ) : (
             <div className="product-grid">
-              {productos.map((producto) => (
+              {productosFiltrados.map((producto) => (
                 <ProductCard key={producto.id} producto={producto} tasaVes={tasaVes} />
               ))}
             </div>
