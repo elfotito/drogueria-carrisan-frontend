@@ -36,10 +36,10 @@ function ProductCard({ producto, tasaVes }) {
           {producto.precio_usd != null ? `$${producto.precio_usd.toFixed(2)}` : 'Consultar precio'}
           {precioVes && <span> — Bs. {precioVes}</span>}
         </p>
-        
+
         <div style={{ display: 'flex', gap: '8px' }}>
           <button onClick={(e) => { e.stopPropagation(); addItem(producto); }}>
-            🛒
+            Agregar al carrito
           </button>
           {user && (
             <button
