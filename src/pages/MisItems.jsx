@@ -1,16 +1,159 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import api from '../api/axios'
 import { useCart } from '../context/CartContext'
+import './MisItems.css'
 
-function MisItems() {
-  const { addItem } = useCart()
-  const [listas, setListas] = useState([])
-  const [listaActiva, setListaActiva] = useState(null)
+// Sugerencias de listas rápidas. Solo crea la lista con este nombre;
+// no llevan lógica especial más allá de eso.
+const LISTAS_SUGERIDAS = [
+  { nombre: 'Favoritos', icon: '⭐' },
+  { nombre: 'Antibióticos', icon: '💊' },
+  { nombre: 'Cuidado Personal', icon: '🧴' },
+  { nombre: 'Vitaminas', icon: '🛡️' },
+]
+
+function formatUSD(valor) {
+  return Number(valor).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+}
+
+// ---------------------------------------------------------
+// Card de item en carrusel horizontal (usada en Mis Items y ReComprar)
+// ---------------------------------------------------------
+function ItemCard({ producto, cantidadEnCarrito, onAgregar, onQuitar, mostrarQuitar }) {
+  return (
+    <div className="itemcard">
+      <div className="itemcard__media">
+        {producto?.foto_url ? (
+          <img src={producto.foto_url} alt={producto.nombre_comercial} loading="lazy" />
+        ) : (
+          <div className="itemcard__media-placeholder">Sin imagen</div>
+        )}
+
+        {mostrarQuitar && (
+          <button
+            type="button"
+            className="itemcard__quitar"
+            onClick={onQuitar}
+            aria-label="Quitar de la lista"
+          >
+            ✕
+          </button>
+        )}
+      </div>
+
+      <button
+        type="button"
+        className={`itemcard__cta ${cantidadEnCarrito ? 'itemcard__cta--cantidad' : ''}`}
+        onClick={onAgregar}
+      >
+        {cantidadEnCarrito ? cantidadEnCarrito : '+ Agregar'}
+      </button>
+
+      <p className="itemcard__precio">${formatUSD(producto?.precio_usd)}</p>
+      <p className="itemcard__nombre">{producto?.nombre_comercial}</p>
+    </div>
+  )
+}
+
+function CarruselSkeleton() {
+  return (
+    <div className="itemcard itemcard--skeleton">
+      <div className="itemcard__media itemcard__media--skeleton" />
+      <div className="skel-line skel-line--btn" />
+      <div className="skel-line skel-line--sm" />
+      <div className="skel-line skel-line--md" />
+    </div>
+  )
+}
+
+// ---------------------------------------------------------
+// Tab: Mis Items (lista predeterminada, carrusel horizontal)
+// ---------------------------------------------------------
+function TabMisItems() {
+  const { items: cartItems, addItem } = useCart()
+  const [listaDefaultId, setListaDefaultId] = useState(null)
   const [items, setItems] = useState([])
-  const [nuevoNombre, setNuevoNombre] = useState('')
-  const [mostrarCrear, setMostrarCrear] = useState(false)
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
+
+  useEffect(() => {
+    async function cargar() {
+      try {
+        const { data: listas } = await api.get('/lists')
+        const predeterminada = listas.find((l) => l.es_predeterminada)
+        if (predeterminada) {
+          setListaDefaultId(predeterminada.id)
+          const { data: itemsData } = await api.get(`/lists/${predeterminada.id}/items`)
+          setItems(itemsData)
+        }
+      } catch (err) {
+        setError('No se pudieron cargar tus items')
+        console.error(err)
+      } finally {
+        setCargando(false)
+      }
+    }
+    cargar()
+  }, [])
+
+  async function quitarItem(productoId) {
+    try {
+      await api.delete(`/lists/${listaDefaultId}/items/${productoId}`)
+      setItems((prev) => prev.filter((item) => item.producto_id !== productoId))
+    } catch (err) {
+      console.error('Error al quitar item:', err)
+    }
+  }
+
+  function cantidadEnCarrito(productoId) {
+    const linea = cartItems.find((i) => i.producto.id === productoId)
+    return linea?.cantidad || 0
+  }
+
+  if (error) return <p className="misitems-error">{error}</p>
+
+  return (
+    <section className="misitems-section">
+      <h2 className="misitems-section-title">Popular Items</h2>
+
+      {cargando ? (
+        <div className="itemcard-carousel">
+          {Array.from({ length: 4 }).map((_, i) => <CarruselSkeleton key={i} />)}
+        </div>
+      ) : items.length === 0 ? (
+        <div className="misitems-vacio">
+          <p>Todavía no tienes items guardados.</p>
+          <Link to="/catalogo" className="misitems-vacio__cta">Explorar catálogo</Link>
+        </div>
+      ) : (
+        <div className="itemcard-carousel">
+          {items.map((item) => (
+            <ItemCard
+              key={item.id}
+              producto={item.productos}
+              cantidadEnCarrito={cantidadEnCarrito(item.producto_id)}
+              onAgregar={() => addItem(item.productos, 1)}
+              onQuitar={() => quitarItem(item.producto_id)}
+              mostrarQuitar
+            />
+          ))}
+        </div>
+      )}
+    </section>
+  )
+}
+
+// ---------------------------------------------------------
+// Tab: Listas (crear / borrar / sugerencias rápidas)
+// ---------------------------------------------------------
+function TabListas() {
+  const [listas, setListas] = useState([])
+  const [cargando, setCargando] = useState(true)
+  const [error, setError] = useState('')
+  const [nuevoNombre, setNuevoNombre] = useState('')
+  const [mostrarCrear, setMostrarCrear] = useState(false)
+  const [creando, setCreando] = useState(false)
 
   useEffect(() => {
     cargarListas()
@@ -20,9 +163,6 @@ function MisItems() {
     try {
       const { data } = await api.get('/lists')
       setListas(data)
-      if (data.length > 0 && !listaActiva) {
-        setListaActiva(data[0].id)
-      }
     } catch (err) {
       setError('No se pudieron cargar las listas')
       console.error(err)
@@ -31,30 +171,18 @@ function MisItems() {
     }
   }
 
-  useEffect(() => {
-    if (listaActiva) {
-      cargarItems(listaActiva)
-    }
-  }, [listaActiva])
-
-  async function cargarItems(listaId) {
+  async function crearLista(nombre) {
+    if (!nombre.trim()) return
+    setCreando(true)
     try {
-      const { data } = await api.get(`/lists/${listaId}/items`)
-      setItems(data)
-    } catch (err) {
-      console.error('Error al cargar items:', err)
-    }
-  }
-
-  async function crearLista() {
-    if (!nuevoNombre.trim()) return
-    try {
-      await api.post('/lists', { nombre: nuevoNombre })
+      await api.post('/lists', { nombre })
       setNuevoNombre('')
       setMostrarCrear(false)
-      cargarListas()
+      await cargarListas()
     } catch (err) {
       alert('Error al crear lista')
+    } finally {
+      setCreando(false)
     }
   }
 
@@ -62,140 +190,207 @@ function MisItems() {
     if (!confirm('¿Eliminar esta lista?')) return
     try {
       await api.delete(`/lists/${listaId}`)
-      if (listaActiva === listaId) {
-        const predeterminada = listas.find(l => l.es_predeterminada)
-        setListaActiva(predeterminada?.id || null)
-      }
-      cargarListas()
+      await cargarListas()
     } catch (err) {
       alert('No se puede eliminar la lista predeterminada')
     }
   }
 
-  async function quitarItem(productoId) {
-    try {
-      await api.delete(`/lists/${listaActiva}/items/${productoId}`)
-      cargarItems(listaActiva)
-    } catch (err) {
-      alert('Error al quitar item')
-    }
-  }
+  const nombresExistentes = listas.map((l) => l.nombre.toLowerCase())
+  const sugerenciasDisponibles = LISTAS_SUGERIDAS.filter(
+    (s) => !nombresExistentes.includes(s.nombre.toLowerCase())
+  )
 
-  function agregarTodosAlCarrito() {
-    items.forEach(item => {
-      addItem(item.productos, 1)
-    })
-    alert('Todos los items fueron agregados al carrito')
-  }
-
-  if (cargando) return <p>Cargando...</p>
-  if (error) return <p style={{ color: 'red' }}>{error}</p>
+  if (error) return <p className="misitems-error">{error}</p>
 
   return (
-    <div style={{ maxWidth: '900px', margin: '0 auto', padding: '20px' }}>
-      <h1>Mis Items</h1>
+    <section className="misitems-section">
+      {/* Listas existentes */}
+      <h2 className="misitems-section-title">Mis listas</h2>
 
-      <div style={{ display: 'flex', gap: '20px', marginTop: '20px' }}>
-        {/* Sidebar de listas */}
-        <div style={{ width: '250px' }}>
-          <h3>Mis listas</h3>
-          <ul style={{ listStyle: 'none', padding: 0 }}>
-            {listas.map(lista => (
-              <li
-                key={lista.id}
-                onClick={() => setListaActiva(lista.id)}
-                style={{
-                  padding: '10px',
-                  marginBottom: '5px',
-                  cursor: 'pointer',
-                  background: listaActiva === lista.id ? '#e3f2fd' : '#f5f5f5',
-                  borderRadius: '5px',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center'
-                }}
-              >
-                <span>
-                  {lista.es_predeterminada ? '📌' : '📋'} {lista.nombre}
-                </span>
-                {!lista.es_predeterminada && (
-                  <button
-                    onClick={(e) => { e.stopPropagation(); eliminarLista(lista.id) }}
-                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#d32f2f' }}
-                  >
-                    ✕
-                  </button>
-                )}
-              </li>
-            ))}
-          </ul>
+      {cargando ? (
+        <div className="listas-grid">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="lista-card lista-card--skeleton" />
+          ))}
+        </div>
+      ) : (
+        <div className="listas-grid">
+          {listas.map((lista) => (
+            <Link key={lista.id} to={`/listas/${lista.id}`} className="lista-card">
+              <span className="lista-card__icon">
+                {lista.es_predeterminada ? '📌' : '📋'}
+              </span>
+              <span className="lista-card__nombre">{lista.nombre}</span>
+              {!lista.es_predeterminada && (
+                <button
+                  type="button"
+                  className="lista-card__eliminar"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    eliminarLista(lista.id)
+                  }}
+                  aria-label={`Eliminar lista ${lista.nombre}`}
+                >
+                  ✕
+                </button>
+              )}
+            </Link>
+          ))}
 
+          {/* Crear nueva lista */}
           {mostrarCrear ? (
-            <div style={{ marginTop: '10px' }}>
+            <div className="lista-card lista-card--crear-form">
               <input
                 type="text"
                 value={nuevoNombre}
                 onChange={(e) => setNuevoNombre(e.target.value)}
                 placeholder="Nombre de la lista"
-                style={{ width: '100%', padding: '8px', marginBottom: '5px' }}
+                className="lista-crear-input"
+                autoFocus
+                onKeyDown={(e) => e.key === 'Enter' && crearLista(nuevoNombre)}
               />
-              <button onClick={crearLista} style={{ marginRight: '5px' }}>Crear</button>
-              <button onClick={() => setMostrarCrear(false)}>Cancelar</button>
+              <div className="lista-crear-actions">
+                <button
+                  type="button"
+                  className="lista-crear-btn lista-crear-btn--confirmar"
+                  onClick={() => crearLista(nuevoNombre)}
+                  disabled={creando}
+                >
+                  Crear
+                </button>
+                <button
+                  type="button"
+                  className="lista-crear-btn"
+                  onClick={() => { setMostrarCrear(false); setNuevoNombre('') }}
+                >
+                  Cancelar
+                </button>
+              </div>
             </div>
           ) : (
-            <button onClick={() => setMostrarCrear(true)} style={{ marginTop: '10px', width: '100%' }}>
-              + Nueva lista
+            <button
+              type="button"
+              className="lista-card lista-card--nueva"
+              onClick={() => setMostrarCrear(true)}
+            >
+              <span className="lista-card__icon">+</span>
+              <span className="lista-card__nombre">Nueva lista</span>
             </button>
           )}
         </div>
+      )}
 
-        {/* Items de la lista activa */}
-        <div style={{ flex: 1 }}>
-          {items.length === 0 ? (
-            <p>Esta lista está vacía. Agrega productos desde el catálogo.</p>
-          ) : (
-            <>
-              <button onClick={agregarTodosAlCarrito} style={{ marginBottom: '20px' }}>
-                🛒 Agregar todos al carrito
+      {/* Sugerencias rápidas */}
+      {!cargando && sugerenciasDisponibles.length > 0 && (
+        <>
+          <h2 className="misitems-section-title misitems-section-title--sugerencias">
+            Creación rápida
+          </h2>
+          <div className="sugerencias-carousel">
+            {sugerenciasDisponibles.map((s) => (
+              <button
+                key={s.nombre}
+                type="button"
+                className="sugerencia-chip"
+                onClick={() => crearLista(s.nombre)}
+              >
+                <span className="sugerencia-chip__icon">{s.icon}</span>
+                <span>{s.nombre}</span>
               </button>
+            ))}
+          </div>
+        </>
+      )}
+    </section>
+  )
+}
 
-              <table style={{ width: '100%' }}>
-                <thead>
-                  <tr>
-                    <th>Producto</th>
-                    <th>Precio USD</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {items.map(item => (
-                    <tr key={item.id}>
-                      <td>
-                        {item.productos?.foto_url && (
-                          <img
-                            src={item.productos.foto_url}
-                            alt={item.productos.nombre_comercial}
-                            style={{ width: '40px', height: '40px', objectFit: 'cover', marginRight: '10px', verticalAlign: 'middle' }}
-                          />
-                        )}
-                        {item.productos?.nombre_comercial}
-                      </td>
-                      <td>${Number(item.productos?.precio_usd).toFixed(2)}</td>
-                      <td>
-                        <button onClick={() => addItem(item.productos, 1)}>
-                          🛒
-                        </button>
-                        <button onClick={() => quitarItem(item.producto_id)} style={{ marginLeft: '5px', color: '#d32f2f' }}>
-                          ✕
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </>
-          )}
+// ---------------------------------------------------------
+// Tab: ReComprar
+// NOTA: el backend todavía no tiene un endpoint de "productos ya
+// comprados". Este tab queda funcional en UI, mockeado con estado
+// vacío honesto, listo para conectar cuando exista /reorder o similar.
+// ---------------------------------------------------------
+function TabReComprar() {
+  const { items: cartItems, addItem } = useCart()
+  const [productos, setProductos] = useState([])
+  const [cargando, setCargando] = useState(true)
+
+  useEffect(() => {
+    // TODO: reemplazar por api.get('/orders/reorder') o el endpoint
+    // que definan cuando exista histórico de compras por producto.
+    setCargando(false)
+    setProductos([])
+  }, [])
+
+  function cantidadEnCarrito(productoId) {
+    const linea = cartItems.find((i) => i.producto.id === productoId)
+    return linea?.cantidad || 0
+  }
+
+  return (
+    <section className="misitems-section">
+      <h2 className="misitems-section-title">Productos que ya compraste</h2>
+
+      {cargando ? (
+        <div className="product-grid-recomprar">
+          {Array.from({ length: 6 }).map((_, i) => <CarruselSkeleton key={i} />)}
         </div>
+      ) : productos.length === 0 ? (
+        <div className="misitems-vacio">
+          <p>Todavía no tenemos historial de compras para sugerirte recompras.</p>
+          <Link to="/pedidos" className="misitems-vacio__cta">Ver mis órdenes</Link>
+        </div>
+      ) : (
+        <div className="product-grid-recomprar">
+          {productos.map((producto) => (
+            <ItemCard
+              key={producto.id}
+              producto={producto}
+              cantidadEnCarrito={cantidadEnCarrito(producto.id)}
+              onAgregar={() => addItem(producto, 1)}
+              mostrarQuitar={false}
+            />
+          ))}
+        </div>
+      )}
+    </section>
+  )
+}
+
+// ---------------------------------------------------------
+// Componente principal
+// ---------------------------------------------------------
+const TABS = [
+  { id: 'items', label: 'Mis Items' },
+  { id: 'listas', label: 'Listas' },
+  { id: 'recomprar', label: 'ReComprar' },
+]
+
+function MisItems() {
+  const [tabActivo, setTabActivo] = useState('items')
+
+  return (
+    <div className="misitems-page">
+      <div className="misitems-tabs">
+        {TABS.map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            className={`misitems-tab ${tabActivo === tab.id ? 'misitems-tab--activo' : ''}`}
+            onClick={() => setTabActivo(tab.id)}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      <div className="misitems-container">
+        {tabActivo === 'items' && <TabMisItems />}
+        {tabActivo === 'listas' && <TabListas />}
+        {tabActivo === 'recomprar' && <TabReComprar />}
       </div>
     </div>
   )
