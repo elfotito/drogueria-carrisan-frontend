@@ -1,0 +1,313 @@
+/* ==========================================================
+   MisOrdenes — Droguería Carrisán
+   Paleta: Índigo #232B45 · Azul #1B4B8F · Teal #12A594
+           Ink #14182A · Paper #FBFAF7
+   ========================================================== */
+
+.misordenes-page {
+  min-height: 100vh;
+  background: #FBFAF7;
+  font-family: 'Inter', sans-serif;
+}
+
+.misordenes-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px 16px 40px;
+}
+
+.misordenes-title {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.4rem;
+  color: #14182A;
+  margin: 0 0 16px;
+}
+
+.misordenes-error {
+  background: #FDECEC;
+  color: #B3261E;
+  border: 1px solid #F3C6C4;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 0.9rem;
+  margin: 20px 16px;
+}
+
+/* ---------------------------------------------------------
+   Tabs de estado (con contador)
+--------------------------------------------------------- */
+.misordenes-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  margin-bottom: 18px;
+  scrollbar-width: none;
+}
+
+.misordenes-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.misordenes-tab {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1.5px solid #E7E5DE;
+  background: #FFFFFF;
+  color: #14182A;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.misordenes-tab--activo {
+  background: #14182A;
+  border-color: #14182A;
+  color: #FBFAF7;
+}
+
+.misordenes-tab__count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: rgba(20, 24, 42, 0.08);
+  color: inherit;
+  border-radius: 999px;
+  padding: 1px 7px;
+}
+
+.misordenes-tab--activo .misordenes-tab__count {
+  background: rgba(251, 250, 247, 0.18);
+}
+
+/* ---------------------------------------------------------
+   Grid de órdenes
+--------------------------------------------------------- */
+.ordenes-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+@media (min-width: 640px) {
+  .ordenes-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 960px) {
+  .ordenes-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ---------------------------------------------------------
+   Orden card
+--------------------------------------------------------- */
+.orden-card {
+  background: #FFFFFF;
+  border: 1px solid #E7E5DE;
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.orden-card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.orden-card__numero {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #14182A;
+  margin: 0;
+}
+
+.orden-card__fecha {
+  font-size: 0.78rem;
+  color: #5B6270;
+  margin: 2px 0 0;
+}
+
+.orden-card__cliente {
+  font-size: 0.82rem;
+  color: #5B6270;
+  margin: 0;
+}
+
+.orden-card__cliente strong {
+  color: #14182A;
+}
+
+.orden-card__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 4px;
+  padding-top: 10px;
+  border-top: 1px solid #F0EEE7;
+}
+
+.orden-card__total {
+  font-size: 0.85rem;
+  color: #5B6270;
+  margin: 0;
+}
+
+.orden-card__total span {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800;
+  font-size: 1rem;
+  color: #12A594;
+}
+
+.orden-card__ver-btn {
+  background: none;
+  border: 1.5px solid #1B4B8F;
+  color: #1B4B8F;
+  font-weight: 700;
+  font-size: 0.8rem;
+  padding: 7px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.orden-card__ver-btn:hover {
+  background: #1B4B8F;
+  color: #FBFAF7;
+}
+
+/* ---------------------------------------------------------
+   Badges de estado
+--------------------------------------------------------- */
+.orden-badge {
+  flex-shrink: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.badge--pendiente {
+  background: #FFF3D6;
+  color: #93650B;
+}
+
+.badge--finalizado {
+  background: #E1F5EF;
+  color: #0E7C63;
+}
+
+/* Fallback para cualquier estado nuevo que se agregue después */
+.badge--neutro {
+  background: #EFEEE9;
+  color: #5B6270;
+}
+
+/* ---------------------------------------------------------
+   Skeleton loader
+--------------------------------------------------------- */
+.orden-card--skeleton {
+  gap: 12px;
+}
+
+.skeleton-line {
+  background: #EFEEE9;
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton-line::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+  animation: skeleton-shimmer 1.4s infinite;
+}
+
+@keyframes skeleton-shimmer {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
+
+.skeleton-line--sm {
+  width: 40%;
+  height: 12px;
+}
+
+.skeleton-line--md {
+  width: 65%;
+  height: 16px;
+}
+
+.skeleton-line--btn {
+  width: 100px;
+  height: 30px;
+  border-radius: 999px;
+  align-self: flex-end;
+  margin-top: 4px;
+}
+
+/* ---------------------------------------------------------
+   Estado vacío (sin órdenes en absoluto)
+--------------------------------------------------------- */
+.misordenes-vacio {
+  text-align: center;
+  padding: 60px 20px;
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+.misordenes-vacio__icon {
+  font-size: 2.6rem;
+  margin-bottom: 12px;
+}
+
+.misordenes-vacio h2 {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: #14182A;
+  margin: 0 0 6px;
+}
+
+.misordenes-vacio p {
+  color: #5B6270;
+  font-size: 0.88rem;
+  margin: 0 0 18px;
+}
+
+.misordenes-vacio__cta {
+  display: inline-block;
+  background: #1B4B8F;
+  color: #FBFAF7;
+  font-weight: 700;
+  padding: 11px 24px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+/* Estado vacío por filtro (sí hay órdenes, pero ninguna calza el tab) */
+.misordenes-vacio-filtro {
+  text-align: center;
+  color: #5B6270;
+  font-size: 0.9rem;
+  padding: 40px 20px;
+}
