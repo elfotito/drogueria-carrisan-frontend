@@ -1,0 +1,131 @@
+/* ==========================================================
+   ProductCard — Droguería Carrisán
+   ========================================================== */
+
+.pcard {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  background: #FFFFFF;
+  border-radius: 14px;
+  padding: 12px;
+  position: relative;
+}
+
+.pcard__media {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #F7F6F1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.pcard__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 8px;
+}
+
+.pcard__media-placeholder {
+  font-size: 0.72rem;
+  color: #A9AC9F;
+}
+
+.pcard__badge-agotado {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: #14182A;
+  color: #FBFAF7;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.pcard__cta {
+  align-self: flex-start;
+  background: #1B4B8F;
+  color: #FBFAF7;
+  border: none;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding: 8px 18px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: background 0.15s ease;
+}
+
+.pcard__cta:hover {
+  background: #163c72;
+}
+
+.pcard__cta--disabled {
+  background: #E7E5DE;
+  color: #A9AC9F;
+  cursor: not-allowed;
+}
+
+.pcard__body {
+  flex: 1;
+}
+
+.pcard__precio-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.pcard__precio-usd {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: #12A594;
+}
+
+.pcard__precio-ves {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: #5B6270;
+  margin: 1px 0 8px;
+}
+
+.pcard__nombre {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 0.88rem;
+  line-height: 1.3;
+  color: #14182A;
+  margin: 4px 0 2px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.pcard__laboratorio {
+  font-size: 0.76rem;
+  color: #5B6270;
+  margin: 0 0 8px;
+}
+
+.pcard__disponibilidad {
+  font-size: 0.76rem;
+  font-weight: 600;
+  margin: 6px 0 0;
+}
+
+.pcard__disponibilidad--ok {
+  color: #12A594;
+}
+
+.pcard__disponibilidad--no {
+  color: #B3261E;
+}
