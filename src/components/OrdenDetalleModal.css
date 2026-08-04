@@ -1,0 +1,225 @@
+/* ==========================================================
+   OrdenDetalleModal — Droguería Carrisán
+   Paleta: Índigo #232B45 · Azul #1B4B8F · Teal #12A594
+           Ink #14182A · Paper #FBFAF7
+   ========================================================== */
+
+.odm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 24, 42, 0.45);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 100;
+  font-family: 'Inter', sans-serif;
+}
+
+.odm-content {
+  position: relative;
+  background: #FBFAF7;
+  width: 100%;
+  max-width: 520px;
+  max-height: 85vh;
+  overflow-y: auto;
+  border-radius: 20px 20px 0 0;
+  padding: 24px 20px calc(20px + env(safe-area-inset-bottom));
+  animation: odm-slide-up 0.2s ease-out;
+}
+
+@keyframes odm-slide-up {
+  from { transform: translateY(24px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Desktop: modal centrado en vez de bottom-sheet */
+@media (min-width: 640px) {
+  .odm-overlay {
+    align-items: center;
+  }
+
+  .odm-content {
+    border-radius: 20px;
+    max-height: 80vh;
+  }
+}
+
+.odm-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: #F0EEE7;
+  color: #5B6270;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.odm-close:hover {
+  background: #E7E5DE;
+  color: #14182A;
+}
+
+/* ---------------------------------------------------------
+   Header
+--------------------------------------------------------- */
+.odm-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-right: 36px;
+  margin-bottom: 4px;
+}
+
+.odm-numero {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: #14182A;
+  margin: 0;
+}
+
+.odm-fecha {
+  font-size: 0.85rem;
+  color: #5B6270;
+  margin: 0 0 10px;
+  text-transform: capitalize;
+}
+
+.odm-cliente {
+  font-size: 0.85rem;
+  color: #5B6270;
+  margin: 0 0 4px;
+}
+
+.odm-cliente strong {
+  color: #14182A;
+}
+
+.odm-divider {
+  height: 1px;
+  background: #E7E5DE;
+  margin: 16px 0;
+}
+
+/* ---------------------------------------------------------
+   Badge de estado (mismo lenguaje visual que MisOrdenes)
+--------------------------------------------------------- */
+.odm-badge {
+  flex-shrink: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.badge--pendiente {
+  background: #FFF3D6;
+  color: #93650B;
+}
+
+.badge--finalizado {
+  background: #E1F5EF;
+  color: #0E7C63;
+}
+
+.badge--neutro {
+  background: #EFEEE9;
+  color: #5B6270;
+}
+
+/* ---------------------------------------------------------
+   Lista de productos
+--------------------------------------------------------- */
+.odm-items {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.odm-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.odm-item__media {
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: #F7F6F1;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.odm-item__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 4px;
+}
+
+.odm-item__media-placeholder {
+  font-size: 0.6rem;
+  color: #A9AC9F;
+  text-align: center;
+}
+
+.odm-item__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.odm-item__nombre {
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: #14182A;
+  margin: 0 0 2px;
+  line-height: 1.3;
+}
+
+.odm-item__cantidad {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  color: #5B6270;
+  margin: 0;
+}
+
+.odm-item__subtotal {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #14182A;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+/* ---------------------------------------------------------
+   Total
+--------------------------------------------------------- */
+.odm-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #14182A;
+}
+
+.odm-total__valor {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800;
+  font-size: 1.25rem;
+  color: #12A594;
+}
