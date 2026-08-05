@@ -4,7 +4,7 @@ import OrdenesAdmin from '../components/admin/OrdenesAdmin'
 import ProductosAdmin from '../components/admin/ProductosAdmin'
 import UsuariosAdmin from '../components/admin/UsuariosAdmin'
 import EstadoCuentaAdmin from '../components/admin/EstadoCuentaAdmin'
-import DescuentosPanel from './DescuentosAdmin'
+import DescuentosPanel from '../components/admin/DescuentosAdmin'
 
 function Admin() {
   const [seccionActiva, setSeccionActiva] = useState('tasa')
