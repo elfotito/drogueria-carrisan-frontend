@@ -2,44 +2,8 @@ import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import api from '../api/axios'
 import { useCart } from '../context/CartContext'
+import { useEnvio } from '../hooks/useEnvio' // 🆕
 import './Carrito.css'
-
-const METODOS_ENTREGA = [
-  {
-    id: 'envio',
-    label: 'Envío',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="1.5" y="6.5" width="12" height="9" rx="1.2" stroke="currentColor" strokeWidth="1.6" />
-        <path d="M13.5 9.5H17.2L21 12.6V15.5C21 15.8 20.8 16 20.5 16H13.5V9.5Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
-        <circle cx="6" cy="17.5" r="1.8" stroke="currentColor" strokeWidth="1.6" />
-        <circle cx="17" cy="17.5" r="1.8" stroke="currentColor" strokeWidth="1.6" />
-      </svg>
-    ),
-  },
-  {
-    id: 'retiro',
-    label: 'Retiro',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M4 11L6.5 5.5C6.8 4.8 7.5 4.3 8.3 4.3H15.7C16.5 4.3 17.2 4.8 17.5 5.5L20 11" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-        <rect x="2.5" y="11" width="19" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.6" />
-        <circle cx="6.5" cy="18" r="1.6" stroke="currentColor" strokeWidth="1.6" />
-        <circle cx="17.5" cy="18" r="1.6" stroke="currentColor" strokeWidth="1.6" />
-      </svg>
-    ),
-  },
-  {
-    id: 'entrega',
-    label: 'Entrega',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M4 8L12 3L20 8V19C20 19.6 19.6 20 19 20H5C4.4 20 4 19.6 4 19V8Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
-        <path d="M9 20V13H15V20" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
-      </svg>
-    ),
-  },
-]
 
 function formatUSD(valor) {
   return valor.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
@@ -111,10 +75,187 @@ function CartLine({ item, tasaVes, onUpdateCantidad, onRemove }) {
   )
 }
 
+// 🆕 Componente para mostrar/agregar direcciones
+function DireccionSelector({ 
+  direcciones, 
+  direccionSeleccionada, 
+  onSeleccionar, 
+  onAgregar,
+  loading 
+}) {
+  const [mostrarForm, setMostrarForm] = useState(false)
+  const [nuevaDireccion, setNuevaDireccion] = useState({
+    nombre: '',
+    direccion: '',
+    ciudad: '',
+    estado: '',
+    telefono_contacto: '',
+    referencia: ''
+  })
+
+  const handleAgregar = async (e) => {
+    e.preventDefault()
+    if (!nuevaDireccion.nombre || !nuevaDireccion.direccion) return
+    
+    try {
+      await onAgregar(nuevaDireccion)
+      setMostrarForm(false)
+      setNuevaDireccion({
+        nombre: '',
+        direccion: '',
+        ciudad: '',
+        estado: '',
+        telefono_contacto: '',
+        referencia: ''
+      })
+    } catch (error) {
+      console.error('Error al guardar dirección:', error)
+    }
+  }
+
+  if (loading) return <p className="delivery-info__text">Cargando direcciones...</p>
+
+  return (
+    <div className="direccion-selector">
+      {direcciones.length > 0 ? (
+        <div className="direccion-lista">
+          {direcciones.map((dir) => (
+            <label 
+              key={dir.id} 
+              className={`direccion-item ${direccionSeleccionada?.id === dir.id ? 'direccion-item--selected' : ''}`}
+            >
+              <input
+                type="radio"
+                name="direccion"
+                checked={direccionSeleccionada?.id === dir.id}
+                onChange={() => onSeleccionar(dir)}
+              />
+              <div className="direccion-item__info">
+                <strong>{dir.nombre}</strong>
+                <p>{dir.direccion}</p>
+                {dir.ciudad && <span>{dir.ciudad}{dir.estado ? `, ${dir.estado}` : ''}</span>}
+                {dir.telefono_contacto && <span>📞 {dir.telefono_contacto}</span>}
+              </div>
+            </label>
+          ))}
+        </div>
+      ) : (
+        <p className="delivery-info__text">No tienes direcciones guardadas</p>
+      )}
+
+      {!mostrarForm ? (
+        <button 
+          type="button" 
+          className="cart-line__link"
+          onClick={() => setMostrarForm(true)}
+          style={{ marginTop: '8px' }}
+        >
+          + Agregar nueva dirección
+        </button>
+      ) : (
+        <form onSubmit={handleAgregar} className="direccion-form">
+          <input
+            type="text"
+            placeholder="Nombre (ej: Casa, Oficina)"
+            value={nuevaDireccion.nombre}
+            onChange={(e) => setNuevaDireccion({...nuevaDireccion, nombre: e.target.value})}
+            required
+          />
+          <textarea
+            placeholder="Dirección completa"
+            value={nuevaDireccion.direccion}
+            onChange={(e) => setNuevaDireccion({...nuevaDireccion, direccion: e.target.value})}
+            required
+            rows="2"
+          />
+          <div className="direccion-form__row">
+            <input
+              type="text"
+              placeholder="Ciudad"
+              value={nuevaDireccion.ciudad}
+              onChange={(e) => setNuevaDireccion({...nuevaDireccion, ciudad: e.target.value})}
+            />
+            <input
+              type="text"
+              placeholder="Estado"
+              value={nuevaDireccion.estado}
+              onChange={(e) => setNuevaDireccion({...nuevaDireccion, estado: e.target.value})}
+            />
+          </div>
+          <input
+            type="text"
+            placeholder="Teléfono de contacto"
+            value={nuevaDireccion.telefono_contacto}
+            onChange={(e) => setNuevaDireccion({...nuevaDireccion, telefono_contacto: e.target.value})}
+          />
+          <input
+            type="text"
+            placeholder="Referencia (opcional)"
+            value={nuevaDireccion.referencia}
+            onChange={(e) => setNuevaDireccion({...nuevaDireccion, referencia: e.target.value})}
+          />
+          <div className="direccion-form__actions">
+            <button type="submit" className="carrito-bottombar__cta" style={{ fontSize: '14px', padding: '8px 16px' }}>
+              Guardar
+            </button>
+            <button 
+              type="button" 
+              className="cart-line__link cart-line__link--danger"
+              onClick={() => setMostrarForm(false)}
+            >
+              Cancelar
+            </button>
+          </div>
+        </form>
+      )}
+    </div>
+  )
+}
+
+// 🆕 Componente para seleccionar agencia de envío
+function AgenciaSelector({ agencias, agenciaSeleccionada, onSeleccionar }) {
+  return (
+    <div className="agencia-selector">
+      <p className="delivery-info__title">Agencia de envío preferida</p>
+      <div className="agencia-lista">
+        {agencias.map((agencia) => (
+          <label 
+            key={agencia} 
+            className={`agencia-item ${agenciaSeleccionada === agencia ? 'agencia-item--selected' : ''}`}
+          >
+            <input
+              type="radio"
+              name="agencia"
+              checked={agenciaSeleccionada === agencia}
+              onChange={() => onSeleccionar(agencia)}
+            />
+            <span>{agencia}</span>
+          </label>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 function Carrito() {
   const { items, updateCantidad, removeItem, clearCart, total } = useCart()
+  const {
+    tipoEnvio,
+    cambiarTipoEnvio,
+    opcionesEnvio,
+    opcionActual,
+    direcciones,
+    direccionSeleccionada,
+    setDireccionSeleccionada,
+    agenciaSeleccionada,
+    setAgenciaSeleccionada,
+    agencias,
+    loading,
+    guardarDireccion,
+    costoEnvio
+  } = useEnvio() // 🆕
+
   const [tasaVes, setTasaVes] = useState(null)
-  const [metodoEntrega, setMetodoEntrega] = useState('envio')
   const [enviando, setEnviando] = useState(false)
   const [error, setError] = useState('')
   const navigate = useNavigate()
@@ -128,6 +269,18 @@ function Carrito() {
 
   async function handleConfirmar() {
     setError('')
+    
+    // Validaciones
+    if (opcionActual?.requiereDireccion && !direccionSeleccionada) {
+      setError('Debes seleccionar una dirección de entrega')
+      return
+    }
+    
+    if (opcionActual?.requiereAgencia && !agenciaSeleccionada) {
+      setError('Debes seleccionar una agencia de envío')
+      return
+    }
+
     setEnviando(true)
 
     try {
@@ -136,7 +289,10 @@ function Carrito() {
           producto_id: item.producto.id,
           cantidad: item.cantidad,
         })),
-        metodo_entrega: metodoEntrega,
+        tipo_envio: tipoEnvio,
+        direccion_envio_id: direccionSeleccionada?.id || null,
+        costo_delivery: costoEnvio,
+        agencia_envio: agenciaSeleccionada || null,
       }
       await api.post('/orders', payload)
       clearCart()
@@ -149,8 +305,8 @@ function Carrito() {
   }
 
   const cantidadArticulos = items.reduce((acc, item) => acc + item.cantidad, 0)
-  const envioGratis = true
-  const totalVes = tasaVes ? total * tasaVes : null
+  const totalConEnvio = total + costoEnvio
+  const totalVes = tasaVes ? totalConEnvio * tasaVes : null
 
   if (items.length === 0) {
     return (
@@ -172,54 +328,55 @@ function Carrito() {
 
         {error && <p className="carrito-error">{error}</p>}
 
-        {/* Opciones de retiro y entrega */}
+        {/* 🆕 Opciones de envío actualizadas */}
         <section className="delivery-card">
           <div className="delivery-card__header">
             <span className="delivery-card__header-icon" aria-hidden="true">📦</span>
-            <h2>Opciones de retiro y entrega</h2>
+            <h2>¿Cómo quieres recibir tu pedido?</h2>
           </div>
 
           <div className="delivery-tabs">
-            {METODOS_ENTREGA.map((metodo) => (
+            {opcionesEnvio.map((opcion) => (
               <button
-                key={metodo.id}
+                key={opcion.id}
                 type="button"
-                className={`delivery-tab ${metodoEntrega === metodo.id ? 'delivery-tab--active' : ''}`}
-                onClick={() => setMetodoEntrega(metodo.id)}
+                className={`delivery-tab ${tipoEnvio === opcion.id ? 'delivery-tab--active' : ''}`}
+                onClick={() => cambiarTipoEnvio(opcion.id)}
               >
-                <span className="delivery-tab__icon">{metodo.icon}</span>
-                <span className="delivery-tab__label">{metodo.label}</span>
-                <span className="delivery-tab__status">Disponible</span>
+                <span className="delivery-tab__icon">{opcion.icono}</span>
+                <span className="delivery-tab__label">{opcion.label}</span>
+                <span className="delivery-tab__costo">{opcion.textoCosto}</span>
               </button>
             ))}
           </div>
 
-          {metodoEntrega === 'envio' && (
+          {/* Información de la opción seleccionada */}
+          {opcionActual && (
             <div className="delivery-info">
-              <span className="delivery-info__icon" aria-hidden="true">🚚</span>
+              <span className="delivery-info__icon" aria-hidden="true">{opcionActual.icono}</span>
               <div className="delivery-info__body">
-                <p className="delivery-info__title">{envioGratis ? 'Envío gratis' : 'Envío'}</p>
-                <p className="delivery-info__text">Coordinamos la entrega tras confirmar tu orden</p>
-              </div>
-            </div>
-          )}
-
-          {metodoEntrega === 'retiro' && (
-            <div className="delivery-info">
-              <span className="delivery-info__icon" aria-hidden="true">🏬</span>
-              <div className="delivery-info__body">
-                <p className="delivery-info__title">Retiro en almacén</p>
-                <p className="delivery-info__text">Retira tu pedido en nuestra sede una vez esté listo</p>
-              </div>
-            </div>
-          )}
-
-          {metodoEntrega === 'entrega' && (
-            <div className="delivery-info">
-              <span className="delivery-info__icon" aria-hidden="true">🎁</span>
-              <div className="delivery-info__body">
-                <p className="delivery-info__title">Entrega directa</p>
-                <p className="delivery-info__text">Un repartidor de Droguería Carrisán te lo lleva</p>
+                <p className="delivery-info__title">{opcionActual.label}</p>
+                <p className="delivery-info__text">{opcionActual.descripcion}</p>
+                
+                {/* 🆕 Selector de dirección */}
+                {opcionActual.requiereDireccion && (
+                  <DireccionSelector
+                    direcciones={direcciones}
+                    direccionSeleccionada={direccionSeleccionada}
+                    onSeleccionar={setDireccionSeleccionada}
+                    onAgregar={guardarDireccion}
+                    loading={loading}
+                  />
+                )}
+                
+                {/* 🆕 Selector de agencia */}
+                {opcionActual.requiereAgencia && (
+                  <AgenciaSelector
+                    agencias={agencias}
+                    agenciaSeleccionada={agenciaSeleccionada}
+                    onSeleccionar={setAgenciaSeleccionada}
+                  />
+                )}
               </div>
             </div>
           )}
@@ -242,7 +399,7 @@ function Carrito() {
           ))}
         </section>
 
-        {/* Resumen */}
+        {/* 🆕 Resumen actualizado */}
         <section className="cart-summary">
           <h2 className="cart-summary__title">Resumen del pedido</h2>
 
@@ -252,21 +409,27 @@ function Carrito() {
           </div>
 
           <div className="cart-summary__row">
-            <span>Envío</span>
-            <span className="cart-summary__gratis">Gratis</span>
+            <span>
+              {opcionActual?.label || 'Envío'}
+            </span>
+            <span className={costoEnvio === 0 ? 'cart-summary__gratis' : ''}>
+              {costoEnvio === 0 ? 'Gratis' : `$${formatUSD(costoEnvio)}`}
+            </span>
           </div>
 
-          <div className="cart-summary__row cart-summary__row--muted">
-            <span>Impuestos</span>
-            <span>Calculado al confirmar</span>
-          </div>
+          {opcionActual?.id === 'envio_nacional' && (
+            <div className="cart-summary__row cart-summary__row--muted">
+              <span>Envío nacional</span>
+              <span>Pago en destino</span>
+            </div>
+          )}
 
           <div className="cart-summary__divider" />
 
           <div className="cart-summary__row cart-summary__row--total">
             <span>Total estimado</span>
             <div className="cart-summary__total-values">
-              <span className="cart-summary__total-usd">${formatUSD(total)}</span>
+              <span className="cart-summary__total-usd">${formatUSD(totalConEnvio)}</span>
               {totalVes && <span className="cart-summary__total-ves">Bs. {formatVES(totalVes)}</span>}
             </div>
           </div>
@@ -277,7 +440,7 @@ function Carrito() {
       <div className="carrito-bottombar">
         <div className="carrito-bottombar__total">
           <span className="carrito-bottombar__label">Total estimado</span>
-          <span className="carrito-bottombar__value">${formatUSD(total)}</span>
+          <span className="carrito-bottombar__value">${formatUSD(totalConEnvio)}</span>
         </div>
         <button
           type="button"
@@ -285,7 +448,7 @@ function Carrito() {
           onClick={handleConfirmar}
           disabled={enviando}
         >
-          {enviando ? 'Confirmando...' : 'Continuar con el pago'}
+          {enviando ? 'Confirmando...' : 'Confirmar pedido'}
         </button>
       </div>
     </div>
