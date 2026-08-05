@@ -1,0 +1,153 @@
+.descuentos-panel {
+  font-family: 'Inter', sans-serif;
+  color: #14182A;
+}
+
+.descuentos-panel__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.descuentos-panel__header h2 {
+  font-family: 'Manrope', sans-serif;
+  font-size: 20px;
+  color: #14182A;
+  margin: 0;
+}
+
+.descuentos-panel__btn-nuevo {
+  background: #1B4B8F;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.descuentos-panel__btn-nuevo:hover {
+  background: #163c72;
+}
+
+.descuentos-panel__filtros {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.descuentos-panel__filtro {
+  background: white;
+  border: 1px solid #d4d1c6;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  color: #232B45;
+}
+
+.descuentos-panel__filtro.activo {
+  background: #232B45;
+  color: white;
+  border-color: #232B45;
+}
+
+.descuentos-panel__form-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 24, 42, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+}
+
+.descuentos-panel__estado {
+  color: #6b6f7a;
+  font-size: 14px;
+  padding: 24px 0;
+  text-align: center;
+}
+
+.descuentos-panel__error {
+  background: #fdeded;
+  color: #b3261e;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.descuentos-panel__tabla {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  font-size: 13px;
+}
+
+.descuentos-panel__tabla th {
+  text-align: left;
+  background: #FBFAF7;
+  padding: 12px 14px;
+  font-weight: 600;
+  color: #6b6f7a;
+  border-bottom: 1px solid #e2e0d8;
+}
+
+.descuentos-panel__tabla td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #f0efe9;
+}
+
+.descuentos-panel__badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge--vigente {
+  background: #e3f7f4;
+  color: #0e8a7c;
+}
+
+.badge--programado {
+  background: #eaf1fb;
+  color: #1B4B8F;
+}
+
+.badge--expirado {
+  background: #f2f1ec;
+  color: #8a8878;
+}
+
+.badge--inactivo {
+  background: #fdeded;
+  color: #b3261e;
+}
+
+.descuentos-panel__acciones {
+  display: flex;
+  gap: 10px;
+}
+
+.descuentos-panel__acciones button {
+  background: none;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  color: #1B4B8F;
+  padding: 0;
+}
+
+.descuentos-panel__btn-eliminar {
+  color: #b3261e !important;
+}
