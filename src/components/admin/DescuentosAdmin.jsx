@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import axios from '../api/axios'; // 👈 AJUSTA esta ruta a donde esté tu instancia real
-import DescuentoForm from './DescuentoForm';
+import DescuentoForm from './DescuentosForm';
 import './DescuentosAdmin.css';
 
 const ESTADO_LABELS = {
