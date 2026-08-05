@@ -1,5 +1,5 @@
-
-import { useState, useEffect } from 'react';
+// frontend/src/hooks/useEnvio.js
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 
@@ -11,31 +11,39 @@ export const useEnvio = () => {
   const [agenciaSeleccionada, setAgenciaSeleccionada] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Opciones de envío con lógica de negocio
+  // Calcular costo del delivery según el usuario
+  const getCostoDelivery = useCallback(() => {
+    if (!user) return 8.00;
+    return user.delivery_gratis ? 0 : 8.00;
+  }, [user]);
+
+  // Opciones de envío
   const opcionesEnvio = [
     {
       id: 'retiro',
-      titulo: 'Retiro en Depósito',
-      descripcion: 'Pasa a recoger tu pedido cuando quieras',
+      label: 'Retiro en Depósito',
+      descripcion: 'Pasa a recoger tu pedido cuando esté listo',
       icono: '🏪',
       costo: 0,
       textoCosto: 'Gratis',
-      requiereDireccion: false
+      requiereDireccion: false,
+      requiereAgencia: false
     },
     {
       id: 'delivery',
-      titulo: 'Delivery en Moto',
+      label: 'Delivery en Moto',
       descripcion: 'Entrega en tu dirección dentro de la ciudad',
       icono: '🛵',
-      costo: user?.delivery_gratis ? 0 : 8.00,
-      textoCosto: user?.delivery_gratis ? '¡Gratis para ti!' : '$8.00',
+      costo: getCostoDelivery(),
+      textoCosto: getCostoDelivery() === 0 ? '¡Gratis para ti!' : '$8.00',
       requiereDireccion: true,
+      requiereAgencia: false,
       tipoDireccion: 'delivery'
     },
     {
       id: 'envio_nacional',
-      titulo: 'Envío Nacional',
-      descripcion: 'Envío por agencia, pagas al recibir',
+      label: 'Envío Nacional',
+      descripcion: 'Envío por agencia, pagas al recibir en destino',
       icono: '📦',
       costo: 0,
       textoCosto: 'Pago en destino',
@@ -48,8 +56,12 @@ export const useEnvio = () => {
   const opcionActual = opcionesEnvio.find(op => op.id === tipoEnvio);
 
   // Cargar direcciones según tipo seleccionado
-  const cargarDirecciones = async (tipo) => {
-    if (!tipo || tipo === 'retiro') return;
+  const cargarDirecciones = useCallback(async (tipo) => {
+    if (!tipo || tipo === 'retiro') {
+      setDirecciones([]);
+      setDireccionSeleccionada(null);
+      return;
+    }
     
     setLoading(true);
     try {
@@ -59,16 +71,19 @@ export const useEnvio = () => {
       // Si hay una sola dirección, seleccionarla automáticamente
       if (data.length === 1) {
         setDireccionSeleccionada(data[0]);
+      } else {
+        setDireccionSeleccionada(null);
       }
     } catch (error) {
       console.error('Error cargando direcciones:', error);
+      setDirecciones([]);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Cambiar tipo de envío
-  const cambiarTipoEnvio = (tipo) => {
+  const cambiarTipoEnvio = useCallback((tipo) => {
     setTipoEnvio(tipo);
     setDireccionSeleccionada(null);
     setAgenciaSeleccionada('');
@@ -77,16 +92,40 @@ export const useEnvio = () => {
     if (opcion?.tipoDireccion) {
       cargarDirecciones(opcion.tipoDireccion);
     }
+  }, [opcionesEnvio, cargarDirecciones]);
+
+  // Guardar nueva dirección
+  const guardarDireccion = async (direccionData) => {
+    try {
+      const { data } = await api.post('/api/direcciones', direccionData);
+      const opcion = opcionesEnvio.find(op => op.id === tipoEnvio);
+      if (opcion?.tipoDireccion) {
+        await cargarDirecciones(opcion.tipoDireccion);
+      }
+      setDireccionSeleccionada(data);
+      return data;
+    } catch (error) {
+      throw error;
+    }
   };
 
-  // Cargar direcciones iniciales si el usuario tiene preferencia
-  useEffect(() => {
-    if (user?.tipo_envio_preferido) {
-      cambiarTipoEnvio(user.tipo_envio_preferido);
+  // Eliminar dirección
+  const eliminarDireccion = async (id) => {
+    try {
+      await api.delete(`/api/direcciones/${id}`);
+      if (direccionSeleccionada?.id === id) {
+        setDireccionSeleccionada(null);
+      }
+      const opcion = opcionesEnvio.find(op => op.id === tipoEnvio);
+      if (opcion?.tipoDireccion) {
+        await cargarDirecciones(opcion.tipoDireccion);
+      }
+    } catch (error) {
+      throw error;
     }
-  }, [user]);
+  };
 
-  // Agencias disponibles
+  // Agencias disponibles para envío nacional
   const agencias = ['MRW', 'Domesa', 'Tealca', 'Zoom', 'Servientrega'];
 
   return {
@@ -102,6 +141,8 @@ export const useEnvio = () => {
     agencias,
     loading,
     cargarDirecciones,
-    costoDelivery: opcionActual?.costo || 0
+    guardarDireccion,
+    eliminarDireccion,
+    costoEnvio: opcionActual?.costo || 0
   };
 };
