@@ -21,6 +21,7 @@ import Terminos from './pages/Terminos'
 import Privacidad from './pages/Privacidad'
 import EstadoCuenta from './pages/EstadoCuenta'
 import ProductoDetalle from './pages/ProductoDetalle'
+import ListaDetalle from './pages/ListaDetalle'
 
 function App() {
   return (
@@ -46,6 +47,7 @@ function App() {
           <Route path="/privacidad" element={<Privacidad />} />
           <Route path="/estado-cuenta" element={<PrivateRoute><EstadoCuenta /></PrivateRoute>} />
           <Route path="/producto/:id" element={<ProductoDetalle />} />
+          <Route path="/listas/:id" element={<PrivateRoute><ListaDetalle /></PrivateRoute>} />
         </Routes>
       </CartProvider>
     </AuthProvider>
