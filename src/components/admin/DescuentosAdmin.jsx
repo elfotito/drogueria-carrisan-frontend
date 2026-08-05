@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import axios from '../api/axios'; // 👈 AJUSTA esta ruta a donde esté tu instancia real
+import axios from '../../api/axios'; // 👈 AJUSTA esta ruta a donde esté tu instancia real
 import DescuentoForm from './DescuentosForm';
 import './DescuentosAdmin.css';
 
