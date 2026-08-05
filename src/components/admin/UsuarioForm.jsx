@@ -161,6 +161,22 @@ function UsuarioForm({ usuario, onClose, onGuardado }) {
             />
           </label>
 
+<div style={{ marginTop: '16px' }}>
+  <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+    <input
+      type="checkbox"
+      checked={formData.delivery_gratis || false}
+      onChange={(e) => setFormData({...formData, delivery_gratis: e.target.checked})}
+    />
+    <div>
+      <strong>🚚 Delivery Gratis</strong>
+      <p style={{ margin: '2px 0 0 0', fontSize: '12px', color: '#666' }}>
+        El cliente no pagará los $8.00 de envío en moto
+      </p>
+    </div>
+  </label>
+</div>
+
           {esEdicion && (
             <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <input
