@@ -14,6 +14,7 @@ function UsuarioForm({ usuario, onClose, onGuardado }) {
   const [telefono, setTelefono] = useState(usuario?.telefono || '')
   const [lineaCredito, setLineaCredito] = useState(usuario?.linea_credito || '')
   const [activo, setActivo] = useState(usuario?.activo ?? true)
+  const [deliveryGratis, setDeliveryGratis] = useState(usuario?.delivery_gratis || false) // 🆕
   const [guardando, setGuardando] = useState(false)
   const [error, setError] = useState('')
 
@@ -31,6 +32,7 @@ function UsuarioForm({ usuario, onClose, onGuardado }) {
       direccion_entrega: direccionEntrega || null,
       telefono: telefono || null,
       linea_credito: Number(lineaCredito) || 0,
+      delivery_gratis: deliveryGratis, // 🆕
       ...(esEdicion && { activo })
     }
 
@@ -161,21 +163,38 @@ function UsuarioForm({ usuario, onClose, onGuardado }) {
             />
           </label>
 
-<div style={{ marginTop: '16px' }}>
-  <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-    <input
-      type="checkbox"
-      checked={formData.delivery_gratis || false}
-      onChange={(e) => setFormData({...formData, delivery_gratis: e.target.checked})}
-    />
-    <div>
-      <strong>🚚 Delivery Gratis</strong>
-      <p style={{ margin: '2px 0 0 0', fontSize: '12px', color: '#666' }}>
-        El cliente no pagará los $8.00 de envío en moto
-      </p>
-    </div>
-  </label>
-</div>
+          {/* 🆕 Delivery Gratis - CORREGIDO */}
+          <div style={{ 
+            marginTop: '8px', 
+            padding: '12px', 
+            background: '#f8f9fa', 
+            borderRadius: '8px',
+            border: '1px solid #e0e0e0'
+          }}>
+            <label style={{ 
+              display: 'flex', 
+              alignItems: 'flex-start', 
+              gap: '10px',
+              cursor: 'pointer'
+            }}>
+              <input
+                type="checkbox"
+                checked={deliveryGratis}
+                onChange={(e) => setDeliveryGratis(e.target.checked)}
+                style={{ marginTop: '3px' }}
+              />
+              <div>
+                <strong>🛵 Delivery Gratis</strong>
+                <p style={{ 
+                  margin: '4px 0 0 0', 
+                  fontSize: '13px', 
+                  color: '#666' 
+                }}>
+                  El cliente no pagará los $8.00 de envío en moto dentro de la ciudad
+                </p>
+              </div>
+            </label>
+          </div>
 
           {esEdicion && (
             <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
