@@ -6,6 +6,7 @@ import ProductCardSkeleton from '../components/Productcardskeleton'
 // import BuscadorFiltro from '../components/BuscadorFiltro'
 import './Catalogo.css'
 
+
 // Categorías para el filtro sidebar (anteriormente el carrusel horizontal)
 const categoriasFiltro = [
   { id: 'todos', nombre: 'Todos' },
