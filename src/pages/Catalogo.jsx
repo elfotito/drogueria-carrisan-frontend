@@ -4,6 +4,7 @@ import ProductCard from '../components/ProductCard'
 import ProductCardSkeleton from '../components/Productcardskeleton'
 // Importa tu BuscadorFiltro cuando estés listo para conectarlo
 // import BuscadorFiltro from '../components/BuscadorFiltro'
+
 import './Catalogo.css'
 
 // Categorías para el filtro sidebar (anteriormente el carrusel horizontal)
