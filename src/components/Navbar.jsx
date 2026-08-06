@@ -137,7 +137,7 @@ function Navbar() {
             <form className="navbar__search" onSubmit={handleBuscar}>
               <input
                 type="text"
-                placeholder="Busca productos, marcas y más..."
+                placeholder="Buscar en Drogueria Carrisan"
                 value={busqueda}
                 onChange={(e) => setBusqueda(e.target.value)}
                 onFocus={() => sugerencias.length > 0 && setMostrarSugerencias(true)}
