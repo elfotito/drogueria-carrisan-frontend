@@ -212,7 +212,6 @@ function DireccionSelector({
   )
 }
 
-// 🆕 Componente para seleccionar agencia de envío
 function AgenciaSelector({ agencias, agenciaSeleccionada, onSeleccionar }) {
   return (
     <div className="agencia-selector">
