@@ -1,0 +1,321 @@
+.gestion-direcciones {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.gestion-loading {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}
+
+.gestion-mensaje {
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.gestion-mensaje--exito {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+}
+
+.gestion-mensaje--error {
+  background: #ffebee;
+  color: #c62828;
+  border: 1px solid #ffcdd2;
+}
+
+/* Tabs */
+.gestion-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.gestion-tab {
+  padding: 12px 24px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 15px;
+  color: #666;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.2s;
+}
+
+.gestion-tab:hover {
+  color: #1976d2;
+}
+
+.gestion-tab--active {
+  color: #1976d2;
+  border-bottom-color: #1976d2;
+  font-weight: 600;
+}
+
+/* Lista */
+.gestion-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.gestion-vacio {
+  text-align: center;
+  padding: 40px 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  color: #666;
+}
+
+.gestion-vacio__icon {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 12px;
+}
+
+/* Card */
+.gestion-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.gestion-card:hover {
+  border-color: #1976d2;
+  box-shadow: 0 2px 8px rgba(25,118,210,0.1);
+}
+
+.gestion-card__info h3 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  color: #1a1a1a;
+}
+
+.gestion-card__direccion {
+  margin: 0 0 8px 0;
+  color: #333;
+  font-size: 14px;
+}
+
+.gestion-card__detalles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 13px;
+  color: #666;
+}
+
+.gestion-card__referencia,
+.gestion-card__agencia {
+  margin: 6px 0 0 0;
+  font-size: 13px;
+  color: #888;
+}
+
+.gestion-card__acciones {
+  display: flex;
+  gap: 4px;
+}
+
+.gestion-btn {
+  padding: 8px;
+  border: 1px solid #e0e0e0;
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s;
+}
+
+.gestion-btn--editar:hover {
+  background: #e3f2fd;
+  border-color: #1976d2;
+}
+
+.gestion-btn--eliminar:hover {
+  background: #ffebee;
+  border-color: #c62828;
+}
+
+/* Botón agregar */
+.gestion-btn-agregar {
+  width: 100%;
+  padding: 14px;
+  background: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.gestion-btn-agregar:hover {
+  background: #1565c0;
+}
+
+/* Modal */
+.gestion-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.gestion-form {
+  background: white;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.gestion-form__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.gestion-form__header h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.gestion-form__close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #666;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.gestion-form__close:hover {
+  background: #f5f5f5;
+}
+
+.gestion-form form {
+  padding: 24px;
+}
+
+.gestion-form__group {
+  margin-bottom: 16px;
+}
+
+.gestion-form__group label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.gestion-form__group input,
+.gestion-form__group textarea,
+.gestion-form__group select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.gestion-form__group input:focus,
+.gestion-form__group textarea:focus,
+.gestion-form__group select:focus {
+  outline: none;
+  border-color: #1976d2;
+}
+
+.gestion-form__disabled {
+  background: #f5f5f5 !important;
+  color: #999 !important;
+  cursor: not-allowed !important;
+}
+
+.gestion-form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.gestion-form__acciones {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.gestion-btn-submit {
+  padding: 10px 24px;
+  background: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.gestion-btn-submit:hover {
+  background: #1565c0;
+}
+
+.gestion-btn-submit:disabled {
+  background: #90caf9;
+  cursor: not-allowed;
+}
+
+.gestion-btn-cancel {
+  padding: 10px 24px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #666;
+}
+
+.gestion-btn-cancel:hover {
+  background: #f5f5f5;
+}
+
+@media (max-width: 768px) {
+  .gestion-form__row {
+    grid-template-columns: 1fr;
+  }
+  
+  .gestion-tab {
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+}
