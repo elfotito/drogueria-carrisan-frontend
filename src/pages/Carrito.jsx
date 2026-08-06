@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import api from '../api/axios'
 import { useCart } from '../context/CartContext'
-import { useEnvio } from '../useEnvio' // 🆕
+import { useEnvio } from '../components/useEnvios'
 import './Carrito.css'
 
 function formatUSD(valor) {
