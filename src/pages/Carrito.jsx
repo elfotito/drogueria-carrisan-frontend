@@ -352,29 +352,6 @@ function DireccionSelector({
   )
 }
 
-function AgenciaSelector({ agencias, agenciaSeleccionada, onSeleccionar }) {
-  return (
-    <div className="agencia-selector">
-      <p className="delivery-info__title">Agencia de envío preferida</p>
-      <div className="agencia-lista">
-        {agencias.map((agencia) => (
-          <label 
-            key={agencia} 
-            className={`agencia-item ${agenciaSeleccionada === agencia ? 'agencia-item--selected' : ''}`}
-          >
-            <input
-              type="radio"
-              name="agencia"
-              checked={agenciaSeleccionada === agencia}
-              onChange={() => onSeleccionar(agencia)}
-            />
-            <span>{agencia}</span>
-          </label>
-        ))}
-      </div>
-    </div>
-  )
-}
 
 function Carrito() {
   const { items, updateCantidad, removeItem, clearCart, total } = useCart()
@@ -509,14 +486,7 @@ function Carrito() {
                     />
                   )}
                 
-                {/* 🆕 Selector de agencia */}
-                {opcionActual.requiereAgencia && (
-                  <AgenciaSelector
-                    agencias={agencias}
-                    agenciaSeleccionada={agenciaSeleccionada}
-                    onSeleccionar={setAgenciaSeleccionada}
-                  />
-                )}
+              
               </div>
             </div>
           )}
