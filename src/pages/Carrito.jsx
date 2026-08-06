@@ -76,6 +76,7 @@ function CartLine({ item, tasaVes, onUpdateCantidad, onRemove }) {
 }
 
 // 🆕 Componente para mostrar/agregar direcciones (VERSIÓN MEJORADA)
+// 🆕 Componente para mostrar/agregar direcciones (VERSIÓN MEJORADA)
 function DireccionSelector({ 
   direcciones, 
   direccionSeleccionada, 
@@ -85,19 +86,20 @@ function DireccionSelector({
   tipo // 'delivery' o 'envio_nacional'
 }) {
   const [mostrarPanel, setMostrarPanel] = useState(false)
-  const [paso, setPaso] = useState(1) // 1: formulario, 2: confirmación
+  const [paso, setPaso] = useState(1)
   const [nuevaDireccion, setNuevaDireccion] = useState({
     nombre: '',
     direccion: '',
     ciudad: '',
-    estado: tipo === 'delivery' ? 'Distrito Capital' : '',
+    estado: tipo === 'delivery' ? 'Carabobo' : '',
     telefono_contacto: '',
-    referencia: ''
+    referencia: '',
+    agencia_preferida: '' // 🆕 Agregado
   })
   const [guardando, setGuardando] = useState(false)
   const [error, setError] = useState('')
 
-  const CIUDADES_DELIVERY = ['Caracas', 'Maracay', 'Valencia']
+  const CIUDADES_DELIVERY = ['Valencia', 'Naguanagua', 'San Diego', 'Guacara', 'Los Guayos']
 
   const handleAgregar = async (e) => {
     e.preventDefault()
@@ -130,7 +132,8 @@ function DireccionSelector({
           ciudad: '',
           estado: tipo === 'delivery' ? 'Distrito Capital' : '',
           telefono_contacto: '',
-          referencia: ''
+          referencia: '',
+          agencia_preferida: '' // 🆕 Resetear
         })
       }, 1500)
     } catch (error) {
@@ -176,6 +179,7 @@ function DireccionSelector({
                 <p className="direccion-radio__direccion">{dir.direccion}</p>
                 <div className="direccion-radio__meta">
                   {dir.ciudad && <span>📍 {dir.ciudad}{dir.estado ? `, ${dir.estado}` : ''}</span>}
+                  {dir.agencia_preferida && <span>🚚 {dir.agencia_preferida}</span>}
                 </div>
               </div>
             </label>
@@ -203,7 +207,7 @@ function DireccionSelector({
             {paso === 1 ? (
               <>
                 <div className="direccion-panel__header">
-                  <h3>Nueva dirección</h3>
+                  <h3>Nueva dirección {tipo === 'envio_nacional' ? 'nacional' : 'de delivery'}</h3>
                   <button 
                     className="direccion-panel__close"
                     onClick={() => setMostrarPanel(false)}
@@ -304,6 +308,26 @@ function DireccionSelector({
                       placeholder="Color de casa, punto de referencia, etc."
                     />
                   </div>
+
+                  {/* 🆕 Selector de agencia - SOLO para envío nacional */}
+                  {tipo === 'envio_nacional' && (
+                    <div className="direccion-input-group">
+                      <label>Agencia de envío preferida</label>
+                      <select
+                        value={nuevaDireccion.agencia_preferida}
+                        onChange={(e) => setNuevaDireccion({...nuevaDireccion, agencia_preferida: e.target.value})}
+                        className="direccion-select-agencia"
+                      >
+                        <option value="">Seleccionar agencia</option>
+                        <option value="MRW">MRW</option>
+                        <option value="Domesa">Domesa</option>
+                        <option value="Tealca">Tealca</option>
+                        <option value="Zoom">Zoom</option>
+                        <option value="Servientrega">Servientrega</option>
+                        <option value="Servientrega">Otro</option>
+                      </select>
+                    </div>
+                  )}
 
                   <button 
                     type="submit" 
