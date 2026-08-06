@@ -110,35 +110,14 @@ function Navbar() {
   return (
     <>
       <header className="navbar">
-        {/* Barra Superior */}
+        {/* Barra Superior - Mobile: Logo + Buscador + Carrito en línea */}
         <div className="navbar__top">
-          <div className="navbar__top-left">
-            {/* Logo */}
-            <Link to="/" className="navbar__logo">
-              <span className="navbar__logo-icon">💊</span>
-              <span className="navbar__logo-text">Carrisán</span>
-            </Link>
+          {/* Logo */}
+          <Link to="/" className="navbar__logo">
+            <span className="navbar__logo-icon">💊</span>
+          </Link>
 
-            {/* Botón Retiro/Delivery (Desktop) */}
-            <button
-              className="navbar__envio-btn"
-              onClick={() => setShowEnvioPanel(!showEnvioPanel)}
-            >
-              <div className="envio-btn__icon">🛵</div>
-              <div className="envio-btn__text">
-                <span className="envio-btn__label">¿Retiro o delivery?</span>
-                <span className="envio-btn__location">{ciudadEstado}</span>
-              </div>
-              <svg
-                className={`envio-btn__arrow ${showEnvioPanel ? 'rotated' : ''}`}
-                width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-              >
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
-            </button>
-          </div>
-
-          {/* Buscador */}
+          {/* Buscador - En medio */}
           <div className="navbar__search-wrapper" ref={searchRef}>
             <form className="navbar__search" onSubmit={handleBuscar}>
               <svg className="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -147,13 +126,12 @@ function Navbar() {
               </svg>
               <input
                 type="text"
-                placeholder="Buscar en Droguería Carrisán..."
+                placeholder="Buscar..."
                 value={busqueda}
                 onChange={(e) => setBusqueda(e.target.value)}
                 onFocus={() => sugerencias.length > 0 && setMostrarSugerencias(true)}
               />
             </form>
-
             {/* Sugerencias */}
             {mostrarSugerencias && sugerencias.length > 0 && (
               <div className="search-suggestions">
@@ -163,10 +141,6 @@ function Navbar() {
                     className="suggestion-item"
                     onClick={() => handleSugerenciaClick(producto)}
                   >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <circle cx="11" cy="11" r="8" />
-                      <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                    </svg>
                     <span>{producto.nombre_comercial}</span>
                     <span className="suggestion-price">${producto.precio_usd}</span>
                   </button>
@@ -175,47 +149,29 @@ function Navbar() {
             )}
           </div>
 
-          {/* Acciones derecha */}
-          <div className="navbar__actions">
-            {/* Favoritos */}
-            <Link to="/mis-items" className="navbar__action">
+          {/* Carrito */}
+          <Link to="/carrito" className="navbar__cart">
+            <div className="cart-icon">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                <circle cx="9" cy="21" r="1" />
+                <circle cx="20" cy="21" r="1" />
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
               </svg>
-              <div className="action-text">
-                <span>Favoritos</span>
-              </div>
-            </Link>
+              {cantidadItems > 0 && <span className="cart-badge">{cantidadItems}</span>}
+            </div>
+          </Link>
+        </div>
 
-            {/* Cuenta */}
-            <Link to="/cuenta" className="navbar__action">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                <circle cx="12" cy="7" r="4" />
-              </svg>
-              <div className="action-text">
-                <span className="action-text__top">{user ? 'Perfil' : 'Iniciar Sesión'}</span>
-                <span className="action-text__bottom">Cuenta</span>
-              </div>
-            </Link>
-
-            {/* Carrito */}
-            <Link to="/carrito" className="navbar__action navbar__cart">
-              <div className="cart-icon">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="9" cy="21" r="1" />
-                  <circle cx="20" cy="21" r="1" />
-                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-                </svg>
-                {cantidadItems > 0 && (
-                  <span className="cart-badge">{cantidadItems}</span>
-                )}
-              </div>
-              <div className="action-text">
-                <span className="cart-total">${total?.toFixed(2) || '0.00'}</span>
-              </div>
-            </Link>
-          </div>
+        {/* Barra de Envío - Segunda línea */}
+        <div className="navbar__envio-bar">
+          <button className="navbar__envio-btn" onClick={() => setShowEnvioPanel(!showEnvioPanel)}>
+            <span className="envio-btn__icon">🛵</span>
+            <span className="envio-btn__label">¿Retiro o delivery?</span>
+            <span className="envio-btn__location">{ciudadEstado}</span>
+            <svg className={`envio-btn__arrow ${showEnvioPanel ? 'rotated' : ''}`} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </button>
         </div>
 
         {/* Panel de Envío */}
