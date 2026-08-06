@@ -311,3 +311,53 @@
   font-size: 0.9rem;
   padding: 40px 20px;
 }
+
+.orden-card__envio {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  font-size: 0.875rem;
+  color: #666;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* Opcional: color diferente para delivery gratis */
+.orden-card__envio--gratis {
+  color: #22c55e;
+  font-weight: 500;
+}
+
+/* En el modal */
+.modal-section {
+  margin-bottom: 1.5rem;
+}
+
+.modal-section h3 {
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+  color: #333;
+}
+
+.modal-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.modal-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.modal-info-item--full {
+  grid-column: 1 / -1;
+}
+
+.modal-label {
+  font-size: 0.75rem;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}

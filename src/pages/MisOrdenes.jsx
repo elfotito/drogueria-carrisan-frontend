@@ -38,6 +38,25 @@ function OrdenCard({ orden, esAdmin, onVerDetalle }) {
     year: 'numeric',
   })
 
+  // ── Icono y etiqueta de tipo de envío ──
+  const envioInfo = useMemo(() => {
+    switch (orden.tipo_envio) {
+      case 'retiro':
+        return { icono: '🏪', texto: 'Retiro en tienda' }
+      case 'delivery':
+        return { 
+          icono: '🛵', 
+          texto: orden.usuario?.delivery_gratis 
+            ? 'Delivery (¡Gratis!)' 
+            : `Delivery (+$${orden.costo_delivery?.toFixed(2) || '8.00'})` 
+        }
+      case 'envio_nacional':
+        return { icono: '📦', texto: `Envío Nac. (${orden.agencia_envio || 'N/A'})` }
+      default:
+        return { icono: '📋', texto: 'Sin especificar' }
+    }
+  }, [orden.tipo_envio, orden.costo_delivery, orden.agencia_envio, orden.usuario?.delivery_gratis])
+
   return (
     <div className="orden-card">
       <div className="orden-card__top">
@@ -46,6 +65,12 @@ function OrdenCard({ orden, esAdmin, onVerDetalle }) {
           <p className="orden-card__fecha">{fecha}</p>
         </div>
         <span className={`orden-badge ${estadoConfig.clase}`}>{estadoConfig.label}</span>
+      </div>
+
+      {/* ⭐ NUEVO: Indicador de tipo de envío */}
+      <div className="orden-card__envio">
+        <span>{envioInfo.icono}</span>
+        <span>{envioInfo.texto}</span>
       </div>
 
       {esAdmin && orden.users?.nombre && (
