@@ -1,147 +1,57 @@
 /* ==========================================================
-   ProductCard — Droguería Carrisán
+   ProductCard — Responsive Walmart-style
+   - Móvil: Layout de item de lista
+   - Escritorio: Layout de tarjeta en grid
    ========================================================== */
 
+/* Contenedor principal de la tarjeta */
 .pcard {
   display: flex;
   flex-direction: column;
   text-decoration: none;
   color: inherit;
   background: #FFFFFF;
-  border-radius: 14px;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
   padding: 12px;
-  position: relative;
+  position: relative; /* Esencial para el posicionamiento absoluto del botón en escritorio */
 }
 
+.pcard:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* ---------- 1. Bloque de Media (Imagen y Badge) ---------- */
 .pcard__media {
   position: relative;
+  width: 100%;
   aspect-ratio: 1 / 1;
-  border-radius: 10px;
-  overflow: hidden;
-  background: #F7F6F1;
+  background: #f8f8f8;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 6px;
   margin-bottom: 12px;
-}
-
-.pcard__media img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  padding: 8px;
-}
-
-.pcard__media-placeholder {
-  font-size: 0.72rem;
-  color: #A9AC9F;
-}
-
-.pcard__badge-agotado {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  background: #14182A;
-  color: #FBFAF7;
-  font-size: 0.68rem;
-  font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 999px;
-}
-
-.pcard__cta {
-  align-self: flex-start;
-  background: #1B4B8F;
-  color: #FBFAF7;
-  border: none;
-  border-radius: 999px;
-  font-weight: 700;
-  font-size: 0.82rem;
-  padding: 8px 18px;
-  cursor: pointer;
-  margin-bottom: 10px;
-  transition: background 0.15s ease;
-}
-
-.pcard__cta:hover {
-  background: #163c72;
-}
-
-.pcard__cta--disabled {
-  background: #E7E5DE;
-  color: #A9AC9F;
-  cursor: not-allowed;
-}
-
-.pcard__body {
-  flex: 1;
-}
-
-.pcard__precio-row {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-}
-
-.pcard__precio-usd {
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 800;
-  font-size: 1.15rem;
-  color: #12A594;
-}
-
-.pcard__precio-ves {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.72rem;
-  color: #5B6270;
-  margin: 1px 0 8px;
-}
-
-.pcard__nombre {
-  font-family: 'Manrope', sans-serif;
-  font-weight: 700;
-  font-size: 0.88rem;
-  line-height: 1.3;
-  color: #14182A;
-  margin: 4px 0 2px;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-.pcard__laboratorio {
-  font-size: 0.76rem;
-  color: #5B6270;
-  margin: 0 0 8px;
+.pcard__media img {
+  max-width: 80%;
+  max-height: 80%;
+  object-fit: contain;
+  mix-blend-mode: multiply; /* Efecto profesional sobre fondo gris */
 }
 
-.pcard__disponibilidad {
-  font-size: 0.76rem;
-  font-weight: 600;
-  margin: 6px 0 0;
-}
-
-.pcard__disponibilidad--ok {
-  color: #12A594;
-}
-
-.pcard__disponibilidad--no {
-  color: #B3261E;
-}
-
-/* ===================================================================
-   NUEVO: estilos para el badge de descuento y precio tachado
-   Agregar esto al CSS existente de ProductCard (no reemplaza nada)
-   =================================================================== */
-
-/* Etiqueta tipo "Rollback", esquina superior izquierda de la imagen */
-.product-card__badge-descuento {
+/* Badge de descuento unificado */
+.pcard__badge-descuento {
   position: absolute;
   top: 8px;
   left: 8px;
   z-index: 2;
-  background: #B3261E;
+  background: #B3261E; /* Rojo */
   color: white;
   font-size: 11px;
   font-weight: 700;
@@ -151,35 +61,255 @@
   border-radius: 4px;
 }
 
-/* Asegura que el wrapper de la imagen sea el contenedor de referencia
-   para el position:absolute del badge (si ya tiene position, no lo dupliques) */
-.product-card__imagen-wrapper {
-  position: relative;
-}
-
-/* Bloque de precios: actual + tachado */
-.product-card__precios {
+/* ---------- 2. Bloque de Contenido ---------- */
+.pcard__body {
+  flex: 1;
   display: flex;
-  align-items: baseline;
-  gap: 8px;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Bloque de precios unificado */
+.pcard__precios {
+  display: flex;
+  flex-direction: column; 
+  gap: 2px;
   margin: 4px 0;
-  flex-wrap: wrap;
 }
 
-.product-card__precio-ahora {
-  font-family: 'Manrope', sans-serif;
-  font-size: 18px;
+/* Precio actual, grande y prominente */
+.pcard__precio-ahora {
+  font-family: 'JetBrains Mono', monospace; /* Bonita mono font de tu archivo */
   font-weight: 800;
-  color: #12A594;
+  font-size: 1.15rem;
+  color: #12A594; /* Cyan/greenish de tu archivo original */
 }
 
-.product-card__precio-ahora--sin-descuento {
-  color: #14182A;
+/* Clase especial para precio actual sin descuento */
+.pcard__precio-ahora--sin-descuento {
+  color: #14182A; /* Oscuro */
 }
 
-.product-card__precio-tachado {
+/* Precio original (tachado) */
+.pcard__precio-original {
+  font-family: 'JetBrains Mono', monospace;
   font-size: 13px;
   color: #8a8878;
   text-decoration: line-through;
+  margin-right: 8px;
 }
 
+/* Precio VES (debajo del actual USD) */
+.pcard__precio-ves {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: #757575; /* Gray */
+  margin-top: -2px;
+}
+
+/* Texto de Nombre/Marca */
+.pcard__nombre {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1a1a1a;
+  margin: 0;
+  line-height: 1.3;
+  cursor: pointer;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.pcard__nombre:hover {
+  color: #1976d2;
+}
+
+.pcard__marca {
+  font-size: 12px;
+  color: #757575;
+  margin: 0;
+}
+
+/* Placeholder para Rating */
+.pcard__rating {
+  font-size: 0.8rem;
+  color: #f1c40f; /* Estrellas amarillas */
+  display: flex;
+  gap: 2px;
+  margin: 4px 0;
+}
+
+.pcard__rating-count {
+  color: #757575;
+  font-size: 0.75rem;
+  margin-left: 2px;
+}
+
+/* Placeholder para información de Entrega */
+.pcard__delivery-info {
+  font-size: 0.75rem;
+  color: #757575;
+  margin: 4px 0;
+}
+.pcard__delivery-info p { margin: 0; line-height: 1.3; }
+.delivery-arrive { font-weight: 600; color: #1a1a1a; }
+.delivery-pickup { color: #1a1a1a; }
+
+/* ---------- 3. Bloque de Acciones (El desafío responsive para escritorio) ---------- */
+.pcard__acciones {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto; /* Empuja las acciones al fondo en el flujo normal */
+}
+
+/* Botón de "Agregar" prominente (Rellenado de color, ancho completo en móvil) */
+.pcard__btn-agregar {
+  flex: 1; /* Toma ancho completo en móvil */
+  padding: 10px 20px;
+  background: #1976d2; /* Clear blue como en el pantallazo */
+  color: white;
+  border: 1px solid #1976d2;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.pcard__btn-agregar:hover {
+  background: #1565c0;
+  border-color: #1565c0;
+}
+
+/* Bloque de Contador de Cantidad (Unificado de todos los archivos) */
+.pcard__contador {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex: 1; /* Toma ancho completo en móvil */
+  border: 1px solid #1976d2;
+  border-radius: 20px;
+  overflow: hidden;
+  max-width: fit-content; /* Asegura que no se estire raro */
+  align-self: flex-start; /* No stretch full width */
+}
+
+.contador-btn {
+  flex: 1;
+  padding: 10px 16px;
+  background: white;
+  border: none;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1976d2;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.contador-btn:hover {
+  background: #e3f2fd;
+}
+
+.contador-cantidad {
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a1a1a;
+  background: #f5f5f5;
+  min-width: 30px;
+  text-align: center;
+  user-select: none;
+}
+
+/* Botón de Icono ("Mis Items") */
+.pcard__btn-items {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid #e0e0e0;
+  background: white;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.pcard__btn-items:hover {
+  background: #f5f5f5;
+  border-color: #ccc;
+}
+
+/* ===================================================================
+   DESKTOP OVERRIDE (> 768px)
+   - Switches layout to a grid of cards
+   - Changes placement and style of "Add to Cart" block
+   =================================================================== */
+
+@media (min-width: 769px) {
+  /* La grid principal se maneja en Catalogo.css */
+  
+  .pcard {
+    border-radius: 8px; /* Ligeramente diferente del list */
+    padding: 12px;
+  }
+  
+  /* El reordenamiento y posicionamiento crítico de acciones para escritorio */
+  .pcard__acciones {
+    position: absolute; /* Sacar del flujo normal para superponer a la imagen */
+    bottom: 12px;
+    left: 12px;
+    right: 12px; /* Estirarse entre el padding de la imagen wrapper */
+    width: auto;
+    z-index: 5;
+    /* Minimizar el contenedor, posicionarlo inteligentemente */
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    justify-content: center; /* Centrar botones sobre imagen */
+    flex-wrap: wrap; /* Manejar multi-botón si contador visible */
+  }
+
+  /* Refinar el botón CTA de escritorio */
+  .pcard__btn-agregar {
+    /* CTA grande prominente que se asienta dentro del espacio de la media wrapper */
+    padding: 10px 20px;
+    font-size: 14px;
+    width: auto;
+    max-width: calc(100% - 10px); /* Leave small gap in media area */
+    border-radius: 20px;
+    margin: 0 auto; /* Centrar botón */
+    pointer-events: auto; /* Mantener clickeable */
+  }
+
+  /* Estilo de contador para superposición en escritorio */
+  .pcard__contador {
+    border-color: transparent; /* Minimalist look cuando superpuesto */
+    background: #e3f2fd;
+    margin: 0 auto;
+    max-width: none; /* Let it define width via padding */
+  }
+  .pcard__contador .contador-btn {
+    background: transparent;
+    color: #1976d2;
+    padding: 8px 12px;
+  }
+  .pcard__contador .contador-cantidad {
+    background: #FFFFFF;
+    color: #1a1a1a;
+    padding: 8px 12px;
+  }
+
+  /* Asegurar que la imagen tenga espacio en el wrapper para el botón overlay */
+  .pcard__media {
+    padding-bottom: 50px; /* Crucial: Create space at the bottom for the CTA button overlay */
+  }
+  
+  /* Shift content down slightly if needed, but not necessary here due to aspect-ratio */
+}
