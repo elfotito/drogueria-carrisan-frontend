@@ -129,3 +129,57 @@
 .pcard__disponibilidad--no {
   color: #B3261E;
 }
+
+/* ===================================================================
+   NUEVO: estilos para el badge de descuento y precio tachado
+   Agregar esto al CSS existente de ProductCard (no reemplaza nada)
+   =================================================================== */
+
+/* Etiqueta tipo "Rollback", esquina superior izquierda de la imagen */
+.product-card__badge-descuento {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 2;
+  background: #B3261E;
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+/* Asegura que el wrapper de la imagen sea el contenedor de referencia
+   para el position:absolute del badge (si ya tiene position, no lo dupliques) */
+.product-card__imagen-wrapper {
+  position: relative;
+}
+
+/* Bloque de precios: actual + tachado */
+.product-card__precios {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 4px 0;
+  flex-wrap: wrap;
+}
+
+.product-card__precio-ahora {
+  font-family: 'Manrope', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: #12A594;
+}
+
+.product-card__precio-ahora--sin-descuento {
+  color: #14182A;
+}
+
+.product-card__precio-tachado {
+  font-size: 13px;
+  color: #8a8878;
+  text-decoration: line-through;
+}
+
