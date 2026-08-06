@@ -3,6 +3,7 @@
    ============================================ */
 
 .pcard {
+  position: relative;
   background: #FFFFFF;
   border: 1px solid #e3e4e5;
   border-radius: 12px;
@@ -19,7 +20,24 @@
   box-shadow: 0 4px 16px rgba(20, 24, 42, 0.08);
 }
 
-/* ---------- Media (imagen + badge) ---------- */
+/* ---------- Badge social (arriba de TODO, nunca sobre la imagen) ---------- */
+.pcard__top-badge {
+  margin-bottom: 8px;
+}
+
+.pcard__badge-social {
+  display: inline-block;
+  border: 1px solid #1B4B8F; /* Azul */
+  color: #1B4B8F;
+  background: #EFF4FB;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  line-height: 1.2;
+}
+
+/* ---------- Media (imagen + badge de descuento + favorito) ---------- */
 .pcard__media {
   position: relative;
   cursor: pointer;
@@ -39,12 +57,13 @@
   object-fit: contain;
 }
 
+/* Badge de descuento SÍ va montado sobre la imagen (distinto al badge social) */
 .pcard__badge-descuento {
   position: absolute;
   top: 8px;
   left: 8px;
   z-index: 2;
-  background: #D64550; /* rojo de urgencia, contraste con el resto de la paleta */
+  background: #D64550; /* rojo de urgencia */
   color: #FFFFFF;
   font-weight: 700;
   font-size: 0.65rem;
@@ -52,6 +71,47 @@
   letter-spacing: 0.03em;
   padding: 4px 8px;
   border-radius: 4px;
+}
+
+.pcard__fav {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.9);
+  color: #14182A;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.pcard__fav:hover {
+  transform: scale(1.08);
+}
+
+.pcard__fav--activo {
+  color: #D64550;
+}
+
+/* ---------- Patrocinado ---------- */
+.pcard__sponsored {
+  font-size: 0.68rem;
+  color: #74767c;
+  margin: 0 0 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pcard__sponsored-info {
+  cursor: help;
 }
 
 /* ---------- Bloque de precios ---------- */
@@ -69,7 +129,6 @@
   font-size: 1.05rem;
 }
 
-/* Sin descuento activo: precio normal, no verde */
 .pcard__precio-ahora--sin-descuento {
   color: #14182A; /* Ink */
 }
@@ -112,20 +171,32 @@
   margin: 0 0 6px;
 }
 
-/* ---------- Rating y entrega ---------- */
+/* ---------- Rating ---------- */
 .pcard__rating {
   font-size: 0.75rem;
   color: #E0A429;
   display: flex;
   align-items: center;
   gap: 4px;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .pcard__rating-count {
   color: #74767c;
 }
 
+/* ---------- Save with (placeholder) ---------- */
+.pcard__save-with {
+  font-size: 0.72rem;
+  color: #1B4B8F;
+  margin: 0 0 6px;
+}
+
+.pcard__save-with strong {
+  color: #12A594;
+}
+
+/* ---------- Delivery (placeholder) ---------- */
 .pcard__delivery-info {
   font-size: 0.7rem;
   color: #74767c;
@@ -136,7 +207,7 @@
   margin: 0;
 }
 
-.delivery-arrive {
+.pcard__delivery-arrive {
   font-weight: 600;
   color: #14182A;
 }
@@ -216,6 +287,31 @@
   color: #FFFFFF;
   font-weight: 700;
   font-size: 0.9rem;
+}
+
+/* ---------- Confirmación "Agregado al carrito" ---------- */
+.pcard__confirmacion {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  background: #12A594; /* Teal */
+  color: #FFFFFF;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-align: center;
+  padding: 8px 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(18, 165, 148, 0.35);
+  animation: pcard-confirmacion 1.8s ease forwards;
+  pointer-events: none;
+}
+
+@keyframes pcard-confirmacion {
+  0% { opacity: 0; transform: translateY(6px); }
+  12% { opacity: 1; transform: translateY(0); }
+  82% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-4px); }
 }
 
 /* ---------- Responsive ---------- */

@@ -1,23 +1,173 @@
-
-
+/* ============================================
+   Catálogo — Layout y Tipografía
+   ============================================ */
 
 .catalogo-layout {
-  max-width: 1400px; /* Match standard broad screen width */
+  max-width: 1400px;
   margin: 0 auto;
   padding: 24px;
   font-family: 'Inter', sans-serif;
-  color: #14182A; /* Dark text */
+  color: #14182A;
   background: #FFFFFF;
 }
 
-/* ---------- 1. Header and Page Text ---------- */
+/* ---------- 1. Barra de filtros rápidos (pills) ---------- */
+.catalogo-filtros-rapidos {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e3e4e5;
+  margin-bottom: 16px;
+}
+
+.pill-filtro-rapido {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #FFFFFF;
+  border: 1px solid #c7cbd6;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #14182A;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.pill-filtro-rapido:hover {
+  border-color: #1B4B8F;
+  background: #F4F6F8;
+}
+
+.pill-filtro-rapido__chevron {
+  color: #74767c;
+  font-size: 0.9rem;
+}
+
+.catalogo-ordenar-desktop {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.catalogo-ordenar-label {
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.catalogo-sort-select {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 6px 28px 6px 12px;
+  border: 1px solid #1a1a1a;
+  border-radius: 999px;
+  background: #fff;
+  color: #1a1a1a;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%231a1a1a%22%20stroke-width%3D%222%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+}
+
+/* ---------- 2. Carrusel de categorías con ícono ---------- */
+.catalogo-carrusel-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.catalogo-carrusel {
+  display: flex;
+  gap: 18px;
+  overflow-x: auto;
+  padding: 6px 4px 10px;
+  scrollbar-width: none;
+}
+.catalogo-carrusel::-webkit-scrollbar {
+  display: none;
+}
+
+.carrusel-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  width: 76px;
+}
+
+.carrusel-item__icono {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  background: #FBFAF7;
+  border: 1px solid #e3e4e5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.carrusel-item--activo .carrusel-item__icono {
+  border-color: #1B4B8F;
+  background: #EFF4FB;
+}
+
+.carrusel-item__label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #14182A;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.carrusel-item--activo .carrusel-item__label {
+  color: #1B4B8F;
+}
+
+.catalogo-carrusel-flecha {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid #c7cbd6;
+  background: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+}
+
+.catalogo-carrusel-flecha:hover {
+  border-color: #1B4B8F;
+}
+
+.catalogo-divider {
+  width: 100%;
+  height: 1px;
+  background: #e3e4e5;
+  margin-bottom: 20px;
+}
+
+/* ---------- 3. Header de resultados ---------- */
 .catalogo-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 24px;
-  border-bottom: 1px solid #e3e4e5;
-  padding-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .header-titles h1 {
@@ -38,38 +188,8 @@
   margin: 0;
 }
 
-/* Mobile-prominent controls, or desktop-inline */
-.catalogo-controles {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.catalogo-controles__desktop-actions {
-  display: flex;
-  gap: 12px;
-}
-
-.catalogo-sort-select {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 600;
-  padding: 8px 32px 8px 16px;
-  border: 1px solid #1a1a1a;
-  border-radius: 999px;
-  background: #fff;
-  color: #1a1a1a;
-  cursor: pointer;
-  appearance: none;
-  /* Basic Chevron Icon cross-browser select */
-  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%231a1a1a%22%20stroke-width%3D%222%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-}
-
-/* Central Mobile filter button CTA, prominently like in image_1 */
 .btn-filtros-mobile-cta {
-  display: none; /* Only show on mobile */
+  display: none;
   font-family: 'Inter', sans-serif;
   font-weight: 600;
   font-size: 0.9rem;
@@ -81,44 +201,7 @@
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
-/* ---------- 2. New Píldoras de Filtro carrusel ---------- */
-.catalogo-filter-quick-pills {
-  display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  padding: 10px 0 16px;
-  scrollbar-width: none; /* Hide scrollbar for cross-browser */
-}
-.catalogo-filter-quick-pills::-webkit-scrollbar {
-  display: none;
-}
-
-.quick-pill-item {
-  background: #ffffff;
-  border: 1px solid #e0e0e0;
-  border-radius: 999px;
-  padding: 8px 16px;
-  font-size: 0.85rem;
-  font-family: 'Inter', sans-serif;
-  color: #1a1a1a;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.2s;
-}
-
-.quick-pill-item:hover {
-  border-color: #1a1a1a;
-  background: #f4f6f8;
-}
-
-.catalogo-divider {
-  width: 100%;
-  height: 1px;
-  background: #e3e4e5;
-  margin-bottom: 24px;
-}
-
-/* ---------- 3. Body: Sidebar + Main Content ---------- */
+/* ---------- 4. Body: Sidebar + Main Content ---------- */
 .catalogo-body {
   display: flex;
   align-items: flex-start;
@@ -126,18 +209,30 @@
   position: relative;
 }
 
-/* Barra Lateral de Filtros */
 .catalogo-filtros {
-  flex: 0 0 240px; /* Standard sidebar width */
+  flex: 0 0 240px;
   position: sticky;
-  top: 100px; /* Adjust top positioning as needed for main nav */
+  top: 100px;
   background: #FFFFFF;
   padding-right: 12px;
-  max-height: calc(100vh - 120px); /* Fill screen but allow scrolling */
+  max-height: calc(100vh - 120px);
   overflow-y: auto;
 }
 
-/* Secciones del sidebar */
+.catalogo-filtros__header-mobile {
+  display: none;
+}
+
+.btn-limpiar-filtros {
+  background: none;
+  border: none;
+  color: #1B4B8F;
+  font-weight: 700;
+  font-size: 0.82rem;
+  cursor: pointer;
+  padding: 0 0 12px;
+}
+
 .filtro-seccion {
   padding: 16px 0;
   border-bottom: 1px solid #e3e4e5;
@@ -150,14 +245,19 @@
   color: #1a1a1a;
 }
 
-/* Content block within filter sections */
 .filtro-content {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  margin-top: 12px;
 }
 
-/* Píldoras in filter sections */
+.filtro-vacio {
+  font-size: 0.78rem;
+  color: #74767c;
+  margin: 0;
+}
+
 .filtro-pill {
   background: #ffffff;
   border: 1px solid #74767c;
@@ -174,9 +274,8 @@
   border-color: #1a1a1a;
   background: #f4f6f8;
 }
-.filtro-pill.active { background: #1B4B8F; color: #FFFFFF; } /* Style active filters */
+.filtro-pill.active { background: #1B4B8F; color: #FFFFFF; border-color: #1B4B8F; }
 
-/* Acordeones style in filter sections */
 .filtro-accordion-btn {
   width: 100%;
   display: flex;
@@ -193,19 +292,47 @@
 .filtro-accordion-btn svg {
   transition: transform 0.2s ease;
 }
-/* If active accordion, you might add a rule here with active class: .filtro-accordion-btn.active svg { transform: rotate(180deg); } */
 
-/* ---------- 4. Main Content and Grid ---------- */
-.catalogo-main-content {
-  flex: 1;
-  min-width: 0; /* Important for grid within flexbox to scroll properly */
+.filtro-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: #14182A;
+  cursor: pointer;
+  margin-top: 12px;
 }
 
-/* GRID de productos responsive */
+.filtro-precio-rango {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.filtro-precio-rango input {
+  width: 70px;
+  padding: 6px 8px;
+  border: 1px solid #c7cbd6;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-family: 'Inter', sans-serif;
+}
+
+.filtro-precio-rango span {
+  color: #74767c;
+}
+
+/* ---------- 5. Main Content y Grid ---------- */
+.catalogo-main-content {
+  flex: 1;
+  min-width: 0;
+}
+
 .product-grid {
   display: grid;
-  grid-template-columns: 1fr; /* MÓVIL: Vista de lista de items */
-  gap: 16px;
+  grid-template-columns: 1fr 1fr; /* MÓVIL: 2 columnas */
+  gap: 12px;
 }
 
 .catalogo-vacio, .catalogo-estado {
@@ -223,39 +350,44 @@
    ========================================================== */
 
 @media (min-width: 769px) {
-  /* Configuración de grid para escritorio */
   .product-grid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Escritorio: Grid ajustado de tarjetas */
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 20px;
   }
 }
 
 /* ============================================
-   MOBILE (< 768px) para page structure
+   MOBILE (< 768px)
    ============================================ */
 @media (max-width: 768px) {
   .catalogo-layout {
     padding: 16px;
   }
 
-  .catalogo-header {
-    flex-direction: column;
-    gap: 16px;
+  .catalogo-filtros-rapidos {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    scrollbar-width: none;
+  }
+  .catalogo-filtros-rapidos::-webkit-scrollbar {
+    display: none;
   }
 
-  .catalogo-controles {
-    width: 100%;
-    justify-content: center; /* Center mobile buttons prominent */
+  .catalogo-ordenar-desktop {
+    display: none;
   }
-  .catalogo-controles__desktop-actions {
-      display: none; /* Hide inline controls on mobile */
+
+  .catalogo-header {
+    flex-direction: column;
+    gap: 12px;
   }
 
   .btn-filtros-mobile-cta {
     display: inline-block;
+    width: 100%;
   }
 
-  /* El sidebar se convierte en drawer deslizante,now styled clearly and integrated */
+  /* Sidebar se convierte en drawer deslizante */
   .catalogo-filtros {
     position: fixed;
     top: 0;
@@ -264,7 +396,7 @@
     width: 85%;
     max-width: 320px;
     z-index: 200;
-    padding: 24px;
+    padding: 20px;
     background: #FFFFFF;
     border-right: 1px solid #e3e4e5;
     transform: translateX(-100%);
@@ -275,6 +407,24 @@
     transform: translateX(0);
   }
 
+  .catalogo-filtros__header-mobile {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e3e4e5;
+  }
+
+  .catalogo-filtros__header-mobile button {
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+  }
+
   .catalogo-overlay {
     display: block;
     position: fixed;
@@ -282,7 +432,4 @@
     background: rgba(0, 0, 0, 0.5);
     z-index: 190;
   }
-
-  
-  .catalogo-filter-quick-pills { gap: 8px; }
 }
