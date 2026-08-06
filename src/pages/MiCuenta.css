@@ -1,0 +1,463 @@
+/* ============================================ */
+/* MI CUENTA - ESTILOS PRINCIPALES              */
+/* ============================================ */
+
+.mi-cuenta {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 24px 20px;
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+/* Loading */
+.cuenta-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 16px;
+  color: #666;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #e0e0e0;
+  border-top: 3px solid #1976d2;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Header */
+.cuenta-header {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.cuenta-header__info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.cuenta-avatar {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #1976d2, #42a5f5);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.cuenta-header__info h1 {
+  margin: 0;
+  font-size: 24px;
+  color: #1a1a1a;
+}
+
+.cuenta-email {
+  margin: 4px 0 0 0;
+  color: #666;
+  font-size: 14px;
+}
+
+/* Tabs */
+.cuenta-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  background: white;
+  padding: 6px;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.cuenta-tab {
+  flex: 1;
+  padding: 12px 20px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+  color: #666;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.cuenta-tab:hover {
+  background: #f5f5f5;
+  color: #333;
+}
+
+.cuenta-tab--active {
+  background: #1976d2;
+  color: white;
+}
+
+.cuenta-tab--active:hover {
+  background: #1565c0;
+  color: white;
+}
+
+/* Alert */
+.cuenta-alert {
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.cuenta-alert--error {
+  background: #ffebee;
+  color: #c62828;
+  border: 1px solid #ffcdd2;
+}
+
+.cuenta-alert--success {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+}
+
+/* ============================================ */
+/* RESUMEN - TARJETAS                           */
+/* ============================================ */
+
+.resumen-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.resumen-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.resumen-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+.resumen-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+}
+
+.resumen-card--ordenes::before { background: #1976d2; }
+.resumen-card--credito::before { background: #4caf50; }
+.resumen-card--deuda::before { background: #f44336; }
+.resumen-card--aldea::before { background: #4caf50; }
+
+.resumen-card__icon {
+  font-size: 32px;
+  min-width: 50px;
+  text-align: center;
+}
+
+.resumen-card__info {
+  flex: 1;
+}
+
+.resumen-card__label {
+  display: block;
+  font-size: 13px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.resumen-card__valor {
+  display: block;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-top: 4px;
+}
+
+.resumen-card--deuda .resumen-card__valor {
+  color: #d32f2f;
+}
+
+.resumen-card__link {
+  position: absolute;
+  bottom: 12px;
+  right: 16px;
+  font-size: 13px;
+  color: #1976d2;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.resumen-card__link:hover {
+  text-decoration: underline;
+}
+
+/* ============================================ */
+/* ACCESOS RÁPIDOS                              */
+/* ============================================ */
+
+.accesos-rapidos {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  margin-bottom: 32px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.accesos-rapidos h2 {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  color: #1a1a1a;
+}
+
+.accesos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.acceso-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 20px 16px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.acceso-item:hover {
+  background: #e3f2fd;
+  border-color: #1976d2;
+  transform: translateY(-2px);
+}
+
+.acceso-item__icon {
+  font-size: 28px;
+}
+
+.acceso-item__texto {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+/* ============================================ */
+/* ÚLTIMAS ÓRDENES                              */
+/* ============================================ */
+
+.ultimas-ordenes {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.ultimas-ordenes__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.ultimas-ordenes__header h2 {
+  margin: 0;
+  font-size: 18px;
+  color: #1a1a1a;
+}
+
+.ver-todas {
+  color: #1976d2;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.ver-todas:hover {
+  text-decoration: underline;
+}
+
+.ordenes-table-wrapper {
+  overflow-x: auto;
+}
+
+.ordenes-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ordenes-table th {
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #666;
+  border-bottom: 2px solid #e0e0e0;
+  font-weight: 600;
+}
+
+.ordenes-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 14px;
+}
+
+.orden-link {
+  color: #1976d2;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.orden-link:hover {
+  text-decoration: underline;
+}
+
+.estado-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.estado-pendiente {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.estado-finalizado {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.empty-state span {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 16px;
+}
+
+.empty-state p {
+  color: #666;
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+.btn-primary {
+  display: inline-block;
+  padding: 10px 24px;
+  background: #1976d2;
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover {
+  background: #1565c0;
+}
+
+/* ============================================ */
+/* RESPONSIVE                                   */
+/* ============================================ */
+
+@media (max-width: 768px) {
+  .mi-cuenta {
+    padding: 16px 12px;
+  }
+
+  .cuenta-header {
+    padding: 16px;
+  }
+
+  .cuenta-avatar {
+    width: 44px;
+    height: 44px;
+    font-size: 20px;
+  }
+
+  .cuenta-header__info h1 {
+    font-size: 20px;
+  }
+
+  .cuenta-tabs {
+    flex-direction: column;
+  }
+
+  .resumen-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .resumen-card {
+    padding: 16px;
+  }
+
+  .resumen-card__valor {
+    font-size: 20px;
+  }
+
+  .accesos-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ordenes-table th:nth-child(2),
+  .ordenes-table td:nth-child(2) {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .accesos-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .acceso-item {
+    padding: 16px 12px;
+  }
+
+  .ordenes-table th:nth-child(4),
+  .ordenes-table td:nth-child(4) {
+    display: none;
+  }
+}

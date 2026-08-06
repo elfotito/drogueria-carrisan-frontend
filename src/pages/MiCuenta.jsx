@@ -2,9 +2,12 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../api/axios'
 import { useAuth } from '../context/AuthContext'
+import GestionDirecciones from '../components/GestionDirecciones'
+import './MiCuenta.css'
 
 function MiCuenta() {
   const { user } = useAuth()
+  const [tabActiva, setTabActiva] = useState('resumen')
   const [estadoCuenta, setEstadoCuenta] = useState(null)
   const [ultimasOrdenes, setUltimasOrdenes] = useState([])
   const [cargando, setCargando] = useState(true)
@@ -16,11 +19,9 @@ function MiCuenta() {
 
   async function cargarDatos() {
     try {
-      // Traer estado de cuenta
       const { data: dataCuenta } = await api.get(`/clientes/${user.id}/estado-cuenta`)
       setEstadoCuenta(dataCuenta)
 
-      // Traer últimas 5 órdenes
       const { data: dataOrdenes } = await api.get('/orders')
       setUltimasOrdenes(dataOrdenes.slice(0, 5))
     } catch (err) {
@@ -31,105 +32,185 @@ function MiCuenta() {
     }
   }
 
-  if (cargando) return <p>Cargando...</p>
-
-  return (
-    <div style={{ maxWidth: '900px', margin: '0 auto', padding: '20px' }}>
-      <h1>Mi Cuenta</h1>
-      <p style={{ color: '#666' }}>Bienvenido, {user.nombre || user.email}</p>
-
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-
-      {/* Tarjetas de resumen */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px', marginTop: '30px' }}>
-        
-        <div style={cardStyle}>
-          <h3>📦 Órdenes</h3>
-          <p style={{ fontSize: '32px', fontWeight: 'bold', margin: '10px 0' }}>
-            {estadoCuenta?.resumen?.total_facturado ? 'Activo' : 'Sin datos'}
-          </p>
-          <Link to="/ordenes">Ver mis órdenes →</Link>
-        </div>
-
-        <div style={cardStyle}>
-          <h3>💰 Línea de crédito</h3>
-          <p style={{ fontSize: '32px', fontWeight: 'bold', margin: '10px 0' }}>
-            ${estadoCuenta?.cliente?.linea_credito?.toFixed(2) || '0.00'}
-          </p>
-          <span style={{ color: '#666' }}>Crédito disponible</span>
-        </div>
-
-        <div style={cardStyle}>
-          <h3>📊 Deuda actual</h3>
-          <p style={{ 
-            fontSize: '32px', 
-            fontWeight: 'bold', 
-            margin: '10px 0',
-            color: estadoCuenta?.resumen?.deuda_actual > 0 ? '#d32f2f' : '#2e7d32'
-          }}>
-            ${estadoCuenta?.resumen?.deuda_actual?.toFixed(2) || '0.00'}
-          </p>
-          <Link to={`/estado-cuenta`}>Ver estado de cuenta →</Link>
-        </div>
-      </div>
-
-      {/* Accesos rápidos */}
-      <div style={{ marginTop: '40px' }}>
-        <h2>Accesos rápidos</h2>
-        <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap', marginTop: '15px' }}>
-          <Link to="/cart" style={linkButtonStyle}>🛒 Ir al carrito</Link>
-          <Link to="/ordenes" style={linkButtonStyle}>📋 Mis órdenes</Link>
-          <Link to="/mis-items" style={linkButtonStyle}>📦 Mis Items</Link>
-        </div>
-      </div>
-
-      {/* Últimas órdenes */}
-      <div style={{ marginTop: '40px' }}>
-        <h2>Últimas órdenes</h2>
-        {ultimasOrdenes.length === 0 ? (
-          <p>Aún no tienes órdenes</p>
-        ) : (
-          <table style={{ width: '100%', marginTop: '15px' }}>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Total</th>
-                <th>Estado</th>
-                <th>Fecha</th>
-              </tr>
-            </thead>
-            <tbody>
-              {ultimasOrdenes.map(orden => (
-                <tr key={orden.id}>
-                  <td>#{orden.id}</td>
-                  <td>${Number(orden.total_usd).toFixed(2)}</td>
-                  <td>{orden.estado}</td>
-                  <td>{new Date(orden.created_at).toLocaleDateString('es-VE')}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+  if (cargando) return (
+    <div className="cuenta-loading">
+      <div className="spinner"></div>
+      <p>Cargando tu cuenta...</p>
     </div>
   )
-}
 
-const cardStyle = {
-  background: 'white',
-  padding: '20px',
-  borderRadius: '8px',
-  border: '1px solid #e0e0e0',
-  textAlign: 'center'
-}
+  return (
+    <div className="mi-cuenta">
+      {/* Header */}
+      <div className="cuenta-header">
+        <div className="cuenta-header__info">
+          <div className="cuenta-avatar">
+            {user.nombre?.charAt(0)?.toUpperCase() || user.email?.charAt(0)?.toUpperCase()}
+          </div>
+          <div>
+            <h1>¡Hola, {user.nombre || 'Usuario'}!</h1>
+            <p className="cuenta-email">{user.email}</p>
+          </div>
+        </div>
+      </div>
 
-const linkButtonStyle = {
-  padding: '10px 20px',
-  background: '#f5f5f5',
-  border: '1px solid #ddd',
-  borderRadius: '8px',
-  textDecoration: 'none',
-  color: '#333'
+      {/* Tabs de navegación */}
+      <div className="cuenta-tabs">
+        <button 
+          className={`cuenta-tab ${tabActiva === 'resumen' ? 'cuenta-tab--active' : ''}`}
+          onClick={() => setTabActiva('resumen')}
+        >
+          📊 Resumen
+        </button>
+        <button 
+          className={`cuenta-tab ${tabActiva === 'direcciones' ? 'cuenta-tab--active' : ''}`}
+          onClick={() => setTabActiva('direcciones')}
+        >
+          📍 Direcciones
+        </button>
+        <button 
+          className={`cuenta-tab ${tabActiva === 'ordenes' ? 'cuenta-tab--active' : ''}`}
+          onClick={() => setTabActiva('ordenes')}
+        >
+          📋 Mis Órdenes
+        </button>
+      </div>
+
+      {/* Contenido de tabs */}
+      {tabActiva === 'resumen' && (
+        <div className="cuenta-resumen">
+          {error && <div className="cuenta-alert cuenta-alert--error">{error}</div>}
+
+          {/* Tarjetas de resumen */}
+          <div className="resumen-cards">
+            <div className="resumen-card resumen-card--ordenes">
+              <div className="resumen-card__icon">📦</div>
+              <div className="resumen-card__info">
+                <span className="resumen-card__label">Total Órdenes</span>
+                <span className="resumen-card__valor">
+                  {estadoCuenta?.resumen?.total_facturado ? 'Activo' : 'Sin datos'}
+                </span>
+              </div>
+              <Link to="/orders" className="resumen-card__link">Ver todas →</Link>
+            </div>
+
+            <div className="resumen-card resumen-card--credito">
+              <div className="resumen-card__icon">💰</div>
+              <div className="resumen-card__info">
+                <span className="resumen-card__label">Línea de Crédito</span>
+                <span className="resumen-card__valor">
+                  ${estadoCuenta?.cliente?.linea_credito?.toFixed(2) || '0.00'}
+                </span>
+              </div>
+              <Link to="/estado-cuenta" className="resumen-card__link">Ver detalle →</Link>
+            </div>
+
+            <div className={`resumen-card ${estadoCuenta?.resumen?.deuda_actual > 0 ? 'resumen-card--deuda' : 'resumen-card--aldea'}`}>
+              <div className="resumen-card__icon">📊</div>
+              <div className="resumen-card__info">
+                <span className="resumen-card__label">Deuda Actual</span>
+                <span className="resumen-card__valor">
+                  ${estadoCuenta?.resumen?.deuda_actual?.toFixed(2) || '0.00'}
+                </span>
+              </div>
+              <Link to="/estado-cuenta" className="resumen-card__link">Ver estado →</Link>
+            </div>
+          </div>
+
+          {/* Accesos rápidos */}
+          <div className="accesos-rapidos">
+            <h2>Accesos Rápidos</h2>
+            <div className="accesos-grid">
+              <Link to="/catalogo" className="acceso-item">
+                <span className="acceso-item__icon">🛍️</span>
+                <span className="acceso-item__texto">Catálogo</span>
+              </Link>
+              <Link to="/carrito" className="acceso-item">
+                <span className="acceso-item__icon">🛒</span>
+                <span className="acceso-item__texto">Carrito</span>
+              </Link>
+              <Link to="/mis-items" className="acceso-item">
+                <span className="acceso-item__icon">⭐</span>
+                <span className="acceso-item__texto">Mis Items</span>
+              </Link>
+              <Link to="/notificaciones" className="acceso-item">
+                <span className="acceso-item__icon">🔔</span>
+                <span className="acceso-item__texto">Notificaciones</span>
+              </Link>
+            </div>
+          </div>
+
+          {/* Últimas órdenes */}
+          <div className="ultimas-ordenes">
+            <div className="ultimas-ordenes__header">
+              <h2>Últimas Órdenes</h2>
+              <Link to="/orders" className="ver-todas">Ver todas →</Link>
+            </div>
+            
+            {ultimasOrdenes.length === 0 ? (
+              <div className="empty-state">
+                <span>📋</span>
+                <p>Aún no tienes órdenes</p>
+                <Link to="/catalogo" className="btn-primary">Ir al catálogo</Link>
+              </div>
+            ) : (
+              <div className="ordenes-table-wrapper">
+                <table className="ordenes-table">
+                  <thead>
+                    <tr>
+                      <th>Orden #</th>
+                      <th>Tipo</th>
+                      <th>Total</th>
+                      <th>Estado</th>
+                      <th>Fecha</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {ultimasOrdenes.map(orden => (
+                      <tr key={orden.id}>
+                        <td>
+                          <Link to={`/orders/${orden.id}`} className="orden-link">
+                            #{orden.id}
+                          </Link>
+                        </td>
+                        <td>
+                          {orden.tipo_envio === 'delivery' && '🛵 Delivery'}
+                          {orden.tipo_envio === 'envio_nacional' && '📦 Envío Nac.'}
+                          {(!orden.tipo_envio || orden.tipo_envio === 'retiro') && '🏪 Retiro'}
+                        </td>
+                        <td>${Number(orden.total_usd).toFixed(2)}</td>
+                        <td>
+                          <span className={`estado-badge estado-${orden.estado}`}>
+                            {orden.estado}
+                          </span>
+                        </td>
+                        <td>{new Date(orden.created_at).toLocaleDateString('es-VE', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric'
+                        })}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {tabActiva === 'direcciones' && (
+        <GestionDirecciones />
+      )}
+
+      {tabActiva === 'ordenes' && (
+        <div className="cuenta-ordenes">
+          <h2>Todas mis órdenes</h2>
+          <Link to="/orders" className="btn-primary">Ver todas las órdenes →</Link>
+        </div>
+      )}
+    </div>
+  )
 }
 
 export default MiCuenta
