@@ -1,167 +1,32 @@
-
 /* ============================================
    Catálogo — Layout y Tipografía
    ============================================ */
 
+/* Standard white background page layout */
 .catalogo-layout {
-  max-width: 1600px; /* Un poco más ancho para dar respiro al grid */
+  max-width: 1400px; /* Match standard broad screen width */
   margin: 0 auto;
   padding: 24px;
   font-family: 'Inter', sans-serif;
-  color: #ffffff;
+  color: #14182A; /* Dark text */
+  background: #FFFFFF;
 }
 
-/* ---------- 1. Categorías Rápidas (Top Bar) ---------- */
-.catalogo-quick-links {
-  display: flex;
-  align-items: center;
-  gap: 32px;
-  padding-bottom: 24px;
-  overflow-x: auto;
-  scrollbar-width: none; /* Oculta scroll en Firefox */
-}
-
-.catalogo-quick-links::-webkit-scrollbar {
-  display: none; /* Oculta scroll en Chrome/Safari */
-}
-
-.quick-link-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  min-width: max-content;
-}
-
-.quick-link-icon {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: #f4f6f8;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  transition: box-shadow 0.2s;
-}
-
-.quick-link-item:hover .quick-link-icon {
-  box-shadow: 0 0 0 2px #000;
-}
-
-.quick-link-text {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #2e2f32;
-}
-
-.catalogo-divider {
-  width: 100%;
-  height: 1px;
-  background: #e3e4e5;
-  margin-bottom: 24px;
-}
-
-/* ---------- Body: Sidebar + Main Content ---------- */
-.catalogo-body {
-  display: flex;
-  align-items: flex-start;
-  gap: 40px;
-  position: relative;
-}
-
-/* ---------- 2. Sidebar de Filtros ---------- */
-.catalogo-filtros {
-  flex: 0 0 240px;
-  position: sticky;
-  top: 90px;
-  background: #ffffff;
-  padding-right: 10px;
-  max-height: calc(100vh - 100px);
-  overflow-y: auto;
-}
-
-/* Secciones del sidebar */
-.filtro-seccion {
-  padding: 16px 0;
-  border-bottom: 1px solid #e3e4e5;
-}
-
-.filtro-seccion:first-child {
-  padding-top: 0;
-}
-
-.filtro-titulo {
-  font-size: 1rem;
-  font-weight: 700;
-  margin: 0 0 16px 0;
-  color: #000;
-}
-
-/* Píldoras sugeridas */
-.filtro-pills-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.filtro-pill {
-  background: #ffffff;
-  border: 1px solid #74767c;
-  border-radius: 999px;
-  padding: 6px 14px;
-  font-size: 0.85rem;
-  font-family: 'Inter', sans-serif;
-  color: #000;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.filtro-pill:hover {
-  border-color: #000;
-  background: #f4f6f8;
-}
-
-/* Acordeones */
-.filtro-accordion-btn {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: none;
-  border: none;
-  padding: 0;
-  font-size: 1rem;
-  font-weight: 700;
-  color: #000;
-  cursor: pointer;
-}
-
-/* ---------- 3. Main Content y Header ---------- */
-.catalogo-main-content {
-  flex: 1;
-  min-width: 0; 
-}
-
+/* ---------- 1. Header and Page Text ---------- */
 .catalogo-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 24px;
+  border-bottom: 1px solid #e3e4e5;
+  padding-bottom: 16px;
 }
 
 .header-titles h1 {
   font-size: 1.25rem;
   font-weight: 400;
   margin: 0 0 4px 0;
-  color: #000;
-}
-
-.header-titles h1 strong {
-  font-weight: 700;
+  color: #1a1a1a;
 }
 
 .header-titles h1 span {
@@ -175,10 +40,15 @@
   margin: 0;
 }
 
-/* Controles de orden */
+/* Mobile-prominent controls, or desktop-inline */
 .catalogo-controles {
   display: flex;
   align-items: center;
+  gap: 12px;
+}
+
+.catalogo-controles__desktop-actions {
+  display: flex;
   gap: 12px;
 }
 
@@ -187,27 +57,157 @@
   font-size: 0.9rem;
   font-weight: 600;
   padding: 8px 32px 8px 16px;
-  border: 1px solid #000;
+  border: 1px solid #1a1a1a;
   border-radius: 999px;
   background: #fff;
-  color: #000;
+  color: #1a1a1a;
   cursor: pointer;
   appearance: none;
-  /* Icono de chevron básico incrustado en el select */
-  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E");
+  /* Basic Chevron Icon cross-browser select */
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%231a1a1a%22%20stroke-width%3D%222%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
 }
 
-.btn-filtros-mobile {
+/* Central Mobile filter button CTA, prominently like in image_1 */
+.btn-filtros-mobile-cta {
+  display: none; /* Only show on mobile */
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 10px 20px;
+  background: #fff;
+  border: 1px solid #1a1a1a;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ---------- 2. New Píldoras de Filtro carrusel ---------- */
+.catalogo-filter-quick-pills {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 10px 0 16px;
+  scrollbar-width: none; /* Hide scrollbar for cross-browser */
+}
+.catalogo-filter-quick-pills::-webkit-scrollbar {
   display: none;
 }
 
-/* ---------- Grid de productos ---------- */
+.quick-pill-item {
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  font-family: 'Inter', sans-serif;
+  color: #1a1a1a;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.quick-pill-item:hover {
+  border-color: #1a1a1a;
+  background: #f4f6f8;
+}
+
+.catalogo-divider {
+  width: 100%;
+  height: 1px;
+  background: #e3e4e5;
+  margin-bottom: 24px;
+}
+
+/* ---------- 3. Body: Sidebar + Main Content ---------- */
+.catalogo-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+  position: relative;
+}
+
+/* Barra Lateral de Filtros */
+.catalogo-filtros {
+  flex: 0 0 240px; /* Standard sidebar width */
+  position: sticky;
+  top: 100px; /* Adjust top positioning as needed for main nav */
+  background: #FFFFFF;
+  padding-right: 12px;
+  max-height: calc(100vh - 120px); /* Fill screen but allow scrolling */
+  overflow-y: auto;
+}
+
+/* Secciones del sidebar */
+.filtro-seccion {
+  padding: 16px 0;
+  border-bottom: 1px solid #e3e4e5;
+}
+
+.filtro-titulo {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 16px 0;
+  color: #1a1a1a;
+}
+
+/* Content block within filter sections */
+.filtro-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Píldoras in filter sections */
+.filtro-pill {
+  background: #ffffff;
+  border: 1px solid #74767c;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  font-family: 'Inter', sans-serif;
+  color: #1a1a1a;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filtro-pill:hover, .filtro-pill.active {
+  border-color: #1a1a1a;
+  background: #f4f6f8;
+}
+.filtro-pill.active { background: #1B4B8F; color: #FFFFFF; } /* Style active filters */
+
+/* Acordeones style in filter sections */
+.filtro-accordion-btn {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  cursor: pointer;
+}
+.filtro-accordion-btn svg {
+    transition: transform 0.2s ease;
+}
+/* If active accordion, you might add a rule here with active class: .filtro-accordion-btn.active svg { transform: rotate(180deg); } */
+
+/* ---------- 4. Main Content and Grid ---------- */
+.catalogo-main-content {
+  flex: 1;
+  min-width: 0; /* Important for grid within flexbox to scroll properly */
+}
+
+/* GRID de productos responsive */
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 24px;
+  grid-template-columns: 1fr; /* MÓVIL: Vista de lista de items */
+  gap: 16px;
 }
 
 .catalogo-vacio, .catalogo-estado {
@@ -220,22 +220,20 @@
   color: #c0392b;
 }
 
-/* ============================================
-   Skeleton loaders (Se mantiene tu estilo original)
-   ============================================ */
-.skeleton-block {
-  background: linear-gradient(90deg, rgba(35, 43, 69, 0.06) 25%, rgba(35, 43, 69, 0.12) 37%, rgba(35, 43, 69, 0.06) 63%);
-  background-size: 400% 100%;
-  animation: skeleton-shimmer 1.4s ease infinite;
-  border-radius: 6px;
-}
-@keyframes skeleton-shimmer {
-  0% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+/* ==========================================================
+   DESKTOP OVERRIDE (> 768px)
+   ========================================================== */
+
+@media (min-width: 769px) {
+  /* Configuración de grid para escritorio */
+  .product-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Escritorio: Grid ajustado de tarjetas */
+    gap: 20px;
+  }
 }
 
 /* ============================================
-   MOBILE (< 768px)
+   MOBILE (< 768px) para page structure
    ============================================ */
 @media (max-width: 768px) {
   .catalogo-layout {
@@ -249,22 +247,17 @@
 
   .catalogo-controles {
     width: 100%;
-    justify-content: space-between;
+    justify-content: center; /* Center mobile buttons prominent */
+  }
+  .catalogo-controles__desktop-actions {
+      display: none; /* Hide inline controls on mobile */
   }
 
-  .btn-filtros-mobile {
+  .btn-filtros-mobile-cta {
     display: inline-block;
-    font-family: 'Inter', sans-serif;
-    font-weight: 600;
-    font-size: 0.9rem;
-    padding: 8px 16px;
-    background: #fff;
-    border: 1px solid #000;
-    border-radius: 999px;
-    cursor: pointer;
   }
 
-  /* El sidebar se convierte en drawer deslizante */
+  /* El sidebar se convierte en drawer deslizante,now styled clearly and integrated */
   .catalogo-filtros {
     position: fixed;
     top: 0;
@@ -274,6 +267,8 @@
     max-width: 320px;
     z-index: 200;
     padding: 24px;
+    background: #FFFFFF;
+    border-right: 1px solid #e3e4e5;
     transform: translateX(-100%);
     transition: transform 0.3s ease;
   }
@@ -290,264 +285,6 @@
     z-index: 190;
   }
 
-  .product-grid {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 16px;
-  }
-}
-
-/* ==========================================================
-   Carrusel de categorías rápidas — pegar en Catalogo.css
-   (reemplaza cualquier regla .catalogo-quick-links / .quick-link-item
-   que ya tengas)
-   ========================================================== */
-
-.catalogo-quick-links {
-  display: flex;
-  gap: 14px;
-  overflow-x: auto;
-  padding: 14px 16px;
-  scroll-snap-type: x proximity;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
-
-.catalogo-quick-links::-webkit-scrollbar {
-  display: none;
-}
-
-.quick-link-item {
-  flex: 0 0 auto;
-  scroll-snap-align: start;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  width: 76px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 4px 0;
-}
-
-.quick-link-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: #EEF3FB;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  border: 1.5px solid transparent;
-  transition: border-color 0.15s ease, background 0.15s ease;
-}
-
-.quick-link-text {
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: #14182A;
-  text-align: center;
-  line-height: 1.2;
-}
-
-.quick-link-item--activo .quick-link-icon {
-  background: #1B4B8F;
-  border-color: #1B4B8F;
-}
-
-.quick-link-item--activo .quick-link-icon {
-  filter: none;
-}
-
-.quick-link-item--activo .quick-link-text {
-  color: #1B4B8F;
-  font-weight: 800;
-}
-/* ============================================
-   Product Card — Estilo Walmart
-   ============================================ */
-
-.product-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 20px;
-}
-
-.product-card {
-  background: white;
-  border: 1px solid #e8e8e8;
-  border-radius: 8px;
-  overflow: hidden;
-  transition: box-shadow 0.2s ease;
-  display: flex;
-  flex-direction: column;
-}
-
-.product-card:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-}
-
-/* Imagen + Badge */
-.product-card__imagen-wrapper {
-  position: relative;
-  background: #f8f8f8;
-  cursor: pointer;
-  aspect-ratio: 1 / 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-}
-
-.product-card__imagen {
-  max-width: 80%;
-  max-height: 80%;
-  object-fit: contain;
-  mix-blend-mode: multiply; /* Efecto profesional sobre fondo gris */
-}
-
-/* Badge de precio sobre la imagen */
-.product-card__precio-badge {
-  position: absolute;
-  bottom: 8px;
-  left: 8px;
-  background: white;
-  padding: 4px 10px;
-  border-radius: 4px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.product-card__precio-usd {
-  font-size: 16px;
-  font-weight: 700;
-  color: #1a1a1a;
-  line-height: 1.2;
-}
-
-.product-card__precio-ves {
-  font-size: 11px;
-  color: #757575;
-  line-height: 1.2;
-}
-
-/* Info */
-.product-card__info {
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  flex: 1;
-}
-
-.product-card__nombre {
-  font-size: 14px;
-  font-weight: 500;
-  color: #1a1a1a;
-  margin: 0;
-  line-height: 1.3;
-  cursor: pointer;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.product-card__nombre:hover {
-  color: #1976d2;
-}
-
-.product-card__marca {
-  font-size: 12px;
-  color: #757575;
-  margin: 0;
-}
-
-/* Acciones */
-.product-card__acciones {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: auto;
-}
-
-/* Botón + Agregar */
-.product-card__btn-agregar {
-  flex: 1;
-  padding: 8px 16px;
-  background: white;
-  color: #1976d2;
-  border: 2px solid #1976d2;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  white-space: nowrap;
-}
-
-.product-card__btn-agregar:hover {
-  background: #e3f2fd;
-}
-
-/* Contador − N + */
-.product-card__contador {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  flex: 1;
-  border: 2px solid #1976d2;
-  border-radius: 20px;
-  overflow: hidden;
-}
-
-.contador-btn {
-  flex: 1;
-  padding: 8px 12px;
-  background: white;
-  border: none;
-  font-size: 18px;
-  font-weight: 600;
-  color: #1976d2;
-  cursor: pointer;
-  transition: background 0.15s ease;
-}
-
-.contador-btn:hover {
-  background: #e3f2fd;
-}
-
-.contador-cantidad {
-  padding: 8px 12px;
-  font-size: 14px;
-  font-weight: 700;
-  color: #1a1a1a;
-  background: #f5f5f5;
-  min-width: 30px;
-  text-align: center;
-  user-select: none;
-}
-
-/* Botón Mis Items */
-.product-card__btn-items {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 1px solid #e0e0e0;
-  background: white;
-  font-size: 16px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.15s ease;
-  flex-shrink: 0;
-}
-
-.product-card__btn-items:hover {
-  background: #f5f5f5;
-  border-color: #ccc;
+  /* Filter quick pills in mobile header could be re-ordered, but let's keep them here. We can decrease gaps. */
+  .catalogo-filter-quick-pills { gap: 8px; }
 }
