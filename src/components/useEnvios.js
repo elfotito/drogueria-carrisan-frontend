@@ -1,3 +1,4 @@
+// frontend/src/hooks/useEnvio.js
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
@@ -71,7 +72,8 @@ export const useEnvio = () => {
       if (data.length === 1) {
         setDireccionSeleccionada(data[0]);
       } else {
-        setDireccionSeleccionada(null);
+        // 🆕 Seleccionar la primera si hay varias
+        setDireccionSeleccionada(data.length > 0 ? data[0] : null);
       }
     } catch (error) {
       console.error('Error cargando direcciones:', error);
@@ -93,14 +95,24 @@ export const useEnvio = () => {
     }
   }, [opcionesEnvio, cargarDirecciones]);
 
-  // Guardar nueva dirección
+  // 🆕 Guardar nueva dirección - AHORA INCLUYE tipo_direccion
   const guardarDireccion = async (direccionData) => {
     try {
-      const { data } = await api.post('/direcciones', direccionData);
       const opcion = opcionesEnvio.find(op => op.id === tipoEnvio);
+      
+      // Agregar el tipo_direccion según la opción actual
+      const dataConTipo = {
+        ...direccionData,
+        tipo_direccion: opcion?.tipoDireccion || 'delivery'
+      };
+      
+      const { data } = await api.post('/direcciones', dataConTipo);
+      
+      // Recargar direcciones del tipo actual
       if (opcion?.tipoDireccion) {
         await cargarDirecciones(opcion.tipoDireccion);
       }
+      
       setDireccionSeleccionada(data);
       return data;
     } catch (error) {

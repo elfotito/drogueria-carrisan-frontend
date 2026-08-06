@@ -94,24 +94,25 @@ function DireccionSelector({
   })
 
   const handleAgregar = async (e) => {
-    e.preventDefault()
-    if (!nuevaDireccion.nombre || !nuevaDireccion.direccion) return
-    
-    try {
-      await onAgregar(nuevaDireccion)
-      setMostrarForm(false)
-      setNuevaDireccion({
-        nombre: '',
-        direccion: '',
-        ciudad: '',
-        estado: '',
-        telefono_contacto: '',
-        referencia: ''
-      })
-    } catch (error) {
-      console.error('Error al guardar dirección:', error)
-    }
+  e.preventDefault()
+  if (!nuevaDireccion.nombre || !nuevaDireccion.direccion) return
+  
+  try {
+    // No incluyas tipo_direccion aquí, el hook lo agrega solo
+    await onAgregar(nuevaDireccion)
+    setMostrarForm(false)
+    setNuevaDireccion({
+      nombre: '',
+      direccion: '',
+      ciudad: '',
+      estado: '',
+      telefono_contacto: '',
+      referencia: ''
+    })
+  } catch (error) {
+    console.error('Error al guardar dirección:', error)
   }
+}
 
   if (loading) return <p className="delivery-info__text">Cargando direcciones...</p>
 
