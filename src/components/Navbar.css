@@ -16,10 +16,15 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
+/* 1. FIJAR LA BARRA */
 .navbar-container {
   background-color: var(--wm-blue);
   color: white;
   width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* Sombra suave opcional */
 }
 
 /* ============================================ */
@@ -50,10 +55,10 @@ body {
 }
 
 /* ============================================ */
-/* PICKUP BOTÓN & DROPDOWN (ESCRITORIO)         */
+/* PICKUP BOTÓN & DROPDOWN                      */
 /* ============================================ */
 .pickup-dropdown-wrapper {
-  position: relative; /* Clave para que el dropdown se adhiera aquí */
+  position: relative;
 }
 
 .navbar__pickup-btn {
@@ -89,34 +94,23 @@ body {
   flex-direction: column;
 }
 
-.pickup-btn__title {
-  font-weight: 700;
-  font-size: 14px;
-}
+.pickup-btn__title { font-weight: 700; font-size: 14px; }
+.pickup-btn__subtitle { font-size: 12px; }
 
-.pickup-btn__subtitle {
-  font-size: 12px;
-}
-
-.pickup-btn__arrow {
-  transition: transform 0.3s;
-}
-.pickup-btn__arrow.rotated {
-  transform: rotate(180deg);
-}
+.pickup-btn__arrow { transition: transform 0.3s; }
+.pickup-btn__arrow.rotated { transform: rotate(180deg); }
 
 /* ============================================ */
-/* PANEL DESPLEGABLE (Pickup or Delivery)       */
+/* PANEL DE ENVÍO (Estilo Walmart aplicado)     */
 /* ============================================ */
 .envio-panel-content {
   background: var(--wm-blue);
   color: white;
   padding: 16px;
   border-radius: 0 0 12px 12px;
-  width: 320px;
+  width: 340px;
 }
 
-/* En escritorio flota absoluto, en móvil es estático */
 .pickup-dropdown-wrapper .envio-panel-content {
   position: absolute;
   top: 100%;
@@ -126,22 +120,49 @@ body {
   z-index: 100;
 }
 
+.envio-panel-header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+.close-panel-btn {
+  background: none; border: none; color: white; font-size: 18px; cursor: pointer;
+}
+
 .envio-types {
   display: flex;
   justify-content: space-around;
   margin-bottom: 20px;
+  gap: 8px;
 }
 
 .envio-type-btn {
   background: transparent;
-  border: none;
+  border: 2px solid transparent;
   color: white;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   cursor: pointer;
-  font-weight: 600;
+  padding: 8px;
+  border-radius: 12px;
+  transition: all 0.2s;
+  flex: 1;
+}
+
+.envio-type-btn:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+.envio-type-btn.active {
+  background: white;
+  color: var(--wm-blue);
+}
+
+.envio-type-btn.active .envio-circle {
+  background: var(--wm-blue);
+  color: white;
 }
 
 .envio-circle {
@@ -153,7 +174,11 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 24px;
 }
+
+.envio-label { font-weight: 700; font-size: 14px; }
+.envio-costo { font-size: 11px; opacity: 0.9; }
 
 .envio-cards {
   display: flex;
@@ -165,60 +190,79 @@ body {
   background: white;
   color: var(--text-main);
   border-radius: 8px;
-  padding: 16px;
+  padding: 12px;
   text-align: left;
-}
-
-.envio-card-header {
   display: flex;
-  gap: 12px;
   align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  border: 2px solid transparent;
 }
 
-.envio-card-header p {
-  margin: 4px 0 0;
-  font-size: 12px;
-  color: var(--text-light);
+.envio-card.selected {
+  border-color: var(--wm-yellow);
+  background: #fffdf5;
 }
+
+.envio-radio { margin-top: 4px; cursor: pointer; }
+
+.envio-card-info p { margin: 4px 0; font-size: 14px; color: var(--text-light); }
+.envio-card-info small { color: #777; font-size: 12px; }
 
 .envio-add-btn {
-  background: var(--wm-blue);
-  color: white;
+  background: white;
+  color: var(--wm-blue);
   border: none;
   border-radius: 20px;
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   font-weight: 600;
-  margin: 16px 0;
   cursor: pointer;
 }
 
-.envio-card-footer {
+/* Formularios de dirección */
+.envio-form {
+  background: white;
+  padding: 12px;
+  border-radius: 8px;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 8px;
-  border-top: 1px solid #eee;
-  padding-top: 12px;
-  font-size: 14px;
-}
-.arrow-right {
-  margin-left: auto;
-  color: #777;
 }
 
+.envio-form input, .envio-form textarea, .envio-form select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.envio-form .input-disabled { background: #eee; color: #888; }
+
+.form-actions { display: flex; gap: 8px; margin-top: 8px; }
+.btn-guardar { background: var(--wm-blue); color: white; border: none; padding: 10px; border-radius: 20px; flex: 1; cursor: pointer; font-weight: bold; }
+.btn-cancelar { background: white; border: 1px solid #ccc; color: var(--text-main); padding: 10px; border-radius: 20px; cursor: pointer; font-weight: bold; }
+
+.envio-mensaje { padding: 10px; border-radius: 6px; margin-bottom: 12px; font-size: 14px; text-align: center; }
+.envio-mensaje.success { background: #e8f5e9; color: #2e7d32; }
+.envio-mensaje.error { background: #ffebee; color: #c62828; }
+
 /* ============================================ */
-/* BUSCADOR (Píldora)                           */
+/* BUSCADOR (Lupa centrada y Sugerencias)       */
 /* ============================================ */
 .navbar__search-wrapper {
   flex: 1;
+  position: relative;
 }
 
 .navbar__search {
   display: flex;
+  align-items: center;     /* Asegura el centrado vertical */
   background: white;
   border-radius: 24px;
-  padding: 4px;
   height: 40px;
+  padding-right: 4px;      /* Espacio para que el botón respire */
 }
 
 .navbar__search input {
@@ -229,6 +273,7 @@ body {
   font-size: 15px;
   outline: none;
   border-radius: 24px 0 0 24px;
+  height: 100%;
 }
 
 .search-btn {
@@ -236,81 +281,70 @@ body {
   color: white;
   border: none;
   border-radius: 50%;
-  width: 32px;
+  width: 32px;            /* Tamaño exacto, igual que el alto */
   height: 32px;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: center;    /* Centra el ícono verticalmente */
+  justify-content: center;/* Centra el ícono horizontalmente */
   cursor: pointer;
+  flex-shrink: 0;         /* Evita que se encoja */
 }
+
+/* Dropdown de Sugerencias */
+.search-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 8px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  overflow: hidden;
+  z-index: 105;
+}
+
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text-main);
+  text-align: left;
+}
+
+.suggestion-item:hover { background: #f2f8fd; }
+.suggestion-price { font-weight: 700; color: var(--wm-dark-blue); }
+
 
 /* ============================================ */
 /* ACCIONES (Derecha)                           */
 /* ============================================ */
-.navbar__actions {
-  display: flex;
-  gap: 16px;
-}
+.navbar__actions { display: flex; gap: 16px; }
 
 .action-btn {
-  background: transparent;
-  border: none;
-  color: white;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  padding: 8px;
-  border-radius: 24px;
-  transition: background 0.2s;
+  background: transparent; border: none; color: white; display: flex; align-items: center;
+  gap: 8px; cursor: pointer; padding: 8px; border-radius: 24px; transition: background 0.2s;
 }
-
-.action-btn:hover {
-  background: rgba(0, 0, 0, 0.2);
-}
-
-.action-text {
-  display: flex;
-  flex-direction: column;
-  text-align: left;
-  font-size: 13px;
-}
+.action-btn:hover { background: rgba(0, 0, 0, 0.2); }
+.action-text { display: flex; flex-direction: column; text-align: left; font-size: 13px; }
 
 .navbar__cart {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: white;
-  text-decoration: none;
-  padding: 4px 8px;
-  border-radius: 8px;
+  display: flex; flex-direction: column; align-items: center; color: white;
+  text-decoration: none; padding: 4px 8px; border-radius: 8px;
 }
-
-.cart-icon-wrapper {
-  position: relative;
-}
-
+.cart-icon-wrapper { position: relative; }
 .cart-badge {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  background: var(--wm-yellow);
-  color: black;
-  font-size: 11px;
-  font-weight: 700;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: absolute; top: -8px; right: -8px; background: var(--wm-yellow); color: black;
+  font-size: 11px; font-weight: 700; width: 18px; height: 18px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
 }
-
-.cart-price {
-  font-size: 13px;
-  font-weight: 700;
-  margin-top: 2px;
-}
+.cart-price { font-size: 13px; font-weight: 700; margin-top: 2px; }
 
 /* ============================================ */
 /* BARRA SECUNDARIA (Blanca)                    */
@@ -331,91 +365,66 @@ body {
   overflow-x: auto;
   white-space: nowrap;
 }
-
-.navbar__secondary-inner::-webkit-scrollbar {
-  display: none;
-}
+.navbar__secondary-inner::-webkit-scrollbar { display: none; }
 
 .pill-btn, .pill-link {
-  background: white;
-  border: 1px solid white;
-  padding: 6px 12px;
-  border-radius: 16px;
-  font-size: 14px;
-  color: var(--text-main);
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  cursor: pointer;
+  background: white; border: 1px solid white; padding: 6px 12px; border-radius: 16px;
+  font-size: 14px; color: var(--text-main); text-decoration: none; display: flex;
+  align-items: center; gap: 4px; cursor: pointer;
 }
-
-.pill-btn:hover, .pill-link:hover {
-  border-color: black;
-}
-
-.divider {
-  width: 1px;
-  height: 20px;
-  background: #ccc;
-  margin: 0 4px;
-}
+.pill-btn:hover, .pill-link:hover { border-color: black; }
+.divider { width: 1px; height: 20px; background: #ccc; margin: 0 4px; }
 
 /* ============================================ */
 /* RESPONSIVO (Tablet comparte con Desktop)     */
 /* ============================================ */
-
-/* Dispositivos Móviles (hasta 767px) */
 @media (max-width: 767px) {
-  .desktop-only {
-    display: none !important;
-  }
+  .desktop-only { display: none !important; }
+  .navbar__main { padding: 12px; gap: 12px; }
+  .navbar__menu-mobile { display: flex; }
 
-  .navbar__main {
-    padding: 12px;
-    gap: 12px;
-  }
-
-  .navbar__menu-mobile {
-    display: flex;
-  }
-
-  /* El botón de pickup en móvil ocupa toda la fila inferior */
   .navbar__mobile-pickup {
     background: var(--wm-dark-blue);
     border-top: 1px solid rgba(255,255,255,0.1);
   }
-
   .navbar__mobile-pickup .navbar__pickup-btn {
-    width: 100%;
-    border-radius: 0;
-    background: transparent;
-    justify-content: space-between;
-    padding: 12px 16px;
+    width: 100%; border-radius: 0; background: transparent;
+    justify-content: space-between; padding: 12px 16px;
   }
+  .pickup-btn__left, .pickup-btn__right { display: flex; align-items: center; gap: 10px; }
 
-  .pickup-btn__left, .pickup-btn__right {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  /* El panel de envío en móvil fluye hacia abajo, no flota */
   .mobile-dropdown-container .envio-panel-content {
-    width: 100%;
-    border-radius: 0;
-    box-sizing: border-box;
+    width: 100%; border-radius: 0; box-sizing: border-box;
     box-shadow: inset 0 4px 8px rgba(0,0,0,0.1);
   }
 }
 
-/* Tablet y Desktop (768px en adelante) */
 @media (min-width: 768px) {
-  .mobile-only {
-    display: none !important;
+  .mobile-only { display: none !important; }
+  .navbar__menu-mobile { display: none; }
+}
+
+/* ============================================ */
+/* ANIMACIÓN DEL PANEL (Deslizamiento suave)    */
+/* ============================================ */
+@keyframes slideDownFade {
+  0% {
+    opacity: 0;
+    transform: translateY(-15px);
   }
-  
-  .navbar__menu-mobile {
-    display: none;
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
+}
+
+.envio-panel-content {
+  background: var(--wm-blue);
+  color: white;
+  padding: 16px;
+  border-radius: 0 0 12px 12px;
+  width: 340px;
+  /* 🆕 Efecto de entrada */
+  animation: slideDownFade 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  transform-origin: top center;
 }
