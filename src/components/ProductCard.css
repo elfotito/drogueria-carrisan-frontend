@@ -1,311 +1,290 @@
+/* ============================================
+   Catálogo — Layout y Tipografía
+   ============================================ */
 
-
-/* Contenedor principal de la tarjeta */
-.pcard {
-  display: flex;
-  flex-direction: column;
-  text-decoration: none;
-  color: inherit;
-  background: #FFFFFF;
-  border: 1px solid #e8e8e8;
-  border-radius: 8px;
-  overflow: hidden;
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
-  padding: 12px;
-  position: relative; /* Esencial para el posicionamiento absoluto del botón en escritorio */
-}
-
-.pcard:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-}
-
-/* ---------- 1. Bloque de Media (Imagen y Badge) ---------- */
-.pcard__media {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  background: #f8f8f8;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 6px;
-  margin-bottom: 12px;
-  overflow: hidden;
-}
-
-.pcard__media img {
-  max-width: 80%;
-  max-height: 80%;
-  object-fit: contain;
-  mix-blend-mode: multiply; /* Efecto profesional sobre fondo gris */
-}
-
-/* Badge de descuento unificado */
-.pcard__badge-descuento {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  z-index: 2;
-  background: #B3261E; /* Rojo */
-  color: white;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-  padding: 4px 8px;
-  border-radius: 4px;
-}
-
-/* ---------- 2. Bloque de Contenido ---------- */
-.pcard__body {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-/* Bloque de precios unificado */
-.pcard__precios {
-  display: flex;
-  flex-direction: column; 
-  gap: 2px;
-  margin: 4px 0;
-}
-
-/* Precio actual, grande y prominente */
-.pcard__precio-ahora {
-  font-family: 'JetBrains Mono', monospace; /* Bonita mono font de tu archivo */
-  font-weight: 800;
-  font-size: 1.15rem;
-  color: #12A594; /* Cyan/greenish de tu archivo original */
-}
-
-/* Clase especial para precio actual sin descuento */
-.pcard__precio-ahora--sin-descuento {
-  color: #14182A; /* Oscuro */
-}
-
-/* Precio original (tachado) */
-.pcard__precio-original {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  color: #8a8878;
-  text-decoration: line-through;
-  margin-right: 8px;
-}
-
-/* Precio VES (debajo del actual USD) */
-.pcard__precio-ves {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.72rem;
-  color: #757575; /* Gray */
-  margin-top: -2px;
-}
-
-/* Texto de Nombre/Marca */
-.pcard__nombre {
+/* Standard white background page layout */
+.catalogo-layout {
+  max-width: 1400px; /* Match standard broad screen width */
+  margin: 0 auto;
+  padding: 24px;
   font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  font-weight: 500;
+  color: #14182A; /* Dark text */
+  background: #FFFFFF;
+}
+
+/* ---------- 1. Header and Page Text ---------- */
+.catalogo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  border-bottom: 1px solid #e3e4e5;
+  padding-bottom: 16px;
+}
+
+.header-titles h1 {
+  font-size: 1.25rem;
+  font-weight: 400;
+  margin: 0 0 4px 0;
   color: #1a1a1a;
-  margin: 0;
-  line-height: 1.3;
-  cursor: pointer;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
 }
 
-.pcard__nombre:hover {
-  color: #1976d2;
+.header-titles h1 span {
+  color: #74767c;
+  font-size: 1rem;
 }
 
-.pcard__marca {
-  font-size: 12px;
-  color: #757575;
+.header-subtitle {
+  font-size: 0.75rem;
+  color: #74767c;
   margin: 0;
 }
 
-/* Placeholder para Rating */
-.pcard__rating {
-  font-size: 0.8rem;
-  color: #f1c40f; /* Estrellas amarillas */
-  display: flex;
-  gap: 2px;
-  margin: 4px 0;
-}
-
-.pcard__rating-count {
-  color: #757575;
-  font-size: 0.75rem;
-  margin-left: 2px;
-}
-
-/* Placeholder para información de Entrega */
-.pcard__delivery-info {
-  font-size: 0.75rem;
-  color: #757575;
-  margin: 4px 0;
-}
-.pcard__delivery-info p { margin: 0; line-height: 1.3; }
-.delivery-arrive { font-weight: 600; color: #1a1a1a; }
-.delivery-pickup { color: #1a1a1a; }
-
-/* ---------- 3. Bloque de Acciones (El desafío responsive para escritorio) ---------- */
-.pcard__acciones {
+/* Mobile-prominent controls, or desktop-inline */
+.catalogo-controles {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-top: auto; /* Empuja las acciones al fondo en el flujo normal */
+  gap: 12px;
 }
 
-/* Botón de "Agregar" prominente (Rellenado de color, ancho completo en móvil) */
-.pcard__btn-agregar {
-  flex: 1; /* Toma ancho completo en móvil */
+.catalogo-controles__desktop-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.catalogo-sort-select {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 8px 32px 8px 16px;
+  border: 1px solid #1a1a1a;
+  border-radius: 999px;
+  background: #fff;
+  color: #1a1a1a;
+  cursor: pointer;
+  appearance: none;
+  /* Basic Chevron Icon cross-browser select */
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%231a1a1a%22%20stroke-width%3D%222%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+
+/* Central Mobile filter button CTA, prominently like in image_1 */
+.btn-filtros-mobile-cta {
+  display: none; /* Only show on mobile */
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
   padding: 10px 20px;
-  background: #1976d2; /* Clear blue como en el pantallazo */
-  color: white;
-  border: 1px solid #1976d2;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: 600;
+  background: #fff;
+  border: 1px solid #1a1a1a;
+  border-radius: 999px;
   cursor: pointer;
-  transition: all 0.15s ease;
-  white-space: nowrap;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
-.pcard__btn-agregar:hover {
-  background: #1565c0;
-  border-color: #1565c0;
-}
-
-/* Bloque de Contador de Cantidad (Unificado de todos los archivos) */
-.pcard__contador {
+/* ---------- 2. New Píldoras de Filtro carrusel ---------- */
+.catalogo-filter-quick-pills {
   display: flex;
-  align-items: center;
-  gap: 0;
-  flex: 1; /* Toma ancho completo en móvil */
-  border: 1px solid #1976d2;
-  border-radius: 20px;
-  overflow: hidden;
-  max-width: fit-content; /* Asegura que no se estire raro */
-  align-self: flex-start; /* No stretch full width */
+  gap: 10px;
+  overflow-x: auto;
+  padding: 10px 0 16px;
+  scrollbar-width: none; /* Hide scrollbar for cross-browser */
+}
+.catalogo-filter-quick-pills::-webkit-scrollbar {
+  display: none;
 }
 
-.contador-btn {
-  flex: 1;
-  padding: 10px 16px;
-  background: white;
-  border: none;
-  font-size: 18px;
-  font-weight: 600;
-  color: #1976d2;
+.quick-pill-item {
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  font-family: 'Inter', sans-serif;
+  color: #1a1a1a;
   cursor: pointer;
-  transition: background 0.15s ease;
+  white-space: nowrap;
+  transition: all 0.2s;
 }
 
-.contador-btn:hover {
-  background: #e3f2fd;
+.quick-pill-item:hover {
+  border-color: #1a1a1a;
+  background: #f4f6f8;
 }
 
-.contador-cantidad {
-  padding: 10px 16px;
-  font-size: 14px;
+.catalogo-divider {
+  width: 100%;
+  height: 1px;
+  background: #e3e4e5;
+  margin-bottom: 24px;
+}
+
+/* ---------- 3. Body: Sidebar + Main Content ---------- */
+.catalogo-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+  position: relative;
+}
+
+/* Barra Lateral de Filtros */
+.catalogo-filtros {
+  flex: 0 0 240px; /* Standard sidebar width */
+  position: sticky;
+  top: 100px; /* Adjust top positioning as needed for main nav */
+  background: #FFFFFF;
+  padding-right: 12px;
+  max-height: calc(100vh - 120px); /* Fill screen but allow scrolling */
+  overflow-y: auto;
+}
+
+/* Secciones del sidebar */
+.filtro-seccion {
+  padding: 16px 0;
+  border-bottom: 1px solid #e3e4e5;
+}
+
+.filtro-titulo {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 16px 0;
+  color: #1a1a1a;
+}
+
+/* Content block within filter sections */
+.filtro-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Píldoras in filter sections */
+.filtro-pill {
+  background: #ffffff;
+  border: 1px solid #74767c;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  font-family: 'Inter', sans-serif;
+  color: #1a1a1a;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filtro-pill:hover, .filtro-pill.active {
+  border-color: #1a1a1a;
+  background: #f4f6f8;
+}
+.filtro-pill.active { background: #1B4B8F; color: #FFFFFF; } /* Style active filters */
+
+/* Acordeones style in filter sections */
+.filtro-accordion-btn {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 1rem;
   font-weight: 700;
   color: #1a1a1a;
-  background: #f5f5f5;
-  min-width: 30px;
-  text-align: center;
-  user-select: none;
-}
-
-/* Botón de Icono ("Mis Items") */
-.pcard__btn-items {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 1px solid #e0e0e0;
-  background: white;
-  font-size: 16px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.15s ease;
-  flex-shrink: 0;
+}
+.filtro-accordion-btn svg {
+    transition: transform 0.2s ease;
+}
+/* If active accordion, you might add a rule here with active class: .filtro-accordion-btn.active svg { transform: rotate(180deg); } */
+
+/* ---------- 4. Main Content and Grid ---------- */
+.catalogo-main-content {
+  flex: 1;
+  min-width: 0; /* Important for grid within flexbox to scroll properly */
 }
 
-.pcard__btn-items:hover {
-  background: #f5f5f5;
-  border-color: #ccc;
+/* GRID de productos responsive */
+.product-grid {
+  display: grid;
+  grid-template-columns: 1fr; /* MÓVIL: Vista de lista de items */
+  gap: 16px;
 }
 
-/* ===================================================================
+.catalogo-vacio, .catalogo-estado {
+  text-align: center;
+  padding: 60px 0;
+  color: #74767c;
+}
+
+.catalogo-error {
+  color: #c0392b;
+}
+
+/* ==========================================================
    DESKTOP OVERRIDE (> 768px)
-   - Switches layout to a grid of cards
-   - Changes placement and style of "Add to Cart" block
-   =================================================================== */
+   ========================================================== */
 
 @media (min-width: 769px) {
-  /* La grid principal se maneja en Catalogo.css */
-  
-  .pcard {
-    border-radius: 8px; /* Ligeramente diferente del list */
-    padding: 12px;
+  /* Configuración de grid para escritorio */
+  .product-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Escritorio: Grid ajustado de tarjetas */
+    gap: 20px;
   }
-  
-  /* El reordenamiento y posicionamiento crítico de acciones para escritorio */
-  .pcard__acciones {
-    position: absolute; /* Sacar del flujo normal para superponer a la imagen */
-    bottom: 12px;
-    left: 12px;
-    right: 12px; /* Estirarse entre el padding de la imagen wrapper */
-    width: auto;
-    z-index: 5;
-    /* Minimizar el contenedor, posicionarlo inteligentemente */
-    background: transparent;
-    padding: 0;
-    margin: 0;
-    justify-content: center; /* Centrar botones sobre imagen */
-    flex-wrap: wrap; /* Manejar multi-botón si contador visible */
+}
+
+/* ============================================
+   MOBILE (< 768px) para page structure
+   ============================================ */
+@media (max-width: 768px) {
+  .catalogo-layout {
+    padding: 16px;
   }
 
-  /* Refinar el botón CTA de escritorio */
-  .pcard__btn-agregar {
-    /* CTA grande prominente que se asienta dentro del espacio de la media wrapper */
-    padding: 10px 20px;
-    font-size: 14px;
-    width: auto;
-    max-width: calc(100% - 10px); /* Leave small gap in media area */
-    border-radius: 20px;
-    margin: 0 auto; /* Centrar botón */
-    pointer-events: auto; /* Mantener clickeable */
+  .catalogo-header {
+    flex-direction: column;
+    gap: 16px;
   }
 
-  /* Estilo de contador para superposición en escritorio */
-  .pcard__contador {
-    border-color: transparent; /* Minimalist look cuando superpuesto */
-    background: #e3f2fd;
-    margin: 0 auto;
-    max-width: none; /* Let it define width via padding */
+  .catalogo-controles {
+    width: 100%;
+    justify-content: center; /* Center mobile buttons prominent */
   }
-  .pcard__contador .contador-btn {
-    background: transparent;
-    color: #1976d2;
-    padding: 8px 12px;
+  .catalogo-controles__desktop-actions {
+      display: none; /* Hide inline controls on mobile */
   }
-  .pcard__contador .contador-cantidad {
+
+  .btn-filtros-mobile-cta {
+    display: inline-block;
+  }
+
+  /* El sidebar se convierte en drawer deslizante,now styled clearly and integrated */
+  .catalogo-filtros {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 85%;
+    max-width: 320px;
+    z-index: 200;
+    padding: 24px;
     background: #FFFFFF;
-    color: #1a1a1a;
-    padding: 8px 12px;
+    border-right: 1px solid #e3e4e5;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
   }
 
-  /* Asegurar que la imagen tenga espacio en el wrapper para el botón overlay */
-  .pcard__media {
-    padding-bottom: 50px; /* Crucial: Create space at the bottom for the CTA button overlay */
+  .catalogo-filtros--abierto {
+    transform: translateX(0);
   }
-  
-  /* Shift content down slightly if needed, but not necessary here due to aspect-ratio */
+
+  .catalogo-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 190;
+  }
+
+  /* Filter quick pills in mobile header could be re-ordered, but let's keep them here. We can decrease gaps. */
+  .catalogo-filter-quick-pills { gap: 8px; }
 }

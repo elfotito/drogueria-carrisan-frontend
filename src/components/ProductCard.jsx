@@ -9,7 +9,7 @@ function formatUSD(valor) {
   return Number(valor).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
-
+// Traduce el descuento vigente a una etiqueta comercial comercial.
 function obtenerEtiquetaDescuento(descuento) {
   if (!descuento) return null
   if (descuento.tipo === 'monto') return 'Oferta Especial'
