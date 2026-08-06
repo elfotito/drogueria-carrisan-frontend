@@ -283,6 +283,6 @@
     z-index: 190;
   }
 
-  /* Filter quick pills in mobile header could be re-ordered, but let's keep them here. We can decrease gaps. */
+  /* Filter quick pills in mobile header could be re-ordered, but lets keep them here. We can decrease gaps. */
   .catalogo-filter-quick-pills { gap: 8px; }
 }
