@@ -102,16 +102,6 @@ function Navbar() {
     <>
       <header className="navbar-container">
         <div className="navbar__main">
-          
-          {/* Menú Hamburguesa (Móvil) */}
-          <button className="navbar__menu-mobile" onClick={() => setMenuAbierto(true)}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-          </button>
-
-          {/* Logo */}
-          <Link to="/" className="navbar__logo">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="#ffc220"><path d="M12 2L14.39 8.26L21 9.27L16.21 13.97L17.33 20.5L12 17.7L6.67 20.5L7.79 13.97L3 9.27L9.61 8.26L12 2Z"/></svg>
-          </Link>
 
           {/* Botón Pickup/Delivery (Escritorio) y Panel Desplegable */}
           <div className="pickup-dropdown-wrapper" ref={panelRef}>
