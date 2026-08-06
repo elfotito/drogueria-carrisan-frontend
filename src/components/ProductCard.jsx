@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
 import AgregarAItemsModal from './AgregarAItemsModal'
+import './ProductCard.css'
 
 function formatUSD(valor) {
   if (valor == null) return '—'

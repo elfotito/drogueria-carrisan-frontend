@@ -1,290 +1,232 @@
 /* ============================================
-   Catálogo — Layout y Tipografía
+   ProductCard — Estilos de la tarjeta de producto
    ============================================ */
 
-/* Standard white background page layout */
-.catalogo-layout {
-  max-width: 1400px; /* Match standard broad screen width */
-  margin: 0 auto;
-  padding: 24px;
-  font-family: 'Inter', sans-serif;
-  color: #14182A; /* Dark text */
+.pcard {
   background: #FFFFFF;
-}
-
-/* ---------- 1. Header and Page Text ---------- */
-.catalogo-header {
+  border: 1px solid #e3e4e5;
+  border-radius: 12px;
+  padding: 14px;
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 24px;
-  border-bottom: 1px solid #e3e4e5;
-  padding-bottom: 16px;
+  flex-direction: column;
+  height: 100%;
+  font-family: 'Inter', sans-serif;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
-.header-titles h1 {
-  font-size: 1.25rem;
-  font-weight: 400;
-  margin: 0 0 4px 0;
-  color: #1a1a1a;
+.pcard:hover {
+  border-color: #c7cbd6;
+  box-shadow: 0 4px 16px rgba(20, 24, 42, 0.08);
 }
 
-.header-titles h1 span {
+/* ---------- Media (imagen + badge) ---------- */
+.pcard__media {
+  position: relative;
+  cursor: pointer;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #FBFAF7; /* Paper */
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.pcard__image {
+  max-width: 78%;
+  max-height: 78%;
+  object-fit: contain;
+}
+
+.pcard__badge-descuento {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 2;
+  background: #D64550; /* rojo de urgencia, contraste con el resto de la paleta */
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+/* ---------- Bloque de precios ---------- */
+.pcard__precios {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+
+.pcard__precio-ahora {
+  color: #12A594; /* Teal — precio con descuento */
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+/* Sin descuento activo: precio normal, no verde */
+.pcard__precio-ahora--sin-descuento {
+  color: #14182A; /* Ink */
+}
+
+.pcard__precio-original {
   color: #74767c;
-  font-size: 1rem;
+  text-decoration: line-through;
+  font-size: 0.82rem;
 }
 
-.header-subtitle {
+.pcard__precio-ves {
+  width: 100%;
+  color: #74767c;
+  font-size: 0.72rem;
+  margin-top: -2px;
+}
+
+/* ---------- Nombre / marca ---------- */
+.pcard__nombre {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #14182A;
+  margin: 2px 0 2px;
+  line-height: 1.3;
+  cursor: pointer;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.pcard__nombre:hover {
+  color: #1B4B8F;
+  text-decoration: underline;
+}
+
+.pcard__marca {
   font-size: 0.75rem;
   color: #74767c;
+  margin: 0 0 6px;
+}
+
+/* ---------- Rating y entrega ---------- */
+.pcard__rating {
+  font-size: 0.75rem;
+  color: #E0A429;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.pcard__rating-count {
+  color: #74767c;
+}
+
+.pcard__delivery-info {
+  font-size: 0.7rem;
+  color: #74767c;
+  margin-bottom: 10px;
+}
+
+.pcard__delivery-info p {
   margin: 0;
 }
 
-/* Mobile-prominent controls, or desktop-inline */
-.catalogo-controles {
+.delivery-arrive {
+  font-weight: 600;
+  color: #14182A;
+}
+
+/* ---------- Acciones ---------- */
+.pcard__acciones {
+  margin-top: auto;
   display: flex;
   align-items: center;
-  gap: 12px;
-}
-
-.catalogo-controles__desktop-actions {
-  display: flex;
-  gap: 12px;
-}
-
-.catalogo-sort-select {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 600;
-  padding: 8px 32px 8px 16px;
-  border: 1px solid #1a1a1a;
-  border-radius: 999px;
-  background: #fff;
-  color: #1a1a1a;
-  cursor: pointer;
-  appearance: none;
-  /* Basic Chevron Icon cross-browser select */
-  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%231a1a1a%22%20stroke-width%3D%222%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-}
-
-/* Central Mobile filter button CTA, prominently like in image_1 */
-.btn-filtros-mobile-cta {
-  display: none; /* Only show on mobile */
-  font-family: 'Inter', sans-serif;
-  font-weight: 600;
-  font-size: 0.9rem;
-  padding: 10px 20px;
-  background: #fff;
-  border: 1px solid #1a1a1a;
-  border-radius: 999px;
-  cursor: pointer;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-/* ---------- 2. New Píldoras de Filtro carrusel ---------- */
-.catalogo-filter-quick-pills {
-  display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  padding: 10px 0 16px;
-  scrollbar-width: none; /* Hide scrollbar for cross-browser */
-}
-.catalogo-filter-quick-pills::-webkit-scrollbar {
-  display: none;
-}
-
-.quick-pill-item {
-  background: #ffffff;
-  border: 1px solid #e0e0e0;
-  border-radius: 999px;
-  padding: 8px 16px;
-  font-size: 0.85rem;
-  font-family: 'Inter', sans-serif;
-  color: #1a1a1a;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.2s;
-}
-
-.quick-pill-item:hover {
-  border-color: #1a1a1a;
-  background: #f4f6f8;
-}
-
-.catalogo-divider {
-  width: 100%;
-  height: 1px;
-  background: #e3e4e5;
-  margin-bottom: 24px;
-}
-
-/* ---------- 3. Body: Sidebar + Main Content ---------- */
-.catalogo-body {
-  display: flex;
-  align-items: flex-start;
-  gap: 32px;
-  position: relative;
-}
-
-/* Barra Lateral de Filtros */
-.catalogo-filtros {
-  flex: 0 0 240px; /* Standard sidebar width */
-  position: sticky;
-  top: 100px; /* Adjust top positioning as needed for main nav */
-  background: #FFFFFF;
-  padding-right: 12px;
-  max-height: calc(100vh - 120px); /* Fill screen but allow scrolling */
-  overflow-y: auto;
-}
-
-/* Secciones del sidebar */
-.filtro-seccion {
-  padding: 16px 0;
-  border-bottom: 1px solid #e3e4e5;
-}
-
-.filtro-titulo {
-  font-size: 1rem;
-  font-weight: 700;
-  margin: 0 0 16px 0;
-  color: #1a1a1a;
-}
-
-/* Content block within filter sections */
-.filtro-content {
-  display: flex;
-  flex-wrap: wrap;
   gap: 8px;
 }
 
-/* Píldoras in filter sections */
-.filtro-pill {
-  background: #ffffff;
-  border: 1px solid #74767c;
+.pcard__btn-items {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
   border-radius: 999px;
-  padding: 6px 14px;
+  border: 1px solid #e3e4e5;
+  background: #FBFAF7;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s ease;
+}
+
+.pcard__btn-items:hover {
+  border-color: #1B4B8F;
+}
+
+.pcard__btn-agregar {
+  flex: 1;
+  background: #1B4B8F; /* Azul */
+  color: #FFFFFF;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 14px;
+  font-weight: 700;
   font-size: 0.85rem;
   font-family: 'Inter', sans-serif;
-  color: #1a1a1a;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background 0.2s ease;
 }
 
-.filtro-pill:hover, .filtro-pill.active {
-  border-color: #1a1a1a;
-  background: #f4f6f8;
+.pcard__btn-agregar:hover {
+  background: #14315e;
 }
-.filtro-pill.active { background: #1B4B8F; color: #FFFFFF; } /* Style active filters */
 
-/* Acordeones style in filter sections */
-.filtro-accordion-btn {
-  width: 100%;
+.pcard__contador {
+  flex: 1;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  background: none;
+  justify-content: space-between;
+  background: #1B4B8F;
+  border-radius: 999px;
+  padding: 4px;
+}
+
+.contador-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
   border: none;
-  padding: 0;
+  background: #FFFFFF;
+  color: #1B4B8F;
   font-size: 1rem;
   font-weight: 700;
-  color: #1a1a1a;
   cursor: pointer;
-}
-.filtro-accordion-btn svg {
-    transition: transform 0.2s ease;
-}
-/* If active accordion, you might add a rule here with active class: .filtro-accordion-btn.active svg { transform: rotate(180deg); } */
-
-/* ---------- 4. Main Content and Grid ---------- */
-.catalogo-main-content {
-  flex: 1;
-  min-width: 0; /* Important for grid within flexbox to scroll properly */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
 }
 
-/* GRID de productos responsive */
-.product-grid {
-  display: grid;
-  grid-template-columns: 1fr; /* MÓVIL: Vista de lista de items */
-  gap: 16px;
+.contador-cantidad {
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 0.9rem;
 }
 
-.catalogo-vacio, .catalogo-estado {
-  text-align: center;
-  padding: 60px 0;
-  color: #74767c;
-}
-
-.catalogo-error {
-  color: #c0392b;
-}
-
-/* ==========================================================
-   DESKTOP OVERRIDE (> 768px)
-   ========================================================== */
-
-@media (min-width: 769px) {
-  /* Configuración de grid para escritorio */
-  .product-grid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Escritorio: Grid ajustado de tarjetas */
-    gap: 20px;
-  }
-}
-
-/* ============================================
-   MOBILE (< 768px) para page structure
-   ============================================ */
+/* ---------- Responsive ---------- */
 @media (max-width: 768px) {
-  .catalogo-layout {
-    padding: 16px;
+  .pcard {
+    padding: 10px;
   }
-
-  .catalogo-header {
-    flex-direction: column;
-    gap: 16px;
+  .pcard__nombre {
+    font-size: 0.82rem;
   }
-
-  .catalogo-controles {
-    width: 100%;
-    justify-content: center; /* Center mobile buttons prominent */
+  .pcard__precio-ahora {
+    font-size: 0.95rem;
   }
-  .catalogo-controles__desktop-actions {
-      display: none; /* Hide inline controls on mobile */
-  }
-
-  .btn-filtros-mobile-cta {
-    display: inline-block;
-  }
-
-  /* El sidebar se convierte en drawer deslizante,now styled clearly and integrated */
-  .catalogo-filtros {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: 85%;
-    max-width: 320px;
-    z-index: 200;
-    padding: 24px;
-    background: #FFFFFF;
-    border-right: 1px solid #e3e4e5;
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
-  }
-
-  .catalogo-filtros--abierto {
-    transform: translateX(0);
-  }
-
-  .catalogo-overlay {
-    display: block;
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 190;
-  }
-
-  /* Filter quick pills in mobile header could be re-ordered, but let's keep them here. We can decrease gaps. */
-  .catalogo-filter-quick-pills { gap: 8px; }
 }
