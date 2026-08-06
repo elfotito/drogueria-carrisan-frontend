@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import api from '../api/axios';
 import './GestionDirecciones.css';
 
-const CIUDADES_DELIVERY = ['Seleccionar ciudad', 'Caracas', 'Maracay', 'Valencia'];
-const ESTADO_DELIVERY = 'Distrito Capital';
+const CIUDADES_DELIVERY = ['Valencia', 'Naguanagua', 'San Diego', 'Guacara'];
+const ESTADO_DELIVERY = 'Carabobo';
 
 function GestionDirecciones() {
   const [direccionesDelivery, setDireccionesDelivery] = useState([]);
@@ -319,6 +319,7 @@ function GestionDirecciones() {
                     <option value="Tealca">Tealca</option>
                     <option value="Zoom">Zoom</option>
                     <option value="Servientrega">Servientrega</option>
+                    <option value="Servientrega">Otro</option>
                   </select>
                 </div>
               )}
