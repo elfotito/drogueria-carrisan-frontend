@@ -1,4 +1,3 @@
-// frontend/src/hooks/useEnvio.js
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
@@ -65,7 +64,7 @@ export const useEnvio = () => {
     
     setLoading(true);
     try {
-      const { data } = await api.get(`/api/direcciones?tipo=${tipo}`);
+      const { data } = await api.get(`/direcciones?tipo=${tipo}`);
       setDirecciones(data);
       
       // Si hay una sola dirección, seleccionarla automáticamente
@@ -97,7 +96,7 @@ export const useEnvio = () => {
   // Guardar nueva dirección
   const guardarDireccion = async (direccionData) => {
     try {
-      const { data } = await api.post('/api/direcciones', direccionData);
+      const { data } = await api.post('/direcciones', direccionData);
       const opcion = opcionesEnvio.find(op => op.id === tipoEnvio);
       if (opcion?.tipoDireccion) {
         await cargarDirecciones(opcion.tipoDireccion);
@@ -112,7 +111,7 @@ export const useEnvio = () => {
   // Eliminar dirección
   const eliminarDireccion = async (id) => {
     try {
-      await api.delete(`/api/direcciones/${id}`);
+      await api.delete(`/direcciones/${id}`);
       if (direccionSeleccionada?.id === id) {
         setDireccionSeleccionada(null);
       }
