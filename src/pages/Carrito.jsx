@@ -75,55 +75,90 @@ function CartLine({ item, tasaVes, onUpdateCantidad, onRemove }) {
   )
 }
 
-// 🆕 Componente para mostrar/agregar direcciones
+// 🆕 Componente para mostrar/agregar direcciones (VERSIÓN MEJORADA)
 function DireccionSelector({ 
   direcciones, 
   direccionSeleccionada, 
   onSeleccionar, 
   onAgregar,
-  loading 
+  loading,
+  tipo // 'delivery' o 'envio_nacional'
 }) {
-  const [mostrarForm, setMostrarForm] = useState(false)
+  const [mostrarPanel, setMostrarPanel] = useState(false)
+  const [paso, setPaso] = useState(1) // 1: formulario, 2: confirmación
   const [nuevaDireccion, setNuevaDireccion] = useState({
     nombre: '',
     direccion: '',
     ciudad: '',
-    estado: '',
+    estado: tipo === 'delivery' ? 'Distrito Capital' : '',
     telefono_contacto: '',
     referencia: ''
   })
+  const [guardando, setGuardando] = useState(false)
+  const [error, setError] = useState('')
+
+  const CIUDADES_DELIVERY = ['Caracas', 'Maracay', 'Valencia']
 
   const handleAgregar = async (e) => {
-  e.preventDefault()
-  if (!nuevaDireccion.nombre || !nuevaDireccion.direccion) return
-  
-  try {
-    // No incluyas tipo_direccion aquí, el hook lo agrega solo
-    await onAgregar(nuevaDireccion)
-    setMostrarForm(false)
-    setNuevaDireccion({
-      nombre: '',
-      direccion: '',
-      ciudad: '',
-      estado: '',
-      telefono_contacto: '',
-      referencia: ''
-    })
-  } catch (error) {
-    console.error('Error al guardar dirección:', error)
-  }
-}
+    e.preventDefault()
+    
+    if (!nuevaDireccion.nombre || !nuevaDireccion.direccion) {
+      setError('Nombre y dirección son requeridos')
+      return
+    }
 
-  if (loading) return <p className="delivery-info__text">Cargando direcciones...</p>
+    if (tipo === 'delivery' && !nuevaDireccion.ciudad) {
+      setError('Selecciona una ciudad')
+      return
+    }
+
+    setGuardando(true)
+    setError('')
+
+    try {
+      await onAgregar({
+        ...nuevaDireccion,
+        estado: tipo === 'delivery' ? 'Distrito Capital' : nuevaDireccion.estado
+      })
+      setPaso(2)
+      setTimeout(() => {
+        setMostrarPanel(false)
+        setPaso(1)
+        setNuevaDireccion({
+          nombre: '',
+          direccion: '',
+          ciudad: '',
+          estado: tipo === 'delivery' ? 'Distrito Capital' : '',
+          telefono_contacto: '',
+          referencia: ''
+        })
+      }, 1500)
+    } catch (error) {
+      setError('Error al guardar la dirección')
+    } finally {
+      setGuardando(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="direccion-loading">
+        <div className="direccion-loading__spinner"></div>
+        <span>Cargando direcciones...</span>
+      </div>
+    )
+  }
 
   return (
     <div className="direccion-selector">
-      {direcciones.length > 0 ? (
+      {/* Lista de direcciones existentes */}
+      {direcciones.length > 0 && (
         <div className="direccion-lista">
+          <p className="direccion-lista__titulo">Selecciona una dirección</p>
           {direcciones.map((dir) => (
             <label 
               key={dir.id} 
-              className={`direccion-item ${direccionSeleccionada?.id === dir.id ? 'direccion-item--selected' : ''}`}
+              className={`direccion-radio ${direccionSeleccionada?.id === dir.id ? 'direccion-radio--selected' : ''}`}
             >
               <input
                 type="radio"
@@ -131,83 +166,163 @@ function DireccionSelector({
                 checked={direccionSeleccionada?.id === dir.id}
                 onChange={() => onSeleccionar(dir)}
               />
-              <div className="direccion-item__info">
-                <strong>{dir.nombre}</strong>
-                <p>{dir.direccion}</p>
-                {dir.ciudad && <span>{dir.ciudad}{dir.estado ? `, ${dir.estado}` : ''}</span>}
-                {dir.telefono_contacto && <span>📞 {dir.telefono_contacto}</span>}
+              <div className="direccion-radio__content">
+                <div className="direccion-radio__header">
+                  <span className="direccion-radio__nombre">{dir.nombre}</span>
+                  {dir.telefono_contacto && (
+                    <span className="direccion-radio__telefono">{dir.telefono_contacto}</span>
+                  )}
+                </div>
+                <p className="direccion-radio__direccion">{dir.direccion}</p>
+                <div className="direccion-radio__meta">
+                  {dir.ciudad && <span>📍 {dir.ciudad}{dir.estado ? `, ${dir.estado}` : ''}</span>}
+                </div>
               </div>
             </label>
           ))}
         </div>
-      ) : (
-        <p className="delivery-info__text">No tienes direcciones guardadas</p>
       )}
 
-      {!mostrarForm ? (
-        <button 
-          type="button" 
-          className="cart-line__link"
-          onClick={() => setMostrarForm(true)}
-          style={{ marginTop: '8px' }}
-        >
-          + Agregar nueva dirección
-        </button>
-      ) : (
-        <form onSubmit={handleAgregar} className="direccion-form">
-          <input
-            type="text"
-            placeholder="Nombre (ej: Casa, Oficina)"
-            value={nuevaDireccion.nombre}
-            onChange={(e) => setNuevaDireccion({...nuevaDireccion, nombre: e.target.value})}
-            required
-          />
-          <textarea
-            placeholder="Dirección completa"
-            value={nuevaDireccion.direccion}
-            onChange={(e) => setNuevaDireccion({...nuevaDireccion, direccion: e.target.value})}
-            required
-            rows="2"
-          />
-          <div className="direccion-form__row">
-            <input
-              type="text"
-              placeholder="Ciudad"
-              value={nuevaDireccion.ciudad}
-              onChange={(e) => setNuevaDireccion({...nuevaDireccion, ciudad: e.target.value})}
-            />
-            <input
-              type="text"
-              placeholder="Estado"
-              value={nuevaDireccion.estado}
-              onChange={(e) => setNuevaDireccion({...nuevaDireccion, estado: e.target.value})}
-            />
+      {/* Botón para agregar nueva */}
+      <button 
+        type="button" 
+        className="direccion-add-btn"
+        onClick={() => setMostrarPanel(true)}
+      >
+        <span className="direccion-add-btn__icon">+</span>
+        {direcciones.length === 0 ? 'Agregar dirección de entrega' : 'Agregar otra dirección'}
+      </button>
+
+      {/* Panel slide-up */}
+      {mostrarPanel && (
+        <>
+          <div className="direccion-overlay" onClick={() => setMostrarPanel(false)} />
+          <div className="direccion-panel">
+            <div className="direccion-panel__handle" />
+            
+            {paso === 1 ? (
+              <>
+                <div className="direccion-panel__header">
+                  <h3>Nueva dirección</h3>
+                  <button 
+                    className="direccion-panel__close"
+                    onClick={() => setMostrarPanel(false)}
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                <form onSubmit={handleAgregar} className="direccion-panel__form">
+                  {error && <div className="direccion-error">{error}</div>}
+
+                  <div className="direccion-input-group">
+                    <label>Nombre de la dirección *</label>
+                    <input
+                      type="text"
+                      value={nuevaDireccion.nombre}
+                      onChange={(e) => setNuevaDireccion({...nuevaDireccion, nombre: e.target.value})}
+                      placeholder="Ej: Casa, Oficina, Consultorio"
+                      required
+                    />
+                  </div>
+
+                  <div className="direccion-input-group">
+                    <label>Dirección completa *</label>
+                    <textarea
+                      value={nuevaDireccion.direccion}
+                      onChange={(e) => setNuevaDireccion({...nuevaDireccion, direccion: e.target.value})}
+                      placeholder="Calle, número, urbanización, punto de referencia"
+                      required
+                      rows="2"
+                    />
+                  </div>
+
+                  {tipo === 'delivery' ? (
+                    <div className="direccion-input-row">
+                      <div className="direccion-input-group">
+                        <label>Ciudad *</label>
+                        <select
+                          value={nuevaDireccion.ciudad}
+                          onChange={(e) => setNuevaDireccion({...nuevaDireccion, ciudad: e.target.value})}
+                          required
+                        >
+                          <option value="">Seleccionar</option>
+                          {CIUDADES_DELIVERY.map(ciudad => (
+                            <option key={ciudad} value={ciudad}>{ciudad}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="direccion-input-group">
+                        <label>Estado</label>
+                        <input
+                          type="text"
+                          value="Distrito Capital"
+                          disabled
+                          className="direccion-input-disabled"
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="direccion-input-row">
+                      <div className="direccion-input-group">
+                        <label>Ciudad</label>
+                        <input
+                          type="text"
+                          value={nuevaDireccion.ciudad}
+                          onChange={(e) => setNuevaDireccion({...nuevaDireccion, ciudad: e.target.value})}
+                          placeholder="Ciudad"
+                        />
+                      </div>
+                      <div className="direccion-input-group">
+                        <label>Estado</label>
+                        <input
+                          type="text"
+                          value={nuevaDireccion.estado}
+                          onChange={(e) => setNuevaDireccion({...nuevaDireccion, estado: e.target.value})}
+                          placeholder="Estado"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="direccion-input-group">
+                    <label>Teléfono de contacto</label>
+                    <input
+                      type="text"
+                      value={nuevaDireccion.telefono_contacto}
+                      onChange={(e) => setNuevaDireccion({...nuevaDireccion, telefono_contacto: e.target.value})}
+                      placeholder="Ej: +58 414-1234567"
+                    />
+                  </div>
+
+                  <div className="direccion-input-group">
+                    <label>Referencia (opcional)</label>
+                    <input
+                      type="text"
+                      value={nuevaDireccion.referencia}
+                      onChange={(e) => setNuevaDireccion({...nuevaDireccion, referencia: e.target.value})}
+                      placeholder="Color de casa, punto de referencia, etc."
+                    />
+                  </div>
+
+                  <button 
+                    type="submit" 
+                    className="direccion-submit-btn"
+                    disabled={guardando}
+                  >
+                    {guardando ? 'Guardando...' : 'Guardar dirección'}
+                  </button>
+                </form>
+              </>
+            ) : (
+              <div className="direccion-success">
+                <div className="direccion-success__icon">✅</div>
+                <h3>¡Dirección guardada!</h3>
+                <p>Tu dirección ha sido agregada correctamente</p>
+              </div>
+            )}
           </div>
-          <input
-            type="text"
-            placeholder="Teléfono de contacto"
-            value={nuevaDireccion.telefono_contacto}
-            onChange={(e) => setNuevaDireccion({...nuevaDireccion, telefono_contacto: e.target.value})}
-          />
-          <input
-            type="text"
-            placeholder="Referencia (opcional)"
-            value={nuevaDireccion.referencia}
-            onChange={(e) => setNuevaDireccion({...nuevaDireccion, referencia: e.target.value})}
-          />
-          <div className="direccion-form__actions">
-            <button type="submit" className="carrito-bottombar__cta" style={{ fontSize: '14px', padding: '8px 16px' }}>
-              Guardar
-            </button>
-            <button 
-              type="button" 
-              className="cart-line__link cart-line__link--danger"
-              onClick={() => setMostrarForm(false)}
-            >
-              Cancelar
-            </button>
-          </div>
-        </form>
+        </>
       )}
     </div>
   )
@@ -360,14 +475,15 @@ function Carrito() {
                 
                 {/* 🆕 Selector de dirección */}
                 {opcionActual.requiereDireccion && (
-                  <DireccionSelector
-                    direcciones={direcciones}
-                    direccionSeleccionada={direccionSeleccionada}
-                    onSeleccionar={setDireccionSeleccionada}
-                    onAgregar={guardarDireccion}
-                    loading={loading}
-                  />
-                )}
+                    <DireccionSelector
+                      direcciones={direcciones}
+                      direccionSeleccionada={direccionSeleccionada}
+                      onSeleccionar={setDireccionSeleccionada}
+                      onAgregar={guardarDireccion}
+                      loading={loading}
+                      tipo={opcionActual.tipoDireccion} // 🆕 Pasar el tipo
+                    />
+                  )}
                 
                 {/* 🆕 Selector de agencia */}
                 {opcionActual.requiereAgencia && (
