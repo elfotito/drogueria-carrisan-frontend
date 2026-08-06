@@ -9,11 +9,9 @@ import './Navbar.css'
 
 const RUTAS_SIN_NAVBAR = ['/login', '/registro', '/recuperar']
 
-// Datos mock para categorías del menú desplegable
 const CATEGORIAS = {
-  medicamentos: ['Analgésicos', 'Antibióticos', 'Antiinflamatorios', 'Cardiovasculares', 'Respiratorios'],
-  cuidado: ['Cuidado Facial', 'Cuidado Corporal', 'Protección Solar', 'Salud Bucal'],
-  bebe: ['Fórmulas', 'Pañales', 'Alimentación', 'Cuidado del Bebé'],
+  Departments: ['Analgésicos', 'Antibióticos', 'Cuidado Facial'],
+  Services: ['Pharmacy', 'Auto Service', 'Photo'],
 }
 
 function Navbar() {
@@ -24,31 +22,22 @@ function Navbar() {
     cambiarTipoEnvio,
     opcionesEnvio,
     direccionSeleccionada,
-    direcciones,
-    guardarDireccion,
-    cargarDirecciones,
   } = useEnvio()
   
   const navigate = useNavigate()
   const location = useLocation()
   const [menuAbierto, setMenuAbierto] = useState(false)
   const [busqueda, setBusqueda] = useState('')
-  const [sugerencias, setSugerencias] = useState([])
-  const [mostrarSugerencias, setMostrarSugerencias] = useState(false)
   const [showEnvioPanel, setShowEnvioPanel] = useState(false)
   const [dropdownAbierto, setDropdownAbierto] = useState(null)
+  
   const searchRef = useRef(null)
   const panelRef = useRef(null)
 
   const cantidadItems = items?.reduce((acc, item) => acc + item.cantidad, 0) || 0
-  const opcionActual = opcionesEnvio?.find(op => op.id === tipoEnvio)
 
-  // Cerrar sugerencias al hacer clic fuera
   useEffect(() => {
     function handleClickOutside(event) {
-      if (searchRef.current && !searchRef.current.contains(event.target)) {
-        setMostrarSugerencias(false)
-      }
       if (panelRef.current && !panelRef.current.contains(event.target)) {
         setShowEnvioPanel(false)
       }
@@ -57,368 +46,190 @@ function Navbar() {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  // Buscar sugerencias mientras escribe
-  useEffect(() => {
-    if (busqueda.length < 2) {
-      setSugerencias([])
-      setMostrarSugerencias(false)
-      return
-    }
-
-    const debounce = setTimeout(async () => {
-      try {
-        const { data } = await api.get(`/products?search=${encodeURIComponent(busqueda)}&limit=5`)
-        setSugerencias(data.slice(0, 5))
-        setMostrarSugerencias(true)
-      } catch (err) {
-        console.error('Error buscando sugerencias:', err)
-      }
-    }, 300)
-
-    return () => clearTimeout(debounce)
-  }, [busqueda])
-
-  if (RUTAS_SIN_NAVBAR.includes(location.pathname)) {
-    return null
-  }
-
-  function handleLogout() {
-    setMenuAbierto(false)
-    logout()
-    navigate('/login')
-  }
+  if (RUTAS_SIN_NAVBAR.includes(location.pathname)) return null
 
   function handleBuscar(e) {
     e.preventDefault()
     const termino = busqueda.trim()
     if (termino) {
-      setMostrarSugerencias(false)
       navigate(`/catalogo?search=${encodeURIComponent(termino)}`)
     }
   }
 
-  function handleSugerenciaClick(producto) {
-    setMostrarSugerencias(false)
-    setBusqueda('')
-    navigate(`/producto/${producto.id}`)
-  }
-
-  const ciudadEstado = direccionSeleccionada 
-    ? `${direccionSeleccionada.ciudad || 'Ciudad'}, ${direccionSeleccionada.estado || 'Estado'}`
-    : 'Valencia, Carabobo'
+  const ubicacionTexto = direccionSeleccionada 
+    ? `${direccionSeleccionada.ciudad}, ${direccionSeleccionada.estado}`
+    : 'New York, 10013'
 
   return (
     <>
-      <header className="navbar">
-        {/* Barra Superior - Mobile: Logo + Buscador + Carrito en línea */}
-        <div className="navbar__top">
+      <header className="navbar-container">
+        <div className="navbar__main">
+          
+          {/* Menú Hamburguesa (Solo Móvil) */}
+          <button className="navbar__menu-mobile" onClick={() => setMenuAbierto(true)}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+
           {/* Logo */}
           <Link to="/" className="navbar__logo">
-            <span className="navbar__logo-icon">💊</span>
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="#ffc220"><path d="M12 2L14.39 8.26L21 9.27L16.21 13.97L17.33 20.5L12 17.7L6.67 20.5L7.79 13.97L3 9.27L9.61 8.26L12 2Z"/></svg>
           </Link>
 
-          {/* Buscador - En medio */}
+          {/* Botón Pickup/Delivery (Escritorio) y Contenedor del Dropdown */}
+          <div className="pickup-dropdown-wrapper" ref={panelRef}>
+            <button className="navbar__pickup-btn desktop-only" onClick={() => setShowEnvioPanel(!showEnvioPanel)}>
+              <div className="pickup-btn__icon">
+                <img src="https://i.imgur.com/8QG9gXv.png" alt="pickup icon" width="24"/>
+              </div>
+              <div className="pickup-btn__text">
+                <span className="pickup-btn__title">Pickup or delivery?</span>
+                <span className="pickup-btn__subtitle">{ubicacionTexto} • Secaucus Superc...</span>
+              </div>
+              <svg className={`pickup-btn__arrow ${showEnvioPanel ? 'rotated' : ''}`} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+
+            {/* Panel Desplegable */}
+            {showEnvioPanel && (
+              <PanelEnvio 
+                ubicacionTexto={ubicacionTexto}
+                onClose={() => setShowEnvioPanel(false)}
+              />
+            )}
+          </div>
+
+          {/* Buscador */}
           <div className="navbar__search-wrapper" ref={searchRef}>
             <form className="navbar__search" onSubmit={handleBuscar}>
-              <svg className="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="11" cy="11" r="8" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-              </svg>
               <input
                 type="text"
-                placeholder="Buscar..."
+                placeholder="Search everything at Walmart online and in store"
                 value={busqueda}
                 onChange={(e) => setBusqueda(e.target.value)}
-                onFocus={() => sugerencias.length > 0 && setMostrarSugerencias(true)}
               />
+              <button type="submit" className="search-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              </button>
             </form>
-            {/* Sugerencias */}
-            {mostrarSugerencias && sugerencias.length > 0 && (
-              <div className="search-suggestions">
-                {sugerencias.map((producto) => (
-                  <button
-                    key={producto.id}
-                    className="suggestion-item"
-                    onClick={() => handleSugerenciaClick(producto)}
-                  >
-                    <span>{producto.nombre_comercial}</span>
-                    <span className="suggestion-price">${producto.precio_usd}</span>
-                  </button>
-                ))}
+          </div>
+
+          {/* Acciones Derecha (Escritorio) */}
+          <div className="navbar__actions desktop-only">
+            <button className="action-btn">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+              <div className="action-text">
+                <span>Reorder</span>
+                <strong>My Items</strong>
               </div>
-            )}
+            </button>
+            <button className="action-btn">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              <div className="action-text">
+                <span>Sign In</span>
+                <strong>Account</strong>
+              </div>
+            </button>
           </div>
 
           {/* Carrito */}
           <Link to="/carrito" className="navbar__cart">
-            <div className="cart-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="9" cy="21" r="1" />
-                <circle cx="20" cy="21" r="1" />
-                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-              </svg>
-              {cantidadItems > 0 && <span className="cart-badge">{cantidadItems}</span>}
+            <div className="cart-icon-wrapper">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+              <span className="cart-badge">{cantidadItems}</span>
             </div>
+            <span className="cart-price desktop-only">$0.00</span>
           </Link>
         </div>
 
-        {/* Barra de Envío - Segunda línea */}
-        <div className="navbar__envio-bar">
-          <button className="navbar__envio-btn" onClick={() => setShowEnvioPanel(!showEnvioPanel)}>
-            <span className="envio-btn__icon">🛵</span>
-            <span className="envio-btn__label">¿Retiro o delivery?</span>
-            <span className="envio-btn__location">{ciudadEstado}</span>
-            <svg className={`envio-btn__arrow ${showEnvioPanel ? 'rotated' : ''}`} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
+        {/* Botón Pickup/Delivery (Móvil) */}
+        <div className="navbar__mobile-pickup mobile-only">
+          <button className="navbar__pickup-btn" onClick={() => setShowEnvioPanel(!showEnvioPanel)}>
+            <div className="pickup-btn__left">
+              <div className="pickup-btn__icon">
+                <img src="https://i.imgur.com/8QG9gXv.png" alt="pickup icon" width="24"/>
+              </div>
+              <span className="pickup-btn__title">Pickup or delivery?</span>
+            </div>
+            <div className="pickup-btn__right">
+              <span className="pickup-btn__subtitle">{ubicacionTexto}</span>
+              <svg className={`pickup-btn__arrow ${showEnvioPanel ? 'rotated' : ''}`} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </div>
           </button>
+          
+          {/* Panel Desplegable Móvil */}
+          {showEnvioPanel && (
+            <div className="mobile-dropdown-container">
+               <PanelEnvio ubicacionTexto={ubicacionTexto} onClose={() => setShowEnvioPanel(false)} />
+            </div>
+          )}
         </div>
 
-        {/* Panel de Envío */}
-        {showEnvioPanel && (
-          <div className="envio-panel" ref={panelRef}>
-            <PanelEnvio
-              tipoEnvio={tipoEnvio}
-              cambiarTipoEnvio={cambiarTipoEnvio}
-              opcionesEnvio={opcionesEnvio}
-              direcciones={direcciones}
-              direccionSeleccionada={direccionSeleccionada}
-              setDireccionSeleccionada={setDireccionSeleccionada}
-              guardarDireccion={guardarDireccion}
-              cargarDirecciones={cargarDirecciones}
-              onClose={() => setShowEnvioPanel(false)}
-            />
-          </div>
-        )}
-
-        {/* Barra de Navegación Secundaria (Desktop) */}
-        <nav className="navbar__secondary">
+        {/* Barra Secundaria (Categorías) */}
+        <nav className="navbar__secondary desktop-only">
           <div className="navbar__secondary-inner">
-            {/* Menús desplegables */}
-            {Object.entries(CATEGORIAS).map(([key, items]) => (
-              <div
-                key={key}
-                className="nav-dropdown"
-                onMouseEnter={() => setDropdownAbierto(key)}
-                onMouseLeave={() => setDropdownAbierto(null)}
-              >
-                <button className="nav-dropdown__trigger">
-                  {key === 'medicamentos' && '💊 Medicamentos'}
-                  {key === 'cuidado' && '🧴 Cuidado Personal'}
-                  {key === 'bebe' && '🍼 Bebé'}
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polyline points="6 9 12 15 18 9" />
-                  </svg>
-                </button>
-                {dropdownAbierto === key && (
-                  <div className="nav-dropdown__menu">
-                    {items.map((item) => (
-                      <Link
-                        key={item}
-                        to={`/catalogo?categoria=${encodeURIComponent(item)}`}
-                        className="nav-dropdown__item"
-                      >
-                        {item}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-
-            {/* Enlaces fijos */}
-            <Link to="/catalogo" className="nav-link">Ofertas</Link>
-            <Link to="/catalogo" className="nav-link">Nuevos</Link>
-            <Link to="/catalogo" className="nav-link">Más Vendidos</Link>
-            <Link to="/quienes-somos" className="nav-link">Quiénes Somos</Link>
-            <Link to="/faq" className="nav-link">FAQ</Link>
-            <Link to="/ayuda" className="nav-link">Ayuda</Link>
-            <Link to="/contacto" className="nav-link">Contacto</Link>
-            <Link to="/terminos" className="nav-link">Términos</Link>
+            <button className="pill-btn"><strong>Departments</strong> <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+            <button className="pill-btn"><strong>Services</strong> <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+            <span className="divider"></span>
+            <Link to="#" className="pill-link">Rollbacks & More</Link>
+            <Link to="#" className="pill-link">Back to School</Link>
+            <Link to="#" className="pill-link">Get it Fast</Link>
+            <Link to="#" className="pill-link">Pharmacy</Link>
+            <Link to="#" className="pill-link">New Arrivals</Link>
+            <Link to="#" className="pill-link">Auto Service</Link>
           </div>
         </nav>
       </header>
 
-      {/* Menú Móvil */}
-      <MenuDrawer
-        isOpen={menuAbierto}
-        onClose={() => setMenuAbierto(false)}
-        user={user}
-        onLogout={handleLogout}
-      />
+      <MenuDrawer isOpen={menuAbierto} onClose={() => setMenuAbierto(false)} />
     </>
   )
 }
 
-// Componente del Panel de Envío
-function PanelEnvio({
-  tipoEnvio,
-  cambiarTipoEnvio,
-  opcionesEnvio,
-  direcciones,
-  direccionSeleccionada,
-  setDireccionSeleccionada,
-  guardarDireccion,
-  cargarDirecciones,
-  onClose,
-}) {
-  const [mostrarForm, setMostrarForm] = useState(false)
-  const [nuevaDireccion, setNuevaDireccion] = useState({
-    nombre: '',
-    direccion: '',
-    ciudad: '',
-    estado: '',
-    telefono_contacto: '',
-    referencia: '',
-    agencia_preferida: '',
-  })
-  const [guardando, setGuardando] = useState(false)
-
-  const opcionActual = opcionesEnvio?.find(op => op.id === tipoEnvio)
-  const CIUDADES_DELIVERY = ['Caracas', 'Maracay', 'Valencia']
-
-  const handleGuardarDireccion = async (e) => {
-    e.preventDefault()
-    if (!nuevaDireccion.nombre || !nuevaDireccion.direccion) return
-
-    setGuardando(true)
-    try {
-      await guardarDireccion({
-        ...nuevaDireccion,
-        tipo_direccion: opcionActual?.tipoDireccion || 'delivery',
-        estado: tipoEnvio === 'delivery' ? 'Distrito Capital' : nuevaDireccion.estado,
-      })
-      await cargarDirecciones(opcionActual?.tipoDireccion)
-      setMostrarForm(false)
-      setNuevaDireccion({
-        nombre: '',
-        direccion: '',
-        ciudad: '',
-        estado: '',
-        telefono_contacto: '',
-        referencia: '',
-        agencia_preferida: '',
-      })
-    } catch (err) {
-      console.error('Error guardando:', err)
-    } finally {
-      setGuardando(false)
-    }
-  }
-
+function PanelEnvio({ ubicacionTexto }) {
   return (
-    <div className="envio-panel__content">
-      <div className="envio-panel__header">
-        <h3>¿Cómo quieres recibir tu pedido?</h3>
-        <button className="envio-panel__close" onClick={onClose}>✕</button>
+    <div className="envio-panel-content">
+      <div className="envio-types">
+        <button className="envio-type-btn">
+          <div className="envio-circle"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg></div>
+          <span>Shipping</span>
+        </button>
+        <button className="envio-type-btn">
+          <div className="envio-circle"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 15v1c0 .6.4 1 1 1h2"></path><circle cx="7" cy="17" r="2"></circle><path d="M9 17h6"></path><circle cx="17" cy="17" r="2"></circle></svg></div>
+          <span>Pickup</span>
+        </button>
+        <button className="envio-type-btn">
+          <div className="envio-circle"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg></div>
+          <span>Delivery</span>
+        </button>
       </div>
 
-      {/* Opciones de envío */}
-      <div className="envio-panel__opciones">
-        {opcionesEnvio?.map((opcion) => (
-          <button
-            key={opcion.id}
-            className={`envio-opcion ${tipoEnvio === opcion.id ? 'envio-opcion--active' : ''}`}
-            onClick={() => cambiarTipoEnvio(opcion.id)}
-          >
-            <span className="envio-opcion__icon">{opcion.icono}</span>
-            <div className="envio-opcion__info">
-              <span className="envio-opcion__label">{opcion.label}</span>
-              <span className="envio-opcion__costo">{opcion.textoCosto}</span>
+      <div className="envio-cards">
+        <div className="envio-card">
+          <div className="envio-card-header">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            <div>
+              <strong>Add an address for shipping and delivery</strong>
+              <p>{ubicacionTexto}</p>
             </div>
-          </button>
-        ))}
-      </div>
-
-      {/* Direcciones */}
-      {opcionActual?.requiereDireccion && (
-        <div className="envio-panel__direcciones">
-          <p className="envio-panel__subtitulo">Dirección de entrega</p>
-
-          {direcciones?.filter(d => d.tipo_direccion === opcionActual.tipoDireccion).map((dir) => (
-            <label
-              key={dir.id}
-              className={`envio-direccion ${direccionSeleccionada?.id === dir.id ? 'envio-direccion--selected' : ''}`}
-            >
-              <input
-                type="radio"
-                name="direccion_envio"
-                checked={direccionSeleccionada?.id === dir.id}
-                onChange={() => setDireccionSeleccionada(dir)}
-              />
-              <div>
-                <strong>{dir.nombre}</strong>
-                <p>{dir.direccion}</p>
-                <small>{dir.ciudad}, {dir.estado}</small>
-              </div>
-            </label>
-          ))}
-
-          {!mostrarForm ? (
-            <button className="envio-add-btn" onClick={() => setMostrarForm(true)}>
-              + Agregar nueva dirección
-            </button>
-          ) : (
-            <form onSubmit={handleGuardarDireccion} className="envio-form">
-              <input
-                type="text"
-                placeholder="Nombre (Casa, Oficina...)"
-                value={nuevaDireccion.nombre}
-                onChange={(e) => setNuevaDireccion({ ...nuevaDireccion, nombre: e.target.value })}
-                required
-              />
-              <textarea
-                placeholder="Dirección completa"
-                value={nuevaDireccion.direccion}
-                onChange={(e) => setNuevaDireccion({ ...nuevaDireccion, direccion: e.target.value })}
-                required
-                rows="2"
-              />
-              {tipoEnvio === 'delivery' ? (
-                <select
-                  value={nuevaDireccion.ciudad}
-                  onChange={(e) => setNuevaDireccion({ ...nuevaDireccion, ciudad: e.target.value })}
-                  required
-                >
-                  <option value="">Seleccionar ciudad</option>
-                  {CIUDADES_DELIVERY.map(c => <option key={c} value={c}>{c}</option>)}
-                </select>
-              ) : (
-                <input
-                  type="text"
-                  placeholder="Ciudad"
-                  value={nuevaDireccion.ciudad}
-                  onChange={(e) => setNuevaDireccion({ ...nuevaDireccion, ciudad: e.target.value })}
-                />
-              )}
-              <input
-                type="text"
-                placeholder="Teléfono"
-                value={nuevaDireccion.telefono_contacto}
-                onChange={(e) => setNuevaDireccion({ ...nuevaDireccion, telefono_contacto: e.target.value })}
-              />
-              {tipoEnvio === 'envio_nacional' && (
-                <select
-                  value={nuevaDireccion.agencia_preferida}
-                  onChange={(e) => setNuevaDireccion({ ...nuevaDireccion, agencia_preferida: e.target.value })}
-                >
-                  <option value="">Agencia preferida</option>
-                  <option value="MRW">MRW</option>
-                  <option value="Domesa">Domesa</option>
-                  <option value="Tealca">Tealca</option>
-                  <option value="Zoom">Zoom</option>
-                </select>
-              )}
-              <div className="envio-form__actions">
-                <button type="submit" disabled={guardando}>
-                  {guardando ? 'Guardando...' : 'Guardar'}
-                </button>
-                <button type="button" onClick={() => setMostrarForm(false)}>Cancelar</button>
-              </div>
-            </form>
-          )}
+          </div>
+          <button className="envio-add-btn">Add address</button>
+          <div className="envio-card-footer">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            <span>Ship to another country</span>
+            <svg className="arrow-right" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </div>
         </div>
-      )}
+
+        <div className="envio-card">
+          <div className="envio-card-header">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            <div>
+              <strong>Sterling Supercenter</strong>
+              <p>45415 DULLES CROSSING PLZ, Sterling, VA 20166</p>
+            </div>
+            <svg className="arrow-right" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
