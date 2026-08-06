@@ -191,7 +191,7 @@
   cursor: pointer;
 }
 .filtro-accordion-btn svg {
-    transition: transform 0.2s ease;
+  transition: transform 0.2s ease;
 }
 /* If active accordion, you might add a rule here with active class: .filtro-accordion-btn.active svg { transform: rotate(180deg); } */
 
