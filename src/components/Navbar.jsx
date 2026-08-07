@@ -7,6 +7,11 @@ import api from '../api/axios'
 import MenuDrawer from './MenuDrawer'
 import './Navbar.css'
 
+
+const [showMyItemsMenu, setShowMyItemsMenu] = useState(false)
+const [showAccountMenu, setShowAccountMenu] = useState(false)
+const myItemsRef = useRef(null)
+const accountRef = useRef(null)
 const RUTAS_SIN_NAVBAR = ['/login', '/registro', '/recuperar']
 
 // 🆕 Datos de departamentos y sus subcategorías
@@ -123,35 +128,40 @@ function Navbar() {
   const mobilePanelRef = useRef(null)
   const deptosRef = useRef(null) //
 
-  useEffect(() => {
-    function handleClickOutside(event) {
-      const isOutsideDesktop = panelRef.current && !panelRef.current.contains(event.target)
-      const isOutsideMobile = mobilePanelRef.current && !mobilePanelRef.current.contains(event.target)
-      const isOutsideDeptos = deptosRef.current && !deptosRef.current.contains(event.target)
-      const isOutsideServicios = serviciosRef.current && !serviciosRef.current.contains(event.target)
+      useEffect(() => {
+      function handleClickOutside(event) {
+        const isOutsideDesktop = panelRef.current && !panelRef.current.contains(event.target)
+        const isOutsideMobile = mobilePanelRef.current && !mobilePanelRef.current.contains(event.target)
+        const isOutsideDeptos = deptosRef.current && !deptosRef.current.contains(event.target)
+        const isOutsideMyItems = myItemsRef.current && !myItemsRef.current.contains(event.target)
+        const isOutsideAccount = accountRef.current && !accountRef.current.contains(event.target)
 
-      if (isOutsideDesktop && isOutsideMobile) {
-        setShowEnvioPanel(false)
+        if (isOutsideDesktop && isOutsideMobile) {
+          setShowEnvioPanel(false)
+        }
+        
+        if (isOutsideDeptos) {
+          setShowDeptosMenu(false)
+          setDeptoActivo(null)
+        }
+        
+        // 🆕
+        if (isOutsideMyItems) {
+          setShowMyItemsMenu(false)
+        }
+        
+        // 🆕
+        if (isOutsideAccount) {
+          setShowAccountMenu(false)
+        }
+        
+        if (searchRef.current && !searchRef.current.contains(event.target)) {
+          setMostrarSugerencias(false)
+        }
       }
-      
-      if (isOutsideDeptos) {
-        setShowDeptosMenu(false)
-        setDeptoActivo(null)
-      }
-      
-      if (searchRef.current && !searchRef.current.contains(event.target)) {
-        setMostrarSugerencias(false)
-      }
-
-      if (isOutsideServicios) {
-        setShowServiciosMenu(false)
-        setServicioActivo(null)
-      }
-
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => document.removeEventListener('mousedown', handleClickOutside)
+    }, [])
 
   useEffect(() => {
     if (busqueda.length < 2) {
@@ -266,22 +276,147 @@ function Navbar() {
           </div>
 
           {/* Acciones Derecha (Escritorio) */}
-          <div className="navbar__actions desktop-only">
-            <button className="action-btn">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-              <div className="action-text">
-                <span>Reorder</span>
-                <strong>My Items</strong>
-              </div>
-            </button>
-            <button className="action-btn">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-              <div className="action-text">
-                <span>Sign In</span>
-                <strong>Account</strong>
-              </div>
-            </button>
+<div className="navbar__actions desktop-only">
+
+  {/* 🆕 Mi Botiquín (antes My Items) */}
+  <div className="navbar__action-dropdown" ref={myItemsRef}>
+    <button 
+      className="action-btn"
+      onClick={() => {
+        setShowMyItemsMenu(!showMyItemsMenu)
+        setShowAccountMenu(false)
+      }}
+    >
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+      </svg>
+      <div className="action-text">
+        <span>Mi Botiquín</span>
+        <strong>Mis Items</strong>
+      </div>
+      <svg className={`action-btn__arrow ${showMyItemsMenu ? 'rotated' : ''}`} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </button>
+
+    {showMyItemsMenu && (
+      <div className="action-dropdown-menu">
+        <Link to="/favoritos" className="action-dropdown-item" onClick={() => setShowMyItemsMenu(false)}>
+          <span className="action-dropdown-item__icono">❤️</span>
+          <div>
+            <span className="action-dropdown-item__label">Favoritos</span>
+            <span className="action-dropdown-item__desc">Productos que te gustan</span>
           </div>
+        </Link>
+        <Link to="/listas" className="action-dropdown-item" onClick={() => setShowMyItemsMenu(false)}>
+          <span className="action-dropdown-item__icono">📋</span>
+          <div>
+            <span className="action-dropdown-item__label">Mis Listas</span>
+            <span className="action-dropdown-item__desc">Listas de compras</span>
+          </div>
+        </Link>
+        <Link to="/frecuentes" className="action-dropdown-item" onClick={() => setShowMyItemsMenu(false)}>
+          <span className="action-dropdown-item__icono">🔄</span>
+          <div>
+            <span className="action-dropdown-item__label">Frecuentes</span>
+            <span className="action-dropdown-item__desc">Compras recurrentes</span>
+          </div>
+        </Link>
+      </div>
+    )}
+  </div>
+
+  {/* 🆕 Cuenta */}
+  <div className="navbar__action-dropdown" ref={accountRef}>
+    <button 
+      className="action-btn"
+      onClick={() => {
+        setShowAccountMenu(!showAccountMenu)
+        setShowMyItemsMenu(false)
+      }}
+    >
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+      </svg>
+      <div className="action-text">
+        <span>{user ? 'Sesión Iniciada' : 'Iniciar Sesión'}</span>
+        <strong>{user ? 'Mi Cuenta' : 'Cuenta'}</strong>
+      </div>
+      <svg className={`action-btn__arrow ${showAccountMenu ? 'rotated' : ''}`} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </button>
+
+    {showAccountMenu && (
+      <div className="action-dropdown-menu">
+        {user ? (
+          <>
+            <Link to="/cuenta" className="action-dropdown-item" onClick={() => setShowAccountMenu(false)}>
+              <span className="action-dropdown-item__icono">👤</span>
+              <div>
+                <span className="action-dropdown-item__label">Mi Cuenta</span>
+                <span className="action-dropdown-item__desc">Información personal</span>
+              </div>
+            </Link>
+            <Link to="/orders" className="action-dropdown-item" onClick={() => setShowAccountMenu(false)}>
+              <span className="action-dropdown-item__icono">📦</span>
+              <div>
+                <span className="action-dropdown-item__label">Mis Órdenes</span>
+                <span className="action-dropdown-item__desc">Historial de pedidos</span>
+              </div>
+            </Link>
+            <Link to="/estado-cuenta" className="action-dropdown-item" onClick={() => setShowAccountMenu(false)}>
+              <span className="action-dropdown-item__icono">💳</span>
+              <div>
+                <span className="action-dropdown-item__label">Estado de Cuenta</span>
+                <span className="action-dropdown-item__desc">Historial de facturación</span>
+              </div>
+            </Link>
+            <Link to="/notificaciones" className="action-dropdown-item" onClick={() => setShowAccountMenu(false)}>
+              <span className="action-dropdown-item__icono">🔔</span>
+              <div>
+                <span className="action-dropdown-item__label">Notificaciones</span>
+                <span className="action-dropdown-item__desc">Alertas y avisos</span>
+              </div>
+            </Link>
+            <Link to="/ajustes" className="action-dropdown-item" onClick={() => setShowAccountMenu(false)}>
+              <span className="action-dropdown-item__icono">⚙️</span>
+              <div>
+                <span className="action-dropdown-item__label">Ajustes</span>
+                <span className="action-dropdown-item__desc">Configuración</span>
+              </div>
+            </Link>
+            <div className="action-dropdown-divider"></div>
+            <button className="action-dropdown-item action-dropdown-item--danger" onClick={() => { logout(); setShowAccountMenu(false); }}>
+              <span className="action-dropdown-item__icono">🚪</span>
+              <div>
+                <span className="action-dropdown-item__label">Cerrar Sesión</span>
+              </div>
+            </button>
+          </>
+        ) : (
+          <>
+            <Link to="/login" className="action-dropdown-item" onClick={() => setShowAccountMenu(false)}>
+              <span className="action-dropdown-item__icono">🔑</span>
+              <div>
+                <span className="action-dropdown-item__label">Iniciar Sesión</span>
+                <span className="action-dropdown-item__desc">Accede a tu cuenta</span>
+              </div>
+            </Link>
+            <Link to="/registro" className="action-dropdown-item" onClick={() => setShowAccountMenu(false)}>
+              <span className="action-dropdown-item__icono">📝</span>
+              <div>
+                <span className="action-dropdown-item__label">Crear Cuenta</span>
+                <span className="action-dropdown-item__desc">Regístrate gratis</span>
+              </div>
+            </Link>
+          </>
+        )}
+      </div>
+    )}
+  </div>
+</div>
 
           {/* Carrito */}
           <Link to="/carrito" className="navbar__cart">
