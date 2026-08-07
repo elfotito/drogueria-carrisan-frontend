@@ -34,7 +34,6 @@ function Navbar() {
   const [sugerencias, setSugerencias] = useState([])
   const [mostrarSugerencias, setMostrarSugerencias] = useState(false)
   
-  // 🟢 AQUÍ ESTABA EL ERROR: Faltaba declarar esta línea exactamente así
   const searchRef = useRef(null)
   const panelRef = useRef(null)
   const mobilePanelRef = useRef(null) 
@@ -103,32 +102,36 @@ function Navbar() {
       <header className="navbar-container">
         <div className="navbar__main">
 
-          {/* Botón Pickup/Delivery (Escritorio) y Panel Desplegable */}
-          <div className="navbar__desktop-pickup-wrapper desktop-only" ref={panelRef}>
+          {/* Botón Pickup/Delivery (Móvil) */}
+          <div className="navbar__mobile-pickup-wrapper mobile-only" ref={mobilePanelRef}>
             <button className="navbar__pickup-btn" onClick={() => setShowEnvioPanel(!showEnvioPanel)}>
-              <div className="pickup-btn__icon">
-                🚚
+              <div className="pickup-btn__left">
+                <div className="pickup-btn__icon">
+                  🚚
+                </div>
+                <span className="pickup-btn__title">¿Retiro o entrega?</span>
               </div>
-              <div className="pickup-btn__text">
-                <span className="pickup-btn__title">¿Retiro o delivery?</span>
+              <div className="pickup-btn__right">
                 <span className="pickup-btn__subtitle">{ciudadEstado}</span>
+                <svg className={`pickup-btn__arrow ${showEnvioPanel ? 'rotated' : ''}`} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
               </div>
-              <svg className={`pickup-btn__arrow ${showEnvioPanel ? 'rotated' : ''}`} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
             </button>
-
-            {/* El panel flotante solo vive aquí para escritorio */}
+            
+            {/* Sin overlay, solo el dropdown que baja */}
             {showEnvioPanel && (
-              <PanelEnvio
-                tipoEnvio={tipoEnvio}
-                cambiarTipoEnvio={cambiarTipoEnvio}
-                opcionesEnvio={opcionesEnvio}
-                direcciones={direcciones}
-                direccionSeleccionada={direccionSeleccionada}
-                setDireccionSeleccionada={setDireccionSeleccionada}
-                guardarDireccion={guardarDireccion}
-                cargarDirecciones={cargarDirecciones}
-                onClose={() => setShowEnvioPanel(false)}
-              />
+              <div className="mobile-dropdown-container">
+                <PanelEnvio
+                  tipoEnvio={tipoEnvio}
+                  cambiarTipoEnvio={cambiarTipoEnvio}
+                  opcionesEnvio={opcionesEnvio}
+                  direcciones={direcciones}
+                  direccionSeleccionada={direccionSeleccionada}
+                  setDireccionSeleccionada={setDireccionSeleccionada}
+                  guardarDireccion={guardarDireccion}
+                  cargarDirecciones={cargarDirecciones}
+                  onClose={() => setShowEnvioPanel(false)}
+                />
+              </div>
             )}
           </div>
 
