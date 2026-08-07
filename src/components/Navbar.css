@@ -695,6 +695,12 @@ body {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  background: #f8f9fa; /* 🆕 Mismo fondo que el sidebar izquierdo cuando está vacío */
+}
+
+/* 🆕 Cuando tiene contenido, fondo blanco */
+.deptos-dropdown__subcategorias:has(.deptos-dropdown__sub-link) {
+  background: white;
 }
 
 .deptos-dropdown__sub-link {
