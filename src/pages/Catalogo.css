@@ -340,8 +340,7 @@
 
 .product-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* MÓVIL: 2 columnas */
-  gap: 12px;
+  gap: 20px;
 }
 
 .catalogo-vacio, .catalogo-estado {
@@ -355,13 +354,33 @@
 }
 
 /* ==========================================================
-   DESKTOP OVERRIDE (> 768px)
+   COLUMNA DE PRODUCTOS
    ========================================================== */
 
-@media (min-width: 769px) {
+@media (min-width: 1024px) {
   .product-grid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* 3 columnas */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .product-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* 2 columnas */
+@media (min-width: 480px) and (max-width: 767px) {
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 1 columna (mobile) */
+@media (max-width: 479px) {
+  .product-grid {
+    grid-template-columns: 1fr;
   }
 }
 
