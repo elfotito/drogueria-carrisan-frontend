@@ -396,10 +396,6 @@ function Navbar() {
                 {showServiciosMenu && (
                   <div 
                     className="deptos-dropdown"
-                    style={{
-                      top: `${serviciosPosition.top}px`,
-                      left: `${serviciosPosition.left}px`,
-                    }}
                   >
                     <div className="deptos-dropdown__sidebar">
                       <p className="deptos-dropdown__titulo">Todos los servicios</p>
