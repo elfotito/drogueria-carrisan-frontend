@@ -166,8 +166,24 @@ function Catalogo() {
   return (
     <div className="catalogo-layout">
 
-      {/* 1. Barra superior de accesos rápidos a filtros */}
+      {/* 1. Barra superior de accesos rápidos a filtros (carrusel de pills, solo texto) */}
       <div className="catalogo-filtros-rapidos">
+        <button
+          type="button"
+          className="pill-filtro-sliders"
+          onClick={() => setFiltrosAbiertos(true)}
+          aria-label="Abrir todos los filtros"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <line x1="4" y1="6" x2="20" y2="6"></line>
+            <circle cx="9" cy="6" r="2" fill="currentColor" stroke="none"></circle>
+            <line x1="4" y1="12" x2="20" y2="12"></line>
+            <circle cx="16" cy="12" r="2" fill="currentColor" stroke="none"></circle>
+            <line x1="4" y1="18" x2="20" y2="18"></line>
+            <circle cx="11" cy="18" r="2" fill="currentColor" stroke="none"></circle>
+          </svg>
+        </button>
+
         {filtrosRapidos.map((f) => (
           <button
             key={f.key}
@@ -233,14 +249,6 @@ function Catalogo() {
             Usa los detalles del artículo. Precio al comprar en línea.
           </p>
         </div>
-
-        <button
-          type="button"
-          className="btn-filtros-mobile-cta"
-          onClick={() => setFiltrosAbiertos((v) => !v)}
-        >
-          Filtros y Ordenar
-        </button>
       </header>
 
       <div className="catalogo-body">

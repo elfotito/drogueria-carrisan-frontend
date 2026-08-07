@@ -22,10 +22,31 @@
   margin-bottom: 16px;
 }
 
+.pill-filtro-sliders {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid #c7cbd6;
+  background: #FFFFFF;
+  color: #14182A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.pill-filtro-sliders:hover {
+  border-color: #1B4B8F;
+  background: #F4F6F8;
+}
+
 .pill-filtro-rapido {
   display: flex;
   align-items: center;
   gap: 6px;
+  flex-shrink: 0;
   background: #FFFFFF;
   border: 1px solid #c7cbd6;
   border-radius: 999px;
@@ -35,6 +56,7 @@
   color: #14182A;
   cursor: pointer;
   transition: border-color 0.2s ease, background 0.2s ease;
+  white-space: nowrap;
 }
 
 .pill-filtro-rapido:hover {
@@ -186,19 +208,6 @@
   font-size: 0.75rem;
   color: #74767c;
   margin: 0;
-}
-
-.btn-filtros-mobile-cta {
-  display: none;
-  font-family: 'Inter', sans-serif;
-  font-weight: 600;
-  font-size: 0.9rem;
-  padding: 10px 20px;
-  background: #fff;
-  border: 1px solid #1a1a1a;
-  border-radius: 999px;
-  cursor: pointer;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 /* ---------- 4. Body: Sidebar + Main Content ---------- */
@@ -375,16 +384,6 @@
 
   .catalogo-ordenar-desktop {
     display: none;
-  }
-
-  .catalogo-header {
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .btn-filtros-mobile-cta {
-    display: inline-block;
-    width: 100%;
   }
 
   /* Sidebar se convierte en drawer deslizante */

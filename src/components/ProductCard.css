@@ -314,15 +314,54 @@
   100% { opacity: 0; transform: translateY(-4px); }
 }
 
-/* ---------- Responsive ---------- */
+/* ---------- Responsive: mobile = tarjeta horizontal (imagen izq. / info der.) ---------- */
 @media (max-width: 768px) {
   .pcard {
-    padding: 10px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    padding: 12px;
+    gap: 0 12px;
   }
+
+  /* El badge social ocupa toda la fila de arriba, antes de imagen + info */
+  .pcard__top-badge {
+    flex: 0 0 100%;
+    margin-bottom: 8px;
+  }
+
+  /* Columna izquierda: imagen, ancho fijo y pequeño */
+  .pcard__media {
+    flex: 0 0 118px;
+    width: 118px;
+    margin-bottom: 0;
+  }
+
+  /* Columna derecha: toda la info */
+  .pcard__body {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
   .pcard__nombre {
     font-size: 0.82rem;
   }
   .pcard__precio-ahora {
     font-size: 0.95rem;
+  }
+
+  /* En este layout angosto, el botón de agregar / contador ocupa toda la columna derecha */
+  .pcard__acciones {
+    flex-wrap: wrap;
+  }
+  .pcard__btn-agregar,
+  .pcard__contador {
+    flex: 1 1 100%;
+  }
+
+  .pcard__confirmacion {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
   }
 }
