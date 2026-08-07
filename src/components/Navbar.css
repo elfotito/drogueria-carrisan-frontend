@@ -598,3 +598,118 @@ body {
     transform: translateY(0);
   }
 }
+
+/* ============================================ */
+/* MENÚ DESPLEGABLE DEPARTAMENTOS               */
+/* ============================================ */
+
+/* Wrapper con position relative */
+.navbar__deptos-wrapper {
+  position: relative;
+}
+
+.pill-btn--deptos {
+  gap: 6px;
+}
+
+/* Dropdown principal */
+.deptos-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  display: flex;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.15);
+  z-index: 500;
+  min-width: 600px;
+  overflow: hidden;
+  animation: slideDownFade 0.2s ease-out;
+}
+
+/* Sidebar izquierda (lista de departamentos) */
+.deptos-dropdown__sidebar {
+  width: 250px;
+  background: #f8f9fa;
+  padding: 12px 0;
+  border-right: 1px solid #e0e0e0;
+}
+
+.deptos-dropdown__titulo {
+  padding: 8px 16px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.deptos-dropdown__depto-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 14px;
+  color: #1a1a1a;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.deptos-dropdown__depto-btn:hover,
+.deptos-dropdown__depto-btn.active {
+  background: #e8f0fe;
+  color: #0071dc;
+  font-weight: 600;
+}
+
+.deptos-dropdown__depto-icono {
+  font-size: 18px;
+  width: 24px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.deptos-dropdown__depto-btn svg {
+  margin-left: auto;
+  opacity: 0.5;
+}
+
+.deptos-dropdown__depto-btn:hover svg,
+.deptos-dropdown__depto-btn.active svg {
+  opacity: 1;
+  color: #0071dc;
+}
+
+/* Panel derecho (subcategorías) */
+.deptos-dropdown__subcategorias {
+  flex: 1;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.deptos-dropdown__sub-link {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+  text-align: left;
+  border-radius: 6px;
+  transition: all 0.15s;
+}
+
+.deptos-dropdown__sub-link:hover {
+  background: #f0f4ff;
+  color: #0071dc;
+  font-weight: 500;
+}
