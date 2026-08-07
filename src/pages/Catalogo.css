@@ -1,12 +1,7 @@
 /* ============================================
    Catálogo — Layout y Tipografía
    ============================================ */
-.catalogo-layout,
-.catalogo-layout *,
-.catalogo-layout *::before,
-.catalogo-layout *::after {
-  box-sizing: border-box;
-}
+
 .catalogo-layout {
   max-width: 1400px;
   margin: 0 auto;
