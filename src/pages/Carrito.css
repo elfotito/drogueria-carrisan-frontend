@@ -8,12 +8,6 @@
   font-family: 'Inter', sans-serif;
 }
 
-.carrito-container {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 20px 16px 32px;
-}
-
 .carrito-title {
   font-family: 'Manrope', sans-serif;
   font-weight: 800;
@@ -1053,8 +1047,9 @@
 /* LAYOUT DE 2 COLUMNAS (ESCRITORIO)            */
 /* ============================================ */
 .carrito-container {
-  max-width: 100%; 
-  padding: 0 24px; 
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 32px 24px;
 }
 
 .carrito-layout {
@@ -1065,18 +1060,15 @@
 
 .carrito-main {
   flex: 1;
-  min-width: 0;
-  max-width: 100%; 
+  min-width: 0; 
 }
 
 /* ============================================ */
 /* SIDEBAR DERECHO STICKY                       */
 /* ============================================ */
 .cart-resumen-sidebar {
-  width: 400px; /* 🆕 Un poco más ancho */
+  width: 380px;
   flex-shrink: 0;
-  /* 🆕 Altura mínima para que sticky funcione */
-  min-height: 100vh;
 }
 
 .cart-resumen-sticky {
@@ -1230,6 +1222,12 @@
 /* RESPONSIVO                                   */
 /* ============================================ */
 
+@media (max-width: 1280px) {
+  .carrito-container {
+    padding: 32px 20px;
+  }
+}
+
 @media (max-width: 1200px) {
   .carrito-layout {
     gap: 24px;
@@ -1255,7 +1253,13 @@
 
   .carrito-container {
     padding: 16px;
+    max-width: 100%;
   }
+
+    .cart-resumen-sidebar {
+    width: 100%;
+  }
+  
 }
 
 /* Barra inferior - SOLO visible en móvil */
