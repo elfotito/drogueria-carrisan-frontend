@@ -34,16 +34,21 @@ function Navbar() {
   const [sugerencias, setSugerencias] = useState([])
   const [mostrarSugerencias, setMostrarSugerencias] = useState(false)
   
-  const searchRef = useRef(null)
-  const panelRef = useRef(null)
-
-  const cantidadItems = items?.reduce((acc, item) => acc + item.cantidad, 0) || 0
+    const searchRef = useRef(null)
+  const panelRef = useRef(null) 
+  const mobilePanelRef = useRef(null) // 🆕 1. Agregamos la referencia para el móvil
 
   useEffect(() => {
     function handleClickOutside(event) {
-      if (panelRef.current && !panelRef.current.contains(event.target)) {
+      // 🆕 2. Verificamos si el clic fue FUERA de ambos contenedores (escritorio y móvil)
+      const isOutsideDesktop = panelRef.current && !panelRef.current.contains(event.target)
+      const isOutsideMobile = mobilePanelRef.current && !mobilePanelRef.current.contains(event.target)
+
+      // Solo si el clic fue fuera de AMBOS, cerramos el panel
+      if (isOutsideDesktop && isOutsideMobile) {
         setShowEnvioPanel(false)
       }
+      
       if (searchRef.current && !searchRef.current.contains(event.target)) {
         setMostrarSugerencias(false)
       }
@@ -51,6 +56,7 @@ function Navbar() {
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
+
 
   useEffect(() => {
     if (busqueda.length < 2) {
