@@ -55,14 +55,14 @@ function CartLine({ item, tasaVes, onUpdateCantidad, onRemove }) {
   )
 }
 
-// 🆕 Componente DireccionSelector simplificado (igual que antes pero sin duplicar lógica)
+// Componente DireccionSelector (se mantiene igual)
 function DireccionSelector({ 
   direcciones, 
   direccionSeleccionada, 
   onSeleccionar, 
   onAgregar,
   loading,
-  tipo
+  tipo 
 }) {
   const [mostrarPanel, setMostrarPanel] = useState(false)
   const [paso, setPaso] = useState(1)
@@ -99,7 +99,8 @@ function DireccionSelector({
     try {
       await onAgregar({
         ...nuevaDireccion,
-        estado: tipo === 'delivery' ? 'Distrito Capital' : nuevaDireccion.estado
+        estado: tipo === 'delivery' ? 'Distrito Capital' : nuevaDireccion.estado,
+        tipo_direccion: tipo
       })
       setPaso(2)
       setTimeout(() => {
@@ -120,6 +121,12 @@ function DireccionSelector({
     } finally {
       setGuardando(false)
     }
+  }
+
+  // 🆕 Cuando se selecciona una dirección, notificar al padre
+  const handleSeleccionarDireccion = (dir) => {
+    onSeleccionar(dir)
+    // El padre (Carrito) se encargará de cerrar el panel
   }
 
   if (loading) {
@@ -145,7 +152,7 @@ function DireccionSelector({
                 type="radio"
                 name="direccion"
                 checked={direccionSeleccionada?.id === dir.id}
-                onChange={() => onSeleccionar(dir)}
+                onChange={() => handleSeleccionarDireccion(dir)}
               />
               <div className="direccion-radio__content">
                 <div className="direccion-radio__header">
@@ -295,9 +302,7 @@ function Carrito() {
   const [tasaVes, setTasaVes] = useState(null)
   const [enviando, setEnviando] = useState(false)
   const [error, setError] = useState('')
-  
-  // 🆕 Controla si la sección de envío está expandida o colapsada
-  const [envioExpandido, setEnvioExpandido] = useState(true)
+  const [envioExpandido, setEnvioExpandido] = useState(true) // 🆕 Siempre abierto al entrar
   
   const navigate = useNavigate()
 
@@ -308,25 +313,30 @@ function Carrito() {
       .catch(() => setTasaVes(null))
   }, [])
 
-  // 🆕 Si ya hay una dirección seleccionada y tipo de envío, colapsar la sección
-  useEffect(() => {
-    if (tipoEnvio && (tipoEnvio === 'retiro' || direccionSeleccionada)) {
-      setEnvioExpandido(false)
-    }
-  }, [tipoEnvio, direccionSeleccionada])
+  // 🆕 Cerrar panel SOLO cuando se selecciona una dirección (no al cambiar tipo de envío)
+  const handleSeleccionarDireccion = (dir) => {
+    setDireccionSeleccionada(dir)
+    setEnvioExpandido(false) // 🆕 Solo se cierra al elegir dirección
+  }
+
+  // 🆕 Cambiar tipo de envío sin cerrar el panel
+  const handleCambiarTipoEnvio = (tipo) => {
+    cambiarTipoEnvio(tipo)
+    setEnvioExpandido(true) // Mantener abierto para que configure la dirección
+  }
 
   async function handleConfirmar() {
     setError('')
     
     if (opcionActual?.requiereDireccion && !direccionSeleccionada) {
       setError('Debes seleccionar una dirección de entrega')
-      setEnvioExpandido(true) // 🆕 Expandir para que vea el error
+      setEnvioExpandido(true)
       return
     }
     
     if (opcionActual?.requiereAgencia && !agenciaSeleccionada) {
       setError('Debes seleccionar una agencia de envío')
-      setEnvioExpandido(true) // 🆕 Expandir para que vea el error
+      setEnvioExpandido(true)
       return
     }
 
@@ -370,125 +380,161 @@ function Carrito() {
     )
   }
 
+  // 🆕 Componente del resumen (sidebar derecho)
+  const ResumenPedido = () => (
+    <div className="cart-resumen-sidebar">
+      <div className="cart-resumen-sticky">
+        <h2 className="cart-summary__title">Resumen del pedido</h2>
+
+        <div className="cart-summary__row">
+          <span>Subtotal ({cantidadArticulos} {cantidadArticulos === 1 ? 'artículo' : 'artículos'})</span>
+          <span>${formatUSD(total)}</span>
+        </div>
+
+        <div className="cart-summary__row">
+          <span>{opcionActual?.label || 'Envío'}</span>
+          <span className={costoEnvio === 0 ? 'cart-summary__gratis' : ''}>
+            {costoEnvio === 0 ? 'Gratis' : `$${formatUSD(costoEnvio)}`}
+          </span>
+        </div>
+
+        {opcionActual?.id === 'envio_nacional' && (
+          <div className="cart-summary__row cart-summary__row--muted">
+            <span>Envío nacional</span>
+            <span>Pago en destino</span>
+          </div>
+        )}
+
+        <div className="cart-summary__divider" />
+
+        <div className="cart-summary__row cart-summary__row--total">
+          <span>Total estimado</span>
+          <div className="cart-summary__total-values">
+            <span className="cart-summary__total-usd">${formatUSD(totalConEnvio)}</span>
+            {totalVes && <span className="cart-summary__total-ves">Bs. {formatVES(totalVes)}</span>}
+          </div>
+        </div>
+
+        {error && <p className="carrito-error carrito-error--sidebar">{error}</p>}
+
+        <button
+          type="button"
+          className="carrito-bottombar__cta carrito-bottombar__cta--sidebar"
+          onClick={handleConfirmar}
+          disabled={enviando}
+        >
+          {enviando ? 'Confirmando...' : 'Confirmar pedido'}
+        </button>
+
+        <div className="cart-resumen-seguridad">
+          <span>🔒 Compra segura</span>
+          <p>Tus datos están protegidos</p>
+        </div>
+      </div>
+    </div>
+  )
+
   return (
     <div className="carrito-page">
       <div className="carrito-container">
-        <h1 className="carrito-title">Carrito</h1>
+        <h1 className="carrito-title">Carrito ({cantidadArticulos} {cantidadArticulos === 1 ? 'artículo' : 'artículos'})</h1>
 
-        {error && <p className="carrito-error">{error}</p>}
-
-        {/* 🆕 Sección de envío colapsable */}
-        <section className="delivery-card">
-          <button 
-            className="delivery-card__header"
-            onClick={() => setEnvioExpandido(!envioExpandido)}
-          >
-            <span className="delivery-card__header-icon" aria-hidden="true">📦</span>
-            <div className="delivery-card__header-text">
-              <h2>¿Cómo quieres recibir tu pedido?</h2>
-              {!envioExpandido && opcionActual && (
-                <p className="delivery-card__resumen">
-                  {opcionActual.icono} {opcionActual.label}
-                  {direccionSeleccionada && ` • 📍 ${direccionSeleccionada.nombre}`}
-                </p>
-              )}
-            </div>
-            <svg 
-              className={`delivery-card__chevron ${envioExpandido ? 'rotated' : ''}`}
-              width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-            >
-              <polyline points="6 9 12 15 18 9"></polyline>
-            </svg>
-          </button>
-
-          {/* Contenido expandible */}
-          <div className={`delivery-card__body ${envioExpandido ? 'expanded' : 'collapsed'}`}>
-            <div className="delivery-tabs">
-              {opcionesEnvio.map((opcion) => (
-                <button
-                  key={opcion.id}
-                  type="button"
-                  className={`delivery-tab ${tipoEnvio === opcion.id ? 'delivery-tab--active' : ''}`}
-                  onClick={() => cambiarTipoEnvio(opcion.id)}
-                >
-                  <span className="delivery-tab__icon">{opcion.icono}</span>
-                  <span className="delivery-tab__label">{opcion.label}</span>
-                  <span className="delivery-tab__costo">{opcion.textoCosto}</span>
-                </button>
-              ))}
-            </div>
-
-            {opcionActual && (
-              <div className="delivery-info">
-                <span className="delivery-info__icon" aria-hidden="true">{opcionActual.icono}</span>
-                <div className="delivery-info__body">
-                  <p className="delivery-info__title">{opcionActual.label}</p>
-                  <p className="delivery-info__text">{opcionActual.descripcion}</p>
-                  
-                  {opcionActual.requiereDireccion && (
-                    <DireccionSelector
-                      direcciones={direcciones}
-                      direccionSeleccionada={direccionSeleccionada}
-                      onSeleccionar={setDireccionSeleccionada}
-                      onAgregar={guardarDireccion}
-                      loading={loading}
-                      tipo={opcionActual.tipoDireccion}
-                    />
+        {/* 🆕 Layout de 2 columnas */}
+        <div className="carrito-layout">
+          {/* Columna izquierda: Envío + Productos */}
+          <div className="carrito-main">
+            {/* Sección de envío colapsable */}
+            <section className="delivery-card">
+              <button 
+                className="delivery-card__header"
+                onClick={() => setEnvioExpandido(!envioExpandido)}
+              >
+                <span className="delivery-card__header-icon" aria-hidden="true">📦</span>
+                <div className="delivery-card__header-text">
+                  <h2>¿Cómo quieres recibir tu pedido?</h2>
+                  {!envioExpandido && opcionActual && (
+                    <p className="delivery-card__resumen">
+                      {opcionActual.icono} {opcionActual.label}
+                      {direccionSeleccionada && ` • 📍 ${direccionSeleccionada.nombre}`}
+                    </p>
                   )}
                 </div>
+                <svg 
+                  className={`delivery-card__chevron ${envioExpandido ? 'rotated' : ''}`}
+                  width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                >
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+
+              <div className={`delivery-card__body ${envioExpandido ? 'expanded' : 'collapsed'}`}>
+                <div className="delivery-tabs">
+                  {opcionesEnvio.map((opcion) => (
+                    <button
+                      key={opcion.id}
+                      type="button"
+                      className={`delivery-tab ${tipoEnvio === opcion.id ? 'delivery-tab--active' : ''}`}
+                      onClick={() => handleCambiarTipoEnvio(opcion.id)}
+                    >
+                      <span className="delivery-tab__icon">{opcion.icono}</span>
+                      <span className="delivery-tab__label">{opcion.label}</span>
+                      <span className="delivery-tab__costo">{opcion.textoCosto}</span>
+                    </button>
+                  ))}
+                </div>
+
+                {opcionActual && (
+                  <div className="delivery-info">
+                    <span className="delivery-info__icon" aria-hidden="true">{opcionActual.icono}</span>
+                    <div className="delivery-info__body">
+                      <p className="delivery-info__title">{opcionActual.label}</p>
+                      <p className="delivery-info__text">{opcionActual.descripcion}</p>
+                      
+                      {opcionActual.requiereDireccion && (
+                        <DireccionSelector
+                          direcciones={direcciones}
+                          direccionSeleccionada={direccionSeleccionada}
+                          onSeleccionar={handleSeleccionarDireccion} // 🆕 Usar la nueva función
+                          onAgregar={guardarDireccion}
+                          loading={loading}
+                          tipo={opcionActual.tipoDireccion}
+                        />
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        </section>
+            </section>
 
-        {/* Líneas de producto */}
-        <section className="cart-lines">
-          <p className="cart-lines__count">
-            Vendido y enviado por <strong>Droguería Carrisán</strong> · {cantidadArticulos} {cantidadArticulos === 1 ? 'artículo' : 'artículos'}
-          </p>
-          {items.map((item) => (
-            <CartLine
-              key={item.producto.id}
-              item={item}
-              tasaVes={tasaVes}
-              onUpdateCantidad={updateCantidad}
-              onRemove={removeItem}
-            />
-          ))}
-        </section>
+            {/* Líneas de producto */}
+            <section className="cart-lines">
+              <p className="cart-lines__count">
+                Vendido y enviado por <strong>Droguería Carrisán</strong>
+              </p>
+              {items.map((item) => (
+                <CartLine
+                  key={item.producto.id}
+                  item={item}
+                  tasaVes={tasaVes}
+                  onUpdateCantidad={updateCantidad}
+                  onRemove={removeItem}
+                />
+              ))}
+            </section>
 
-        {/* Resumen */}
-        <section className="cart-summary">
-          <h2 className="cart-summary__title">Resumen del pedido</h2>
-          <div className="cart-summary__row">
-            <span>Subtotal ({cantidadArticulos} {cantidadArticulos === 1 ? 'artículo' : 'artículos'})</span>
-            <span>${formatUSD(total)}</span>
+            {/* 🆕 Espacio para futuras promociones y carruseles */}
+            <section className="cart-promociones">
+              {/* Aquí irán promociones y carruseles de productos */}
+            </section>
           </div>
-          <div className="cart-summary__row">
-            <span>{opcionActual?.label || 'Envío'}</span>
-            <span className={costoEnvio === 0 ? 'cart-summary__gratis' : ''}>
-              {costoEnvio === 0 ? 'Gratis' : `$${formatUSD(costoEnvio)}`}
-            </span>
-          </div>
-          {opcionActual?.id === 'envio_nacional' && (
-            <div className="cart-summary__row cart-summary__row--muted">
-              <span>Envío nacional</span>
-              <span>Pago en destino</span>
-            </div>
-          )}
-          <div className="cart-summary__divider" />
-          <div className="cart-summary__row cart-summary__row--total">
-            <span>Total estimado</span>
-            <div className="cart-summary__total-values">
-              <span className="cart-summary__total-usd">${formatUSD(totalConEnvio)}</span>
-              {totalVes && <span className="cart-summary__total-ves">Bs. {formatVES(totalVes)}</span>}
-            </div>
-          </div>
-        </section>
+
+          {/* Columna derecha: Resumen sticky */}
+          <ResumenPedido />
+        </div>
       </div>
 
-      {/* Barra inferior sticky */}
-      <div className="carrito-bottombar">
+      {/* 🆕 Barra inferior SOLO para móvil */}
+      <div className="carrito-bottombar carrito-bottombar--mobile">
         <div className="carrito-bottombar__total">
           <span className="carrito-bottombar__label">Total estimado</span>
           <span className="carrito-bottombar__value">${formatUSD(totalConEnvio)}</span>
