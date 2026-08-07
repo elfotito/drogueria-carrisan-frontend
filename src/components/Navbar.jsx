@@ -12,7 +12,7 @@ const RUTAS_SIN_NAVBAR = ['/login', '/registro', '/recuperar']
 function Navbar() {
   const { user, logout } = useAuth()
   const { items } = useCart()
-  
+  const cantidadItems = items?.reduce((acc, item) => acc + item.cantidad, 0) || 0
   const {
     tipoEnvio,
     cambiarTipoEnvio,
