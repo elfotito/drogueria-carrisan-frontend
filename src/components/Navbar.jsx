@@ -104,8 +104,8 @@ function Navbar() {
         <div className="navbar__main">
 
           {/* Botón Pickup/Delivery (Escritorio) y Panel Desplegable */}
-          <div className="pickup-dropdown-wrapper" ref={panelRef}>
-            <button className="navbar__pickup-btn desktop-only" onClick={() => setShowEnvioPanel(!showEnvioPanel)}>
+          <div className="navbar__desktop-pickup-wrapper desktop-only" ref={panelRef}>
+            <button className="navbar__pickup-btn" onClick={() => setShowEnvioPanel(!showEnvioPanel)}>
               <div className="pickup-btn__icon">
                 🚚
               </div>
@@ -116,7 +116,7 @@ function Navbar() {
               <svg className={`pickup-btn__arrow ${showEnvioPanel ? 'rotated' : ''}`} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
             </button>
 
-            {/* Renderizado de tu panel de envíos funcional */}
+            {/* El panel flotante solo vive aquí para escritorio */}
             {showEnvioPanel && (
               <PanelEnvio
                 tipoEnvio={tipoEnvio}
@@ -188,42 +188,43 @@ function Navbar() {
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
               <span className="cart-badge">{cantidadItems}</span>
             </div>
-            <span className="cart-price desktop-only">$0.00</span>
+            <span className="cart-price">$0.00</span>
           </Link>
         </div>
 
         {/* Botón Pickup/Delivery (Móvil) */}
-        <div className="navbar__mobile-pickup mobile-only">
-          <button className="navbar__pickup-btn" onClick={() => setShowEnvioPanel(!showEnvioPanel)}>
-            <div className="pickup-btn__left">
-              <div className="pickup-btn__icon">
-                <img src="https://i.imgur.com/8QG9gXv.png" alt="pickup icon" width="24"/>
+
+          <div className="navbar__mobile-pickup-wrapper mobile-only" ref={mobilePanelRef}>
+            <button className="navbar__pickup-btn" onClick={() => setShowEnvioPanel(!showEnvioPanel)}>
+              <div className="pickup-btn__left">
+                <div className="pickup-btn__icon">
+                  🚚
+                </div>
+                <span className="pickup-btn__title">¿Retiro o entrega?</span>
               </div>
-              <span className="pickup-btn__title">¿Retiro o delivery?</span>
-            </div>
-            <div className="pickup-btn__right">
-              <span className="pickup-btn__subtitle">{ciudadEstado}</span>
-              <svg className={`pickup-btn__arrow ${showEnvioPanel ? 'rotated' : ''}`} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-            </div>
-          </button>
-          
-          {/* Panel Desplegable Móvil */}
-          {showEnvioPanel && (
-            <div className="mobile-dropdown-container">
-              <PanelEnvio
-                tipoEnvio={tipoEnvio}
-                cambiarTipoEnvio={cambiarTipoEnvio}
-                opcionesEnvio={opcionesEnvio}
-                direcciones={direcciones}
-                direccionSeleccionada={direccionSeleccionada}
-                setDireccionSeleccionada={setDireccionSeleccionada}
-                guardarDireccion={guardarDireccion}
-                cargarDirecciones={cargarDirecciones}
-                onClose={() => setShowEnvioPanel(false)}
-              />
-            </div>
-          )}
-        </div>
+              <div className="pickup-btn__right">
+                <span className="pickup-btn__subtitle">{ciudadEstado}</span>
+                <svg className={`pickup-btn__arrow ${showEnvioPanel ? 'rotated' : ''}`} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </div>
+            </button>
+            
+            {/* El panel móvil solo vive aquí, expandiéndose hacia abajo */}
+            {showEnvioPanel && (
+              <div className="mobile-dropdown-container">
+                <PanelEnvio
+                  tipoEnvio={tipoEnvio}
+                  cambiarTipoEnvio={cambiarTipoEnvio}
+                  opcionesEnvio={opcionesEnvio}
+                  direcciones={direcciones}
+                  direccionSeleccionada={direccionSeleccionada}
+                  setDireccionSeleccionada={setDireccionSeleccionada}
+                  guardarDireccion={guardarDireccion}
+                  cargarDirecciones={cargarDirecciones}
+                  onClose={() => setShowEnvioPanel(false)}
+                />
+              </div>
+            )}
+          </div>
 
         {/* Barra Secundaria (Categorías) */}
         <nav className="navbar__secondary desktop-only">

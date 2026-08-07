@@ -70,9 +70,9 @@ body {
   padding: 8px 12px;
   border-radius: 24px;
   cursor: pointer;
-  gap: 10px;
+  gap: 12px;           
   text-align: left;
-  transition: background 0.2s;
+  position: relative; 
 }
 
 .navbar__pickup-btn:hover {
@@ -82,16 +82,24 @@ body {
 .pickup-btn__icon {
   background: white;
   border-radius: 50%;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+}
+
+.pickup-btn__icon img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
 }
 
 .pickup-btn__text {
   display: flex;
   flex-direction: column;
+  line-height: 1.2;
 }
 
 .pickup-btn__title { font-weight: 700; font-size: 14px; }
@@ -594,4 +602,59 @@ body {
 }
 .wm-close-text:hover {
   opacity: 0.8;
+}
+
+/* ================================================= */
+/* REGLAS MAESTRAS DE VISIBILIDAD MÓVIL / ESCRITORIO */
+/* ================================================= */
+
+@media (max-width: 767px) {
+  /* En teléfonos, destruimos y ocultamos por completo lo de escritorio */
+  .desktop-only, 
+  .navbar__desktop-pickup-wrapper {
+    display: none !important;
+  }
+  
+  .mobile-only,
+  .navbar__mobile-pickup-wrapper {
+    display: block !important;
+    width: 100%;
+    background: var(--wm-dark-blue);
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+
+  /* Asegurar que el panel móvil se despliegue ordenado sin flotar */
+  .mobile-dropdown-container .envio-panel-content {
+    width: 100% !important;
+    position: relative !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    box-sizing: border-box;
+  }
+}
+
+@media (min-width: 768px) {
+  /* En tablets y PC, destruimos y ocultamos por completo lo de móvil */
+  .mobile-only,
+  .navbar__mobile-pickup-wrapper {
+    display: none !important;
+  }
+
+  .desktop-only,
+  .navbar__desktop-pickup-wrapper {
+    display: block !important;
+    position: relative;
+  }
+
+  /* El panel de escritorio flota de manera absoluta */
+  .navbar__desktop-pickup-wrapper .envio-panel-content {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 360px;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+    z-index: 100;
+    margin-top: 12px;
+  }
 }
