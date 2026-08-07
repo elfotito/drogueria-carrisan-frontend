@@ -8,8 +8,6 @@ import MenuDrawer from './MenuDrawer'
 import './Navbar.css'
 
 
-const [showMyItemsMenu, setShowMyItemsMenu] = useState(false)
-const [showAccountMenu, setShowAccountMenu] = useState(false)
 
 const RUTAS_SIN_NAVBAR = ['/login', '/registro', '/recuperar']
 
@@ -117,7 +115,10 @@ function Navbar() {
   const [servicioActivo, setServicioActivo] = useState(null) // 
   const serviciosBtnRef = useRef(null) // 
   const serviciosRef = useRef(null) // 
-  
+  const [showMyItemsMenu, setShowMyItemsMenu] = useState(false)
+  const [showAccountMenu, setShowAccountMenu] = useState(false)
+  const myItemsRef = useRef(null)
+  const accountRef = useRef(null)
   const [busqueda, setBusqueda] = useState('')
   const [sugerencias, setSugerencias] = useState([])
   const [mostrarSugerencias, setMostrarSugerencias] = useState(false)
