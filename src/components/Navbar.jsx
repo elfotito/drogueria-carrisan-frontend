@@ -286,8 +286,12 @@ function Navbar() {
             <div className="navbar__deptos-wrapper" ref={deptosRef}>
               <button 
                 className="pill-btn pill-btn--deptos"
-                onClick={() => setShowDeptosMenu(!showDeptosMenu)}
-                onMouseEnter={() => setShowDeptosMenu(true)}
+                onClick={() => {
+                  setShowDeptosMenu(!showDeptosMenu)
+                  if (!showDeptosMenu) {
+                    setDeptoActivo(DEPARTAMENTOS[0].id) // 🆕 Abrir con el primer departamento seleccionado
+                  }
+                }}
               >
                 <strong>Departamentos</strong>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -297,13 +301,7 @@ function Navbar() {
 
               {/* 🆕 Menú desplegable de departamentos */}
               {showDeptosMenu && (
-                <div 
-                  className="deptos-dropdown"
-                  onMouseLeave={() => {
-                    setShowDeptosMenu(false)
-                    setDeptoActivo(null)
-                  }}
-                >
+                <div className="deptos-dropdown">
                   <div className="deptos-dropdown__sidebar">
                     <p className="deptos-dropdown__titulo">Todos los departamentos</p>
                     {DEPARTAMENTOS.map((depto) => (
@@ -322,20 +320,18 @@ function Navbar() {
                     ))}
                   </div>
 
-                  {/* 🆕 Subcategorías del departamento activo */}
-                  {deptoActivo && (
-                    <div className="deptos-dropdown__subcategorias">
-                      {DEPARTAMENTOS.find(d => d.id === deptoActivo)?.subcategorias.map((sub) => (
-                        <button
-                          key={sub.nombre}
-                          className="deptos-dropdown__sub-link"
-                          onClick={() => handleSubcategoriaClick(sub.ruta)}
-                        >
-                          {sub.nombre}
-                        </button>
-                      ))}
-                    </div>
-                  )}
+                  {/* Subcategorías del departamento activo */}
+                  <div className="deptos-dropdown__subcategorias">
+                    {DEPARTAMENTOS.find(d => d.id === deptoActivo)?.subcategorias.map((sub) => (
+                      <button
+                        key={sub.nombre}
+                        className="deptos-dropdown__sub-link"
+                        onClick={() => handleSubcategoriaClick(sub.ruta)}
+                      >
+                        {sub.nombre}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>

@@ -615,13 +615,13 @@ body {
 /* Dropdown principal */
 .deptos-dropdown {
   position: absolute;
-  top: calc(100% + 8px);
+  top: 100%;
   left: 0;
   display: flex;
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 12px 32px rgba(0,0,0,0.15);
-  z-index: 500;
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.2);
+  z-index: 999;
   min-width: 600px;
   overflow: hidden;
   animation: slideDownFade 0.2s ease-out;
@@ -662,9 +662,14 @@ body {
 
 .deptos-dropdown__depto-btn:hover,
 .deptos-dropdown__depto-btn.active {
-  background: #e8f0fe;
-  color: #0071dc;
-  font-weight: 600;
+  background: #0071dc;
+  color: white;
+}
+
+.deptos-dropdown__depto-btn:hover svg,
+.deptos-dropdown__depto-btn.active svg {
+  color: white;
+  opacity: 1;
 }
 
 .deptos-dropdown__depto-icono {
@@ -677,12 +682,6 @@ body {
 .deptos-dropdown__depto-btn svg {
   margin-left: auto;
   opacity: 0.5;
-}
-
-.deptos-dropdown__depto-btn:hover svg,
-.deptos-dropdown__depto-btn.active svg {
-  opacity: 1;
-  color: #0071dc;
 }
 
 /* Panel derecho (subcategorías) */
