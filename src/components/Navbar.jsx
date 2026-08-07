@@ -52,6 +52,41 @@ const DEPARTAMENTOS = [
   },
 ]
 
+// 🆕 Datos de servicios y sus subcategorías
+const SERVICIOS = [
+  {
+    id: 'consulta-medica',
+    nombre: 'Consulta Médica',
+    icono: '🩺',
+    subcategorias: [
+      { nombre: 'Cardiología', ruta: '/servicios/consulta-medica/cardiologia' },
+      { nombre: 'Medicina Interna', ruta: '/servicios/consulta-medica/medicina-interna' },
+      { nombre: 'Estudios pre-operatorios', ruta: '/servicios/consulta-medica/pre-operatorios' },
+    ]
+  },
+  {
+    id: 'laboratorio-clinico',
+    nombre: 'Laboratorio Clínico',
+    icono: '🔬',
+    subcategorias: [
+      { nombre: 'Análisis de Sangre', ruta: '/servicios/laboratorio/analisis-sangre' },
+      { nombre: 'Análisis de orina y heces', ruta: '/servicios/laboratorio/analisis-orina-heces' },
+      { nombre: 'Microbiología y parasitología', ruta: '/servicios/laboratorio/microbiologia' },
+    ]
+  },
+  {
+    id: 'detalles-disenos',
+    nombre: 'Detalles & Diseños',
+    icono: '🎁',
+    subcategorias: [
+      { nombre: 'Arreglos florales', ruta: '/servicios/detalles/arreglos-florales' },
+      { nombre: 'Cestas conmemorativas', ruta: '/servicios/detalles/cestas' },
+      { nombre: 'Escultura con Globos', ruta: '/servicios/detalles/globos' },
+      { nombre: 'Decoración para eventos', ruta: '/servicios/detalles/decoracion-eventos' },
+    ]
+  },
+]
+
 function Navbar() {
   const { user, logout } = useAuth()
   const { items } = useCart()
@@ -72,8 +107,12 @@ function Navbar() {
   
   const [menuAbierto, setMenuAbierto] = useState(false)
   const [showEnvioPanel, setShowEnvioPanel] = useState(false)
-  const [showDeptosMenu, setShowDeptosMenu] = useState(false) // 🆕 Estado para menú departamentos
-  const [deptoActivo, setDeptoActivo] = useState(null) // 🆕 Departamento activo en el hover
+  const [showDeptosMenu, setShowDeptosMenu] = useState(false) //
+  const [deptoActivo, setDeptoActivo] = useState(null) //
+  const [showServiciosMenu, setShowServiciosMenu] = useState(false) // 
+  const [servicioActivo, setServicioActivo] = useState(null) // 
+  const serviciosBtnRef = useRef(null) // 
+  const serviciosRef = useRef(null) // 
   
   const [busqueda, setBusqueda] = useState('')
   const [sugerencias, setSugerencias] = useState([])
@@ -89,6 +128,7 @@ function Navbar() {
       const isOutsideDesktop = panelRef.current && !panelRef.current.contains(event.target)
       const isOutsideMobile = mobilePanelRef.current && !mobilePanelRef.current.contains(event.target)
       const isOutsideDeptos = deptosRef.current && !deptosRef.current.contains(event.target)
+      const isOutsideServicios = serviciosRef.current && !serviciosRef.current.contains(event.target)
 
       if (isOutsideDesktop && isOutsideMobile) {
         setShowEnvioPanel(false)
@@ -102,6 +142,12 @@ function Navbar() {
       if (searchRef.current && !searchRef.current.contains(event.target)) {
         setMostrarSugerencias(false)
       }
+
+      if (isOutsideServicios) {
+        setShowServiciosMenu(false)
+        setServicioActivo(null)
+      }
+
     }
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
@@ -288,9 +334,7 @@ function Navbar() {
                 className="pill-btn pill-btn--deptos"
                 onClick={() => {
                   setShowDeptosMenu(!showDeptosMenu)
-                  if (!showDeptosMenu) {
-                    setDeptoActivo(DEPARTAMENTOS[0].id) // 🆕 Abrir con el primer departamento seleccionado
-                  }
+                  
                 }}
               >
                 <strong>Departamentos</strong>
@@ -336,12 +380,63 @@ function Navbar() {
               )}
             </div>
 
-            <button className="pill-btn">
-              <strong>Servicios</strong>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </button>
+            {/* 🆕 Botón Servicios con menú desplegable */}
+              <div className="navbar__deptos-wrapper" ref={serviciosRef}>
+                <button 
+                  className="pill-btn pill-btn--deptos"
+                  ref={serviciosBtnRef}
+                  onClick={() => setShowServiciosMenu(!showServiciosMenu)}
+                >
+                  <strong>Servicios</strong>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </button>
+
+                {showServiciosMenu && (
+                  <div 
+                    className="deptos-dropdown"
+                    style={{
+                      top: `${serviciosPosition.top}px`,
+                      left: `${serviciosPosition.left}px`,
+                    }}
+                  >
+                    <div className="deptos-dropdown__sidebar">
+                      <p className="deptos-dropdown__titulo">Todos los servicios</p>
+                      {SERVICIOS.map((servicio) => (
+                        <button
+                          key={servicio.id}
+                          className={`deptos-dropdown__depto-btn ${servicioActivo === servicio.id ? 'active' : ''}`}
+                          onMouseEnter={() => setServicioActivo(servicio.id)}
+                          onClick={() => setServicioActivo(servicio.id)}
+                        >
+                          <span className="deptos-dropdown__depto-icono">{servicio.icono}</span>
+                          {servicio.nombre}
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                          </svg>
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="deptos-dropdown__subcategorias">
+                      {SERVICIOS.find(s => s.id === servicioActivo)?.subcategorias.map((sub) => (
+                        <button
+                          key={sub.nombre}
+                          className="deptos-dropdown__sub-link"
+                          onClick={() => {
+                            setShowServiciosMenu(false)
+                            setServicioActivo(null)
+                            navigate(sub.ruta)
+                          }}
+                        >
+                          {sub.nombre}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             <span className="divider"></span>
             <Link to="/catalogo" className="pill-link">Nuevos Ingresos</Link>
             <Link to="/catalogo" className="pill-link">Ofertas</Link>
