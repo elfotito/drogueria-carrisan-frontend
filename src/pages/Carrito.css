@@ -1052,33 +1052,62 @@
 /* ============================================ */
 /* LAYOUT DE 2 COLUMNAS (ESCRITORIO)            */
 /* ============================================ */
+.carrito-container {
+  max-width: 100%; 
+  padding: 0 24px; 
+}
+
 .carrito-layout {
   display: flex;
-  gap: 32px;
+  gap: 40px; 
   align-items: flex-start;
 }
 
 .carrito-main {
   flex: 1;
-  min-width: 0; /* Evita overflow */
+  min-width: 0;
+  max-width: 100%; 
 }
 
 /* ============================================ */
 /* SIDEBAR DERECHO STICKY                       */
 /* ============================================ */
 .cart-resumen-sidebar {
-  width: 380px;
+  width: 400px; /* 🆕 Un poco más ancho */
   flex-shrink: 0;
+  /* 🆕 Altura mínima para que sticky funcione */
+  min-height: 100vh;
 }
 
 .cart-resumen-sticky {
   position: sticky;
-  top: 120px; /* Debajo del navbar */
+  top: 100px; /* Debajo del navbar */
   background: white;
   border: 1px solid #e0e0e0;
   border-radius: 12px;
+  padding: 28px; /* 🆕 Más padding */
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  /* 🆕 Asegurar que sticky funcione */
+  z-index: 10;
+}
+
+.carrito-page {
+  background: #f5f5f5; /* Fondo gris claro para contraste */
+  min-height: 100vh;
+}
+
+.carrito-container {
+  padding: 32px 32px; /* 🆕 Más padding */
+}
+
+.delivery-card,
+.cart-lines,
+.cart-promociones {
+  background: white;
+  border-radius: 12px;
   padding: 24px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  margin-bottom: 24px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
 }
 
 .cart-summary__title {
@@ -1200,17 +1229,32 @@
 /* ============================================ */
 /* RESPONSIVO                                   */
 /* ============================================ */
+
+@media (max-width: 1200px) {
+  .carrito-layout {
+    gap: 24px;
+  }
+  
+  .cart-resumen-sidebar {
+    width: 340px;
+  }
+}
+
 @media (max-width: 1024px) {
   .carrito-layout {
     flex-direction: column;
   }
-
+  
   .cart-resumen-sidebar {
     width: 100%;
   }
 
   .cart-resumen-sticky {
     position: static;
+  }
+
+  .carrito-container {
+    padding: 16px;
   }
 }
 
@@ -1238,5 +1282,17 @@
 @media (min-width: 1025px) {
   .carrito-bottombar--mobile {
     display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .carrito-container {
+    padding: 12px;
+  }
+  
+  .delivery-card,
+  .cart-lines {
+    padding: 16px;
+    border-radius: 8px;
   }
 }
