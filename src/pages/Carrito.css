@@ -1055,7 +1055,7 @@
 .carrito-layout {
   display: flex;
   gap: 40px; 
-  align-items: flex-start;
+  align-items: stretch;
 }
 
 .carrito-main {
@@ -1069,6 +1069,7 @@
 .cart-resumen-sidebar {
   width: 380px;
   flex-shrink: 0;
+  position: relative;
 }
 
 .cart-resumen-sticky {
@@ -1259,7 +1260,7 @@
     .cart-resumen-sidebar {
     width: 100%;
   }
-  
+
 }
 
 /* Barra inferior - SOLO visible en móvil */
