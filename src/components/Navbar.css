@@ -429,3 +429,169 @@ body {
   animation: slideDownFade 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
   transform-origin: top center;
 }
+
+/* ============================================ */
+/* REGLAS ESTRICTAS PARA MÓVIL Y ESCRITORIO     */
+/* Evita el problema de la imagen "doble"       */
+/* ============================================ */
+@media (max-width: 767px) {
+  .desktop-only { display: none !important; }
+  .mobile-only { display: block !important; }
+}
+@media (min-width: 768px) {
+  .desktop-only { display: block !important; }
+  /* Excepción para flex containers */
+  div.desktop-only { display: block !important; } 
+  .navbar__actions.desktop-only { display: flex !important; }
+  .mobile-only { display: none !important; }
+}
+
+/* ============================================ */
+/* PANEL CLON WALMART (Estilos exactos)         */
+/* ============================================ */
+
+/* Animación fluida de caída */
+@keyframes slideDownAndFade {
+  0% { opacity: 0; transform: translateY(-10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* En móvil fluye con el contenido, en desktop flota */
+.envio-panel-content {
+  background: var(--wm-blue);
+  color: white;
+  padding: 16px;
+  animation: slideDownAndFade 0.2s ease-out forwards;
+}
+
+.pickup-dropdown-wrapper .envio-panel-content {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 360px;
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+  z-index: 100;
+  margin-top: 12px;
+}
+
+/* Estilos de los círculos superiores */
+.envio-types-video {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin-bottom: 24px;
+}
+
+.wm-type-btn {
+  background: transparent;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.wm-circle {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #004f9a; /* Azul oscuro inactivo */
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  transition: all 0.2s;
+}
+
+.wm-label {
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Estado activo del círculo */
+.wm-type-btn.active .wm-circle {
+  background: white;
+  color: var(--wm-blue);
+}
+.wm-type-btn.active .wm-label {
+  font-weight: 700;
+}
+
+/* Tarjeta Blanca Central */
+.wm-card {
+  background: white;
+  color: black;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.wm-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 15px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.wm-card-icon {
+  font-size: 20px;
+}
+
+.wm-card p {
+  margin: 0;
+  line-height: 1.4;
+}
+
+.wm-card-address {
+  margin-left: 32px !important;
+  color: #464646;
+  font-size: 14px;
+  margin-bottom: 16px !important;
+}
+
+/* Botón Agregar Dirección (Azul Claro/Borde) */
+.wm-add-btn {
+  background: #0071dc;
+  color: white;
+  border: none;
+  border-radius: 24px;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 8px;
+  transition: background 0.2s;
+}
+
+.wm-add-btn:hover {
+  background: #004f9a;
+}
+
+/* Texto "Cerrar" en la parte inferior */
+.wm-close-container {
+  text-align: center;
+  margin-top: 16px;
+  padding-bottom: 8px;
+}
+
+.wm-close-text {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 15px;
+  text-decoration: underline;
+  cursor: pointer;
+  font-weight: 500;
+}
+.wm-close-text:hover {
+  opacity: 0.8;
+}
