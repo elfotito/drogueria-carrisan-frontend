@@ -192,24 +192,25 @@ function Navbar() {
           </Link>
         </div>
 
-        {/* Botón Pickup/Delivery (Móvil) */}
-
-          <div className="navbar__mobile-pickup-wrapper mobile-only" ref={mobilePanelRef}>
-            <button className="navbar__pickup-btn" onClick={() => setShowEnvioPanel(!showEnvioPanel)}>
-              <div className="pickup-btn__left">
-                <div className="pickup-btn__icon">
-                  🚚
-                </div>
-                <span className="pickup-btn__title">¿Retiro o entrega?</span>
+          {/* Botón Pickup/Delivery (Móvil) */}
+        <div className="navbar__mobile-pickup-wrapper mobile-only" ref={mobilePanelRef}>
+          <button className="navbar__pickup-btn" onClick={() => setShowEnvioPanel(!showEnvioPanel)}>
+            <div className="pickup-btn__left">
+              <div className="pickup-btn__icon">
+                🚚
               </div>
-              <div className="pickup-btn__right">
-                <span className="pickup-btn__subtitle">{ciudadEstado}</span>
-                <svg className={`pickup-btn__arrow ${showEnvioPanel ? 'rotated' : ''}`} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-              </div>
-            </button>
-            
-            {/* El panel móvil solo vive aquí, expandiéndose hacia abajo */}
-            {showEnvioPanel && (
+              <span className="pickup-btn__title">¿Retiro o entrega?</span>
+            </div>
+            <div className="pickup-btn__right">
+              <span className="pickup-btn__subtitle">{ciudadEstado}</span>
+              <svg className={`pickup-btn__arrow ${showEnvioPanel ? 'rotated' : ''}`} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </div>
+          </button>
+          
+          {/* Overlay y panel flotante para móvil */}
+          {showEnvioPanel && (
+            <>
+              <div className="mobile-panel-overlay" onClick={() => setShowEnvioPanel(false)} />
               <div className="mobile-dropdown-container">
                 <PanelEnvio
                   tipoEnvio={tipoEnvio}
@@ -223,8 +224,9 @@ function Navbar() {
                   onClose={() => setShowEnvioPanel(false)}
                 />
               </div>
-            )}
-          </div>
+            </>
+          )}
+        </div>
 
         {/* Barra Secundaria (Categorías) */}
         <nav className="navbar__secondary desktop-only">

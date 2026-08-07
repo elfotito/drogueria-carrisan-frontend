@@ -24,7 +24,7 @@ body {
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* Sombra suave opcional */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 /* ============================================ */
@@ -48,16 +48,12 @@ body {
   display: flex;
 }
 
-.navbar__logo {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-}
-
 /* ============================================ */
 /* PICKUP BOTÓN & DROPDOWN                      */
 /* ============================================ */
-.pickup-dropdown-wrapper {
+
+/* Desktop: Wrapper con position relative para el panel absoluto */
+.navbar__desktop-pickup-wrapper {
   position: relative;
 }
 
@@ -72,7 +68,7 @@ body {
   cursor: pointer;
   gap: 12px;           
   text-align: left;
-  position: relative; 
+  width: auto;
 }
 
 .navbar__pickup-btn:hover {
@@ -90,12 +86,6 @@ body {
   flex-shrink: 0;
 }
 
-.pickup-btn__icon img {
-  width: 20px;
-  height: 20px;
-  object-fit: contain;
-}
-
 .pickup-btn__text {
   display: flex;
   flex-direction: column;
@@ -105,27 +95,34 @@ body {
 .pickup-btn__title { font-weight: 700; font-size: 14px; }
 .pickup-btn__subtitle { font-size: 12px; }
 
-.pickup-btn__arrow { transition: transform 0.3s; }
+.pickup-btn__arrow { 
+  transition: transform 0.3s; 
+  flex-shrink: 0;
+}
 .pickup-btn__arrow.rotated { transform: rotate(180deg); }
 
 /* ============================================ */
-/* PANEL DE ENVÍO (Estilo Walmart aplicado)     */
+/* PANEL DE ENVÍO (Base)                        */
 /* ============================================ */
 .envio-panel-content {
   background: var(--wm-blue);
   color: white;
   padding: 16px;
-  border-radius: 0 0 12px 12px;
-  width: 340px;
+  animation: slideDownFade 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  transform-origin: top center;
 }
 
-.pickup-dropdown-wrapper .envio-panel-content {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  margin-top: 12px;
-  box-shadow: 0 12px 24px rgba(0,0,0,0.2);
-  z-index: 100;
+/* Desktop: Panel flotante */
+@media (min-width: 768px) {
+  .navbar__desktop-pickup-wrapper .envio-panel-content {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: 360px;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+    z-index: 100;
+  }
 }
 
 .envio-panel-header {
@@ -134,7 +131,11 @@ body {
   margin-bottom: 8px;
 }
 .close-panel-btn {
-  background: none; border: none; color: white; font-size: 18px; cursor: pointer;
+  background: none; 
+  border: none; 
+  color: white; 
+  font-size: 18px; 
+  cursor: pointer;
 }
 
 .envio-types {
@@ -238,7 +239,9 @@ body {
   gap: 8px;
 }
 
-.envio-form input, .envio-form textarea, .envio-form select {
+.envio-form input, 
+.envio-form textarea, 
+.envio-form select {
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 6px;
@@ -246,15 +249,51 @@ body {
   width: 100%;
   box-sizing: border-box;
 }
-.envio-form .input-disabled { background: #eee; color: #888; }
+.envio-form .input-disabled { 
+  background: #eee; 
+  color: #888; 
+}
 
-.form-actions { display: flex; gap: 8px; margin-top: 8px; }
-.btn-guardar { background: var(--wm-blue); color: white; border: none; padding: 10px; border-radius: 20px; flex: 1; cursor: pointer; font-weight: bold; }
-.btn-cancelar { background: white; border: 1px solid #ccc; color: var(--text-main); padding: 10px; border-radius: 20px; cursor: pointer; font-weight: bold; }
+.form-actions { 
+  display: flex; 
+  gap: 8px; 
+  margin-top: 8px; 
+}
+.btn-guardar { 
+  background: var(--wm-blue); 
+  color: white; 
+  border: none; 
+  padding: 10px; 
+  border-radius: 20px; 
+  flex: 1; 
+  cursor: pointer; 
+  font-weight: bold; 
+}
+.btn-cancelar { 
+  background: white; 
+  border: 1px solid #ccc; 
+  color: var(--text-main); 
+  padding: 10px; 
+  border-radius: 20px; 
+  cursor: pointer; 
+  font-weight: bold; 
+}
 
-.envio-mensaje { padding: 10px; border-radius: 6px; margin-bottom: 12px; font-size: 14px; text-align: center; }
-.envio-mensaje.success { background: #e8f5e9; color: #2e7d32; }
-.envio-mensaje.error { background: #ffebee; color: #c62828; }
+.envio-mensaje { 
+  padding: 10px; 
+  border-radius: 6px; 
+  margin-bottom: 12px; 
+  font-size: 14px; 
+  text-align: center; 
+}
+.envio-mensaje.success { 
+  background: #e8f5e9; 
+  color: #2e7d32; 
+}
+.envio-mensaje.error { 
+  background: #ffebee; 
+  color: #c62828; 
+}
 
 /* ============================================ */
 /* BUSCADOR (Lupa centrada y Sugerencias)       */
@@ -266,17 +305,17 @@ body {
 
 .navbar__search {
   display: flex;
-  align-items: center;     /* Asegura el centrado vertical */
+  align-items: center;
   background: white;
   border-radius: 24px;
-  height: 40px;
-  padding-right: 4px;      /* Espacio para que el botón respire */
+  height: 44px;
+  padding-right: 4px;
 }
 
 .navbar__search input {
   flex: 1;
   border: none;
-  color:#000000;
+  color: #000000;
   background: transparent;
   padding: 0 16px;
   font-size: 15px;
@@ -290,22 +329,21 @@ body {
   color: white;
   border: none;
   border-radius: 50%;
-  width: 32px;            /* Tamaño exacto, igual que el alto */
-  height: 32px;
+  width: 36px;
+  height: 36px;
   display: flex;
-  align-items: center;    /* Centra el ícono verticalmente */
-  justify-content: center;/* Centra el ícono horizontalmente */
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  flex-shrink: 0;         /* Evita que se encoja */
+  flex-shrink: 0;
 }
 
 /* Dropdown de Sugerencias */
 .search-suggestions {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 4px);
   left: 0;
   right: 0;
-  margin-top: 8px;
   background: white;
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.15);
@@ -334,24 +372,55 @@ body {
 /* ============================================ */
 /* ACCIONES (Derecha)                           */
 /* ============================================ */
-.navbar__actions { display: flex; gap: 16px; }
+.navbar__actions { 
+  display: flex; 
+  gap: 16px; 
+}
 
 .action-btn {
-  background: transparent; border: none; color: white; display: flex; align-items: center;
-  gap: 8px; cursor: pointer; padding: 8px; border-radius: 24px; transition: background 0.2s;
+  background: transparent; 
+  border: none; 
+  color: white; 
+  display: flex; 
+  align-items: center;
+  gap: 8px; 
+  cursor: pointer; 
+  padding: 8px; 
+  border-radius: 24px; 
+  transition: background 0.2s;
 }
 .action-btn:hover { background: rgba(0, 0, 0, 0.2); }
-.action-text { display: flex; flex-direction: column; text-align: left; font-size: 13px; }
+.action-text { 
+  display: flex; 
+  flex-direction: column; 
+  text-align: left; 
+  font-size: 13px; 
+}
 
 .navbar__cart {
-  display: flex; flex-direction: column; align-items: center; color: white;
-  text-decoration: none; padding: 4px 8px; border-radius: 8px;
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  color: white;
+  text-decoration: none; 
+  padding: 4px 8px; 
+  border-radius: 8px;
 }
 .cart-icon-wrapper { position: relative; }
 .cart-badge {
-  position: absolute; top: -8px; right: -8px; background: var(--wm-yellow); color: black;
-  font-size: 11px; font-weight: 700; width: 18px; height: 18px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
+  position: absolute; 
+  top: -8px; 
+  right: -8px; 
+  background: var(--wm-yellow); 
+  color: black;
+  font-size: 11px; 
+  font-weight: 700; 
+  width: 18px; 
+  height: 18px; 
+  border-radius: 50%;
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
 }
 .cart-price { font-size: 13px; font-weight: 700; margin-top: 2px; }
 
@@ -377,49 +446,125 @@ body {
 .navbar__secondary-inner::-webkit-scrollbar { display: none; }
 
 .pill-btn, .pill-link {
-  background: white; border: 1px solid white; padding: 6px 12px; border-radius: 16px;
-  font-size: 14px; color: var(--text-main); text-decoration: none; display: flex;
-  align-items: center; gap: 4px; cursor: pointer;
+  background: white; 
+  border: 1px solid white; 
+  padding: 6px 12px; 
+  border-radius: 16px;
+  font-size: 14px; 
+  color: var(--text-main); 
+  text-decoration: none; 
+  display: flex;
+  align-items: center; 
+  gap: 4px; 
+  cursor: pointer;
 }
 .pill-btn:hover, .pill-link:hover { border-color: black; }
-.divider { width: 1px; height: 20px; background: #ccc; margin: 0 4px; }
+.divider { 
+  width: 1px; 
+  height: 20px; 
+  background: #ccc; 
+  margin: 0 4px; 
+}
 
 /* ============================================ */
-/* RESPONSIVO (Tablet comparte con Desktop)     */
+/* MÓVIL: Panel NO empuja contenido             */
 /* ============================================ */
 @media (max-width: 767px) {
-  .desktop-only { display: none !important; }
-  .navbar__main { padding: 12px; gap: 12px; }
-  .navbar__menu-mobile { display: flex; }
+  .desktop-only { 
+    display: none !important; 
+  }
+  
+  .navbar__main { 
+    padding: 12px; 
+    gap: 12px; 
+  }
+  
+  .navbar__menu-mobile { 
+    display: flex; 
+  }
 
-  .navbar__mobile-pickup {
+  /* Wrapper móvil: position relative para el dropdown */
+  .navbar__mobile-pickup-wrapper {
+    display: block;
+    position: relative;
+    z-index: 200;
     background: var(--wm-dark-blue);
     border-top: 1px solid rgba(255,255,255,0.1);
   }
-  .navbar__mobile-pickup .navbar__pickup-btn {
-    width: 100%; border-radius: 0; background: transparent;
-    justify-content: space-between; padding: 12px 16px;
+
+  .navbar__mobile-pickup-wrapper .navbar__pickup-btn {
+    width: 100%; 
+    border-radius: 0; 
+    background: transparent;
+    justify-content: space-between; 
+    padding: 12px 16px;
   }
-  .pickup-btn__left, .pickup-btn__right { display: flex; align-items: center; gap: 10px; }
+  
+  .pickup-btn__left, 
+  .pickup-btn__right { 
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
+  }
+
+  /* CONTENEDOR MÓVIL: Position absolute para no empujar */
+  .mobile-dropdown-container {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    z-index: 300;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  }
 
   .mobile-dropdown-container .envio-panel-content {
-    width: 100%; border-radius: 0; box-sizing: border-box;
-    box-shadow: inset 0 4px 8px rgba(0,0,0,0.1);
+    width: 100%;
+    border-radius: 0 0 12px 12px;
+    max-height: 70vh;
+    overflow-y: auto;
   }
-}
 
-@media (min-width: 768px) {
-  .mobile-only { display: none !important; }
-  .navbar__menu-mobile { display: none; }
+  /* Overlay para fondo oscuro cuando el panel está abierto */
+  .mobile-panel-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 250;
+    animation: fadeIn 0.2s ease-out;
+  }
 }
 
 /* ============================================ */
-/* ANIMACIÓN DEL PANEL (Deslizamiento suave)    */
+/* DESKTOP: Reglas de visibilidad               */
+/* ============================================ */
+@media (min-width: 768px) {
+  .mobile-only { 
+    display: none !important; 
+  }
+  
+  .navbar__menu-mobile { 
+    display: none; 
+  }
+  
+  .navbar__desktop-pickup-wrapper {
+    display: block;
+  }
+  
+  .navbar__actions.desktop-only { 
+    display: flex !important; 
+  }
+}
+
+/* ============================================ */
+/* ANIMACIONES                                  */
 /* ============================================ */
 @keyframes slideDownFade {
   0% {
     opacity: 0;
-    transform: translateY(-15px);
+    transform: translateY(-10px);
   }
   100% {
     opacity: 1;
@@ -427,234 +572,7 @@ body {
   }
 }
 
-.envio-panel-content {
-  background: var(--wm-blue);
-  color: white;
-  padding: 16px;
-  border-radius: 0 0 12px 12px;
-  width: 340px;
-  /* 🆕 Efecto de entrada */
-  animation: slideDownFade 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-  transform-origin: top center;
-}
-
-/* ============================================ */
-/* REGLAS ESTRICTAS PARA MÓVIL Y ESCRITORIO     */
-/* Evita el problema de la imagen "doble"       */
-/* ============================================ */
-@media (max-width: 767px) {
-  .desktop-only { display: none !important; }
-  .mobile-only { display: block !important; }
-}
-@media (min-width: 768px) {
-  .desktop-only { display: block !important; }
-  /* Excepción para flex containers */
-  div.desktop-only { display: block !important; } 
-  .navbar__actions.desktop-only { display: flex !important; }
-  .mobile-only { display: none !important; }
-}
-
-/* ============================================ */
-/* PANEL CLON WALMART (Estilos exactos)         */
-/* ============================================ */
-
-/* Animación fluida de caída */
-@keyframes slideDownAndFade {
-  0% { opacity: 0; transform: translateY(-10px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-
-/* En móvil fluye con el contenido, en desktop flota */
-.envio-panel-content {
-  background: var(--wm-blue);
-  color: white;
-  padding: 16px;
-  animation: slideDownAndFade 0.2s ease-out forwards;
-}
-
-.pickup-dropdown-wrapper .envio-panel-content {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  width: 360px;
-  border-radius: 0 0 12px 12px;
-  box-shadow: 0 12px 24px rgba(0,0,0,0.2);
-  z-index: 100;
-  margin-top: 12px;
-}
-
-/* Estilos de los círculos superiores */
-.envio-types-video {
-  display: flex;
-  justify-content: center;
-  gap: 32px;
-  margin-bottom: 24px;
-}
-
-.wm-type-btn {
-  background: transparent;
-  border: none;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  padding: 0;
-}
-
-.wm-circle {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: #004f9a; /* Azul oscuro inactivo */
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
-  transition: all 0.2s;
-}
-
-.wm-label {
-  color: white;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-/* Estado activo del círculo */
-.wm-type-btn.active .wm-circle {
-  background: white;
-  color: var(--wm-blue);
-}
-.wm-type-btn.active .wm-label {
-  font-weight: 700;
-}
-
-/* Tarjeta Blanca Central */
-.wm-card {
-  background: white;
-  color: black;
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 16px;
-  text-align: left;
-}
-
-.wm-card-header {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  font-size: 15px;
-  font-weight: 500;
-  margin-bottom: 8px;
-}
-
-.wm-card-icon {
-  font-size: 20px;
-}
-
-.wm-card p {
-  margin: 0;
-  line-height: 1.4;
-}
-
-.wm-card-address {
-  margin-left: 32px !important;
-  color: #464646;
-  font-size: 14px;
-  margin-bottom: 16px !important;
-}
-
-/* Botón Agregar Dirección (Azul Claro/Borde) */
-.wm-add-btn {
-  background: #0071dc;
-  color: white;
-  border: none;
-  border-radius: 24px;
-  padding: 10px 24px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  width: 100%;
-  margin-top: 8px;
-  transition: background 0.2s;
-}
-
-.wm-add-btn:hover {
-  background: #004f9a;
-}
-
-/* Texto "Cerrar" en la parte inferior */
-.wm-close-container {
-  text-align: center;
-  margin-top: 16px;
-  padding-bottom: 8px;
-}
-
-.wm-close-text {
-  background: transparent;
-  border: none;
-  color: white;
-  font-size: 15px;
-  text-decoration: underline;
-  cursor: pointer;
-  font-weight: 500;
-}
-.wm-close-text:hover {
-  opacity: 0.8;
-}
-
-/* ================================================= */
-/* REGLAS MAESTRAS DE VISIBILIDAD MÓVIL / ESCRITORIO */
-/* ================================================= */
-
-@media (max-width: 767px) {
-  /* En teléfonos, destruimos y ocultamos por completo lo de escritorio */
-  .desktop-only, 
-  .navbar__desktop-pickup-wrapper {
-    display: none !important;
-  }
-  
-  .mobile-only,
-  .navbar__mobile-pickup-wrapper {
-    display: block !important;
-    width: 100%;
-    background: var(--wm-dark-blue);
-    border-top: 1px solid rgba(255,255,255,0.1);
-  }
-
-  /* Asegurar que el panel móvil se despliegue ordenado sin flotar */
-  .mobile-dropdown-container .envio-panel-content {
-    width: 100% !important;
-    position: relative !important;
-    box-shadow: none !important;
-    border-radius: 0 !important;
-    box-sizing: border-box;
-  }
-}
-
-@media (min-width: 768px) {
-  /* En tablets y PC, destruimos y ocultamos por completo lo de móvil */
-  .mobile-only,
-  .navbar__mobile-pickup-wrapper {
-    display: none !important;
-  }
-
-  .desktop-only,
-  .navbar__desktop-pickup-wrapper {
-    display: block !important;
-    position: relative;
-  }
-
-  /* El panel de escritorio flota de manera absoluta */
-  .navbar__desktop-pickup-wrapper .envio-panel-content {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 360px;
-    border-radius: 0 0 12px 12px;
-    box-shadow: 0 12px 24px rgba(0,0,0,0.2);
-    z-index: 100;
-    margin-top: 12px;
-  }
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
