@@ -465,149 +465,6 @@ body {
   background: #ccc; 
   margin: 0 4px; 
 }
-
-/* ============================================ */
-/* MÓVIL: Panel NO empuja contenido             */
-/* ============================================ */
-@media (max-width: 767px) {
-  .desktop-only { 
-    display: none !important; 
-  }
-  
-  .navbar__main { 
-    padding: 12px; 
-    gap: 12px; 
-  }
-  
-  .navbar__menu-mobile { 
-    display: flex; 
-  }
-
-  /* Wrapper móvil: NO relative, dejamos que el panel se posicione fixed */
-  .navbar__mobile-pickup-wrapper {
-    display: block;
-    background: var(--wm-dark-blue);
-    border-top: 1px solid rgba(255,255,255,0.1);
-  }
-
-  .navbar__mobile-pickup-wrapper .navbar__pickup-btn {
-    width: 100%; 
-    border-radius: 0; 
-    background: transparent;
-    justify-content: space-between; 
-    padding: 12px 16px;
-  }
-  
-  .pickup-btn__left, 
-  .pickup-btn__right { 
-    display: flex; 
-    align-items: center; 
-    gap: 10px; 
-  }
-
-  /* CAMBIO CLAVE: Position fixed en vez de absolute */
-  .mobile-dropdown-container {
-    position: fixed;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    z-index: 2000;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    padding: 20px 16px;
-    overflow-y: auto;
-  }
-
-  .mobile-dropdown-container .envio-panel-content {
-    width: 100%;
-    max-width: 400px;
-    border-radius: 12px;
-    max-height: 80vh;
-    overflow-y: auto;
-    margin-top: 60px; /* Espacio para la X de cerrar */
-    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-  }
-
-  /* Overlay para fondo oscuro */
-  .mobile-panel-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.6);
-    z-index: 1999;
-    animation: fadeIn 0.2s ease-out;
-  }
-
-  /* Header del panel móvil con botón cerrar siempre visible */
-  .envio-panel-header.mobile-only {
-    position: sticky;
-    top: 0;
-    background: var(--wm-blue);
-    padding: 8px;
-    margin: -16px -16px 16px -16px;
-    border-radius: 12px 12px 0 0;
-    z-index: 10;
-  }
-
-  .close-panel-btn {
-    background: rgba(255,255,255,0.2);
-    border: none;
-    color: white;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    font-size: 16px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-}
-
-/* ============================================ */
-/* DESKTOP: Reglas de visibilidad               */
-/* ============================================ */
-@media (min-width: 768px) {
-  .mobile-only { 
-    display: none !important; 
-  }
-  
-  .navbar__menu-mobile { 
-    display: none; 
-  }
-  
-  .navbar__desktop-pickup-wrapper {
-    display: block;
-  }
-  
-  .navbar__actions.desktop-only { 
-    display: flex !important; 
-  }
-}
-
-/* ============================================ */
-/* ANIMACIONES                                  */
-/* ============================================ */
-@keyframes slideDownFade {
-  0% {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
 /* ============================================ */
 /* MÓVIL: Panel se despliega desde el navbar    */
 /* ============================================ */
@@ -656,7 +513,6 @@ body {
     right: 0;
     top: 100%;
     z-index: 300;
-    /* Evita que se salga de la pantalla */
     max-height: calc(100vh - 200px);
     overflow-y: auto;
   }
@@ -694,9 +550,51 @@ body {
     align-items: center;
     justify-content: center;
   }
+}
 
-  /* Quitamos el overlay porque ya no es modal */
-  .mobile-panel-overlay {
-    display: none;
+/* ============================================ */
+/* DESKTOP: Reglas de visibilidad               */
+/* ============================================ */
+@media (min-width: 768px) {
+  .mobile-only { 
+    display: none !important; 
+  }
+  
+  .navbar__menu-mobile { 
+    display: none; 
+  }
+  
+  .navbar__desktop-pickup-wrapper {
+    display: block;
+    position: relative;
+  }
+  
+  .navbar__actions.desktop-only { 
+    display: flex !important; 
+  }
+  
+  /* Panel desktop flotante */
+  .navbar__desktop-pickup-wrapper .envio-panel-content {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: 360px;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+    z-index: 100;
+  }
+}
+
+/* ============================================ */
+/* ANIMACIONES                                  */
+/* ============================================ */
+@keyframes slideDownFade {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

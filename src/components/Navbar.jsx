@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useCart } from '../context/CartContext'
-import { useEnvio } from './useEnvios' // Ajusta el path de tu hook si es necesario
+import { useEnvio } from './useEnvios'
 import api from '../api/axios'
 import MenuDrawer from './MenuDrawer'
 import './Navbar.css'
@@ -55,7 +55,6 @@ function Navbar() {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  // Buscar sugerencias mientras se escribe
   useEffect(() => {
     if (busqueda.length < 2) {
       setSugerencias([])
@@ -102,36 +101,31 @@ function Navbar() {
       <header className="navbar-container">
         <div className="navbar__main">
 
-          {/* Botón Pickup/Delivery (Móvil) */}
-          <div className="navbar__mobile-pickup-wrapper mobile-only" ref={mobilePanelRef}>
+          {/* Botón Pickup/Delivery (ESCRITORIO) */}
+          <div className="navbar__desktop-pickup-wrapper desktop-only" ref={panelRef}>
             <button className="navbar__pickup-btn" onClick={() => setShowEnvioPanel(!showEnvioPanel)}>
-              <div className="pickup-btn__left">
-                <div className="pickup-btn__icon">
-                  🚚
-                </div>
-                <span className="pickup-btn__title">¿Retiro o entrega?</span>
+              <div className="pickup-btn__icon">
+                🚚
               </div>
-              <div className="pickup-btn__right">
+              <div className="pickup-btn__text">
+                <span className="pickup-btn__title">¿Retiro o delivery?</span>
                 <span className="pickup-btn__subtitle">{ciudadEstado}</span>
-                <svg className={`pickup-btn__arrow ${showEnvioPanel ? 'rotated' : ''}`} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
               </div>
+              <svg className={`pickup-btn__arrow ${showEnvioPanel ? 'rotated' : ''}`} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
             </button>
-            
-            {/* Sin overlay, solo el dropdown que baja */}
+
             {showEnvioPanel && (
-              <div className="mobile-dropdown-container">
-                <PanelEnvio
-                  tipoEnvio={tipoEnvio}
-                  cambiarTipoEnvio={cambiarTipoEnvio}
-                  opcionesEnvio={opcionesEnvio}
-                  direcciones={direcciones}
-                  direccionSeleccionada={direccionSeleccionada}
-                  setDireccionSeleccionada={setDireccionSeleccionada}
-                  guardarDireccion={guardarDireccion}
-                  cargarDirecciones={cargarDirecciones}
-                  onClose={() => setShowEnvioPanel(false)}
-                />
-              </div>
+              <PanelEnvio
+                tipoEnvio={tipoEnvio}
+                cambiarTipoEnvio={cambiarTipoEnvio}
+                opcionesEnvio={opcionesEnvio}
+                direcciones={direcciones}
+                direccionSeleccionada={direccionSeleccionada}
+                setDireccionSeleccionada={setDireccionSeleccionada}
+                guardarDireccion={guardarDireccion}
+                cargarDirecciones={cargarDirecciones}
+                onClose={() => setShowEnvioPanel(false)}
+              />
             )}
           </div>
 
@@ -150,7 +144,6 @@ function Navbar() {
               </button>
             </form>
             
-            {/* Dropdown de Sugerencias de búsqueda */}
             {mostrarSugerencias && sugerencias.length > 0 && (
               <div className="search-suggestions">
                 {sugerencias.map((producto) => (
@@ -195,7 +188,7 @@ function Navbar() {
           </Link>
         </div>
 
-          {/* Botón Pickup/Delivery (Móvil) */}
+        {/* Botón Pickup/Delivery (MÓVIL) - SOLO UNO, FUERA del navbar__main */}
         <div className="navbar__mobile-pickup-wrapper mobile-only" ref={mobilePanelRef}>
           <button className="navbar__pickup-btn" onClick={() => setShowEnvioPanel(!showEnvioPanel)}>
             <div className="pickup-btn__left">
@@ -210,24 +203,20 @@ function Navbar() {
             </div>
           </button>
           
-          {/* Overlay y panel flotante para móvil */}
           {showEnvioPanel && (
-            <>
-              <div className="mobile-panel-overlay" onClick={() => setShowEnvioPanel(false)} />
-              <div className="mobile-dropdown-container">
-                <PanelEnvio
-                  tipoEnvio={tipoEnvio}
-                  cambiarTipoEnvio={cambiarTipoEnvio}
-                  opcionesEnvio={opcionesEnvio}
-                  direcciones={direcciones}
-                  direccionSeleccionada={direccionSeleccionada}
-                  setDireccionSeleccionada={setDireccionSeleccionada}
-                  guardarDireccion={guardarDireccion}
-                  cargarDirecciones={cargarDirecciones}
-                  onClose={() => setShowEnvioPanel(false)}
-                />
-              </div>
-            </>
+            <div className="mobile-dropdown-container">
+              <PanelEnvio
+                tipoEnvio={tipoEnvio}
+                cambiarTipoEnvio={cambiarTipoEnvio}
+                opcionesEnvio={opcionesEnvio}
+                direcciones={direcciones}
+                direccionSeleccionada={direccionSeleccionada}
+                setDireccionSeleccionada={setDireccionSeleccionada}
+                guardarDireccion={guardarDireccion}
+                cargarDirecciones={cargarDirecciones}
+                onClose={() => setShowEnvioPanel(false)}
+              />
+            </div>
           )}
         </div>
 
@@ -251,7 +240,7 @@ function Navbar() {
 }
 
 // -------------------------------------------------------------
-// COMPONENTE PANEL ENVÍO INTEGRADO (Lógica tuya + Estilos Walmart)
+// COMPONENTE PANEL ENVÍO INTEGRADO
 // -------------------------------------------------------------
 function PanelEnvio({
   tipoEnvio,
@@ -311,7 +300,6 @@ function PanelEnvio({
 
   return (
     <div className="envio-panel-content">
-      {/* Header interno del panel móvil */}
       <div className="envio-panel-header mobile-only">
         <button onClick={onClose} className="close-panel-btn" aria-label="Cerrar panel">
           ✕
@@ -324,7 +312,6 @@ function PanelEnvio({
         </div>
       )}
 
-      {/* Tipos de envío mapeados dinámicamente */}
       <div className="envio-types">
         {(opcionesEnvio || []).map(opcion => (
           <button
@@ -339,7 +326,6 @@ function PanelEnvio({
         ))}
       </div>
 
-      {/* Direcciones (Sólo si no es retiro) */}
       {tipoEnvio !== 'retiro' && (
         <div className="envio-cards">
           
@@ -363,7 +349,6 @@ function PanelEnvio({
             </label>
           ))}
 
-          {/* Botón de Formulario / Formulario */}
           {!mostrarForm ? (
             <button className="envio-add-btn" onClick={() => setMostrarForm(true)}>
               + Agregar nueva dirección
