@@ -310,7 +310,9 @@ function PanelEnvio({
     <div className="envio-panel-content">
       {/* Header interno del panel móvil */}
       <div className="envio-panel-header mobile-only">
-        <button onClick={onClose} className="close-panel-btn">✕</button>
+        <button onClick={onClose} className="close-panel-btn" aria-label="Cerrar panel">
+          ✕
+        </button>
       </div>
 
       {mensaje && (
