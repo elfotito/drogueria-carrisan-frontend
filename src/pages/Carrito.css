@@ -1074,13 +1074,12 @@
 
 .cart-resumen-sticky {
   position: sticky;
-  top: 100px; /* Debajo del navbar */
+  top: 160px;
   background: white;
   border: 1px solid #e0e0e0;
   border-radius: 12px;
-  padding: 28px; /* 🆕 Más padding */
+  padding: 28px; 
   box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-  /* 🆕 Asegurar que sticky funcione */
   z-index: 10;
 }
 

@@ -9,6 +9,49 @@ import './Navbar.css'
 
 const RUTAS_SIN_NAVBAR = ['/login', '/registro', '/recuperar']
 
+// 🆕 Datos de departamentos y sus subcategorías
+const DEPARTAMENTOS = [
+  {
+    id: 'hospitalaria',
+    nombre: 'Línea Hospitalaria',
+    icono: '🏥',
+    subcategorias: [
+      { nombre: 'Anestesia', ruta: '/catalogo?departamento=hospitalaria&categoria=anestesia' },
+      { nombre: 'Antibióticos', ruta: '/catalogo?departamento=hospitalaria&categoria=antibioticos' },
+      { nombre: 'Soluciones', ruta: '/catalogo?departamento=hospitalaria&categoria=soluciones' },
+    ]
+  },
+  {
+    id: 'farmacia',
+    nombre: 'Línea Farmacia',
+    icono: '💊',
+    subcategorias: [
+      { nombre: 'Antibióticos', ruta: '/catalogo?departamento=farmacia&categoria=antibioticos' },
+      { nombre: 'Pediátricos', ruta: '/catalogo?departamento=farmacia&categoria=pediatricos' },
+      { nombre: 'Antiflamatorios', ruta: '/catalogo?departamento=farmacia&categoria=antiflamatorios' },
+      { nombre: 'Cremas', ruta: '/catalogo?departamento=farmacia&categoria=cremas' },
+    ]
+  },
+  {
+    id: 'material-medico',
+    nombre: 'Material Médico',
+    icono: '🩺',
+    subcategorias: [
+      { nombre: 'Descartables', ruta: '/catalogo?departamento=material-medico&categoria=descartables' },
+      { nombre: 'Adhesivos', ruta: '/catalogo?departamento=material-medico&categoria=adhesivos' },
+      { nombre: 'Soluciones', ruta: '/catalogo?departamento=material-medico&categoria=soluciones' },
+    ]
+  },
+  {
+    id: 'cuidado-personal',
+    nombre: 'Cuidado Personal',
+    icono: '🧴',
+    subcategorias: [
+      { nombre: 'Cuidado Personal', ruta: '/catalogo?departamento=cuidado-personal' },
+    ]
+  },
+]
+
 function Navbar() {
   const { user, logout } = useAuth()
   const { items } = useCart()
@@ -29,6 +72,8 @@ function Navbar() {
   
   const [menuAbierto, setMenuAbierto] = useState(false)
   const [showEnvioPanel, setShowEnvioPanel] = useState(false)
+  const [showDeptosMenu, setShowDeptosMenu] = useState(false) // 🆕 Estado para menú departamentos
+  const [deptoActivo, setDeptoActivo] = useState(null) // 🆕 Departamento activo en el hover
   
   const [busqueda, setBusqueda] = useState('')
   const [sugerencias, setSugerencias] = useState([])
@@ -36,15 +81,22 @@ function Navbar() {
   
   const searchRef = useRef(null)
   const panelRef = useRef(null)
-  const mobilePanelRef = useRef(null) 
+  const mobilePanelRef = useRef(null)
+  const deptosRef = useRef(null) // 🆕 Ref para el menú de departamentos
 
   useEffect(() => {
     function handleClickOutside(event) {
       const isOutsideDesktop = panelRef.current && !panelRef.current.contains(event.target)
       const isOutsideMobile = mobilePanelRef.current && !mobilePanelRef.current.contains(event.target)
+      const isOutsideDeptos = deptosRef.current && !deptosRef.current.contains(event.target)
 
       if (isOutsideDesktop && isOutsideMobile) {
         setShowEnvioPanel(false)
+      }
+      
+      if (isOutsideDeptos) {
+        setShowDeptosMenu(false)
+        setDeptoActivo(null)
       }
       
       if (searchRef.current && !searchRef.current.contains(event.target)) {
@@ -90,6 +142,13 @@ function Navbar() {
     setMostrarSugerencias(false)
     setBusqueda('')
     navigate(`/producto/${producto.id}`)
+  }
+
+  // 🆕 Manejar clic en subcategoría
+  function handleSubcategoriaClick(ruta) {
+    setShowDeptosMenu(false)
+    setDeptoActivo(null)
+    navigate(ruta)
   }
 
   const ciudadEstado = direccionSeleccionada 
@@ -188,7 +247,7 @@ function Navbar() {
           </Link>
         </div>
 
-        {/* Botón Pickup/Delivery (MÓVIL) - SOLO UNO, FUERA del navbar__main */}
+        {/* Botón Pickup/Delivery (MÓVIL) */}
         <div className="navbar__mobile-pickup-wrapper mobile-only" ref={mobilePanelRef}>
           <button className="navbar__pickup-btn" onClick={() => setShowEnvioPanel(!showEnvioPanel)}>
             <div className="pickup-btn__left">
@@ -220,11 +279,73 @@ function Navbar() {
           )}
         </div>
 
-        {/* Barra Secundaria (Categorías) */}
+        {/* 🆕 Barra Secundaria (Categorías) con menú desplegable */}
         <nav className="navbar__secondary desktop-only">
           <div className="navbar__secondary-inner">
-            <button className="pill-btn"><strong>Departamentos</strong> <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
-            <button className="pill-btn"><strong>Servicios</strong> <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+            {/* 🆕 Botón Departamentos con menú desplegable */}
+            <div className="navbar__deptos-wrapper" ref={deptosRef}>
+              <button 
+                className="pill-btn pill-btn--deptos"
+                onClick={() => setShowDeptosMenu(!showDeptosMenu)}
+                onMouseEnter={() => setShowDeptosMenu(true)}
+              >
+                <strong>Departamentos</strong>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+
+              {/* 🆕 Menú desplegable de departamentos */}
+              {showDeptosMenu && (
+                <div 
+                  className="deptos-dropdown"
+                  onMouseLeave={() => {
+                    setShowDeptosMenu(false)
+                    setDeptoActivo(null)
+                  }}
+                >
+                  <div className="deptos-dropdown__sidebar">
+                    <p className="deptos-dropdown__titulo">Todos los departamentos</p>
+                    {DEPARTAMENTOS.map((depto) => (
+                      <button
+                        key={depto.id}
+                        className={`deptos-dropdown__depto-btn ${deptoActivo === depto.id ? 'active' : ''}`}
+                        onMouseEnter={() => setDeptoActivo(depto.id)}
+                        onClick={() => setDeptoActivo(depto.id)}
+                      >
+                        <span className="deptos-dropdown__depto-icono">{depto.icono}</span>
+                        {depto.nombre}
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* 🆕 Subcategorías del departamento activo */}
+                  {deptoActivo && (
+                    <div className="deptos-dropdown__subcategorias">
+                      {DEPARTAMENTOS.find(d => d.id === deptoActivo)?.subcategorias.map((sub) => (
+                        <button
+                          key={sub.nombre}
+                          className="deptos-dropdown__sub-link"
+                          onClick={() => handleSubcategoriaClick(sub.ruta)}
+                        >
+                          {sub.nombre}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <button className="pill-btn">
+              <strong>Servicios</strong>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
             <span className="divider"></span>
             <Link to="/catalogo" className="pill-link">Nuevos Ingresos</Link>
             <Link to="/catalogo" className="pill-link">Ofertas</Link>
