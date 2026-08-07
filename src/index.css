@@ -65,15 +65,13 @@ body {
   box-sizing: border-box;
 }
 
-/* Contenedor interno para centrar el contenido */
 .container {
-  width: 1126px;
-  max-width: 100%;
+  width: 100%;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 24px;
   box-sizing: border-box;
 }
-
 h1,
 h2 {
   font-family: var(--heading);

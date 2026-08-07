@@ -107,7 +107,7 @@ function Navbar() {
           <div className="pickup-dropdown-wrapper" ref={panelRef}>
             <button className="navbar__pickup-btn desktop-only" onClick={() => setShowEnvioPanel(!showEnvioPanel)}>
               <div className="pickup-btn__icon">
-                <img src="https://i.imgur.com/8QG9gXv.png" alt="pickup icon" width="24"/>
+                🚚
               </div>
               <div className="pickup-btn__text">
                 <span className="pickup-btn__title">¿Retiro o delivery?</span>
