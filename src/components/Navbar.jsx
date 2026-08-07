@@ -10,8 +10,7 @@ import './Navbar.css'
 
 const [showMyItemsMenu, setShowMyItemsMenu] = useState(false)
 const [showAccountMenu, setShowAccountMenu] = useState(false)
-const myItemsRef = useRef(null)
-const accountRef = useRef(null)
+
 const RUTAS_SIN_NAVBAR = ['/login', '/registro', '/recuperar']
 
 // 🆕 Datos de departamentos y sus subcategorías
