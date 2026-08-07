@@ -13,7 +13,6 @@ function Navbar() {
   const { user, logout } = useAuth()
   const { items } = useCart()
   
-  // 1. Estados y lógica del panel de envíos
   const {
     tipoEnvio,
     cambiarTipoEnvio,
@@ -30,24 +29,25 @@ function Navbar() {
   
   const [menuAbierto, setMenuAbierto] = useState(false)
   const [showEnvioPanel, setShowEnvioPanel] = useState(false)
-  const [dropdownAbierto, setDropdownAbierto] = useState(null)
   
-  // 2. Estados para el buscador interactivo
   const [busqueda, setBusqueda] = useState('')
   const [sugerencias, setSugerencias] = useState([])
   const [mostrarSugerencias, setMostrarSugerencias] = useState(false)
   
+  // 🟢 AQUÍ ESTABA EL ERROR: Faltaba declarar esta línea exactamente así
   const searchRef = useRef(null)
   const panelRef = useRef(null)
+  const mobilePanelRef = useRef(null) 
 
-  const cantidadItems = items?.reduce((acc, item) => acc + item.cantidad, 0) || 0
-
-  // Cerrar menús flotantes al hacer clic afuera
   useEffect(() => {
     function handleClickOutside(event) {
-      if (panelRef.current && !panelRef.current.contains(event.target)) {
+      const isOutsideDesktop = panelRef.current && !panelRef.current.contains(event.target)
+      const isOutsideMobile = mobilePanelRef.current && !mobilePanelRef.current.contains(event.target)
+
+      if (isOutsideDesktop && isOutsideMobile) {
         setShowEnvioPanel(false)
       }
+      
       if (searchRef.current && !searchRef.current.contains(event.target)) {
         setMostrarSugerencias(false)
       }
