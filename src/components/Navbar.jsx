@@ -177,8 +177,8 @@ function Navbar() {
           </Link>
         </div>
 
-        {/* 🆕 CONTENEDOR MÓVIL (Aislado para evitar doble renderizado) */}
-        <div className="navbar__mobile-pickup mobile-only">
+                {/* 🆕 CONTENEDOR MÓVIL: Le agregamos el ref={mobilePanelRef} aquí abajo */}
+        <div className="navbar__mobile-pickup mobile-only" ref={mobilePanelRef}>
           <button className="navbar__pickup-btn" onClick={() => setShowEnvioPanel(!showEnvioPanel)}>
             <div className="pickup-btn__left">
               <div className="pickup-btn__icon">
@@ -208,6 +208,7 @@ function Navbar() {
             </div>
           )}
         </div>
+
 
         <nav className="navbar__secondary desktop-only">
           {/* ... tu barra secundaria ... */}
