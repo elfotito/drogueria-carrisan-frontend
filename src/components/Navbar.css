@@ -431,7 +431,7 @@ body {
   background: var(--wm-light-bg);
   border-bottom: 1px solid #e3e4e5;
   padding: 8px 0;
-  overflow: visible;
+  overflow: visible !important;
   z-index: 1;
 }
 
@@ -609,6 +609,7 @@ body {
 /* Wrapper con position relative */
 .navbar__deptos-wrapper {
   position: relative;
+  z-index: 800;
 }
 
 .pill-btn--deptos {
@@ -617,14 +618,14 @@ body {
 
 /* Dropdown principal */
 .deptos-dropdown {
-  position: absolute;
-  top: 100%;
-  left: 0;
+  position: fixed;
+  top: auto;
+  left: auto;
   display: flex;
   background: white;
   border-radius: 0 0 12px 12px;
   box-shadow: 0 12px 32px rgba(0,0,0,0.2);
-  z-index: 999;
+  z-index: 900;
   min-width: 600px;
   overflow: hidden;
   animation: slideDownFade 0.2s ease-out;

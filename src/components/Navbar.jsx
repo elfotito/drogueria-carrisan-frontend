@@ -8,7 +8,7 @@ import MenuDrawer from './MenuDrawer'
 import './Navbar.css'
 
 const RUTAS_SIN_NAVBAR = ['/login', '/registro', '/recuperar']
-
+const deptosBtnRef = useRef(null)
 // 🆕 Datos de departamentos y sus subcategorías
 const DEPARTAMENTOS = [
   {
