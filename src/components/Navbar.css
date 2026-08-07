@@ -431,6 +431,8 @@ body {
   background: var(--wm-light-bg);
   border-bottom: 1px solid #e3e4e5;
   padding: 8px 0;
+  overflow: visible;
+  z-index: 1;
 }
 
 .navbar__secondary-inner {
@@ -441,6 +443,7 @@ body {
   gap: 8px;
   align-items: center;
   overflow-x: auto;
+  overflow-y: visible;
   white-space: nowrap;
 }
 .navbar__secondary-inner::-webkit-scrollbar { display: none; }
