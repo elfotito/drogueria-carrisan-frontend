@@ -25,6 +25,9 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
+  overflow-x: hidden;
+  isolation: isolate;
+
   @media (max-width: 1024px) {
     font-size: 16px;
   }
