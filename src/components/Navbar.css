@@ -695,7 +695,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  background: #f8f9fa; /* 🆕 Mismo fondo que el sidebar izquierdo cuando está vacío */
+  background: #e0e0e0;
 }
 
 /* 🆕 Cuando tiene contenido, fondo blanco */

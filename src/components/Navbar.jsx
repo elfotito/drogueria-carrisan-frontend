@@ -121,7 +121,7 @@ function Navbar() {
   const searchRef = useRef(null)
   const panelRef = useRef(null)
   const mobilePanelRef = useRef(null)
-  const deptosRef = useRef(null) // 🆕 Ref para el menú de departamentos
+  const deptosRef = useRef(null) //
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -365,17 +365,19 @@ function Navbar() {
                   </div>
 
                   {/* Subcategorías del departamento activo */}
-                  <div className="deptos-dropdown__subcategorias">
-                    {DEPARTAMENTOS.find(d => d.id === deptoActivo)?.subcategorias.map((sub) => (
-                      <button
-                        key={sub.nombre}
-                        className="deptos-dropdown__sub-link"
-                        onClick={() => handleSubcategoriaClick(sub.ruta)}
-                      >
-                        {sub.nombre}
-                      </button>
-                    ))}
-                  </div>
+                  {deptoActivo && (
+                      <div className="deptos-dropdown__subcategorias">
+                        {DEPARTAMENTOS.find(d => d.id === deptoActivo)?.subcategorias.map((sub) => (
+                          <button
+                            key={sub.nombre}
+                            className="deptos-dropdown__sub-link"
+                            onClick={() => handleSubcategoriaClick(sub.ruta)}
+                          >
+                            {sub.nombre}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                 </div>
               )}
             </div>
@@ -415,21 +417,23 @@ function Navbar() {
                       ))}
                     </div>
 
-                    <div className="deptos-dropdown__subcategorias">
-                      {SERVICIOS.find(s => s.id === servicioActivo)?.subcategorias.map((sub) => (
-                        <button
-                          key={sub.nombre}
-                          className="deptos-dropdown__sub-link"
-                          onClick={() => {
-                            setShowServiciosMenu(false)
-                            setServicioActivo(null)
-                            navigate(sub.ruta)
-                          }}
-                        >
-                          {sub.nombre}
-                        </button>
-                      ))}
-                    </div>
+                    {servicioActivo && (
+                      <div className="deptos-dropdown__subcategorias">
+                        {SERVICIOS.find(s => s.id === servicioActivo)?.subcategorias.map((sub) => (
+                          <button
+                            key={sub.nombre}
+                            className="deptos-dropdown__sub-link"
+                            onClick={() => {
+                              setShowServiciosMenu(false)
+                              setServicioActivo(null)
+                              navigate(sub.ruta)
+                            }}
+                          >
+                            {sub.nombre}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
