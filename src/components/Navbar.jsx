@@ -4,7 +4,6 @@ import { useAuth } from '../context/AuthContext'
 import { useCart } from '../context/CartContext'
 import { useEnvio } from './useEnvios'
 import api from '../api/axios'
-import MenuDrawer from './MenuDrawer'
 import './Navbar.css'
 
 
@@ -107,7 +106,6 @@ function Navbar() {
   const navigate = useNavigate()
   const location = useLocation()
   
-  const [menuAbierto, setMenuAbierto] = useState(false)
   const [showEnvioPanel, setShowEnvioPanel] = useState(false)
   const [showDeptosMenu, setShowDeptosMenu] = useState(false) //
   const [deptoActivo, setDeptoActivo] = useState(null) //
@@ -581,8 +579,6 @@ function Navbar() {
         </nav>
       </header>
 
-      <MenuDrawer isOpen={menuAbierto} onClose={() => setMenuAbierto(false)} />
-    </>
   )
 }
 
