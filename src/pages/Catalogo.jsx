@@ -266,7 +266,7 @@ useEffect(() => {
           <p className="header-subtitle">
             {searchTerm
               ? `Mostrando productos que coinciden con "${searchTerm}"`
-              : 'Usa los detalles del artículo. Precio al comprar en línea.'
+              : 'Usa los detalles del artículo. Precio al comprar por la plataforma.'
             }
           </p>
         </div>
