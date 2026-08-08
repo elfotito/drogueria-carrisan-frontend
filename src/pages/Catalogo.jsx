@@ -48,6 +48,18 @@ function Catalogo() {
 
   const carruselRef = useRef(null)
 
+const [esDesktop, setEsDesktop] = useState(
+  typeof window !== 'undefined' ? window.innerWidth > 768 : true
+)
+
+useEffect(() => {
+  function handleResize() {
+    setEsDesktop(window.innerWidth > 768)
+  }
+  window.addEventListener('resize', handleResize)
+  return () => window.removeEventListener('resize', handleResize)
+}, [])
+
   // Cargar productos con búsqueda
   useEffect(() => {
     async function cargarDatos() {
@@ -269,7 +281,8 @@ function Catalogo() {
           />
         )}
 
-        <aside className={`catalogo-filtros ${filtrosAbiertos ? 'catalogo-filtros--abierto' : ''}`}>
+        {(esDesktop || filtrosAbiertos) && (
+  <aside className={`catalogo-filtros ${filtrosAbiertos ? 'catalogo-filtros--abierto' : ''}`}>
           <div className="catalogo-filtros__header-mobile">
             <span>Filtros</span>
             <button type="button" onClick={() => setFiltrosAbiertos(false)} aria-label="Cerrar filtros">✕</button>
