@@ -10,7 +10,6 @@ function formatUSD(valor) {
   return Number(valor).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
-// Traduce el descuento vigente (que ya viene resuelto del backend) a una etiqueta comercial.
 function obtenerEtiquetaDescuento(descuento) {
   if (!descuento) return null
   if (descuento.tipo === 'monto') return 'Oferta Especial'
@@ -21,6 +20,25 @@ function obtenerEtiquetaDescuento(descuento) {
   return 'Descuento'
 }
 
+// Franja horaria → mensaje de entrega. El tramo 11am-12pm (no cubierto
+// explícitamente) lo dejé dentro del bloque de "1 hora" (11am-3pm).
+function obtenerMensajeEntrega(disponible) {
+  if (!disponible) return 'Se despachará cuando esté disponible'
+  const hora = new Date().getHours()
+  if (hora >= 7 && hora < 11) return 'Entrega en 30 a 45 min'
+  if (hora >= 11 && hora < 15) return 'Entrega en 1 hora'
+  if (hora >= 15) return 'Entrega para mañana' // 3pm–12am
+  return 'Entrega para las 10:00 am' // 12am–7am
+}
+
+// Retiro en tienda: corte a las 4:30pm. Si ya pasó, avisamos que es
+// hasta mañana en vez de mostrar un horario que ya venció hoy.
+function obtenerMensajeRetiro() {
+  const ahora = new Date()
+  const antesDelCorte = ahora.getHours() < 16 || (ahora.getHours() === 16 && ahora.getMinutes() <= 30)
+  return antesDelCorte ? 'Retiro en tienda hasta las 4:30 pm' : 'Retiro en tienda disponible mañana'
+}
+
 function ProductCard({ producto, tasaVes }) {
   const { items: cartItems, addItem, removeItem, updateCantidad } = useCart()
   const { user } = useAuth()
@@ -29,9 +47,6 @@ function ProductCard({ producto, tasaVes }) {
   const [mostrarModal, setMostrarModal] = useState(false)
   const [mostrarContador, setMostrarContador] = useState(false)
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false)
-
-  // TODO(backend): esto debería venir de un endpoint de favoritos del usuario.
-  // Por ahora es solo estado visual local, no se persiste.
   const [esFavorito, setEsFavorito] = useState(false)
 
   const confirmTimerRef = useRef(null)
@@ -44,19 +59,12 @@ function ProductCard({ producto, tasaVes }) {
   const tieneDescuento = producto.precio_original_usd != null && producto.descuento_activo
   const etiquetaDescuento = tieneDescuento ? obtenerEtiquetaDescuento(producto.descuento_activo) : null
 
-  // TODO(backend): cuando exista un sistema de métricas de popularidad
-  // (compras recientes, "elección principal", etc.) reemplazar por un campo real,
-  // ej: producto.badge_social = "En 50+ pedidos esta semana" | "Más pedido este mes"
   const badgeSocial = producto.badge_social || null
-
-  // TODO(backend): campo real de "patrocinado" cuando exista un sistema de pauta interno
   const esPatrocinado = producto.sponsored || false
 
   const itemEnCarrito = cartItems.find(i => i.producto.id === producto.id)
   const cantidad = itemEnCarrito?.cantidad || 0
 
-  // Agregar: mete 1 unidad, muestra el contador de inmediato para que el usuario
-  // pueda ajustar la cantidad, y medio segundo después confirma con una animación.
   function handleAgregar(e) {
     e.stopPropagation()
     if (cantidad === 0) addItem(producto, 1)
@@ -96,8 +104,6 @@ function ProductCard({ producto, tasaVes }) {
     }
   }, [])
 
-  // TODO(backend): reemplazar por rating real — producto.rating, producto.rating_count.
-  // Se deja fijo en 4.5 / 0 reseñas mientras no exista el campo.
   function renderRating(rating, count) {
     return (
       <div className="pcard__rating">
@@ -112,14 +118,13 @@ function ProductCard({ producto, tasaVes }) {
   return (
     <>
       <div className="pcard">
-        {/* Badge social: SIEMPRE arriba del bloque de imagen, nunca encima de la foto */}
         {badgeSocial && (
           <div className="pcard__top-badge">
             <span className="pcard__badge-social">{badgeSocial}</span>
           </div>
         )}
 
-        {/* Bloque 1: Media (imagen + badge de descuento + favorito) */}
+        {/* Bloque 1: Media */}
         <div
           className="pcard__media"
           onClick={() => navigate(`/producto/${producto.id}`)}
@@ -145,8 +150,35 @@ function ProductCard({ producto, tasaVes }) {
           />
         </div>
 
-        {/* Bloque 2: Contenido (patrocinado, precios, info, acciones) */}
+        {/* Bloque 2: Contenido — el orden de aquí en adelante es
+            "botón, precio, nombre..." en desktop/tablet. En mobile
+            el CSS reordena el botón al final con `order`. */}
         <div className="pcard__body">
+          <div className="pcard__acciones">
+            {user && (
+              <button
+                className="pcard__btn-items"
+                onClick={(e) => { e.stopPropagation(); setMostrarModal(true) }}
+                title="Agregar a Mis Items"
+                aria-label="Agregar a Mis Items"
+              >
+                📦
+              </button>
+            )}
+
+            {(mostrarContador || cantidad > 0) ? (
+              <div className="pcard__contador">
+                <button className="contador-btn" onClick={handleRestar} aria-label="Quitar uno">−</button>
+                <span className="contador-cantidad">{cantidad}</span>
+                <button className="contador-btn" onClick={handleSumar} aria-label="Agregar uno">+</button>
+              </div>
+            ) : (
+              <button className="pcard__btn-agregar" onClick={handleAgregar}>
+                + Agregar
+              </button>
+            )}
+          </div>
+
           {esPatrocinado && (
             <p className="pcard__sponsored">
               Patrocinado <span className="pcard__sponsored-info" title="Producto patrocinado">ⓘ</span>
@@ -154,12 +186,18 @@ function ProductCard({ producto, tasaVes }) {
           )}
 
           <div className="pcard__precios">
-            <span className={`pcard__precio-ahora ${tieneDescuento ? '' : 'pcard__precio-ahora--sin-descuento'}`}>
-              Ahora ${formatUSD(producto.precio_usd)}
-            </span>
-            {tieneDescuento && (
-              <span className="pcard__precio-original">
-                ${formatUSD(producto.precio_original_usd)}
+            {tieneDescuento ? (
+              <>
+                <span className="pcard__precio-ahora">
+                  Ahora <span className="pcard__precio-simbolo">$</span><span className="pcard__precio-numero">{formatUSD(producto.precio_usd)}</span>
+                </span>
+                <span className="pcard__precio-original">
+                  ${formatUSD(producto.precio_original_usd)}
+                </span>
+              </>
+            ) : (
+              <span className="pcard__precio-normal">
+                <span className="pcard__precio-simbolo">$</span><span className="pcard__precio-numero">{formatUSD(producto.precio_usd)}</span>
               </span>
             )}
             {precioVes && (
@@ -181,39 +219,11 @@ function ProductCard({ producto, tasaVes }) {
 
           {renderRating(4.5, 0)}
 
-          {/* TODO(negocio): definir si esto es un programa de descuento por volumen/suscripción real.
-              Por ahora es un placeholder visual para mantener la jerarquía del diseño. */}
           <p className="pcard__save-with">Ahorra con <strong>Plan Carrisán+</strong></p>
 
-          {/* TODO(backend): reemplazar por disponibilidad/tiempos de entrega reales (producto.disponible, ETA por zona) */}
           <div className="pcard__delivery-info">
-            <p className="pcard__delivery-arrive">Llega mañana</p>
-            <p className="pcard__delivery-pickup">Retira pronto</p>
-          </div>
-
-          <div className="pcard__acciones">
-            {user && (
-              <button
-                className="pcard__btn-items"
-                onClick={(e) => { e.stopPropagation(); setMostrarModal(true) }}
-                title="Agregar a Mis Items"
-                aria-label="Agregar a Mis Items"
-              >
-                📦
-              </button>
-            )}
-
-            {(mostrarContador || cantidad > 0) ? (
-              <div className="pcard__contador">
-                <button className="contador-btn" onClick={handleRestar} aria-label="Quitar uno">−</button>
-                <span className="contador-cantidad">{cantidad}</span>
-                <button className="contador-btn" onClick={handleSumar} aria-label="Agregar uno">+</button>
-              </div>
-            ) : (
-              <button className="pcard__btn-agregar" onClick={handleAgregar}>
-                + Agregar al carrito
-              </button>
-            )}
+            <p className="pcard__delivery-arrive">{obtenerMensajeEntrega(producto.disponible)}</p>
+            <p className="pcard__delivery-pickup">{obtenerMensajeRetiro()}</p>
           </div>
 
           {mostrarConfirmacion && (
