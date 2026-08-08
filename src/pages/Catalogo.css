@@ -9,6 +9,7 @@
   font-family: 'Inter', sans-serif;
   color: #14182A;
   background: #FFFFFF;
+min-width: 0;
 }
 
 /* ---------- 1. Barra de filtros rápidos (pills) ---------- */
