@@ -425,7 +425,7 @@ useEffect(() => {
             )}
           </div>
         </aside>
-
+     )}
         <main className="catalogo-main-content">
           {cargando ? (
             <div className="product-grid">
