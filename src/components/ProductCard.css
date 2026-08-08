@@ -115,7 +115,7 @@
 }
 
 /* ---------- Bloque de precios ---------- */
-.pcard__precios {
+..pcard__precios {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
@@ -129,8 +129,21 @@
   font-size: 1.05rem;
 }
 
-.pcard__precio-ahora--sin-descuento {
-  color: #14182A; /* Ink */
+.pcard__precio-normal {
+  color: #14182A; /* Ink — precio sin descuento */
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.pcard__precio-simbolo {
+  font-size: 0.65em;
+  font-weight: 700;
+  vertical-align: text-top;
+  margin-right: 1px;
+}
+
+.pcard__precio-numero {
+  font-size: 1em;
 }
 
 .pcard__precio-original {
@@ -214,79 +227,10 @@
 
 /* ---------- Acciones ---------- */
 .pcard__acciones {
-  margin-top: auto;
   display: flex;
   align-items: center;
   gap: 8px;
-}
-
-.pcard__btn-items {
-  flex-shrink: 0;
-  width: 38px;
-  height: 38px;
-  border-radius: 999px;
-  border: 1px solid #e3e4e5;
-  background: #FBFAF7;
-  font-size: 1rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: border-color 0.2s ease;
-}
-
-.pcard__btn-items:hover {
-  border-color: #1B4B8F;
-}
-
-.pcard__btn-agregar {
-  flex: 1;
-  background: #1B4B8F; /* Azul */
-  color: #FFFFFF;
-  border: none;
-  border-radius: 999px;
-  padding: 10px 14px;
-  font-weight: 700;
-  font-size: 0.85rem;
-  font-family: 'Inter', sans-serif;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.pcard__btn-agregar:hover {
-  background: #14315e;
-}
-
-.pcard__contador {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #1B4B8F;
-  border-radius: 999px;
-  padding: 4px;
-}
-
-.contador-btn {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: none;
-  background: #FFFFFF;
-  color: #1B4B8F;
-  font-size: 1rem;
-  font-weight: 700;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-}
-
-.contador-cantidad {
-  color: #FFFFFF;
-  font-weight: 700;
-  font-size: 0.9rem;
+  margin-bottom: 10px;
 }
 
 /* ---------- Confirmación "Agregado al carrito" ---------- */
@@ -323,6 +267,12 @@
     padding: 12px;
     gap: 0 12px;
   }
+
+.pcard__acciones {
+  order: 5;
+  margin-bottom: 0;
+  margin-top: 10px;
+}
 
   /* El badge social ocupa toda la fila de arriba, antes de imagen + info */
   .pcard__top-badge {
@@ -364,4 +314,11 @@
     right: 12px;
     bottom: 12px;
   }
+}
+
+.pcard__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
 }
