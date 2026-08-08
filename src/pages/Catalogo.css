@@ -3,13 +3,15 @@
    ============================================ */
 
 .catalogo-layout {
+  width: 100%;
+  min-width: 0;
   max-width: 1400px;
   margin: 0 auto;
   padding: 24px;
+  box-sizing: border-box;
   font-family: 'Inter', sans-serif;
   color: #14182A;
   background: #FFFFFF;
-min-width: 0;
 }
 
 /* ---------- 1. Barra de filtros rápidos (pills) ---------- */
