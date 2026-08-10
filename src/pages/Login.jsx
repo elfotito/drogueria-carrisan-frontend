@@ -73,10 +73,13 @@ function Login() {
   return (
     <div className="auth-page">
       <main className="auth-container">
-        {/* Logo */}
-        <Link to="/" className="auth-logo">
-          <img src={logo} alt="Logo" />
-        </Link> 
+            <Link to="/" className="auth-logo">
+              <img 
+                src={logo} 
+                alt="Logo" 
+                className="logologin"
+              />
+            </Link>
 
         {sesionExpirada && (
           <div className="auth-banner">
