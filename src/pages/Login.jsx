@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import logo from '../assets/logo/minilogo color sin fondo.png';
 import api from '../api/axios'
 import './Auth.css'
 
@@ -74,10 +75,8 @@ function Login() {
       <main className="auth-container">
         {/* Logo */}
         <Link to="/" className="auth-logo">
-          <span className="auth-logo-dot auth-logo-dot--teal" />
-          <span className="auth-logo-dot auth-logo-dot--indigo" />
-          Carrisán
-        </Link>
+          <img src={logo} alt="Logo" />
+        </Link> 
 
         {sesionExpirada && (
           <div className="auth-banner">
