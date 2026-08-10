@@ -3,8 +3,8 @@
 /* ============================================ */
 
 :root {
-  --wm-blue: #0071dc;
-  --wm-dark-blue: #004f9a;
+  --wm-blue: #1b4b8f;
+  --wm-dark-blue: #1b4b8f;
   --wm-yellow: #ffc220;
   --wm-light-bg: #f2f8fd;
   --text-main: #000000;
@@ -115,6 +115,8 @@ body {
 @media (min-width: 768px) {
   .navbar__desktop-pickup-wrapper .envio-panel-content {
     position: absolute;
+    padding-right: 10px;
+    padding-left: 5px;
     top: calc(100% + 8px);
     left: 0;
     width: 360px;
