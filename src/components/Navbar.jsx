@@ -238,7 +238,7 @@ function Navbar() {
           <div className="navbar__desktop-pickup-wrapper desktop-only" ref={panelRef}>
             <button className="navbar__pickup-btn" onClick={() => setShowEnvioPanel(!showEnvioPanel)}>
               <div className="pickup-btn__icon">
-                🚚
+                📲
               </div>
               <div className="pickup-btn__text">
                 <span className="pickup-btn__title">¿Retiro o delivery?</span>

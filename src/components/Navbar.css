@@ -77,8 +77,8 @@ body {
 .pickup-btn__icon {
   background: white;
   border-radius: 50%;
-  width: 36px;
-  height: 36px;
+  width: 25px;
+  height: 25px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -91,7 +91,7 @@ body {
   line-height: 1.2;
 }
 
-.pickup-btn__title { font-weight: 700; font-size: 14px; }
+.pickup-btn__title { font-weight: bold; font-size: .875rem; }
 .pickup-btn__subtitle { font-size: 12px; }
 
 .pickup-btn__arrow { 
@@ -407,6 +407,7 @@ body {
   text-decoration: none; 
   padding: 4px 8px; 
   border-radius: 8px;
+  margin-top: 5px;
 }
 .cart-icon-wrapper { position: relative; }
 .cart-badge {
@@ -424,7 +425,7 @@ body {
   align-items: center; 
   justify-content: center;
 }
-.cart-price { font-size: 13px; font-weight: 700; margin-top: 2px; }
+.cart-price { font-size: 13px; font-weight: 700; margin-top: -8px; }
 
 /* ============================================ */
 /* BARRA SECUNDARIA (Blanca)                    */
