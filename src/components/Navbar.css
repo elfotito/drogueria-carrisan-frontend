@@ -121,7 +121,7 @@ body {
     width: 360px;
     border-radius: 0 0 12px 12px;
     box-shadow: 0 12px 24px rgba(0,0,0,0.2);
-    z-index: 100;
+    z-index: 850;
   }
 }
 
