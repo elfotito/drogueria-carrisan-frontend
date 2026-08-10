@@ -628,7 +628,7 @@ body {
   background: white;
   border-radius: 0 0 12px 12px;
   box-shadow: 0 12px 32px rgba(0,0,0,0.2);
-  z-index: 5;
+  z-index: 900;
   min-width: 600px;
   overflow: hidden;
   animation: slideDownFade 0.2s ease-out;
