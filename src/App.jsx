@@ -23,6 +23,7 @@ import Privacidad from './pages/Privacidad'
 import EstadoCuenta from './pages/EstadoCuenta'
 import ProductoDetalle from './pages/ProductoDetalle'
 import ListaDetalle from './pages/ListaDetalle'
+import Menu from './pages/Menu'
 
 function App() {
   return (
@@ -50,6 +51,7 @@ function App() {
           <Route path="/estado-cuenta" element={<PrivateRoute><EstadoCuenta /></PrivateRoute>} />
           <Route path="/producto/:id" element={<ProductoDetalle />} />
           <Route path="/listas/:id" element={<PrivateRoute><ListaDetalle /></PrivateRoute>} />
+          <Route path="/menu" element={<PrivateRoute><Menu /></PrivateRoute>} />
         </Routes>
         </EnvioProvider>
       </CartProvider>
