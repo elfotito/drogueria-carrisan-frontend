@@ -546,39 +546,39 @@
     text-align: center;
   }
 }
-
 /* Estilo base para el logo */
 .logologin {
-  height: 60px;
+  height: 180px;
   width: auto;
   display: block;
-  object-fit: contain; /* Mantiene la proporción sin distorsionar */
+  object-fit: contain;
+  margin: 0 auto; /* Centra el logo si está en un contenedor */
 }
 
 /* Desktop (pantallas grandes) */
 @media (min-width: 1024px) {
   .logologin {
-    height: 70px;
+    height: 250px;
   }
 }
 
 /* Tablet (pantallas medianas) */
 @media (max-width: 1023px) and (min-width: 768px) {
   .logologin {
-    height: 55px;
+    height: 200px;
   }
 }
 
 /* Móvil (pantallas pequeñas) */
 @media (max-width: 767px) {
   .logologin {
-    height: 40px;
+    height: 150px; /* Como pediste para móvil */
   }
 }
 
 /* Móvil muy pequeño (opcional) */
 @media (max-width: 480px) {
   .logologin {
-    height: 32px;
+    height: 120px;
   }
 }
