@@ -93,7 +93,7 @@ function Login() {
           <>
             <h1 className="auth-title">Iniciar sesión o crear tu cuenta</h1>
             <p className="auth-subtitle">
-              Ingresá tu correo y vemos si ya tenés cuenta con nosotros.
+              ¿No estas seguro si tienes una cuenta? Ingresá tu correo y vemos si ya tienes una cuenta con nosotros.
             </p>
 
             <form className="auth-form" onSubmit={handleContinuar}>
@@ -126,6 +126,9 @@ function Login() {
 
               <p className="auth-privacy-text">
                 Proteger tu información personal es nuestra prioridad.
+              </p>
+              <p className="auth-privacy-text">
+                Ve nuestras politicas de privacidad
               </p>
 
               <button type="submit" className="auth-btn-primary" disabled={cargando}>
@@ -202,6 +205,7 @@ function Login() {
             <Link to="/privacidad">Aviso de privacidad</Link>
             <Link to="/contacto">Soporte</Link>
           </div>
+          © 2026 Drogueria Carrisan, C.A. Todos los derechos reservados.
         </div>
       </footer>
     </div>

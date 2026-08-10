@@ -3,7 +3,6 @@
   display: flex;
   justify-content: center;
   background: #ffffff;
-  padding: 64px 20px;
 }
 
 .auth-card {
@@ -318,18 +317,21 @@
 
 /* Títulos */
 .auth-title {
-  font-size: 20px;
+  font-size: 1.25rem;
+  color:#232B45;
   font-weight: 700;
   text-align: center;
   margin-bottom: 12px;
+  letter-spacing: 0px;
 }
 
 .auth-subtitle {
-  font-size: 14px;
+  font-size: 1rem;
   line-height: 1.5;
-  color: #4a4c53;
+  color: #2e2f32;
   text-align: center;
   margin-bottom: 24px;
+  letter-spacing: -0.5px;
 }
 
 /* Banners y errores */
@@ -475,6 +477,7 @@
   font-size: 18px;
   font-weight: 700;
   margin-bottom: 6px;
+  color:#14182A
 }
 
 .text-blue {
