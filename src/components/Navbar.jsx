@@ -432,13 +432,17 @@ function Navbar() {
 </div>
 
           {/* Carrito */}
-          <Link to="/carrito" className="navbar__cart">
-            <div className="cart-icon-wrapper">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-              <span className="cart-badge">{cantidadItems}</span>
-            </div>
-            <span className="cart-price">$0.00</span>
-          </Link>
+          <a class="navbar__cart bn bg-transparent br2 flex flex-column items-center pa0 pointer relative sans-serif white hover-bg-dark-primary" href="/carrito" data-discover="true" style="border-radius: 32px; height: auto; min-height: 52px; min-width: 64px; padding: 2px 12px 8px; justify-content: center; text-decoration: none;">
+              <div class="cart-icon-wrapper relative flex justify-center items-center">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="9" cy="21" r="1"></circle>
+                  <circle cx="20" cy="21" r="1"></circle>
+                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+                <span class="cart-badge absolute" style="top: -6px; right: -10px; background-color: #ffc107; color: #000; border-radius: 50%; padding: 0px 5px; font-size: 0.75rem; font-weight: bold;">5</span>
+              </div>
+              <span class="cart-price db nowrap mt1" style="font-size: 0.875rem;">$0.00</span>
+            </a>
         </div>
 
         {/* Botón Pickup/Delivery (MÓVIL) */}
