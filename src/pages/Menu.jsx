@@ -112,7 +112,7 @@ const ICONOS = {
 const GRID_PRINCIPAL = [
   { to: '/catalogo?linea=farmacia', label: 'Línea Farmacia', icono: 'farmacia', tinte: 'teal' },
   { to: '/catalogo?linea=hospitalaria', label: 'Línea Hospitalaria', icono: 'hospital', tinte: 'azul' },
-  { to: '/catalogo?ofertas=true', label: 'Ofertas', icono: 'ofertas', tinte: 'indigo' },
+  { to: '/ofertas', label: 'Ofertas', icono: 'ofertas', tinte: 'indigo' },
   { to: '/plan-carrisan', label: 'Plan Carrisán+', icono: 'plan', tinte: 'teal' },
   { to: '/servicios-aliados', label: 'Servicios Aliados', icono: 'aliados', tinte: 'azul' },
   { to: '/ayuda', label: 'Ayuda', icono: 'ayuda', tinte: 'indigo' },

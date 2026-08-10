@@ -24,6 +24,7 @@ import EstadoCuenta from './pages/EstadoCuenta'
 import ProductoDetalle from './pages/ProductoDetalle'
 import ListaDetalle from './pages/ListaDetalle'
 import Menu from './pages/Menu'
+import Ofertas from './pages/Ofertas'
 
 function App() {
   return (
@@ -52,6 +53,7 @@ function App() {
           <Route path="/producto/:id" element={<ProductoDetalle />} />
           <Route path="/listas/:id" element={<PrivateRoute><ListaDetalle /></PrivateRoute>} />
           <Route path="/menu" element={<PrivateRoute><Menu /></PrivateRoute>} />
+          <Route path="/ofertas" element={<PrivateRoute><Ofertas /></PrivateRoute>} />
         </Routes>
         </EnvioProvider>
       </CartProvider>
