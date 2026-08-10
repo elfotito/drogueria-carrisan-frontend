@@ -810,3 +810,196 @@ body {
   background: #e0e0e0;
   margin: 4px 0;
 }
+
+/* Contenedor principal del dropdown */
+.deptos-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  display: flex;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  min-width: 600px;
+  z-index: 1000;
+  overflow: hidden;
+  animation: dropdownFadeIn 0.2s ease-out;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Columna izquierda - Departamentos/Servicios */
+.deptos-dropdown__sidebar {
+  width: 280px;
+  background: #f8f9fa;
+  padding: 1rem 0;
+  border-right: 1px solid #e9ecef;
+}
+
+.deptos-dropdown__titulo {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6c757d;
+  padding: 0.5rem 1.25rem;
+  margin: 0;
+  font-weight: 600;
+}
+
+.deptos-dropdown__depto-btn {
+  width: 100%;
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #333;
+  transition: all 0.15s ease;
+  text-align: left;
+  position: relative;
+}
+
+.deptos-dropdown__depto-btn:hover {
+  background: #e9ecef;
+  color: #000;
+}
+
+.deptos-dropdown__depto-btn.active {
+  background: #e3f2fd;
+  color: #1976d2;
+  font-weight: 500;
+}
+
+.deptos-dropdown__depto-btn.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #1976d2;
+  border-radius: 0 3px 3px 0;
+}
+
+.deptos-dropdown__depto-icono {
+  font-size: 1.25rem;
+  width: 32px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.deptos-dropdown__depto-nombre {
+  flex: 1;
+  white-space: nowrap;
+}
+
+.deptos-dropdown__depto-btn svg {
+  opacity: 0.4;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.deptos-dropdown__depto-btn:hover svg,
+.deptos-dropdown__depto-btn.active svg {
+  opacity: 1;
+  transform: translateX(2px);
+}
+
+/* Columna derecha - Subcategorías */
+.deptos-dropdown__subcategorias {
+  width: 320px;
+  padding: 1.25rem;
+  background: white;
+  animation: slideIn 0.2s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.deptos-dropdown__subtitulo {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1976d2;
+  margin: 0 0 1rem 0;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #e3f2fd;
+}
+
+.deptos-dropdown__sub-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.6rem 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: #555;
+  transition: all 0.15s ease;
+  text-align: left;
+  border-radius: 6px;
+}
+
+.deptos-dropdown__sub-link:hover {
+  background: #f5f5f5;
+  color: #1976d2;
+  padding-left: 0.75rem;
+}
+
+.deptos-dropdown__sub-icon {
+  color: #1976d2;
+  font-size: 0.6rem;
+}
+
+.deptos-dropdown__sub-link--ver-todo {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #e9ecef;
+  color: #1976d2;
+  font-weight: 500;
+  font-size: 0.8rem;
+}
+
+.deptos-dropdown__sub-link--ver-todo:hover {
+  background: #e3f2fd;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .deptos-dropdown {
+    flex-direction: column;
+    min-width: auto;
+    width: 90vw;
+    max-width: 400px;
+  }
+  
+  .deptos-dropdown__sidebar,
+  .deptos-dropdown__subcategorias {
+    width: 100%;
+  }
+  
+  .deptos-dropdown__subcategorias {
+    border-top: 1px solid #e9ecef;
+  }
+}
