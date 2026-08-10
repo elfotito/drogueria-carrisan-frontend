@@ -1,0 +1,106 @@
+/* ==========================================================
+   FAQ — Droguería Carrisán
+   Paleta: Índigo #232B45 · Azul #1B4B8F · Teal #12A594
+           Ink #14182A · Paper #FBFAF7
+   ========================================================== */
+
+.faq-page {
+  min-height: 100vh;
+  background: #FBFAF7;
+  font-family: 'Inter', sans-serif;
+}
+
+.faq-container {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 32px 16px 48px;
+}
+
+.faq-titulo {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.6rem;
+  color: #14182A;
+  margin: 0 0 6px;
+}
+
+.faq-subtitulo {
+  font-size: 0.9rem;
+  color: #5B6270;
+  margin: 0 0 24px;
+}
+
+/* ---------------------------------------------------------
+   Acordeón
+--------------------------------------------------------- */
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.faq-item {
+  background: #FFFFFF;
+  border: 1px solid #E7E5DE;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.faq-item__pregunta {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 15px 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: #14182A;
+}
+
+.faq-item__chevron {
+  flex-shrink: 0;
+  color: #5B6270;
+  display: flex;
+  transition: transform 0.2s ease;
+}
+
+.faq-item__chevron--abierto {
+  transform: rotate(180deg);
+}
+
+.faq-item__respuesta {
+  padding: 0 16px 16px;
+}
+
+.faq-item__respuesta p {
+  margin: 0;
+  font-size: 0.87rem;
+  color: #5B6270;
+  line-height: 1.55;
+}
+
+/* ---------------------------------------------------------
+   Footer de contacto
+--------------------------------------------------------- */
+.faq-footer {
+  margin: 28px 0 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #5B6270;
+}
+
+.faq-footer a {
+  color: #1B4B8F;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.faq-footer a:hover {
+  text-decoration: underline;
+}
