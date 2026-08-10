@@ -445,10 +445,10 @@ body {
   display: flex;
   gap: 8px;
   align-items: center;
-  overflow-x: auto;
-  overflow-y: visible;
-  white-space: nowrap;
+  flex-wrap: wrap;
+  white-space: normal;
 }
+
 .navbar__secondary-inner::-webkit-scrollbar { display: none; }
 
 .pill-btn, .pill-link {
