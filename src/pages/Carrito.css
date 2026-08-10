@@ -1300,3 +1300,40 @@
     border-radius: 8px;
   }
 }
+
+/* Añadir a tu archivo CSS del carrito */
+.delivery-card__resumen {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.delivery-card__badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.delivery-card__badge--tipo {
+  background: #f3e5f5;
+  color: #6a1b9a;
+}
+
+.delivery-card__badge--direccion {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.delivery-card__badge--costo {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.delivery-card__badge--gratis {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
