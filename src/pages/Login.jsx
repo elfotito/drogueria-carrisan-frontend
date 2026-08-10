@@ -4,10 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import api from '../api/axios'
 import './Auth.css'
 
-// Validación básica de email
 function esEmailValido(email) {
-  // Debe contener @, terminar en .algo (mínimo 2 caracteres después del punto)
-  // y no tener espacios
   const regex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/
   return regex.test(email)
 }
@@ -29,7 +26,6 @@ function Login() {
     e.preventDefault()
     setError('')
 
-    // Validación de email antes de llamar al backend
     const emailLimpio = email.trim().toLowerCase()
     setEmail(emailLimpio)
 
@@ -75,31 +71,34 @@ function Login() {
 
   return (
     <div className="auth-page">
-      <div className="auth-card">
+      <main className="auth-container">
+        {/* Logo */}
         <Link to="/" className="auth-logo">
           <span className="auth-logo-dot auth-logo-dot--teal" />
           <span className="auth-logo-dot auth-logo-dot--indigo" />
           Carrisán
         </Link>
 
+        {sesionExpirada && (
+          <div className="auth-banner">
+            Tu sesión expiró. Iniciá sesión de nuevo para continuar.
+          </div>
+        )}
+
+        {error && <div className="auth-error">{error}</div>}
+
         {paso === 'email' ? (
           <>
-            <h1>Iniciar sesión o crear tu cuenta</h1>
-            <p className="auth-subtitulo">
+            <h1 className="auth-title">Iniciar sesión o crear tu cuenta</h1>
+            <p className="auth-subtitle">
               Ingresá tu correo y vemos si ya tenés cuenta con nosotros.
             </p>
 
-            {sesionExpirada && (
-              <div className="auth-banner">
-                Tu sesión expiró. Iniciá sesión de nuevo para continuar.
-              </div>
-            )}
-            {error && <div className="auth-error">{error}</div>}
-
             <form className="auth-form" onSubmit={handleContinuar}>
-              <label className="auth-field">
-                Correo electrónico
+              <div className="auth-input-group">
+                <label htmlFor="email">Correo electrónico (requerido)</label>
                 <input
+                  id="email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -107,8 +106,9 @@ function Login() {
                   autoFocus
                   required
                 />
-              </label>
+              </div>
 
+              {/* Honeypot oculta para anti-spam */}
               <div className="auth-honeypot" aria-hidden="true">
                 <label htmlFor="sitio_web">Sitio web</label>
                 <input
@@ -122,14 +122,31 @@ function Login() {
                 />
               </div>
 
-              <button type="submit" className="auth-submit" disabled={cargando}>
+              <p className="auth-privacy-text">
+                Proteger tu información personal es nuestra prioridad.
+              </p>
+
+              <button type="submit" className="auth-btn-primary" disabled={cargando}>
                 {cargando ? 'Verificando...' : 'Continuar'}
               </button>
             </form>
+
+            {/* Tarjeta promocional inferior */}
+            <div className="auth-promo-card">
+              <h2 className="auth-promo-title">Carrisán <span className="text-blue">Business</span></h2>
+              <p className="auth-promo-subtitle">¿Compras para tu empresa o negocio?</p>
+              <button 
+                type="button" 
+                className="auth-btn-secondary"
+                onClick={() => navigate('/registro-empresas')}
+              >
+                Crear una cuenta corporativa
+              </button>
+            </div>
           </>
         ) : (
           <>
-            <h1>Ingresá tu contraseña</h1>
+            <h1 className="auth-title">Ingresá tu contraseña</h1>
 
             <div className="auth-email-confirmado">
               <span>{email}</span>
@@ -146,12 +163,11 @@ function Login() {
               </button>
             </div>
 
-            {error && <div className="auth-error">{error}</div>}
-
             <form className="auth-form" onSubmit={handleIngresar}>
-              <label className="auth-field">
-                Contraseña
+              <div className="auth-input-group">
+                <label htmlFor="password">Contraseña</label>
                 <input
+                  id="password"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -159,21 +175,33 @@ function Login() {
                   autoFocus
                   required
                 />
-              </label>
+              </div>
 
-              <Link to="/recuperar" className="auth-olvido">
-                ¿Olvidaste tu contraseña?
-              </Link>
+              <div className="auth-olvido-wrapper">
+                <Link to="/recuperar" className="auth-olvido">
+                  ¿Olvidaste tu contraseña?
+                </Link>
+              </div>
 
-              <button type="submit" className="auth-submit" disabled={cargando}>
+              <button type="submit" className="auth-btn-primary" disabled={cargando}>
                 {cargando ? 'Ingresando...' : 'Ingresar'}
               </button>
             </form>
           </>
         )}
+      </main>
 
-        <p className="auth-footer-rif">RIF J-40068410-2</p>
-      </div>
+      {/* Footer inferior */}
+      <footer className="auth-footer">
+        <div className="auth-footer-content">
+          <span className="auth-footer-rif">RIF J-40068410-2</span>
+          <div className="auth-footer-links">
+            <Link to="/terminos">Términos de uso</Link>
+            <Link to="/privacidad">Aviso de privacidad</Link>
+            <Link to="/contacto">Soporte</Link>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }
