@@ -115,7 +115,7 @@
 }
 
 /* ---------- Bloque de precios ---------- */
-..pcard__precios {
+.pcard__precios {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
