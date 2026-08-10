@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import preguntasFrecuentes from '../data/faqData'
-import './Faq.css'
+import './FAQ.css'
 
 function Faq() {
   const [abierta, setAbierta] = useState(null)
