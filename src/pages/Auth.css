@@ -381,6 +381,7 @@
 
 .auth-input-group input {
   height: 48px;
+  color: #000;
   border: 1px solid #000000;
   background-color: #FFFFFF;
   border-radius: 4px;
@@ -412,8 +413,9 @@
 /* Botón Principal */
 .auth-btn-primary {
   width: 100%;
+  font-family: 'Inter', sans-serif;
   height: 48px;
-  background-color: #0071ce;
+  background-color: #1B4B8F;
   color: #ffffff;
   border: none;
   border-radius: 100px;
@@ -484,7 +486,7 @@
 }
 
 .text-blue {
-  color: #0071ce;
+  color: #1B4B8F;
 }
 
 .auth-promo-subtitle {

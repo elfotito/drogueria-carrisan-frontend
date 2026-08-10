@@ -33,10 +33,9 @@ body {
 .navbar__main {
   display: flex;
   align-items: center;
-  padding: 12px 16px;
+  padding: 6px 6px;
   max-width: 1440px;
   margin: 0 auto;
-  gap: 16px;
 }
 
 .navbar__menu-mobile {
@@ -479,6 +478,10 @@ body {
     display: none !important; 
   }
   
+  .navbar__logo img {
+  height: 26px;
+  }
+
   .navbar__main { 
     padding: 12px; 
     gap: 12px; 
@@ -1002,4 +1005,16 @@ body {
   .deptos-dropdown__subcategorias {
     border-top: 1px solid #e9ecef;
   }
+}
+
+.navbar__logo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.navbar__logo img {
+  height: 34px;
+  width: auto;
+  display: block;
 }

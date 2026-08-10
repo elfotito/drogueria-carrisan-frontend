@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useCart } from '../context/CartContext'
 import { useEnvio } from '../context/EnvioContext'
+import logo from '../assets/logo/minilogo blanco sin fondo.png'
 import api from '../api/axios'
 import './Navbar.css'
 
@@ -228,6 +229,10 @@ function Navbar() {
     <>
       <header className="navbar-container">
         <div className="navbar__main">
+
+          <Link to="/" className="navbar__logo" aria-label="Ir a inicio">
+            <img src={logo} alt="Droguería Carrisán" />
+          </Link>
 
           {/* Botón Pickup/Delivery (ESCRITORIO) */}
           <div className="navbar__desktop-pickup-wrapper desktop-only" ref={panelRef}>
