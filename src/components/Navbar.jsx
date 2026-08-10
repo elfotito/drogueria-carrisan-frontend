@@ -439,7 +439,7 @@ function Navbar() {
                   <circle cx="20" cy="21" r="1"></circle>
                   <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                 </svg>
-                <span class="cart-badge" style="top: -6px; right: -10px; background-color: #ffc107; color: #000; border-radius: 50%; padding: 0px 5px; font-size: 0.75rem; font-weight: bold;">5</span>
+                <span class="cart-badge" style="top: -6px; right: -10px; background-color: #ffc107; color: #000; border-radius: 50%; padding: 0px 5px; font-size: 0.75rem; font-weight: bold;">{cantidadItems}</span>
             </div>
             <span className="cart-price" style="font-size: 0.875rem;">$0.00</span>
           </Link>
