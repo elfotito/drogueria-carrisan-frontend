@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useCart } from '../context/CartContext'
-import { useEnvio } from './useEnvios'
+import { useEnvio } from '../context/EnvioContext'
 import api from '../api/axios'
 import './Navbar.css'
 

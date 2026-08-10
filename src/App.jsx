@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import { CartProvider } from './context/CartContext'
+import { EnvioProvider } from './context/EnvioContext'
 import Navbar from './components/Navbar'
 import PrivateRoute from './components/PrivateRoute'
 import Home from './pages/Home'
@@ -27,6 +28,7 @@ function App() {
   return (
     <AuthProvider>
       <CartProvider>
+        <EnvioProvider>
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
@@ -49,6 +51,7 @@ function App() {
           <Route path="/producto/:id" element={<ProductoDetalle />} />
           <Route path="/listas/:id" element={<PrivateRoute><ListaDetalle /></PrivateRoute>} />
         </Routes>
+        </EnvioProvider>
       </CartProvider>
     </AuthProvider>
   )

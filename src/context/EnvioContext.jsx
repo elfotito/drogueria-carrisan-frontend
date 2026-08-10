@@ -1,9 +1,11 @@
-// frontend/src/hooks/useEnvio.js
-import { useState, useEffect, useCallback } from 'react';
-import { useAuth } from '../context/AuthContext';
+// frontend/src/context/EnvioContext.jsx
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { useAuth } from './AuthContext';
 import api from '../api/axios';
 
-export const useEnvio = () => {
+const EnvioContext = createContext(null);
+
+export function EnvioProvider({ children }) {
   const { user } = useAuth();
   const [tipoEnvio, setTipoEnvio] = useState('retiro');
   const [direcciones, setDirecciones] = useState([]);
@@ -22,6 +24,7 @@ export const useEnvio = () => {
     {
       id: 'retiro',
       label: 'Retiro en Depósito',
+      titulo: 'Retiro en Depósito',
       descripcion: 'Pasa a recoger tu pedido cuando esté listo',
       icono: '🏪',
       costo: 0,
@@ -32,6 +35,7 @@ export const useEnvio = () => {
     {
       id: 'delivery',
       label: 'Delivery en Moto',
+      titulo: 'Delivery en Moto',
       descripcion: 'Entrega en tu dirección dentro de la ciudad',
       icono: '🛵',
       costo: getCostoDelivery(),
@@ -43,6 +47,7 @@ export const useEnvio = () => {
     {
       id: 'envio_nacional',
       label: 'Envío Nacional',
+      titulo: 'Envío Nacional',
       descripcion: 'Envío por agencia, pagas al recibir en destino',
       icono: '📦',
       costo: 0,
@@ -68,16 +73,16 @@ export const useEnvio = () => {
       const { data } = await api.get(`/direcciones?tipo=${tipo}`);
       setDirecciones(data);
       
-      // Si hay una sola dirección, seleccionarla automáticamente
-      if (data.length === 1) {
+      // Seleccionar automáticamente la primera dirección disponible
+      if (data.length > 0) {
         setDireccionSeleccionada(data[0]);
       } else {
-        // 🆕 Seleccionar la primera si hay varias
-        setDireccionSeleccionada(data.length > 0 ? data[0] : null);
+        setDireccionSeleccionada(null);
       }
     } catch (error) {
       console.error('Error cargando direcciones:', error);
       setDirecciones([]);
+      setDireccionSeleccionada(null);
     } finally {
       setLoading(false);
     }
@@ -95,12 +100,11 @@ export const useEnvio = () => {
     }
   }, [opcionesEnvio, cargarDirecciones]);
 
-  // 🆕 Guardar nueva dirección - AHORA INCLUYE tipo_direccion
+  // Guardar nueva dirección
   const guardarDireccion = async (direccionData) => {
     try {
       const opcion = opcionesEnvio.find(op => op.id === tipoEnvio);
       
-      // Agregar el tipo_direccion según la opción actual
       const dataConTipo = {
         ...direccionData,
         tipo_direccion: opcion?.tipoDireccion || 'delivery'
@@ -108,7 +112,6 @@ export const useEnvio = () => {
       
       const { data } = await api.post('/direcciones', dataConTipo);
       
-      // Recargar direcciones del tipo actual
       if (opcion?.tipoDireccion) {
         await cargarDirecciones(opcion.tipoDireccion);
       }
@@ -136,10 +139,10 @@ export const useEnvio = () => {
     }
   };
 
-  // Agencias disponibles para envío nacional
+  // Agencias disponibles
   const agencias = ['MRW', 'Domesa', 'Tealca', 'Zoom', 'Servientrega'];
 
-  return {
+  const value = {
     tipoEnvio,
     cambiarTipoEnvio,
     opcionesEnvio,
@@ -156,4 +159,19 @@ export const useEnvio = () => {
     eliminarDireccion,
     costoEnvio: opcionActual?.costo || 0
   };
-};
+
+  return (
+    <EnvioContext.Provider value={value}>
+      {children}
+    </EnvioContext.Provider>
+  );
+}
+
+// Hook personalizado para usar el contexto
+export function useEnvio() {
+  const context = useContext(EnvioContext);
+  if (!context) {
+    throw new Error('useEnvio debe usarse dentro de un EnvioProvider');
+  }
+  return context;
+}

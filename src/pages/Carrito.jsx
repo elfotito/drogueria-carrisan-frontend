@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import api from '../api/axios'
 import { useCart } from '../context/CartContext'
-import { useEnvio } from '../components/useEnvios'
+import { useEnvio } from '../context/EnvioContext'
 import './Carrito.css'
 
 function formatUSD(valor) {
@@ -302,7 +302,7 @@ function Carrito() {
   const [tasaVes, setTasaVes] = useState(null)
   const [enviando, setEnviando] = useState(false)
   const [error, setError] = useState('')
-  const [envioExpandido, setEnvioExpandido] = useState(true) // 🆕 Siempre abierto al entrar
+  const [envioExpandido, setEnvioExpandido] = useState(false)
   
   const navigate = useNavigate()
 
@@ -313,16 +313,22 @@ function Carrito() {
       .catch(() => setTasaVes(null))
   }, [])
 
+  useEffect(() => {
+    const opcionActual = opcionesEnvio?.find(op => op.id === tipoEnvio)
+    if (opcionActual?.requiereDireccion && !direccionSeleccionada) {
+      setEnvioExpandido(true)
+    }
+  }, [tipoEnvio, direccionSeleccionada, opcionesEnvio])
+
   // 🆕 Cerrar panel SOLO cuando se selecciona una dirección (no al cambiar tipo de envío)
-  const handleSeleccionarDireccion = (dir) => {
-    setDireccionSeleccionada(dir)
-    setEnvioExpandido(false) // 🆕 Solo se cierra al elegir dirección
+    const handleCambiarTipoEnvio = (tipo) => {
+    cambiarTipoEnvio(tipo) // Esto actualiza el contexto global
+    setEnvioExpandido(true) // Expandir para configurar
   }
 
-  // 🆕 Cambiar tipo de envío sin cerrar el panel
-  const handleCambiarTipoEnvio = (tipo) => {
-    cambiarTipoEnvio(tipo)
-    setEnvioExpandido(true) // Mantener abierto para que configure la dirección
+  const handleSeleccionarDireccion = (dir) => {
+    setDireccionSeleccionada(dir)
+    setEnvioExpandido(false) // Colapsar después de seleccionar
   }
 
   async function handleConfirmar() {
@@ -444,66 +450,69 @@ function Carrito() {
           {/* Columna izquierda: Envío + Productos */}
           <div className="carrito-main">
             {/* Sección de envío colapsable */}
-            <section className="delivery-card">
+                        <section className="delivery-card">
               <button 
                 className="delivery-card__header"
                 onClick={() => setEnvioExpandido(!envioExpandido)}
               >
-                <span className="delivery-card__header-icon" aria-hidden="true">📦</span>
+                <span className="delivery-card__header-icon">📦</span>
                 <div className="delivery-card__header-text">
-                  <h2>¿Cómo quieres recibir tu pedido?</h2>
+                  <h2>Método de envío</h2>
                   {!envioExpandido && opcionActual && (
                     <p className="delivery-card__resumen">
-                      {opcionActual.icono} {opcionActual.label}
-                      {direccionSeleccionada && ` • 📍 ${direccionSeleccionada.nombre}`}
+                      <span className="delivery-card__badge delivery-card__badge--tipo">
+                        {opcionActual.icono} {opcionActual.label}
+                      </span>
+                      {direccionSeleccionada && (
+                        <span className="delivery-card__badge delivery-card__badge--direccion">
+                          📍 {direccionSeleccionada.nombre}
+                        </span>
+                      )}
+                      <span className={`delivery-card__badge delivery-card__badge--costo ${
+                        costoEnvio === 0 ? 'delivery-card__badge--gratis' : ''
+                      }`}>
+                        {costoEnvio === 0 ? '✓ Gratis' : `$${costoEnvio.toFixed(2)}`}
+                      </span>
                     </p>
                   )}
                 </div>
                 <svg 
                   className={`delivery-card__chevron ${envioExpandido ? 'rotated' : ''}`}
-                  width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                  width="20" height="20" viewBox="0 0 24 24" fill="none" 
+                  stroke="currentColor" strokeWidth="2"
                 >
                   <polyline points="6 9 12 15 18 9"></polyline>
                 </svg>
               </button>
 
-              <div className={`delivery-card__body ${envioExpandido ? 'expanded' : 'collapsed'}`}>
-                <div className="delivery-tabs">
-                  {opcionesEnvio.map((opcion) => (
-                    <button
-                      key={opcion.id}
-                      type="button"
-                      className={`delivery-tab ${tipoEnvio === opcion.id ? 'delivery-tab--active' : ''}`}
-                      onClick={() => handleCambiarTipoEnvio(opcion.id)}
-                    >
-                      <span className="delivery-tab__icon">{opcion.icono}</span>
-                      <span className="delivery-tab__label">{opcion.label}</span>
-                      <span className="delivery-tab__costo">{opcion.textoCosto}</span>
-                    </button>
-                  ))}
-                </div>
-
-                {opcionActual && (
-                  <div className="delivery-info">
-                    <span className="delivery-info__icon" aria-hidden="true">{opcionActual.icono}</span>
-                    <div className="delivery-info__body">
-                      <p className="delivery-info__title">{opcionActual.label}</p>
-                      <p className="delivery-info__text">{opcionActual.descripcion}</p>
-                      
-                      {opcionActual.requiereDireccion && (
-                        <DireccionSelector
-                          direcciones={direcciones}
-                          direccionSeleccionada={direccionSeleccionada}
-                          onSeleccionar={handleSeleccionarDireccion} // 🆕 Usar la nueva función
-                          onAgregar={guardarDireccion}
-                          loading={loading}
-                          tipo={opcionActual.tipoDireccion}
-                        />
-                      )}
-                    </div>
+              {envioExpandido && (
+                <div className="delivery-card__body">
+                  <div className="delivery-tabs">
+                    {opcionesEnvio?.map((opcion) => (
+                      <button
+                        key={opcion.id}
+                        type="button"
+                        className={`delivery-tab ${tipoEnvio === opcion.id ? 'delivery-tab--active' : ''}`}
+                        onClick={() => handleCambiarTipoEnvio(opcion.id)}
+                      >
+                        <span className="delivery-tab__icon">{opcion.icono}</span>
+                        <span className="delivery-tab__label">{opcion.label}</span>
+                        <span className="delivery-tab__costo">{opcion.textoCosto}</span>
+                      </button>
+                    ))}
                   </div>
-                )}
-              </div>
+
+                  {opcionActual?.requiereDireccion && (
+                    <DireccionSelector
+                      direcciones={direcciones}
+                      direccionSeleccionada={direccionSeleccionada}
+                      onSeleccionar={handleSeleccionarDireccion}
+                      onAgregar={guardarDireccion}
+                      tipo={opcionActual.tipoDireccion}
+                    />
+                  )}
+                </div>
+              )}
             </section>
 
             {/* Líneas de producto */}
