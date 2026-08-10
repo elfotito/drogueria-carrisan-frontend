@@ -125,9 +125,7 @@ function Login() {
               </div>
 
               <p className="auth-privacy-text">
-                Proteger tu información personal es nuestra prioridad.
-              </p>
-              <p className="auth-privacy-text">
+                Proteger tu información personal es nuestra prioridad.<br />
                 Ve nuestras politicas de privacidad
               </p>
 
@@ -138,7 +136,7 @@ function Login() {
 
             {/* Tarjeta promocional inferior */}
             <div className="auth-promo-card">
-              <h2 className="auth-promo-title">Carrisan <span className="text-blue">Business</span></h2>
+              <h2 className="auth-promo-title">Somos <span className="text-blue">Carrisan</span></h2>
               <p className="auth-promo-subtitle">¿Compras insumos médicos de forma habitual para tu negocio o institución?</p>
               <button 
                 type="button" 
