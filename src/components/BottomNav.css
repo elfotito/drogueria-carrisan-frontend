@@ -39,18 +39,18 @@
     transition: color 0.15s ease;
   }
 
-  /* indicador de línea arriba del ícono activo */
+  /* indicador — franja arriba, a todo lo ancho del botón */
   .bottom-nav__item::before {
     content: '';
     position: absolute;
-    top: 6px;
-    width: 18px;
+    top: 0;
+    left: 0;
+    right: 0;
     height: 3px;
-    border-radius: 2px;
-    background: #12A594;
+    border-radius: 0 0 3px 3px;
+    background: #1B4B8F;
     opacity: 0;
-    transform: scaleX(0.5);
-    transition: opacity 0.15s ease, transform 0.15s ease;
+    transition: opacity 0.15s ease;
   }
 
   .bottom-nav__item--activo {
@@ -58,12 +58,11 @@
   }
 
   .bottom-nav__item--activo svg {
-    stroke: #12A594;
+    stroke: #1B4B8F;
   }
 
   .bottom-nav__item--activo::before {
     opacity: 1;
-    transform: scaleX(1);
   }
 
   /* --- Botón central "Menú" (FAB elevado) --- */

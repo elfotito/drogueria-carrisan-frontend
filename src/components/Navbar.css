@@ -92,7 +92,7 @@ body {
 }
 
 .pickup-btn__title { font-weight: bold; font-size: .875rem; }
-.pickup-btn__subtitle { font-size: 12px; }
+.pickup-btn__subtitle { font-size: .875rem; }
 
 .pickup-btn__arrow { 
   transition: transform 0.3s; 
@@ -506,7 +506,6 @@ body {
     border-radius: 0; 
     background: transparent;
     justify-content: space-between; 
-    padding: 12px 16px;
   }
   
   .pickup-btn__left, 
@@ -1015,7 +1014,7 @@ body {
 }
 
 .navbar__logo img {
-  height: 62px;
+  height: 54px;
   padding-left: 10px;
   width: auto;
   display: block;
