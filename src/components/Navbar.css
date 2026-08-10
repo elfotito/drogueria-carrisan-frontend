@@ -409,7 +409,8 @@ body {
   text-decoration: none; 
   padding: 4px 8px; 
   border-radius: 8px;
-  margin-top: 5px;
+  margin-top: 7px;
+  margin-right: 5px;
 }
 .cart-icon-wrapper { position: relative; }
 .cart-badge {
@@ -499,7 +500,6 @@ body {
     display: block;
     position: relative;
     background: var(--wm-dark-blue);
-    border-top: 1px solid rgba(255,255,255,0.1);
     z-index: 200;
   }
 
@@ -513,7 +513,8 @@ body {
   .pickup-btn__left, 
   .pickup-btn__right { 
     display: flex; 
-    align-items: center; 
+    align-items: center;
+    padding-left: 15px; 
     gap: 10px; 
   }
 
@@ -1016,7 +1017,7 @@ body {
 }
 
 .navbar__logo img {
-  height: 54px;
+  height: 50px;
   padding-left: 10px;
   width: auto;
   display: block;
