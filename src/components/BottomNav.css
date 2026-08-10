@@ -20,7 +20,10 @@
     padding-bottom: env(safe-area-inset-bottom, 0);
   }
 
+  /* --- Items normales (Inicio, Mis Items, Mis Órdenes, Cuenta) --- */
+
   .bottom-nav__item {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -36,11 +39,78 @@
     transition: color 0.15s ease;
   }
 
+  /* indicador de línea arriba del ícono activo */
+  .bottom-nav__item::before {
+    content: '';
+    position: absolute;
+    top: 6px;
+    width: 18px;
+    height: 3px;
+    border-radius: 2px;
+    background: #12A594;
+    opacity: 0;
+    transform: scaleX(0.5);
+    transition: opacity 0.15s ease, transform 0.15s ease;
+  }
+
   .bottom-nav__item--activo {
     color: #1B4B8F;
   }
 
   .bottom-nav__item--activo svg {
     stroke: #12A594;
+  }
+
+  .bottom-nav__item--activo::before {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+
+  /* --- Botón central "Menú" (FAB elevado) --- */
+
+  .bottom-nav__fab-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    flex: 1;
+    height: 100%;
+    text-decoration: none;
+    color: rgba(20, 24, 42, 0.55);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 500;
+  }
+
+  .bottom-nav__fab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-top: -22px; /* eleva el botón por encima del bottom-nav */
+    background: linear-gradient(145deg, #1B4B8F, #232B45);
+    color: #FBFAF7; /* íconos usan currentColor */
+    box-shadow: 0 4px 14px rgba(27, 75, 143, 0.35);
+    border: 3px solid #FBFAF7; /* separa visualmente el FAB del fondo */
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+
+  .bottom-nav__fab-label {
+    margin-top: 3px;
+  }
+
+  .bottom-nav__fab-wrapper:active .bottom-nav__fab {
+    transform: scale(0.94);
+  }
+
+  .bottom-nav__fab-wrapper--activo .bottom-nav__fab {
+    background: linear-gradient(145deg, #12A594, #1B4B8F);
+  }
+
+  .bottom-nav__fab-wrapper--activo .bottom-nav__fab-label {
+    color: #1B4B8F;
   }
 }

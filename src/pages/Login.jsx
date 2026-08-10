@@ -98,7 +98,7 @@ function Login() {
 
             <form className="auth-form" onSubmit={handleContinuar}>
               <div className="auth-input-group">
-                <label htmlFor="email">Correo electrónico (requerido)</label>
+                <label htmlFor="email">Correo electrónico</label>
                 <input
                   id="email"
                   type="email"
@@ -135,8 +135,8 @@ function Login() {
 
             {/* Tarjeta promocional inferior */}
             <div className="auth-promo-card">
-              <h2 className="auth-promo-title">Carrisán <span className="text-blue">Business</span></h2>
-              <p className="auth-promo-subtitle">¿Compras para tu empresa o negocio?</p>
+              <h2 className="auth-promo-title">Carrisan <span className="text-blue">Business</span></h2>
+              <p className="auth-promo-subtitle">¿Compras insumos médicos de forma habitual para tu negocio o institución?</p>
               <button 
                 type="button" 
                 className="auth-btn-secondary"
