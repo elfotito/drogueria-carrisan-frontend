@@ -107,10 +107,10 @@ function Navbar() {
   const location = useLocation()
   
   const [showEnvioPanel, setShowEnvioPanel] = useState(false)
-  const [showDeptosMenu, setShowDeptosMenu] = useState(false) //
-  const [deptoActivo, setDeptoActivo] = useState(null) //
-  const [showServiciosMenu, setShowServiciosMenu] = useState(false) // 
-  const [servicioActivo, setServicioActivo] = useState(null) // 
+  const [showDeptosMenu, setShowDeptosMenu] = useState(false)
+  const [deptoActivo, setDeptoActivo] = useState(null)
+  const [showServiciosMenu, setShowServiciosMenu] = useState(false)
+  const [servicioActivo, setServicioActivo] = useState(null) 
   const serviciosBtnRef = useRef(null) // 
   const serviciosRef = useRef(null) // 
   const [showMyItemsMenu, setShowMyItemsMenu] = useState(false)
@@ -166,6 +166,15 @@ function Navbar() {
       document.addEventListener('mousedown', handleClickOutside)
       return () => document.removeEventListener('mousedown', handleClickOutside)
     }, [])
+
+    useEffect(() => {
+    if (!showDeptosMenu) {
+      setDeptoActivo(null)
+    }
+    if (!showServiciosMenu) {
+      setServicioActivo(null)
+    }
+  }, [showDeptosMenu, showServiciosMenu])
 
   useEffect(() => {
     if (busqueda.length < 2) {
@@ -475,6 +484,7 @@ function Navbar() {
                   setShowDeptosMenu(!showDeptosMenu)
                   setShowServiciosMenu(false)
                   setServicioActivo(null)
+                  setDeptoActivo(null)
                 }}
               >
                 <strong>Departamentos</strong>
@@ -492,11 +502,14 @@ function Navbar() {
                       <button
                         key={depto.id}
                         className={`deptos-dropdown__depto-btn ${deptoActivo === depto.id ? 'active' : ''}`}
-                        onMouseEnter={() => setDeptoActivo(depto.id)}
-                        onClick={() => setDeptoActivo(depto.id)}
+                        onMouseEnter={() => setDeptoActivo(depto.id)} // Solo hover
+                        onClick={() => {
+                          // Opcional: también activar con click
+                          setDeptoActivo(deptoActivo === depto.id ? null : depto.id)
+                        }}
                       >
                         <span className="deptos-dropdown__depto-icono">{depto.icono}</span>
-                        {depto.nombre}
+                        <span className="deptos-dropdown__depto-nombre">{depto.nombre}</span>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                           <polyline points="9 18 15 12 9 6"></polyline>
                         </svg>
@@ -506,18 +519,32 @@ function Navbar() {
 
                   {/* Subcategorías del departamento activo */}
                   {deptoActivo && (
-                      <div className="deptos-dropdown__subcategorias">
-                        {DEPARTAMENTOS.find(d => d.id === deptoActivo)?.subcategorias.map((sub) => (
-                          <button
-                            key={sub.nombre}
-                            className="deptos-dropdown__sub-link"
-                            onClick={() => handleSubcategoriaClick(sub.ruta)}
-                          >
-                            {sub.nombre}
-                          </button>
-                        ))}
-                      </div>
-                    )}
+                    <div className="deptos-dropdown__subcategorias">
+                      <p className="deptos-dropdown__subtitulo">
+                        {DEPARTAMENTOS.find(d => d.id === deptoActivo)?.nombre}
+                      </p>
+                      {DEPARTAMENTOS.find(d => d.id === deptoActivo)?.subcategorias.map((sub) => (
+                        <button
+                          key={sub.nombre}
+                          className="deptos-dropdown__sub-link"
+                          onClick={() => handleSubcategoriaClick(sub.ruta)}
+                        >
+                          <span className="deptos-dropdown__sub-icon">•</span>
+                          {sub.nombre}
+                        </button>
+                      ))}
+                      
+                      {/* 🆕 Botón "Ver todo" opcional */}
+                      <button
+                        className="deptos-dropdown__sub-link deptos-dropdown__sub-link--ver-todo"
+                        onClick={() => handleSubcategoriaClick(
+                          `/catalogo?departamento=${deptoActivo}`
+                        )}
+                      >
+                        Ver todo en {DEPARTAMENTOS.find(d => d.id === deptoActivo)?.nombre}
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -531,56 +558,61 @@ function Navbar() {
                     setShowServiciosMenu(!showServiciosMenu)
                     setShowDeptosMenu(false)
                     setDeptoActivo(null)
+                    setServicioActivo(null)
                   }}
                 >
                   <strong>Servicios</strong>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polyline points="6 9 12 15 18 9"></polyline>
-                  </svg>
-                </button>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </button>
 
-                {showServiciosMenu && (
-                  <div 
-                    className="deptos-dropdown"
-                  >
-                    <div className="deptos-dropdown__sidebar">
-                      <p className="deptos-dropdown__titulo">Todos los servicios</p>
-                      {SERVICIOS.map((servicio) => (
-                        <button
-                          key={servicio.id}
-                          className={`deptos-dropdown__depto-btn ${servicioActivo === servicio.id ? 'active' : ''}`}
-                          onMouseEnter={() => setServicioActivo(servicio.id)}
-                          onClick={() => setServicioActivo(servicio.id)}
-                        >
-                          <span className="deptos-dropdown__depto-icono">{servicio.icono}</span>
-                          {servicio.nombre}
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <polyline points="9 18 15 12 9 6"></polyline>
-                          </svg>
-                        </button>
-                      ))}
-                    </div>
-
-                    {servicioActivo && (
-                      <div className="deptos-dropdown__subcategorias">
-                        {SERVICIOS.find(s => s.id === servicioActivo)?.subcategorias.map((sub) => (
+                  {showServiciosMenu && (
+                    <div className="deptos-dropdown">
+                      <div className="deptos-dropdown__sidebar">
+                        <p className="deptos-dropdown__titulo">Todos los servicios</p>
+                        {SERVICIOS.map((servicio) => (
                           <button
-                            key={sub.nombre}
-                            className="deptos-dropdown__sub-link"
+                            key={servicio.id}
+                            className={`deptos-dropdown__depto-btn ${servicioActivo === servicio.id ? 'active' : ''}`}
+                            onMouseEnter={() => setServicioActivo(servicio.id)}
                             onClick={() => {
-                              setShowServiciosMenu(false)
-                              setServicioActivo(null)
-                              navigate(sub.ruta)
+                              setServicioActivo(servicioActivo === servicio.id ? null : servicio.id)
                             }}
                           >
-                            {sub.nombre}
+                            <span className="deptos-dropdown__depto-icono">{servicio.icono}</span>
+                            <span className="deptos-dropdown__depto-nombre">{servicio.nombre}</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
                           </button>
                         ))}
                       </div>
-                    )}
-                  </div>
-                )}
-              </div>
+
+                      {servicioActivo && (
+                        <div className="deptos-dropdown__subcategorias">
+                          <p className="deptos-dropdown__subtitulo">
+                            {SERVICIOS.find(s => s.id === servicioActivo)?.nombre}
+                          </p>
+                          {SERVICIOS.find(s => s.id === servicioActivo)?.subcategorias.map((sub) => (
+                            <button
+                              key={sub.nombre}
+                              className="deptos-dropdown__sub-link"
+                              onClick={() => {
+                                setShowServiciosMenu(false)
+                                setServicioActivo(null)
+                                navigate(sub.ruta)
+                              }}
+                            >
+                              <span className="deptos-dropdown__sub-icon">•</span>
+                              {sub.nombre}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
             <span className="divider"></span>
             <Link to="/catalogo" className="pill-link">Nuevos Ingresos</Link>
             <Link to="/catalogo" className="pill-link">Ofertas</Link>
