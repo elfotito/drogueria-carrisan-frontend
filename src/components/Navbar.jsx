@@ -131,6 +131,7 @@ function Navbar() {
         const isOutsideDesktop = panelRef.current && !panelRef.current.contains(event.target)
         const isOutsideMobile = mobilePanelRef.current && !mobilePanelRef.current.contains(event.target)
         const isOutsideDeptos = deptosRef.current && !deptosRef.current.contains(event.target)
+        const isOutsideServicios = serviciosRef.current && !serviciosRef.current.contains(event.target)
         const isOutsideMyItems = myItemsRef.current && !myItemsRef.current.contains(event.target)
         const isOutsideAccount = accountRef.current && !accountRef.current.contains(event.target)
 
@@ -141,6 +142,11 @@ function Navbar() {
         if (isOutsideDeptos) {
           setShowDeptosMenu(false)
           setDeptoActivo(null)
+        }
+
+        if (isOutsideServicios) {
+          setShowServiciosMenu(false)
+          setServicioActivo(null)
         }
         
         // 🆕
@@ -467,7 +473,8 @@ function Navbar() {
                 className="pill-btn pill-btn--deptos"
                 onClick={() => {
                   setShowDeptosMenu(!showDeptosMenu)
-                  
+                  setShowServiciosMenu(false)
+                  setServicioActivo(null)
                 }}
               >
                 <strong>Departamentos</strong>
@@ -520,7 +527,11 @@ function Navbar() {
                 <button 
                   className="pill-btn pill-btn--deptos"
                   ref={serviciosBtnRef}
-                  onClick={() => setShowServiciosMenu(!showServiciosMenu)}
+                  onClick={() => {
+                    setShowServiciosMenu(!showServiciosMenu)
+                    setShowDeptosMenu(false)
+                    setDeptoActivo(null)
+                  }}
                 >
                   <strong>Servicios</strong>
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
