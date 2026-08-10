@@ -1,0 +1,298 @@
+/* ==========================================================
+   Ofertas — Droguería Carrisán
+   Paleta: Índigo #232B45 · Azul #1B4B8F · Teal #12A594
+           Ink #14182A · Paper #FBFAF7
+   ========================================================== */
+
+.ofertas-layout {
+  width: 100%;
+  min-width: 0;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+  color: #14182A;
+  background: #FFFFFF;
+}
+
+/* ---------- Header ---------- */
+.ofertas-header {
+  margin-bottom: 20px;
+}
+
+.header-titles h1 {
+  font-family: 'Manrope', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin: 0 0 4px 0;
+  color: #14182A;
+}
+
+.header-titles h1 span {
+  color: #74767c;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.header-subtitle {
+  font-size: 0.85rem;
+  color: #74767c;
+  margin: 0;
+}
+
+/* ---------- Banner promocional ---------- */
+.ofertas-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  background: linear-gradient(135deg, #232B45 0%, #1B4B8F 100%);
+  border-radius: 20px;
+  padding: 32px;
+  margin-bottom: 24px;
+  overflow: hidden;
+  position: relative;
+}
+
+.ofertas-banner__texto {
+  position: relative;
+  z-index: 1;
+  max-width: 460px;
+}
+
+.ofertas-banner__eyebrow {
+  display: inline-block;
+  background: rgba(18, 165, 148, 0.18);
+  color: #5FE8D3;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 5px 12px;
+  border-radius: 999px;
+  margin-bottom: 12px;
+}
+
+.ofertas-banner__texto h2 {
+  font-family: 'Manrope', sans-serif;
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: #FBFAF7;
+  margin: 0 0 8px;
+  line-height: 1.15;
+}
+
+.ofertas-banner__texto p {
+  font-size: 0.88rem;
+  color: rgba(251, 250, 247, 0.78);
+  margin: 0 0 20px;
+  line-height: 1.5;
+}
+
+.ofertas-banner__cta {
+  display: inline-block;
+  background: #12A594;
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 0.88rem;
+  padding: 12px 26px;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.ofertas-banner__cta:hover {
+  background: #0d8a7c;
+}
+
+.ofertas-banner__grafico {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ofertas-banner__badge {
+  font-family: 'Manrope', sans-serif;
+  font-size: 2.6rem;
+  font-weight: 800;
+  color: #FBFAF7;
+}
+
+/* ---------- Chips rápidos ---------- */
+.ofertas-chips {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.ofertas-chip {
+  background: #FFFFFF;
+  border: 1px solid #c7cbd6;
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #14182A;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.ofertas-chip:hover {
+  border-color: #1B4B8F;
+  background: #F4F6F8;
+}
+
+.ofertas-chip--activo {
+  background: #14182A;
+  border-color: #14182A;
+  color: #FFFFFF;
+}
+
+/* ---------- Grid de productos (mismo patrón que Catálogo) ---------- */
+.ofertas-main {
+  min-width: 0;
+}
+
+.product-grid {
+  display: grid;
+  gap: 20px;
+}
+
+@media (min-width: 1024px) {
+  .product-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .product-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 480px) and (max-width: 767px) {
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 479px) {
+  .product-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Estado vacío ---------- */
+.ofertas-vacio {
+  text-align: center;
+  padding: 64px 24px;
+  background: #FBFAF7;
+  border-radius: 16px;
+}
+
+.ofertas-vacio__icono {
+  font-size: 2.2rem;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.ofertas-vacio h3 {
+  font-family: 'Manrope', sans-serif;
+  font-size: 1.1rem;
+  color: #14182A;
+  margin: 0 0 6px;
+}
+
+.ofertas-vacio p {
+  font-size: 0.85rem;
+  color: #74767c;
+  margin: 0 0 20px;
+}
+
+.ofertas-vacio__cta {
+  display: inline-block;
+  background: #1B4B8F;
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 10px 24px;
+  border-radius: 999px;
+  text-decoration: none;
+}
+
+.ofertas-vacio__cta:hover {
+  background: #163c72;
+}
+
+.ofertas-estado {
+  text-align: center;
+  padding: 60px 0;
+  color: #74767c;
+}
+
+.ofertas-error {
+  color: #c0392b;
+}
+
+/* ============================================
+   MOBILE
+   ============================================ */
+@media (max-width: 768px) {
+  .ofertas-layout {
+    padding: 16px;
+  }
+
+  .ofertas-banner {
+    padding: 24px 20px;
+  }
+
+  .ofertas-banner__texto h2 {
+    font-size: 1.4rem;
+  }
+
+  .ofertas-banner__grafico {
+    width: 80px;
+    height: 80px;
+  }
+
+  .ofertas-banner__badge {
+    font-size: 1.8rem;
+  }
+
+  .ofertas-chips {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .ofertas-chips::-webkit-scrollbar {
+    display: none;
+  }
+
+  .ofertas-chip {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .ofertas-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .ofertas-banner__grafico {
+    display: none;
+  }
+}
