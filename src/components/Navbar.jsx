@@ -615,9 +615,10 @@ function Navbar() {
                 </div>
             <span className="divider"></span>
             <Link to="/catalogo" className="pill-link">Nuevos Ingresos</Link>
-            <Link to="/catalogo" className="pill-link">Ofertas</Link>
-            <Link to="/catalogo" className="pill-link">Farmacia</Link>
-            <Link to="/catalogo" className="pill-link">Cuidado Personal</Link>
+            <Link to="/catalogo?descuento=true" className="pill-link">Ofertas</Link>
+            <Link to="/catalogo?categoria=Linea+Hospitalaria" className="pill-link">Hospitalaria</Link>
+            <Link to="/catalogo?categoria=Linea+Farmacia" className="pill-link">Farmacia</Link>
+            <Link to="/catalogo?categoria=Pediatrico" className="pill-link">Cuidado Personal</Link>
           </div>
         </nav>
       </header>
