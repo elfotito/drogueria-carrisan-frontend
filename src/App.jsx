@@ -57,8 +57,8 @@ function App() {
           <Route path="/listas/:id" element={<PrivateRoute><ListaDetalle /></PrivateRoute>} />
           <Route path="/menu" element={<PrivateRoute><Menu /></PrivateRoute>} />
           <Route path="/ofertas" element={<PrivateRoute><Ofertas /></PrivateRoute>} />
-<Route path="/LineaFarmacia" element={<PrivateRoute><Linea Farmacia /></PrivateRoute>} />
-<Route path="/LineaHospitalaria" element={<PrivateRoute><Linea Hospitalaria /></PrivateRoute>} />
+<Route path="/farmacia" element={<PrivateRoute><Linea Farmacia /></PrivateRoute>} />
+<Route path="/hospitalaria" element={<PrivateRoute><Linea Hospitalaria /></PrivateRoute>} />
         </Routes>
         </EnvioProvider>
       </CartProvider>
