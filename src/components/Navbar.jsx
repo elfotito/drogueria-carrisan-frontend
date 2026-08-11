@@ -275,7 +275,7 @@ function Navbar() {
           </div>
 
           {/* Buscador Interactivo */}
-          <<div className="navbar__search-wrapper" ref={searchRef}>
+          <div className="navbar__search-wrapper" ref={searchRef}>
             <form className="navbar__search" onSubmit={handleBuscar}>
               <input
                 type="text"
