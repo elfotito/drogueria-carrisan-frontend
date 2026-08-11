@@ -110,8 +110,8 @@ const ICONOS = {
 // NOTA: /plan-carrisan y /servicios-aliados aún no existen como páginas —
 // quedan enlazadas para cuando se construyan.
 const GRID_PRINCIPAL = [
-  { to: '/catalogo?linea=farmacia', label: 'Línea Farmacia', icono: 'farmacia', tinte: 'teal' },
-  { to: '/catalogo?linea=hospitalaria', label: 'Línea Hospitalaria', icono: 'hospital', tinte: 'azul' },
+  { to: '/LineaFarmacia', label: 'Línea Farmacia', icono: 'farmacia', tinte: 'teal' },
+  { to: '/LineaHospitalaria', label: 'Línea Hospitalaria', icono: 'hospital', tinte: 'azul' },
   { to: '/ofertas', label: 'Ofertas', icono: 'ofertas', tinte: 'indigo' },
   { to: '/plan-carrisan', label: 'Plan Carrisán+', icono: 'plan', tinte: 'teal' },
   { to: '/servicios-aliados', label: 'Servicios Aliados', icono: 'aliados', tinte: 'azul' },
