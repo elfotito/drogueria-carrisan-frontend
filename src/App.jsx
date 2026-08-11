@@ -26,7 +26,7 @@ import ListaDetalle from './pages/ListaDetalle'
 import Menu from './pages/Menu'
 import Ofertas from './pages/Ofertas'
 import LineaFarmacia from './pages/Linea Farmacia'
-import LineaHospitalaria from './pages/Linea Hospitalaria'
+import LineaHospitalaria from './pages/'
 
 
 function App() {
@@ -57,8 +57,8 @@ function App() {
           <Route path="/listas/:id" element={<PrivateRoute><ListaDetalle /></PrivateRoute>} />
           <Route path="/menu" element={<PrivateRoute><Menu /></PrivateRoute>} />
           <Route path="/ofertas" element={<PrivateRoute><Ofertas /></PrivateRoute>} />
-<Route path="/farmacia" element={<PrivateRoute><Linea Farmacia /></PrivateRoute>} />
-<Route path="/hospitalaria" element={<PrivateRoute><Linea Hospitalaria /></PrivateRoute>} />
+<Route path="/farmacia" element={<PrivateRoute><LineaFarmacia /></PrivateRoute>} />
+<Route path="/hospitalaria" element={<PrivateRoute><LineaHospitalaria /></PrivateRoute>} />
         </Routes>
         </EnvioProvider>
       </CartProvider>
