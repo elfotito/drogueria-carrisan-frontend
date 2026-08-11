@@ -5,6 +5,7 @@ import { useCart } from '../context/CartContext'
 import { useEnvio } from '../context/EnvioContext'
 import logo from '../assets/logo/minilogo blanco sin fondo.png'
 import api from '../api/axios'
+import BuscadorMovil from './BuscadorMovil'
 import './Navbar.css'
 
 
@@ -121,6 +122,7 @@ function Navbar() {
   const [busqueda, setBusqueda] = useState('')
   const [sugerencias, setSugerencias] = useState([])
   const [mostrarSugerencias, setMostrarSugerencias] = useState(false)
+  const [buscadorMovilAbierto, setBuscadorMovilAbierto] = useState(false)
   
   const searchRef = useRef(null)
   const panelRef = useRef(null)
@@ -178,7 +180,7 @@ function Navbar() {
   }, [showDeptosMenu, showServiciosMenu])
 
   useEffect(() => {
-    if (busqueda.length < 2) {
+    if (busqueda.length < 1) {
       setSugerencias([])
       setMostrarSugerencias(false)
       return
@@ -212,6 +214,16 @@ function Navbar() {
     setMostrarSugerencias(false)
     setBusqueda('')
     navigate(`/producto/${producto.id}`)
+  }
+
+  function handleSearchFocus(e) {
+    const esMobile = window.matchMedia('(max-width: 768px)').matches
+    if (esMobile) {
+      e.target.blur()
+      setBuscadorMovilAbierto(true)
+    } else if (sugerencias.length > 0) {
+      setMostrarSugerencias(true)
+    }
   }
 
   // 🆕 Manejar clic en subcategoría
@@ -263,14 +275,14 @@ function Navbar() {
           </div>
 
           {/* Buscador Interactivo */}
-          <div className="navbar__search-wrapper" ref={searchRef}>
+          <<div className="navbar__search-wrapper" ref={searchRef}>
             <form className="navbar__search" onSubmit={handleBuscar}>
               <input
                 type="text"
                 placeholder="Buscar en Drogueria Carrisan"
                 value={busqueda}
                 onChange={(e) => setBusqueda(e.target.value)}
-                onFocus={() => sugerencias.length > 0 && setMostrarSugerencias(true)}
+                onFocus={handleSearchFocus}
               />
               <button type="submit" className="search-btn">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
@@ -285,14 +297,22 @@ function Navbar() {
                     className="suggestion-item"
                     onClick={() => handleSugerenciaClick(producto)}
                   >
-                    <span>{producto.nombre_comercial}</span>
-                    <span className="suggestion-price">${producto.precio_usd}</span>
+                    <img
+                      src={producto.foto_url || '/placeholder.png'}
+                      alt=""
+                      className="suggestion-item__img"
+                    />
+                    <span className="suggestion-item__nombre">{producto.nombre_comercial}</span>
+                    <span className="suggestion-price">${Number(producto.precio_usd).toFixed(2)}</span>
                   </button>
                 ))}
               </div>
             )}
           </div>
 
+          {buscadorMovilAbierto && (
+            <BuscadorMovil onClose={() => setBuscadorMovilAbierto(false)} />
+          )}
           {/* Acciones Derecha (Escritorio) */}
 <div className="navbar__actions desktop-only">
 
