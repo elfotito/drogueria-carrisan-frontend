@@ -25,6 +25,9 @@ import ProductoDetalle from './pages/ProductoDetalle'
 import ListaDetalle from './pages/ListaDetalle'
 import Menu from './pages/Menu'
 import Ofertas from './pages/Ofertas'
+import LineaFarmacia from './pages/Linea Farmacia'
+import LineaHospitalaria from './pages/Linea Hospitalaria'
+
 
 function App() {
   return (
@@ -54,6 +57,8 @@ function App() {
           <Route path="/listas/:id" element={<PrivateRoute><ListaDetalle /></PrivateRoute>} />
           <Route path="/menu" element={<PrivateRoute><Menu /></PrivateRoute>} />
           <Route path="/ofertas" element={<PrivateRoute><Ofertas /></PrivateRoute>} />
+<Route path="/LineaFarmacia" element={<PrivateRoute><Linea Farmacia /></PrivateRoute>} />
+<Route path="/LineaHospitalaria" element={<PrivateRoute><Linea Hospitalaria /></PrivateRoute>} />
         </Routes>
         </EnvioProvider>
       </CartProvider>
