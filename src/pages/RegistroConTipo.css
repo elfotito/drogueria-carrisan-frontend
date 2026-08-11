@@ -1,0 +1,250 @@
+/* Selector de tipo de cliente */
+.registro-tipo__selectores {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.registro-tipo__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Inter', sans-serif;
+  color: inherit;
+}
+
+.registro-tipo__card:hover {
+  border-color: #1B4B8F;
+  box-shadow: 0 4px 12px rgba(27, 75, 143, 0.15);
+  transform: translateY(-2px);
+}
+
+.registro-tipo__icono {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #1B4B8F 0%, #232B45 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  color: white;
+}
+
+.registro-tipo__icono svg {
+  width: 32px;
+  height: 32px;
+  stroke-width: 2;
+}
+
+.registro-tipo__card h3 {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #232B45;
+  margin: 0 0 8px;
+}
+
+.registro-tipo__card p {
+  font-size: 0.85rem;
+  color: #6B7280;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Grupos de inputs con múltiples campos */
+.auth-input-group-triple {
+  display: grid;
+  grid-template-columns: 0.6fr 1fr 1fr;
+  gap: 10px;
+  text-align: left;
+}
+
+.auth-input-group-triple > div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.auth-input-group-triple label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #232B45;
+}
+
+.auth-input-group-triple input,
+.auth-input-group-triple select {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 400;
+  padding: 12px 12px;
+  border: 1px solid rgba(35, 43, 69, 0.18);
+  border-radius: 8px;
+  background: white;
+  color: #14182A;
+  transition: border-color 0.15s ease;
+}
+
+.auth-input-group-triple input:focus,
+.auth-input-group-triple select:focus {
+  outline: none;
+  border-color: #1B4B8F;
+  box-shadow: 0 0 0 2px rgba(27, 75, 143, 0.1);
+}
+
+/* Grupo de inputs de dos columnas */
+.auth-input-group-duo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  text-align: left;
+}
+
+.auth-input-group-duo > div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.auth-input-group-duo label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #232B45;
+}
+
+.auth-input-group-duo input,
+.auth-input-group-duo select {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 400;
+  padding: 12px 14px;
+  border: 1px solid rgba(35, 43, 69, 0.18);
+  border-radius: 8px;
+  background: white;
+  color: #14182A;
+  transition: border-color 0.15s ease;
+}
+
+.auth-input-group-duo input:focus,
+.auth-input-group-duo select:focus {
+  outline: none;
+  border-color: #1B4B8F;
+  box-shadow: 0 0 0 2px rgba(27, 75, 143, 0.1);
+}
+
+/* Select genérico */
+select {
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23232B45' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 20px;
+  padding-right: 36px;
+  appearance: none;
+}
+
+/* RIF Institución - Prefijo no editable */
+.auth-rif-institucion {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border: 1px solid rgba(35, 43, 69, 0.18);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.auth-rif-prefijo {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #232B45;
+  background: #f3f4f6;
+  padding: 12px 12px;
+  border-right: 1px solid rgba(35, 43, 69, 0.18);
+  display: flex;
+  align-items: center;
+}
+
+.auth-rif-institucion input {
+  flex: 1;
+  border: none;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.95rem;
+  padding: 12px 14px;
+  background: white;
+  color: #14182A;
+}
+
+.auth-rif-institucion input:focus {
+  outline: none;
+  background: white;
+}
+
+/* Error en campo */
+.auth-field-error {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  color: #DC2626;
+  margin-top: -4px;
+}
+
+/* Textarea para dirección entrega */
+textarea {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 400;
+  padding: 12px 14px;
+  border: 1px solid rgba(35, 43, 69, 0.18);
+  border-radius: 8px;
+  background: white;
+  color: #14182A;
+  resize: vertical;
+  transition: border-color 0.15s ease;
+  line-height: 1.4;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #1B4B8F;
+  box-shadow: 0 0 0 2px rgba(27, 75, 143, 0.1);
+}
+
+/* Botón secundario para cambiar tipo */
+.auth-submit--secondary {
+  background: white;
+  color: #232B45;
+  border: 1px solid rgba(35, 43, 69, 0.18);
+  margin-top: -8px;
+}
+
+.auth-submit--secondary:hover:not(:disabled) {
+  background: #f9fafb;
+  border-color: #1B4B8F;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .registro-tipo__selectores {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-input-group-triple {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-input-group-duo {
+    grid-template-columns: 1fr;
+  }
+}
