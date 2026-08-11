@@ -26,7 +26,7 @@ import ListaDetalle from './pages/ListaDetalle'
 import Menu from './pages/Menu'
 import Ofertas from './pages/Ofertas'
 import LineaFarmacia from './pages/Linea Farmacia'
-import LineaHospitalaria from './pages/'
+import LineaHospitalaria from './pages/LineaHospitalaria'
 
 
 function App() {
