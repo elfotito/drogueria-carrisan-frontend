@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../api/axios'
 import { useCart } from '../context/CartContext'
+import { useFavoritos } from '../context/FavoritosContext'
 import './MisItems.css'
+
 
 // Sugerencias de listas rápidas. Solo crea la lista con este nombre;
 // no llevan lógica especial más allá de eso.
@@ -70,39 +72,28 @@ function CarruselSkeleton() {
 // ---------------------------------------------------------
 // Tab: Mis Items (lista predeterminada, carrusel horizontal)
 // ---------------------------------------------------------
+// ---------------------------------------------------------
+// Tab: Mis Items (ahora desde favoritos reales, no lista predeterminada)
+// ---------------------------------------------------------
 function TabMisItems() {
   const { items: cartItems, addItem } = useCart()
-  const [listaDefaultId, setListaDefaultId] = useState(null)
+  const { favoritos, toggleFavorito, loading: cargandoFav } = useFavoritos() // ← desde el contexto
   const [items, setItems] = useState([])
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
 
   useEffect(() => {
-    async function cargar() {
-      try {
-        const { data: listas } = await api.get('/lists')
-        const predeterminada = listas.find((l) => l.es_predeterminada)
-        if (predeterminada) {
-          setListaDefaultId(predeterminada.id)
-          const { data: itemsData } = await api.get(`/lists/${predeterminada.id}/items`)
-          setItems(itemsData)
-        }
-      } catch (err) {
-        setError('No se pudieron cargar tus items')
-        console.error(err)
-      } finally {
-        setCargando(false)
-      }
-    }
-    cargar()
-  }, [])
+    if (cargandoFav) return // espera a que el contexto termine de cargar
+    setItems(favoritos)
+    setCargando(false)
+  }, [favoritos, cargandoFav])
 
+  // quitar de favoritos (usa toggleFavorito del contexto)
   async function quitarItem(productoId) {
-    try {
-      await api.delete(`/lists/${listaDefaultId}/items/${productoId}`)
-      setItems((prev) => prev.filter((item) => item.producto_id !== productoId))
-    } catch (err) {
-      console.error('Error al quitar item:', err)
+    const producto = items.find((item) => item.id === productoId)
+    if (producto) {
+      await toggleFavorito(producto)
+      // el contexto actualiza favoritos y el useEffect dispara setItems
     }
   }
 
@@ -115,7 +106,7 @@ function TabMisItems() {
 
   return (
     <section className="misitems-section">
-      <h2 className="misitems-section-title">Popular Items</h2>
+      <h2 className="misitems-section-title">Mis Favoritos</h2>
 
       {cargando ? (
         <div className="itemcard-carousel">
@@ -123,18 +114,18 @@ function TabMisItems() {
         </div>
       ) : items.length === 0 ? (
         <div className="misitems-vacio">
-          <p>Todavía no tienes items guardados.</p>
+          <p>Todavía no tienes productos favoritos.</p>
           <Link to="/catalogo" className="misitems-vacio__cta">Explorar catálogo</Link>
         </div>
       ) : (
         <div className="itemcard-carousel">
-          {items.map((item) => (
+          {items.map((producto) => (
             <ItemCard
-              key={item.id}
-              producto={item.productos}
-              cantidadEnCarrito={cantidadEnCarrito(item.producto_id)}
-              onAgregar={() => addItem(item.productos, 1)}
-              onQuitar={() => quitarItem(item.producto_id)}
+              key={producto.id}
+              producto={producto}
+              cantidadEnCarrito={cantidadEnCarrito(producto.id)}
+              onAgregar={() => addItem(producto, 1)}
+              onQuitar={() => quitarItem(producto.id)}
               mostrarQuitar
             />
           ))}
