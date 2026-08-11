@@ -1,0 +1,209 @@
+/* ==========================================================
+   Línea Departamento (Farmacia / Hospitalaria) — Droguería Carrisán
+   Paleta: Índigo #232B45 · Azul #1B4B8F · Teal #12A594
+           Ink #14182A · Paper #FBFAF7
+   ========================================================== */
+
+.linea-page {
+  width: 100%;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ---------- Chips de categoría ---------- */
+.linea-chips-wrap {
+  background: #FFFFFF;
+  padding: 16px 24px;
+  border-bottom: 1px solid #e3e4e5;
+}
+
+.linea-chips {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.linea-chips::-webkit-scrollbar {
+  display: none;
+}
+
+.linea-chip {
+  flex-shrink: 0;
+  background: #FFFFFF;
+  border: 1px solid #c7cbd6;
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #14182A;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.linea-chip:hover {
+  border-color: #1B4B8F;
+}
+
+.linea-chip--activo {
+  background: #1B4B8F;
+  border-color: #1B4B8F;
+  color: #FFFFFF;
+}
+
+/* ---------- Sección oscura ---------- */
+.linea-dark {
+  background: #232B45; /* Índigo */
+  padding: 24px;
+}
+
+/* ---------- Banner ---------- */
+.linea-banner {
+  max-width: 1400px;
+  margin: 0 auto 24px;
+  background: #FBFAF7; /* Paper */
+  border-radius: 20px;
+  padding: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.linea-banner__eyebrow {
+  display: inline-block;
+  background: rgba(18, 165, 148, 0.12);
+  color: #0d8a7c;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 5px 12px;
+  border-radius: 999px;
+  margin-bottom: 12px;
+}
+
+.linea-banner__texto {
+  max-width: 460px;
+}
+
+.linea-banner__texto h1 {
+  font-family: 'Manrope', sans-serif;
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: #14182A;
+  margin: 0 0 8px;
+  line-height: 1.15;
+}
+
+.linea-banner__texto p {
+  font-size: 0.88rem;
+  color: #5B6270;
+  margin: 0 0 20px;
+  line-height: 1.5;
+}
+
+.linea-banner__cta {
+  display: inline-block;
+  background: #1B4B8F;
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 0.88rem;
+  padding: 12px 26px;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.linea-banner__cta:hover {
+  background: #163c72;
+}
+
+.linea-banner__icono {
+  flex-shrink: 0;
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: #EEF3FB;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+}
+
+/* ---------- Nota de vista previa ---------- */
+.linea-preview-nota {
+  max-width: 1400px;
+  margin: 0 auto 16px;
+  color: rgba(251, 250, 247, 0.6);
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
+/* ---------- Grid de productos (2 columnas, como la referencia) ---------- */
+.linea-grid {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.linea-grid__item {
+  min-width: 0;
+}
+
+@media (min-width: 1024px) {
+  .linea-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .linea-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ============================================
+   MOBILE
+   ============================================ */
+@media (max-width: 768px) {
+  .linea-chips-wrap {
+    padding: 12px 16px;
+  }
+
+  .linea-dark {
+    padding: 16px;
+  }
+
+  .linea-banner {
+    padding: 24px 20px;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .linea-banner__texto h1 {
+    font-size: 1.4rem;
+  }
+
+  .linea-banner__icono {
+    width: 72px;
+    height: 72px;
+    font-size: 2rem;
+  }
+
+  .linea-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+
+@media (max-width: 400px) {
+  .linea-grid {
+    grid-template-columns: 1fr;
+  }
+}
