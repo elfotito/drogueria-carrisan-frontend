@@ -1,39 +1,255 @@
-.auth-page {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  background: #ffffff;
+/* ============================================
+   MEJORAS VISUALES PARA LOGIN Y REGISTRO
+   ============================================ */
+
+/* Mejorar banners */
+.auth-banner {
+  background: linear-gradient(135deg, rgba(27, 75, 143, 0.08) 0%, rgba(18, 165, 148, 0.04) 100%);
+  border: 1px solid rgba(27, 75, 143, 0.2);
+  color: #1B4B8F;
 }
 
-.auth-card {
-  width: 100%;
-  max-width: 400px;
+.auth-banner--warning {
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.08) 0%, rgba(220, 38, 38, 0.04) 100%);
+  border-color: rgba(220, 38, 38, 0.2);
+  color: #DC2626;
+}
+
+.auth-error {
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.08) 0%, rgba(220, 38, 38, 0.04) 100%);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+  color: #DC2626;
+}
+
+/* Mejorar inputs */
+.auth-input-group input,
+.auth-input-group select {
+  transition: all 0.2s ease;
+  border: 1.5px solid #e5e7eb;
+  background: #fafafa;
+}
+
+.auth-input-group input:focus,
+.auth-input-group select:focus {
+  border-color: #1B4B8F;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(27, 75, 143, 0.1);
+}
+
+.auth-input-group input::placeholder {
+  color: #9ca3af;
+}
+
+/* Botones mejorados */
+.auth-btn-primary {
+  background: linear-gradient(135deg, #1B4B8F 0%, #232B45 100%);
+  box-shadow: 0 2px 8px rgba(27, 75, 143, 0.2);
+  transition: all 0.2s ease;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.auth-btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(27, 75, 143, 0.3);
+}
+
+.auth-btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.auth-btn-primary:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.auth-btn-secondary {
+  background: white;
+  color: #1B4B8F;
+  border: 2px solid #1B4B8F;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+
+.auth-btn-secondary:hover {
+  background: #1B4B8F;
+  color: white;
+}
+
+/* Promo card mejorada */
+.auth-promo-card {
+  background: linear-gradient(135deg, #f0f4ff 0%, #f5fbf9 100%);
+  border: 1px solid rgba(27, 75, 143, 0.1);
+  border-radius: 12px;
+  padding: 24px 20px;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.auth-promo-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #232B45;
+  letter-spacing: -0.3px;
+}
+
+.auth-promo-subtitle {
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 16px;
+  color: #6B7280;
+  line-height: 1.5;
+}
+
+/* Email confirmado con estilo */
+.auth-email-confirmado {
+  background: linear-gradient(135deg, rgba(27, 75, 143, 0.05) 0%, rgba(18, 165, 148, 0.03) 100%);
+  border: 1px solid rgba(27, 75, 143, 0.1);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-weight: 600;
+  color: #232B45;
+  margin-bottom: 20px;
+}
+
+/* Términos mejorados */
+.auth-terminos__texto {
+  background: #f9fafb;
+  border-left: 3px solid #1B4B8F;
+  border-radius: 6px;
+  padding: 12px 14px;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: #6B7280;
+}
+
+.auth-terminos__link {
+  color: #1B4B8F;
+  font-weight: 700;
+}
+
+.auth-terminos__link:hover {
+  text-decoration: underline;
+}
+
+/* Enlace de "Olvidaste" */
+.auth-olvido-wrapper {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.auth-olvido {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1B4B8F;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.auth-olvido:hover {
+  color: #232B45;
+  text-decoration: underline;
+}
+
+/* Logo con sombra suave */
+.auth-logo {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.05));
+  transition: all 0.2s ease;
+}
+
+.auth-logo:hover {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+/* Title y subtitle con mejor jerarquía */
+.auth-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #232B45;
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
+}
+
+.auth-subtitle {
+  font-size: 0.95rem;
+  color: #6B7280;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+/* Privacy text mejorado */
+.auth-privacy-text {
+  font-size: 0.85rem;
+  color: #6B7280;
+  line-height: 1.5;
+  margin-bottom: 20px;
   text-align: center;
 }
 
-/* ---------- Logo centrado ---------- */
-.auth-logo {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  font-family: 'Manrope', sans-serif;
-  font-weight: 800;
-  font-size: 1.2rem;
-  color: #232B45;
+/* Footer */
+.auth-footer {
+  border-top: 1px solid #e5e7eb;
+  padding: 20px;
+  background: #fafafa;
+  font-size: 0.85rem;
+}
+
+.auth-footer-links a {
+  color: #1B4B8F;
   text-decoration: none;
-  margin-bottom: 28px;
+  font-weight: 500;
+  transition: color 0.2s ease;
 }
 
-.auth-logo-dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  display: inline-block;
+.auth-footer-links a:hover {
+  color: #232B45;
+  text-decoration: underline;
 }
 
+/* Animaciones suaves */
+.auth-banner,
+.auth-error {
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive mejorado */
+@media (max-width: 640px) {
+  .auth-title {
+    font-size: 1.25rem;
+  }
+
+  .auth-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .auth-promo-card {
+    padding: 20px 16px;
+  }
+
+  .auth-footer-content {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+
+  .auth-footer-links {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
 .auth-logo-dot--teal {
   background: #12A594;
 }
