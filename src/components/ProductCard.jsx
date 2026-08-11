@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
+import { useFavoritos } from '../context/FavoritosContext'
 import AgregarAItemsModal from './AgregarAItemsModal'
 import './ProductCard.css'
 
@@ -42,12 +43,12 @@ function obtenerMensajeRetiro() {
 function ProductCard({ producto, tasaVes }) {
   const { items: cartItems, addItem, removeItem, updateCantidad } = useCart()
   const { user } = useAuth()
+  const { esFavorito, toggleFavorito } = useFavoritos()
   const navigate = useNavigate()
 
   const [mostrarModal, setMostrarModal] = useState(false)
   const [mostrarContador, setMostrarContador] = useState(false)
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false)
-  const [esFavorito, setEsFavorito] = useState(false)
 
   const confirmTimerRef = useRef(null)
   const hideConfirmTimerRef = useRef(null)
@@ -61,6 +62,7 @@ function ProductCard({ producto, tasaVes }) {
 
   const badgeSocial = producto.badge_social || null
   const esPatrocinado = producto.sponsored || false
+  const favorito = esFavorito(producto.id)
 
   const itemEnCarrito = cartItems.find(i => i.producto.id === producto.id)
   const cantidad = itemEnCarrito?.cantidad || 0
@@ -97,6 +99,15 @@ function ProductCard({ producto, tasaVes }) {
     }
   }
 
+  function handleFavorito(e) {
+    e.stopPropagation()
+    if (!user) {
+      navigate('/login')
+      return
+    }
+    toggleFavorito(producto)
+  }
+
   useEffect(() => {
     return () => {
       clearTimeout(confirmTimerRef.current)
@@ -104,23 +115,21 @@ function ProductCard({ producto, tasaVes }) {
     }
   }, [])
 
-  function renderRating(rating, count) {
-    return (
-      <div className="pcard__rating">
-        <span className="pcard__rating-estrellas">
-          {'★'.repeat(Math.floor(rating))}{'☆'.repeat(5 - Math.floor(rating))}
-        </span>
-        <span className="pcard__rating-count">({count})</span>
-      </div>
-    )
-  }
-
   return (
     <>
       <div className="pcard">
         {badgeSocial && (
           <div className="pcard__top-badge">
             <span className="pcard__badge-social">{badgeSocial}</span>
+          </div>
+        )}
+
+        {/* Versión "arriba de la tarjeta" — solo visible en mobile (ver CSS).
+            En escritorio se sigue mostrando montada sobre la imagen, dentro
+            de .pcard__media, sin ningún cambio. */}
+        {etiquetaDescuento && (
+          <div className="pcard__top-badge pcard__top-badge--descuento-mobile">
+            <span className="pcard__badge-descuento-pill">{etiquetaDescuento}</span>
           </div>
         )}
 
@@ -135,11 +144,11 @@ function ProductCard({ producto, tasaVes }) {
 
           <button
             type="button"
-            className={`pcard__fav ${esFavorito ? 'pcard__fav--activo' : ''}`}
-            onClick={(e) => { e.stopPropagation(); setEsFavorito(v => !v) }}
-            aria-label={esFavorito ? 'Quitar de favoritos' : 'Agregar a favoritos'}
+            className={`pcard__fav ${favorito ? 'pcard__fav--activo' : ''}`}
+            onClick={handleFavorito}
+            aria-label={favorito ? 'Quitar de favoritos' : 'Agregar a favoritos'}
           >
-            {esFavorito ? '♥' : '♡'}
+            {favorito ? '♥' : '♡'}
           </button>
 
           <img
@@ -159,10 +168,13 @@ function ProductCard({ producto, tasaVes }) {
               <button
                 className="pcard__btn-items"
                 onClick={(e) => { e.stopPropagation(); setMostrarModal(true) }}
-                title="Agregar a Mis Items"
-                aria-label="Agregar a Mis Items"
+                title="Agregar a una lista"
+                aria-label="Agregar a una lista"
               >
-                📦
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M19 21 12 16 5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2Z"></path>
+                </svg>
+                <span className="pcard__btn-items-label">Agregar a lista</span>
               </button>
             )}
 
@@ -217,12 +229,15 @@ function ProductCard({ producto, tasaVes }) {
             {producto.marcas?.nombre || producto.laboratorio || ''}
           </p>
 
-          {renderRating(4.5, 0)}
-
           <p className="pcard__save-with">Ahorra con <strong>Plan Carrisán+</strong></p>
 
           <div className="pcard__delivery-info">
-            <p className="pcard__delivery-arrive">{obtenerMensajeEntrega(producto.disponible)}</p>
+            <p className="pcard__delivery-arrive">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" className="pcard__delivery-rayo">
+                <path d="M13 2 3 14h7l-1 8 11-14h-7l1-6Z" />
+              </svg>
+              {obtenerMensajeEntrega(producto.disponible)}
+            </p>
             <p className="pcard__delivery-pickup">{obtenerMensajeRetiro()}</p>
           </div>
 

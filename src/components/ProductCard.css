@@ -37,6 +37,27 @@
   line-height: 1.2;
 }
 
+/* Versión del badge de descuento como pastilla arriba de la tarjeta.
+   Oculta por defecto (desktop sigue viéndolo montado sobre la imagen);
+   se activa solo en mobile — ver media query al final. */
+.pcard__top-badge--descuento-mobile {
+  display: none;
+}
+
+.pcard__badge-descuento-pill {
+  display: inline-block;
+  border: 1px solid #D64550;
+  color: #D64550;
+  background: #FDECEE;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  line-height: 1.2;
+}
+
 /* ---------- Media (imagen + badge de descuento + favorito) ---------- */
 .pcard__media {
   position: relative;
@@ -57,7 +78,8 @@
   object-fit: contain;
 }
 
-/* Badge de descuento SÍ va montado sobre la imagen (distinto al badge social) */
+/* Badge de descuento montado sobre la imagen — visible en desktop.
+   En mobile se oculta y se usa la pastilla de arriba (.pcard__badge-descuento-pill). */
 .pcard__badge-descuento {
   position: absolute;
   top: 8px;
@@ -184,20 +206,6 @@
   margin: 0 0 6px;
 }
 
-/* ---------- Rating ---------- */
-.pcard__rating {
-  font-size: 0.75rem;
-  color: #E0A429;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-bottom: 4px;
-}
-
-.pcard__rating-count {
-  color: #74767c;
-}
-
 /* ---------- Save with (placeholder) ---------- */
 .pcard__save-with {
   font-size: 0.72rem;
@@ -209,7 +217,7 @@
   color: #12A594;
 }
 
-/* ---------- Delivery (placeholder) ---------- */
+/* ---------- Delivery ---------- */
 .pcard__delivery-info {
   font-size: 0.7rem;
   color: #74767c;
@@ -223,6 +231,18 @@
 .pcard__delivery-arrive {
   font-weight: 600;
   color: #14182A;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pcard__delivery-rayo {
+  flex-shrink: 0;
+  color: #1B4B8F;
+}
+
+.pcard__delivery-pickup {
+  margin-top: 4px !important;
 }
 
 /* ---------- Acciones ---------- */
@@ -231,6 +251,96 @@
   align-items: center;
   gap: 8px;
   margin-bottom: 10px;
+}
+
+/* Botón: agregar a una lista (antes era solo un ícono suelto sin estilo) */
+.pcard__btn-items {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid #c7cbd6;
+  border-radius: 50%;
+  background: #FFFFFF;
+  color: #1B4B8F;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.pcard__btn-items:hover {
+  border-color: #1B4B8F;
+  background: #EFF4FB;
+}
+
+.pcard__btn-items-label {
+  display: none;
+}
+
+/* Botón: agregar al carrito */
+.pcard__btn-agregar {
+  flex: 1;
+  border: none;
+  border-radius: 999px;
+  background: #1B4B8F;
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 9px 14px;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.pcard__btn-agregar:hover {
+  background: #163c72;
+}
+
+.pcard__btn-agregar:active {
+  transform: scale(0.97);
+}
+
+/* Contador (− N +) */
+.pcard__contador {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #1B4B8F;
+  border-radius: 999px;
+  padding: 4px 6px;
+  background: #FFFFFF;
+}
+
+.contador-btn {
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 50%;
+  background: #EFF4FB;
+  color: #1B4B8F;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease;
+}
+
+.contador-btn:hover {
+  background: #DCE7F5;
+}
+
+.contador-cantidad {
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: #14182A;
+  min-width: 18px;
+  text-align: center;
 }
 
 /* ---------- Confirmación "Agregado al carrito" ---------- */
@@ -258,7 +368,18 @@
   100% { opacity: 0; transform: translateY(-4px); }
 }
 
-/* ---------- Responsive: mobile = tarjeta horizontal (imagen izq. / info der.) ---------- */
+.pcard__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+/* ============================================
+   Responsive: mobile = tarjeta horizontal
+   (imagen izq. / info der.), rediseñada estilo
+   Walmart/Amazon por pedido de Tito.
+   ============================================ */
 @media (max-width: 768px) {
   .pcard {
     flex-direction: row;
@@ -268,11 +389,11 @@
     gap: 0 12px;
   }
 
-.pcard__acciones {
-  order: 5;
-  margin-bottom: 0;
-  margin-top: 10px;
-}
+  .pcard__acciones {
+    order: 5;
+    margin-bottom: 0;
+    margin-top: 10px;
+  }
 
   /* El badge social ocupa toda la fila de arriba, antes de imagen + info */
   .pcard__top-badge {
@@ -280,10 +401,20 @@
     margin-bottom: 8px;
   }
 
-  /* Columna izquierda: imagen, ancho fijo y pequeño */
+  /* Descuento: se muestra como pastilla arriba (no montado sobre la imagen) */
+  .pcard__badge-descuento {
+    display: none;
+  }
+  .pcard__top-badge--descuento-mobile {
+    display: block;
+  }
+
+  /* Columna izquierda: imagen — un poco más angosta que la mitad de la tarjeta */
   .pcard__media {
-    flex: 0 0 118px;
-    width: 118px;
+    flex: 0 0 32%;
+    max-width: 128px;
+    min-width: 88px;
+    width: auto;
     margin-bottom: 0;
   }
 
@@ -294,19 +425,62 @@
   }
 
   .pcard__nombre {
-    font-size: 0.82rem;
+    font-size: 0.87rem;
   }
-  .pcard__precio-ahora {
-    font-size: 0.95rem;
+  .pcard__precio-ahora,
+  .pcard__precio-normal {
+    font-size: 1.15rem;
+  }
+  .pcard__precio-original {
+    font-size: 0.85rem;
+  }
+  .pcard__marca {
+    font-size: 0.78rem;
   }
 
-  /* En este layout angosto, el botón de agregar / contador ocupa toda la columna derecha */
+  /* Botones de acciones: fila de dos pastillas 50/50, como la referencia
+     (outline "Agregar a lista" + sólido "Agregar al carrito") */
   .pcard__acciones {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    gap: 10px;
   }
+
+  .pcard__btn-items {
+    flex: 1;
+    width: auto;
+    height: auto;
+    border-radius: 999px;
+    padding: 9px 10px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    gap: 6px;
+  }
+  .pcard__btn-items-label {
+    display: inline;
+  }
+
   .pcard__btn-agregar,
   .pcard__contador {
-    flex: 1 1 100%;
+    flex: 1;
+  }
+
+  /* Caja azul de entrega estilo "Entrega tan pronto como en 15 min" */
+  .pcard__delivery-arrive {
+    background: #1B4B8F;
+    color: #FFFFFF;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 0.72rem;
+    margin-bottom: 5px;
+  }
+  .pcard__delivery-rayo {
+    color: #FFFFFF;
+  }
+  .pcard__delivery-pickup {
+    font-size: 0.72rem;
   }
 
   .pcard__confirmacion {
@@ -314,11 +488,4 @@
     right: 12px;
     bottom: 12px;
   }
-}
-
-.pcard__body {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-width: 0;
 }
