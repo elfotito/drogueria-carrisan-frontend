@@ -1,0 +1,258 @@
+/* ==========================================================
+   Buscador Móvil — overlay pantalla completa
+   Droguería Carrisán · Paleta: Azul #1B4B8F · Ink #14182A · Paper #FBFAF7
+   ========================================================== */
+
+.buscador-movil {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ---------- Header ---------- */
+.buscador-movil__header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: #1B4B8F;
+  padding-top: max(12px, env(safe-area-inset-top));
+}
+
+.buscador-movil__volver {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: none;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.buscador-movil__form {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #FFFFFF;
+  border-radius: 24px;
+  height: 42px;
+  padding: 0 14px;
+}
+
+.buscador-movil__form svg {
+  flex-shrink: 0;
+  color: #74767c;
+}
+
+.buscador-movil__form input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 15px;
+  color: #14182A;
+  height: 100%;
+}
+
+.buscador-movil__limpiar {
+  flex-shrink: 0;
+  border: none;
+  background: #e3e4e5;
+  color: #5B6270;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-size: 0.65rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* ---------- Body ---------- */
+.buscador-movil__body {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.buscador-movil__seccion {
+  padding: 18px 16px 6px;
+}
+
+.buscador-movil__seccion h2 {
+  font-family: 'Manrope', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #14182A;
+  margin: 0 0 10px;
+}
+
+/* ---------- Recientes ---------- */
+.buscador-movil__lista {
+  display: flex;
+  flex-direction: column;
+}
+
+.buscador-movil__item-reciente {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 11px 0;
+  border: none;
+  border-bottom: 1px solid #F0EEE7;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.buscador-movil__item-icono {
+  flex-shrink: 0;
+  color: #5B6270;
+  display: flex;
+}
+
+.buscador-movil__item-texto {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.9rem;
+  color: #14182A;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.buscador-movil__item-borrar {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9a9ca3;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+/* ---------- Tendencias ---------- */
+.buscador-movil__pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.buscador-movil__pill {
+  background: #FFFFFF;
+  border: 1px solid #c7cbd6;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #14182A;
+  cursor: pointer;
+}
+
+.buscador-movil__pill:active {
+  background: #F4F6F8;
+}
+
+/* ---------- Resultados / sugerencias ---------- */
+.buscador-movil__resultados {
+  padding-bottom: 12px;
+}
+
+.buscador-movil__cargando,
+.buscador-movil__sin-resultados {
+  padding: 32px 16px;
+  text-align: center;
+  color: #74767c;
+  font-size: 0.88rem;
+}
+
+.buscador-movil__sin-resultados p {
+  margin: 0 0 16px;
+}
+
+.buscador-movil__sugerencia {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 16px;
+  border: none;
+  border-bottom: 1px solid #F0EEE7;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.buscador-movil__sugerencia-img {
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  background: #FBFAF7;
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.buscador-movil__sugerencia-nombre {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.87rem;
+  color: #5B6270;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.buscador-movil__sugerencia-nombre strong {
+  color: #14182A;
+  font-weight: 700;
+}
+
+.buscador-movil__sugerencia-precio {
+  flex-shrink: 0;
+  font-weight: 700;
+  font-size: 0.87rem;
+  color: #1B4B8F;
+}
+
+.buscador-movil__ver-todo {
+  display: block;
+  width: calc(100% - 32px);
+  margin: 14px 16px 0;
+  padding: 12px;
+  border: 1px solid #1B4B8F;
+  border-radius: 10px;
+  background: none;
+  color: #1B4B8F;
+  font-weight: 700;
+  font-size: 0.87rem;
+  text-align: center;
+  cursor: pointer;
+}
+
+/* Solo debe existir en mobile — en escritorio seguimos usando el dropdown
+   inline del Navbar, así que este overlay nunca se monta ahí, pero por
+   seguridad lo ocultamos también vía CSS si algún día se renderiza. */
+@media (min-width: 769px) {
+  .buscador-movil {
+    display: none;
+  }
+  }
