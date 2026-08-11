@@ -1,5 +1,4 @@
-// src/data/faqData.js
-
+// src/data/faqData.jsx
 const preguntasFrecuentes = [
   {
     pregunta: "¿Cómo puedo realizar un pedido?",
@@ -32,10 +31,6 @@ const preguntasFrecuentes = [
   {
     pregunta: "¿Cómo puedo crear una cuenta?",
     respuesta: "Puedes crear una cuenta haciendo clic en el botón 'Registrarse' en la esquina superior derecha. Solo necesitas proporcionar tu correo electrónico y crear una contraseña segura."
-  },
-  {
-    pregunta: "¿Puedo cambiar la dirección de envío después de hacer el pedido?",
-    respuesta: "Sí, puedes solicitar un cambio de dirección siempre que tu pedido no haya sido despachado. Contáctanos lo antes posible para gestionarlo."
   }
 ];
 
