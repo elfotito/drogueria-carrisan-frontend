@@ -1,5 +1,9 @@
 import { Link } from 'react-router-dom'
 import './Menu.css'
+import LineaFarmacia from "./pages/LineaFarmacia"
+import LineaHospitalaria from "./pages/LineaHospitalaria"
+
+
 
 // --- Íconos SVG inline, stroke = currentColor (heredan color del tile) ---
 const ICONOS = {
@@ -110,8 +114,8 @@ const ICONOS = {
 // NOTA: /plan-carrisan y /servicios-aliados aún no existen como páginas —
 // quedan enlazadas para cuando se construyan.
 const GRID_PRINCIPAL = [
-  { to: '/LineaFarmacia', label: 'Línea Farmacia', icono: 'farmacia', tinte: 'teal' },
-  { to: '/LineaHospitalaria', label: 'Línea Hospitalaria', icono: 'hospital', tinte: 'azul' },
+  { to: '/farmacia', label: 'Línea Farmacia', icono: 'farmacia', tinte: 'teal' },
+  { to: '/hospitalaria', label: 'Línea Hospitalaria', icono: 'hospital', tinte: 'azul' },
   { to: '/ofertas', label: 'Ofertas', icono: 'ofertas', tinte: 'indigo' },
   { to: '/plan-carrisan', label: 'Plan Carrisán+', icono: 'plan', tinte: 'teal' },
   { to: '/servicios-aliados', label: 'Servicios Aliados', icono: 'aliados', tinte: 'azul' },
