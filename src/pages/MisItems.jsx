@@ -69,12 +69,7 @@ function CarruselSkeleton() {
   )
 }
 
-// ---------------------------------------------------------
-// Tab: Mis Items (lista predeterminada, carrusel horizontal)
-// ---------------------------------------------------------
-// ---------------------------------------------------------
-// Tab: Mis Items (ahora desde favoritos reales, no lista predeterminada)
-// ---------------------------------------------------------
+
 function TabMisItems() {
   const { items: cartItems, addItem } = useCart()
   const { favoritos, toggleFavorito, loading: cargandoFav } = useFavoritos() // ← desde el contexto
