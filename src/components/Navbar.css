@@ -53,6 +53,7 @@ body {
 
 /* Desktop: Wrapper con position relative para el panel absoluto */
 .navbar__desktop-pickup-wrapper {
+  padding-left: 15px;
   position: relative;
 }
 
@@ -91,8 +92,8 @@ body {
   line-height: 1.2;
 }
 
-.pickup-btn__title { font-weight: bold; font-size: .875rem; }
-.pickup-btn__subtitle { font-size: .875rem; }
+.pickup-btn__title { font-weight: bold; font-size: 12px; }
+.pickup-btn__subtitle { font-size: 11px; }
 
 .pickup-btn__arrow { 
   transition: transform 0.3s; 
@@ -303,6 +304,8 @@ body {
   flex: 1;
   min-width: 0;
   position: relative;
+  padding-left: 15px;
+  padding-right: 15px;
 }
 
 .navbar__search {
