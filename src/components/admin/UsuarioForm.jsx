@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import api from '../../api/axios'
+import './UsuarioForm.css'
 
 function UsuarioForm({ usuario, onClose, onGuardado }) {
   const esEdicion = Boolean(usuario)
@@ -14,13 +15,42 @@ function UsuarioForm({ usuario, onClose, onGuardado }) {
   const [telefono, setTelefono] = useState(usuario?.telefono || '')
   const [lineaCredito, setLineaCredito] = useState(usuario?.linea_credito || '')
   const [activo, setActivo] = useState(usuario?.activo ?? true)
-  const [deliveryGratis, setDeliveryGratis] = useState(usuario?.delivery_gratis || false) // 🆕
+  const [deliveryGratis, setDeliveryGratis] = useState(usuario?.delivery_gratis || false)
   const [guardando, setGuardando] = useState(false)
   const [error, setError] = useState('')
+  const [errores, setErrores] = useState({})
+  const [paso, setPaso] = useState(1)
+
+  function validarPaso1() {
+    const errs = {}
+    if (!email.trim()) errs.email = 'El email es requerido'
+    else if (!/\S+@\S+\.\S+/.test(email)) errs.email = 'Email inválido'
+    
+    if (!esEdicion && !password) errs.password = 'La contraseña es requerida'
+    else if (password && password.length < 6) errs.password = 'Mínimo 6 caracteres'
+    
+    if (!nombre.trim()) errs.nombre = 'El nombre es requerido'
+    
+    setErrores(errs)
+    return Object.keys(errs).length === 0
+  }
+
+  function validarPaso2() {
+    const errs = {}
+    if (rifCedula && rifCedula.length < 6) errs.rifCedula = 'RIF/Cédula inválido'
+    if (telefono && telefono.length < 7) errs.telefono = 'Teléfono inválido'
+    if (lineaCredito && Number(lineaCredito) < 0) errs.lineaCredito = 'El crédito no puede ser negativo'
+    
+    setErrores(errs)
+    return Object.keys(errs).length === 0
+  }
 
   async function handleSubmit(e) {
     e.preventDefault()
     setError('')
+
+    if (!validarPaso1() || !validarPaso2()) return
+
     setGuardando(true)
 
     const payload = {
@@ -32,17 +62,11 @@ function UsuarioForm({ usuario, onClose, onGuardado }) {
       direccion_entrega: direccionEntrega || null,
       telefono: telefono || null,
       linea_credito: Number(lineaCredito) || 0,
-      delivery_gratis: deliveryGratis, // 🆕
+      delivery_gratis: deliveryGratis,
       ...(esEdicion && { activo })
     }
 
-    // Solo enviar password si se está creando o si se cambió en edición
     if (!esEdicion) {
-      if (!password) {
-        setError('La contraseña es requerida para nuevos usuarios')
-        setGuardando(false)
-        return
-      }
       payload.password = password
     } else if (password) {
       payload.password = password
@@ -64,152 +88,260 @@ function UsuarioForm({ usuario, onClose, onGuardado }) {
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <button className="modal-close" onClick={onClose}>✕</button>
+      <div className="modal-content usuario-form-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2>{esEdicion ? '✏️ Editar Usuario' : '🆕 Nuevo Usuario'}</h2>
+          <button className="modal-close" onClick={onClose}>✕</button>
+        </div>
 
-        <h2>{esEdicion ? 'Editar usuario' : 'Nuevo usuario'}</h2>
-
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <label>
-            Email *
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </label>
-
-          <label>
-            Contraseña {esEdicion && '(dejar vacío para mantener)'}
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required={!esEdicion}
-              minLength="6"
-            />
-          </label>
-
-          <label>
-            Nombre completo
-            <input
-              value={nombre}
-              onChange={(e) => setNombre(e.target.value)}
-            />
-          </label>
-
-          <label>
-            Etiqueta / Rol
-            <select 
-              value={etiqueta} 
-              onChange={(e) => setEtiqueta(e.target.value)}
-            >
-              <option value="distribuidor">Distribuidor</option>
-              <option value="admin">Administrador</option>
-              <option value="cliente">Cliente</option>
-            </select>
-          </label>
-
-          <label>
-            RIF / Cédula
-            <input
-              value={rifCedula}
-              onChange={(e) => setRifCedula(e.target.value)}
-              placeholder="J-12345678-9"
-            />
-          </label>
-
-          <label>
-            Dirección Fiscal
-            <textarea
-              value={direccionFiscal}
-              onChange={(e) => setDireccionFiscal(e.target.value)}
-              rows="2"
-              placeholder="Dirección principal de la empresa"
-            />
-          </label>
-
-          <label>
-            Dirección de Entrega
-            <textarea
-              value={direccionEntrega}
-              onChange={(e) => setDireccionEntrega(e.target.value)}
-              rows="2"
-              placeholder="Dirección para envíos"
-            />
-          </label>
-
-          <label>
-            Teléfono
-            <input
-              value={telefono}
-              onChange={(e) => setTelefono(e.target.value)}
-              placeholder="+58 212-555-1234"
-            />
-          </label>
-
-          <label>
-            Línea de Crédito (USD)
-            <input
-              type="number"
-              step="0.01"
-              min="0"
-              value={lineaCredito}
-              onChange={(e) => setLineaCredito(e.target.value)}
-              placeholder="0.00"
-            />
-          </label>
-
-          {/* 🆕 Delivery Gratis - CORREGIDO */}
-          <div style={{ 
-            marginTop: '8px', 
-            padding: '12px', 
-            background: '#f8f9fa', 
-            borderRadius: '8px',
-            border: '1px solid #e0e0e0'
-          }}>
-            <label style={{ 
-              display: 'flex', 
-              alignItems: 'flex-start', 
-              gap: '10px',
-              cursor: 'pointer'
-            }}>
-              <input
-                type="checkbox"
-                checked={deliveryGratis}
-                onChange={(e) => setDeliveryGratis(e.target.checked)}
-                style={{ marginTop: '3px' }}
-              />
-              <div>
-                <strong>🛵 Delivery Gratis</strong>
-                <p style={{ 
-                  margin: '4px 0 0 0', 
-                  fontSize: '13px', 
-                  color: '#666' 
-                }}>
-                  El cliente no pagará los $8.00 de envío en moto dentro de la ciudad
-                </p>
-              </div>
-            </label>
+        {/* Pasos */}
+        <div className="form-pasos">
+          <div className={`paso ${paso === 1 ? 'active' : paso > 1 ? 'completed' : ''}`}>
+            <div className="paso-numero">1</div>
+            <span>Cuenta</span>
           </div>
+          <div className="paso-linea"></div>
+          <div className={`paso ${paso === 2 ? 'active' : paso > 2 ? 'completed' : ''}`}>
+            <div className="paso-numero">2</div>
+            <span>Contacto</span>
+          </div>
+          <div className="paso-linea"></div>
+          <div className={`paso ${paso === 3 ? 'active' : ''}`}>
+            <div className="paso-numero">3</div>
+            <span>Preferencias</span>
+          </div>
+        </div>
 
-          {esEdicion && (
-            <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <input
-                type="checkbox"
-                checked={activo}
-                onChange={(e) => setActivo(e.target.checked)}
-              />
-              Usuario activo
-            </label>
+        {error && <div className="error-banner">{error}</div>}
+
+        <form onSubmit={handleSubmit}>
+          {/* Paso 1: Cuenta */}
+          {paso === 1 && (
+            <div className="form-section">
+              <div className="form-group">
+                <label>Email *</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => { setEmail(e.target.value); setErrores({...errores, email: ''}) }}
+                  className={errores.email ? 'error' : ''}
+                  placeholder="usuario@ejemplo.com"
+                />
+                {errores.email && <span className="error-text">{errores.email}</span>}
+              </div>
+
+              <div className="form-group">
+                <label>
+                  Contraseña {esEdicion && '(dejar vacío para mantener)'}
+                  {!esEdicion && ' *'}
+                </label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => { setPassword(e.target.value); setErrores({...errores, password: ''}) }}
+                  className={errores.password ? 'error' : ''}
+                  placeholder={esEdicion ? '••••••••' : 'Mínimo 6 caracteres'}
+                  required={!esEdicion}
+                  minLength="6"
+                />
+                {errores.password && <span className="error-text">{errores.password}</span>}
+              </div>
+
+              <div className="form-group">
+                <label>Nombre completo *</label>
+                <input
+                  value={nombre}
+                  onChange={(e) => { setNombre(e.target.value); setErrores({...errores, nombre: ''}) }}
+                  className={errores.nombre ? 'error' : ''}
+                  placeholder="Nombre y apellido"
+                />
+                {errores.nombre && <span className="error-text">{errores.nombre}</span>}
+              </div>
+
+              <div className="form-group">
+                <label>Etiqueta / Rol</label>
+                <select value={etiqueta} onChange={(e) => setEtiqueta(e.target.value)}>
+                  <option value="distribuidor">🏢 Distribuidor</option>
+                  <option value="admin">🛡️ Administrador</option>
+                  <option value="cliente">👤 Cliente</option>
+                </select>
+              </div>
+            </div>
           )}
 
-          <button type="submit" disabled={guardando}>
-            {guardando ? 'Guardando...' : esEdicion ? 'Guardar cambios' : 'Crear usuario'}
-          </button>
+          {/* Paso 2: Contacto */}
+          {paso === 2 && (
+            <div className="form-section">
+              <div className="form-group">
+                <label>RIF / Cédula</label>
+                <input
+                  value={rifCedula}
+                  onChange={(e) => { setRifCedula(e.target.value); setErrores({...errores, rifCedula: ''}) }}
+                  className={errores.rifCedula ? 'error' : ''}
+                  placeholder="J-12345678-9"
+                />
+                {errores.rifCedula && <span className="error-text">{errores.rifCedula}</span>}
+              </div>
+
+              <div className="form-group">
+                <label>Teléfono</label>
+                <input
+                  type="tel"
+                  value={telefono}
+                  onChange={(e) => { setTelefono(e.target.value); setErrores({...errores, telefono: ''}) }}
+                  className={errores.telefono ? 'error' : ''}
+                  placeholder="+58 212-555-1234"
+                />
+                {errores.telefono && <span className="error-text">{errores.telefono}</span>}
+              </div>
+
+              <div className="form-group">
+                <label>Dirección Fiscal</label>
+                <textarea
+                  value={direccionFiscal}
+                  onChange={(e) => setDireccionFiscal(e.target.value)}
+                  rows="2"
+                  placeholder="Dirección principal de la empresa"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Dirección de Entrega</label>
+                <textarea
+                  value={direccionEntrega}
+                  onChange={(e) => setDireccionEntrega(e.target.value)}
+                  rows="2"
+                  placeholder="Dirección para envíos"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Paso 3: Preferencias */}
+          {paso === 3 && (
+            <div className="form-section">
+              <div className="form-group">
+                <label>Línea de Crédito (USD)</label>
+                <div className="input-precio">
+                  <span className="precio-simbolo">$</span>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={lineaCredito}
+                    onChange={(e) => { setLineaCredito(e.target.value); setErrores({...errores, lineaCredito: ''}) }}
+                    className={errores.lineaCredito ? 'error' : ''}
+                    placeholder="0.00"
+                  />
+                </div>
+                {errores.lineaCredito && <span className="error-text">{errores.lineaCredito}</span>}
+              </div>
+
+              {/* Delivery Gratis */}
+              <div className="form-group">
+                <label className="checkbox-card">
+                  <input
+                    type="checkbox"
+                    checked={deliveryGratis}
+                    onChange={(e) => setDeliveryGratis(e.target.checked)}
+                  />
+                  <div className="checkbox-card-content">
+                    <div className="checkbox-card-header">
+                      <span className="checkbox-card-icon">🛵</span>
+                      <strong>Delivery Gratis</strong>
+                    </div>
+                    <small>El cliente no pagará los $8.00 de envío en moto dentro de la ciudad</small>
+                  </div>
+                </label>
+              </div>
+
+              {/* Estado (solo edición) */}
+              {esEdicion && (
+                <div className="form-group">
+                  <label className="checkbox-card">
+                    <input
+                      type="checkbox"
+                      checked={activo}
+                      onChange={(e) => setActivo(e.target.checked)}
+                    />
+                    <div className="checkbox-card-content">
+                      <div className="checkbox-card-header">
+                        <span className="checkbox-card-icon">{activo ? '✅' : '❌'}</span>
+                        <strong>Usuario Activo</strong>
+                      </div>
+                      <small>Los usuarios inactivos no pueden iniciar sesión</small>
+                    </div>
+                  </label>
+                </div>
+              )}
+
+              {/* Resumen */}
+              <div className="resumen-card">
+                <h4>📋 Resumen del Usuario</h4>
+                <div className="resumen-item">
+                  <span>Email:</span>
+                  <strong>{email || '-'}</strong>
+                </div>
+                <div className="resumen-item">
+                  <span>Nombre:</span>
+                  <strong>{nombre || '-'}</strong>
+                </div>
+                <div className="resumen-item">
+                  <span>Rol:</span>
+                  <span className={`etiqueta-badge etiqueta-${etiqueta}`}>
+                    {etiqueta === 'admin' ? '🛡️ Admin' :
+                     etiqueta === 'distribuidor' ? '🏢 Distribuidor' : '👤 Cliente'}
+                  </span>
+                </div>
+                <div className="resumen-item">
+                  <span>Crédito:</span>
+                  <strong>${Number(lineaCredito || 0).toFixed(2)}</strong>
+                </div>
+                <div className="resumen-item">
+                  <span>Delivery:</span>
+                  <strong>{deliveryGratis ? '🛵 Gratis' : 'Pago normal'}</strong>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Navegación */}
+          <div className="form-navegacion">
+            {paso > 1 ? (
+              <button type="button" onClick={() => setPaso(p => p - 1)} className="btn-secundario">
+                ← Anterior
+              </button>
+            ) : (
+              <button type="button" onClick={onClose} className="btn-secundario">
+                Cancelar
+              </button>
+            )}
+            
+            {paso < 3 ? (
+              <button 
+                type="button" 
+                onClick={() => {
+                  if (paso === 1 && !validarPaso1()) return
+                  if (paso === 2 && !validarPaso2()) return
+                  setPaso(p => p + 1)
+                }} 
+                className="btn-primario"
+              >
+                Siguiente →
+              </button>
+            ) : (
+              <button type="submit" disabled={guardando} className="btn-guardar">
+                {guardando ? (
+                  <>
+                    <span className="spinner-small"></span>
+                    Guardando...
+                  </>
+                ) : (
+                  esEdicion ? '💾 Guardar Cambios' : '✨ Crear Usuario'
+                )}
+              </button>
+            )}
+          </div>
         </form>
       </div>
     </div>
