@@ -26,6 +26,7 @@
 }
 
 /* Pasos */
+/* Pasos */
 .form-pasos {
   display: flex;
   align-items: center;
@@ -39,7 +40,7 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.85rem;
-  color: var(--gray-400);
+  color: var(--gray-500);  /* Color gris por defecto (visible) */
   font-weight: 500;
   white-space: nowrap;
 }
@@ -49,6 +50,7 @@
   height: 30px;
   border-radius: 50%;
   background: var(--gray-200);
+  color: var(--gray-600);  /* Color del número */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -68,11 +70,11 @@
 }
 
 .paso.active {
-  color: var(--primary);
+  color: var(--primary);  /* Texto azul cuando está activo */
 }
 
 .paso.completed {
-  color: var(--success);
+  color: var(--success);  /* Texto verde cuando está completado */
 }
 
 .paso-linea {

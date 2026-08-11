@@ -23,13 +23,21 @@ function UsuarioForm({ usuario, onClose, onGuardado }) {
 
   function validarPaso1() {
     const errs = {}
-    if (!email.trim()) errs.email = 'El email es requerido'
-    else if (!/\S+@\S+\.\S+/.test(email)) errs.email = 'Email inválido'
+    if (!email.trim()) {
+      errs.email = 'El email es requerido'
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      errs.email = 'Email inválido'
+    }
     
-    if (!esEdicion && !password) errs.password = 'La contraseña es requerida'
-    else if (password && password.length < 6) errs.password = 'Mínimo 6 caracteres'
+    if (!esEdicion && !password) {
+      errs.password = 'La contraseña es requerida'
+    } else if (password && password.length < 6) {
+      errs.password = 'Mínimo 6 caracteres'
+    }
     
-    if (!nombre.trim()) errs.nombre = 'El nombre es requerido'
+    if (!nombre.trim()) {
+      errs.nombre = 'El nombre es requerido'
+    }
     
     setErrores(errs)
     return Object.keys(errs).length === 0
@@ -37,19 +45,46 @@ function UsuarioForm({ usuario, onClose, onGuardado }) {
 
   function validarPaso2() {
     const errs = {}
-    if (rifCedula && rifCedula.length < 6) errs.rifCedula = 'RIF/Cédula inválido'
-    if (telefono && telefono.length < 7) errs.telefono = 'Teléfono inválido'
-    if (lineaCredito && Number(lineaCredito) < 0) errs.lineaCredito = 'El crédito no puede ser negativo'
+    // Las validaciones del paso 2 son opcionales, solo validar formato si hay datos
+    if (rifCedula && rifCedula.length < 6) {
+      errs.rifCedula = 'RIF/Cédula muy corto'
+    }
+    if (telefono && telefono.length < 7) {
+      errs.telefono = 'Teléfono muy corto'
+    }
+    if (lineaCredito && Number(lineaCredito) < 0) {
+      errs.lineaCredito = 'El crédito no puede ser negativo'
+    }
     
     setErrores(errs)
     return Object.keys(errs).length === 0
+  }
+
+  function handleSiguiente() {
+    if (paso === 1) {
+      if (validarPaso1()) {
+        setPaso(2)
+      }
+    } else if (paso === 2) {
+      // Paso 2 no requiere validación estricta, solo validar formato
+      validarPaso2()
+      setPaso(3)
+    }
+  }
+
+  function handleAnterior() {
+    setPaso(p => Math.max(1, p - 1))
   }
 
   async function handleSubmit(e) {
     e.preventDefault()
     setError('')
 
-    if (!validarPaso1() || !validarPaso2()) return
+    // Validar todo antes de guardar
+    if (!validarPaso1()) {
+      setPaso(1)
+      return
+    }
 
     setGuardando(true)
 
@@ -81,7 +116,6 @@ function UsuarioForm({ usuario, onClose, onGuardado }) {
       onGuardado()
     } catch (err) {
       setError(err.response?.data?.error || 'Error al guardar el usuario')
-    } finally {
       setGuardando(false)
     }
   }
@@ -97,12 +131,12 @@ function UsuarioForm({ usuario, onClose, onGuardado }) {
         {/* Pasos */}
         <div className="form-pasos">
           <div className={`paso ${paso === 1 ? 'active' : paso > 1 ? 'completed' : ''}`}>
-            <div className="paso-numero">1</div>
+            <div className="paso-numero">{paso > 1 ? '✓' : '1'}</div>
             <span>Cuenta</span>
           </div>
           <div className="paso-linea"></div>
           <div className={`paso ${paso === 2 ? 'active' : paso > 2 ? 'completed' : ''}`}>
-            <div className="paso-numero">2</div>
+            <div className="paso-numero">{paso > 2 ? '✓' : '2'}</div>
             <span>Contacto</span>
           </div>
           <div className="paso-linea"></div>
@@ -132,7 +166,7 @@ function UsuarioForm({ usuario, onClose, onGuardado }) {
 
               <div className="form-group">
                 <label>
-                  Contraseña {esEdicion && '(dejar vacío para mantener)'}
+                  Contraseña {esEdicion && '(dejar vacío para mantener la actual)'}
                   {!esEdicion && ' *'}
                 </label>
                 <input
@@ -140,9 +174,8 @@ function UsuarioForm({ usuario, onClose, onGuardado }) {
                   value={password}
                   onChange={(e) => { setPassword(e.target.value); setErrores({...errores, password: ''}) }}
                   className={errores.password ? 'error' : ''}
-                  placeholder={esEdicion ? '••••••••' : 'Mínimo 6 caracteres'}
-                  required={!esEdicion}
-                  minLength="6"
+                  placeholder={esEdicion ? '•••••••• (sin cambios)' : 'Mínimo 6 caracteres'}
+                  minLength={!esEdicion ? 6 : undefined}
                 />
                 {errores.password && <span className="error-text">{errores.password}</span>}
               </div>
@@ -229,12 +262,10 @@ function UsuarioForm({ usuario, onClose, onGuardado }) {
                     step="0.01"
                     min="0"
                     value={lineaCredito}
-                    onChange={(e) => { setLineaCredito(e.target.value); setErrores({...errores, lineaCredito: ''}) }}
-                    className={errores.lineaCredito ? 'error' : ''}
+                    onChange={(e) => setLineaCredito(e.target.value)}
                     placeholder="0.00"
                   />
                 </div>
-                {errores.lineaCredito && <span className="error-text">{errores.lineaCredito}</span>}
               </div>
 
               {/* Delivery Gratis */}
@@ -301,6 +332,12 @@ function UsuarioForm({ usuario, onClose, onGuardado }) {
                   <span>Delivery:</span>
                   <strong>{deliveryGratis ? '🛵 Gratis' : 'Pago normal'}</strong>
                 </div>
+                {esEdicion && (
+                  <div className="resumen-item">
+                    <span>Estado:</span>
+                    <strong>{activo ? '✅ Activo' : '❌ Inactivo'}</strong>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -308,7 +345,7 @@ function UsuarioForm({ usuario, onClose, onGuardado }) {
           {/* Navegación */}
           <div className="form-navegacion">
             {paso > 1 ? (
-              <button type="button" onClick={() => setPaso(p => p - 1)} className="btn-secundario">
+              <button type="button" onClick={handleAnterior} className="btn-secundario">
                 ← Anterior
               </button>
             ) : (
@@ -320,11 +357,7 @@ function UsuarioForm({ usuario, onClose, onGuardado }) {
             {paso < 3 ? (
               <button 
                 type="button" 
-                onClick={() => {
-                  if (paso === 1 && !validarPaso1()) return
-                  if (paso === 2 && !validarPaso2()) return
-                  setPaso(p => p + 1)
-                }} 
+                onClick={handleSiguiente}
                 className="btn-primario"
               >
                 Siguiente →
