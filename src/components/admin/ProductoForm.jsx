@@ -1,11 +1,14 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import api from '../../api/axios'
+import './ProductoForm.css'
 
 const LINEAS = ['Linea Hospitalaria', 'Linea Farmacia', 'Material Medico']
 const FORMAS = ['Ampollas', 'Tabletas', 'Jarabes']
+const PAISES = ['Venezuela', 'Colombia', 'Argentina', 'Brasil', 'México', 'Estados Unidos', 'India', 'China']
 
 function ProductoForm({ producto, marcas, onClose, onGuardado }) {
-  const esEdicion = Boolean(producto)
+  const esEdicion = Boolean(producto?.id)
+  const [paso, setPaso] = useState(1)
 
   const [nombreComercial, setNombreComercial] = useState(producto?.nombre_comercial || '')
   const [descripcion, setDescripcion] = useState(producto?.descripcion || '')
@@ -21,10 +24,43 @@ function ProductoForm({ producto, marcas, onClose, onGuardado }) {
   const [activo, setActivo] = useState(producto?.activo ?? true)
   const [guardando, setGuardando] = useState(false)
   const [error, setError] = useState('')
+  const [errores, setErrores] = useState({})
+
+  function validarFormulario() {
+    const nuevosErrores = {}
+
+    if (!nombreComercial.trim()) {
+      nuevosErrores.nombreComercial = 'El nombre comercial es requerido'
+    }
+    if (!marcaId) {
+      nuevosErrores.marcaId = 'Selecciona una marca'
+    }
+    if (!precioUsd || Number(precioUsd) <= 0) {
+      nuevosErrores.precioUsd = 'Ingresa un precio válido'
+    }
+    if (fotoUrl && !isValidUrl(fotoUrl)) {
+      nuevosErrores.fotoUrl = 'URL de imagen no válida'
+    }
+
+    setErrores(nuevosErrores)
+    return Object.keys(nuevosErrores).length === 0
+  }
+
+  function isValidUrl(string) {
+    try {
+      new URL(string)
+      return true
+    } catch (_) {
+      return false
+    }
+  }
 
   async function handleSubmit(e) {
     e.preventDefault()
     setError('')
+
+    if (!validarFormulario()) return
+
     setGuardando(true)
 
     const payload = {
@@ -39,7 +75,7 @@ function ProductoForm({ producto, marcas, onClose, onGuardado }) {
       linea: linea || null,
       forma: forma || null,
       disponible,
-      ...(esEdicion && { activo }), // solo mandamos "activo" si estamos editando
+      ...(esEdicion && { activo }),
     }
 
     try {
@@ -58,121 +94,249 @@ function ProductoForm({ producto, marcas, onClose, onGuardado }) {
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <button className="modal-close" onClick={onClose}>✕</button>
+      <div className="modal-content producto-form-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2>{esEdicion ? '✏️ Editar Producto' : '🆕 Nuevo Producto'}</h2>
+          <button className="modal-close" onClick={onClose}>✕</button>
+        </div>
 
-        <h2>{esEdicion ? 'Editar producto' : 'Nuevo producto'}</h2>
+        {/* Pasos */}
+        <div className="form-pasos">
+          <div className={`paso ${paso === 1 ? 'active' : paso > 1 ? 'completed' : ''}`}>
+            <div className="paso-numero">1</div>
+            <span>Información Básica</span>
+          </div>
+          <div className="paso-linea"></div>
+          <div className={`paso ${paso === 2 ? 'active' : paso > 2 ? 'completed' : ''}`}>
+            <div className="paso-numero">2</div>
+            <span>Clasificación</span>
+          </div>
+          <div className="paso-linea"></div>
+          <div className={`paso ${paso === 3 ? 'active' : ''}`}>
+            <div className="paso-numero">3</div>
+            <span>Precio y Estado</span>
+          </div>
+        </div>
 
-        {error && <p style={{ color: 'red' }}>{error}</p>}
+        {error && <div className="error-message">{error}</div>}
 
         <form onSubmit={handleSubmit}>
-          <label>
-            Nombre comercial
-            <input
-              value={nombreComercial}
-              onChange={(e) => setNombreComercial(e.target.value)}
-              required
-            />
-          </label>
+          {/* Paso 1: Información Básica */}
+          {paso === 1 && (
+            <div className="form-section">
+              <div className="form-group">
+                <label>Nombre Comercial *</label>
+                <input
+                  value={nombreComercial}
+                  onChange={(e) => {
+                    setNombreComercial(e.target.value)
+                    setErrores({...errores, nombreComercial: ''})
+                  }}
+                  className={errores.nombreComercial ? 'error' : ''}
+                  placeholder="Ej: Acetaminofén 500mg"
+                />
+                {errores.nombreComercial && <span className="error-text">{errores.nombreComercial}</span>}
+              </div>
 
-          <label>
-            Descripción
-            <textarea value={descripcion} onChange={(e) => setDescripcion(e.target.value)} />
-          </label>
+              <div className="form-group">
+                <label>Descripción</label>
+                <textarea 
+                  value={descripcion} 
+                  onChange={(e) => setDescripcion(e.target.value)}
+                  placeholder="Descripción detallada del producto..."
+                  rows="3"
+                />
+              </div>
 
-          <label>
-            Marca
-            <select value={marcaId} onChange={(e) => setMarcaId(e.target.value)} required>
-              <option value="">Seleccionar marca</option>
-              {marcas.map((marca) => (
-                <option key={marca.id} value={marca.id}>{marca.nombre}</option>
-              ))}
-            </select>
-          </label>
+              <div className="form-group">
+                <label>Marca *</label>
+                <select 
+                  value={marcaId} 
+                  onChange={(e) => {
+                    setMarcaId(e.target.value)
+                    setErrores({...errores, marcaId: ''})
+                  }}
+                  className={errores.marcaId ? 'error' : ''}
+                >
+                  <option value="">Seleccionar marca</option>
+                  {marcas.map((marca) => (
+                    <option key={marca.id} value={marca.id}>{marca.nombre}</option>
+                  ))}
+                </select>
+                {errores.marcaId && <span className="error-text">{errores.marcaId}</span>}
+              </div>
 
-          <div className="form-row">
-            <label>
-              Laboratorio
-              <input value={laboratorio} onChange={(e) => setLaboratorio(e.target.value)} />
-            </label>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Laboratorio</label>
+                  <input 
+                    value={laboratorio} 
+                    onChange={(e) => setLaboratorio(e.target.value)}
+                    placeholder="Nombre del laboratorio"
+                  />
+                </div>
 
-            <label>
-              País de origen
-              <input value={paisOrigen} onChange={(e) => setPaisOrigen(e.target.value)} />
-            </label>
-          </div>
+                <div className="form-group">
+                  <label>País de Origen</label>
+                  <select value={paisOrigen} onChange={(e) => setPaisOrigen(e.target.value)}>
+                    <option value="">Seleccionar país</option>
+                    {PAISES.map((pais) => (
+                      <option key={pais} value={pais}>{pais}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
 
-          <label>
-            Molécula(s)
-            <input
-              value={molecula}
-              onChange={(e) => setMolecula(e.target.value)}
-              placeholder="Ej: Paracetamol+Cafeina"
-            />
-          </label>
-
-          <div className="form-row">
-            <label>
-              Línea
-              <select value={linea} onChange={(e) => setLinea(e.target.value)}>
-                <option value="">Seleccionar línea</option>
-                {LINEAS.map((l) => (
-                  <option key={l} value={l}>{l}</option>
-                ))}
-              </select>
-            </label>
-
-            <label>
-              Forma
-              <select value={forma} onChange={(e) => setForma(e.target.value)}>
-                <option value="">Seleccionar forma</option>
-                {FORMAS.map((f) => (
-                  <option key={f} value={f}>{f}</option>
-                ))}
-              </select>
-            </label>
-          </div>
-
-          <label>
-            Precio (USD)
-            <input
-              type="number"
-              step="0.01"
-              min="0"
-              value={precioUsd}
-              onChange={(e) => setPrecioUsd(e.target.value)}
-              required
-            />
-          </label>
-
-          <label>
-            URL de la foto
-            <input value={fotoUrl} onChange={(e) => setFotoUrl(e.target.value)} />
-          </label>
-
-          <label>
-            <input
-              type="checkbox"
-              checked={disponible}
-              onChange={(e) => setDisponible(e.target.checked)}
-            />
-            Disponible (si se desmarca, el catálogo oculta el precio y muestra "Pedir cotización")
-          </label>
-
-          {esEdicion && (
-            <label>
-              <input
-                type="checkbox"
-                checked={activo}
-                onChange={(e) => setActivo(e.target.checked)}
-              />
-              Activo
-            </label>
+              <div className="form-group">
+                <label>Molécula(s)</label>
+                <input
+                  value={molecula}
+                  onChange={(e) => setMolecula(e.target.value)}
+                  placeholder="Ej: Paracetamol + Cafeína"
+                />
+              </div>
+            </div>
           )}
 
-          <button type="submit" disabled={guardando}>
-            {guardando ? 'Guardando...' : esEdicion ? 'Guardar cambios' : 'Crear producto'}
-          </button>
+          {/* Paso 2: Clasificación */}
+          {paso === 2 && (
+            <div className="form-section">
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Línea</label>
+                  <select value={linea} onChange={(e) => setLinea(e.target.value)}>
+                    <option value="">Seleccionar línea</option>
+                    {LINEAS.map((l) => (
+                      <option key={l} value={l}>{l}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label>Forma Farmacéutica</label>
+                  <select value={forma} onChange={(e) => setForma(e.target.value)}>
+                    <option value="">Seleccionar forma</option>
+                    {FORMAS.map((f) => (
+                      <option key={f} value={f}>{f}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>URL de la Imagen</label>
+                <input 
+                  value={fotoUrl} 
+                  onChange={(e) => {
+                    setFotoUrl(e.target.value)
+                    setErrores({...errores, fotoUrl: ''})
+                  }}
+                  className={errores.fotoUrl ? 'error' : ''}
+                  placeholder="https://ejemplo.com/imagen.jpg"
+                />
+                {errores.fotoUrl && <span className="error-text">{errores.fotoUrl}</span>}
+                
+                {fotoUrl && isValidUrl(fotoUrl) && (
+                  <div className="imagen-preview">
+                    <img src={fotoUrl} alt="Preview" />
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Paso 3: Precio y Estado */}
+          {paso === 3 && (
+            <div className="form-section">
+              <div className="form-group">
+                <label>Precio (USD) *</label>
+                <div className="input-precio">
+                  <span className="precio-simbolo">$</span>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={precioUsd}
+                    onChange={(e) => {
+                      setPrecioUsd(e.target.value)
+                      setErrores({...errores, precioUsd: ''})
+                    }}
+                    className={errores.precioUsd ? 'error' : ''}
+                    placeholder="0.00"
+                  />
+                </div>
+                {errores.precioUsd && <span className="error-text">{errores.precioUsd}</span>}
+              </div>
+
+              <div className="form-group">
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={disponible}
+                    onChange={(e) => setDisponible(e.target.checked)}
+                  />
+                  <div className="checkbox-content">
+                    <strong>Producto Disponible</strong>
+                    <small>Si se desmarca, el catálogo oculta el precio y muestra "Pedir cotización"</small>
+                  </div>
+                </label>
+              </div>
+
+              {esEdicion && (
+                <div className="form-group">
+                  <label className="checkbox-label">
+                    <input
+                      type="checkbox"
+                      checked={activo}
+                      onChange={(e) => setActivo(e.target.checked)}
+                    />
+                    <div className="checkbox-content">
+                      <strong>Producto Activo</strong>
+                      <small>Los productos inactivos no aparecen en el catálogo público</small>
+                    </div>
+                  </label>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Botones de navegación */}
+          <div className="form-navegacion">
+            {paso > 1 && (
+              <button 
+                type="button" 
+                onClick={() => setPaso(p => p - 1)}
+                className="btn-secundario"
+              >
+                ← Anterior
+              </button>
+            )}
+            
+            {paso < 3 ? (
+              <button 
+                type="button" 
+                onClick={() => setPaso(p => p + 1)}
+                className="btn-primario"
+              >
+                Siguiente →
+              </button>
+            ) : (
+              <button 
+                type="submit" 
+                disabled={guardando}
+                className="btn-guardar"
+              >
+                {guardando ? (
+                  <>
+                    <span className="spinner-small"></span>
+                    Guardando...
+                  </>
+                ) : (
+                  esEdicion ? '💾 Guardar Cambios' : '✨ Crear Producto'
+                )}
+              </button>
+            )}
+          </div>
         </form>
       </div>
     </div>

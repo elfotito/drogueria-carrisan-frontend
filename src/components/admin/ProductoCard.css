@@ -1,0 +1,176 @@
+/* ============================================
+   PRODUCTO CARD
+   ============================================ */
+
+.producto-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--gray-200);
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+}
+
+.producto-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.producto-card.inactivo {
+  opacity: 0.6;
+}
+
+/* Imagen */
+.card-imagen {
+  position: relative;
+  height: 180px;
+  background: var(--gray-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.card-imagen img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.no-imagen {
+  font-size: 4rem;
+  opacity: 0.3;
+}
+
+.card-badges {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+}
+
+.badge-status {
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badge-status.disponible {
+  background: var(--success);
+  color: white;
+}
+
+.badge-status.no-disponible {
+  background: var(--warning);
+  color: white;
+}
+
+/* Body */
+.card-body {
+  padding: 1rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.card-body h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--dark);
+  line-height: 1.3;
+}
+
+.card-body .molecula {
+  font-size: 0.8rem;
+  color: var(--gray-500);
+  font-style: italic;
+}
+
+.card-body .marca {
+  font-size: 0.85rem;
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.card-body .laboratorio {
+  font-size: 0.8rem;
+  color: var(--gray-600);
+}
+
+/* Tags */
+.card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+}
+
+.tag {
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  background: var(--gray-100);
+  color: var(--gray-600);
+}
+
+/* Precio */
+.card-precio {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-top: auto;
+  padding-top: 0.5rem;
+}
+
+/* Acciones */
+.card-acciones {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--gray-100);
+  background: var(--gray-50);
+}
+
+.card-acciones button {
+  flex: 1;
+  padding: 0.4rem;
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius-sm);
+  background: white;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+
+.card-acciones button:hover {
+  background: var(--gray-100);
+  border-color: var(--gray-400);
+}
+
+.card-acciones button:last-child:hover {
+  background: var(--danger-light);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+/* ============ RESPONSIVE ============ */
+
+@media (max-width: 480px) {
+  .card-imagen {
+    height: 150px;
+  }
+  
+  .card-body h3 {
+    font-size: 0.9rem;
+  }
+  
+  .card-precio {
+    font-size: 1.1rem;
+  }
+}
