@@ -356,3 +356,126 @@
   gap: 0.5rem;
   flex-wrap: wrap;
 }
+
+/* Estado de actualización automática */
+.auto-update-status {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--gray-200);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.auto-update-status.activa {
+  border-left: 4px solid var(--success);
+}
+
+.auto-update-status.inactiva {
+  border-left: 4px solid var(--gray-400);
+}
+
+.auto-update-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.auto-update-icon {
+  font-size: 1.5rem;
+}
+
+.auto-update-info strong {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--dark);
+}
+
+.auto-update-detalle {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--gray-500);
+  margin-top: 0.15rem;
+}
+
+/* Toggle Switch */
+.toggle-switch {
+  position: relative;
+  width: 48px;
+  height: 26px;
+  flex-shrink: 0;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.3s;
+  border-radius: 26px;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+  background-color: var(--success);
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+  transform: translateX(22px);
+}
+
+/* Badge horario BCV */
+.horario-bcv-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: var(--success-light);
+  color: #065f46;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-top: 0.75rem;
+}
+
+/* Referencia error */
+.referencia-error {
+  text-align: center;
+}
+
+.referencia-error .btn-refrescar {
+  margin-top: 0.5rem;
+  width: auto;
+  display: inline-flex;
+}
+
+.referencia-acciones {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}

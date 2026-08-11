@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import api from '../../api/axios'
 import './TasaCambio.css'
 
@@ -11,12 +11,20 @@ function TasaCambio() {
   const [tasaReferencia, setTasaReferencia] = useState(null)
   const [cargandoReferencia, setCargandoReferencia] = useState(false)
   const [errorReferencia, setErrorReferencia] = useState('')
+  const [actualizacionAutomatica, setActualizacionAutomatica] = useState(true)
+  const [proximaActualizacion, setProximaActualizacion] = useState(null)
 
   useEffect(() => {
     cargarTasa()
-    obtenerTasaReferencia()
+    verificarActualizacionAutomatica()
+    
+    // Revisar cada minuto si debe actualizar
+    const intervalo = setInterval(verificarActualizacionAutomatica, 60000)
+    
+    return () => clearInterval(intervalo)
   }, [])
 
+  // Cargar tasa actual desde el backend
   async function cargarTasa() {
     try {
       const { data } = await api.get('/prices')
@@ -29,11 +37,125 @@ function TasaCambio() {
     }
   }
 
-  async function obtenerTasaReferencia() {
+  // Verificar si estamos en horario de actualización
+  function verificarActualizacionAutomatica() {
+    const ahora = new Date()
+    const diaSemana = ahora.getDay() // 0=domingo, 1=lunes, ..., 6=sábado
+    const horaVenezuela = obtenerHoraVenezuela(ahora)
+    const horas = horaVenezuela.getHours()
+    const minutos = horaVenezuela.getMinutes()
+    const dia = horaVenezuela.getDay()
+    
+    // Es fin de semana?
+    const esFinDeSemana = dia === 0 || dia === 6
+    
+    // Horario BCV: lunes a viernes entre 3pm y 5pm
+    const enHorarioBCV = !esFinDeSemana && horas >= 15 && horas < 17
+    
+    // Calcular próxima actualización
+    const proxima = calcularProximaActualizacion(horaVenezuela)
+    setProximaActualizacion(proxima)
+    
+    if (enHorarioBCV && actualizacionAutomatica) {
+      // Verificar si ya actualizamos hoy
+      const ultimaActualizacion = localStorage.getItem('ultima_actualizacion_tasa')
+      const hoy = horaVenezuela.toDateString()
+      
+      if (ultimaActualizacion !== hoy) {
+        console.log('🕒 Horario BCV detectado, actualizando tasa automáticamente...')
+        obtenerTasaYActualizar()
+      }
+    }
+  }
+
+  // Obtener hora de Venezuela (UTC-4)
+  function obtenerHoraVenezuela(fecha) {
+    // Venezuela está en UTC-4
+    const offsetVenezuela = -4 * 60 // minutos
+    const offsetLocal = fecha.getTimezoneOffset()
+    const diferencia = offsetVenezuela - offsetLocal
+    return new Date(fecha.getTime() + diferencia * 60000)
+  }
+
+  // Calcular próxima actualización
+  function calcularProximaActualizacion(fechaVzla) {
+    const dia = fechaVzla.getDay()
+    const horas = fechaVzla.getHours()
+    
+    let proxima = new Date(fechaVzla)
+    
+    if (dia === 0) {
+      // Domingo -> próximo lunes 3pm
+      proxima.setDate(proxima.getDate() + 1)
+      proxima.setHours(15, 0, 0, 0)
+    } else if (dia === 6) {
+      // Sábado -> próximo lunes 3pm
+      proxima.setDate(proxima.getDate() + 2)
+      proxima.setHours(15, 0, 0, 0)
+    } else if (horas < 15) {
+      // Antes de las 3pm -> hoy 3pm
+      proxima.setHours(15, 0, 0, 0)
+    } else if (horas >= 17) {
+      // Después de las 5pm
+      if (dia === 5) {
+        // Viernes después de 5pm -> próximo lunes 3pm
+        proxima.setDate(proxima.getDate() + 3)
+      } else {
+        // Otros días -> mañana 3pm
+        proxima.setDate(proxima.getDate() + 1)
+      }
+      proxima.setHours(15, 0, 0, 0)
+    } else {
+      // Entre 3pm y 5pm, ya está en horario
+      proxima.setHours(17, 0, 0, 0)
+    }
+    
+    return proxima
+  }
+
+  // Obtener tasa de referencia y actualizar automáticamente
+  async function obtenerTasaYActualizar() {
     setCargandoReferencia(true)
     setErrorReferencia('')
     
-    // Intentar múltiples fuentes en orden
+    const tasa = await consultarTasaExterna()
+    
+    if (tasa) {
+      setTasaReferencia({
+        valor: tasa.valor,
+        fuente: tasa.fuente,
+        fecha: new Date().toISOString()
+      })
+      
+      // Actualizar automáticamente en el backend
+      try {
+        await api.patch('/prices/tasa-cambio', { usd_a_ves: tasa.valor })
+        
+        // Guardar que ya actualizamos hoy
+        const ahoraVzla = obtenerHoraVenezuela(new Date())
+        localStorage.setItem('ultima_actualizacion_tasa', ahoraVzla.toDateString())
+        
+        setMensaje({ 
+          tipo: 'exito', 
+          texto: `✅ Tasa actualizada automáticamente: ${tasa.valor.toFixed(2)} Bs/USD (Fuente: ${tasa.fuente})` 
+        })
+        
+        await cargarTasa()
+        
+        setTimeout(() => setMensaje({ tipo: '', texto: '' }), 5000)
+      } catch (err) {
+        setMensaje({ 
+          tipo: 'error', 
+          texto: 'Tasa obtenida pero no se pudo guardar automáticamente' 
+        })
+      }
+    }
+    
+    setCargandoReferencia(false)
+  }
+
+  // Consultar APIs externas
+  async function consultarTasaExterna() {
     const fuentes = [
       {
         nombre: 'ExchangeRate-API',
@@ -46,7 +168,7 @@ function TasaCambio() {
         extraer: (data) => data?.USD?.promedio
       },
       {
-        nombre: 'BCV (no oficial)',
+        nombre: 'DolarAPI',
         url: 'https://ve.dolar-api.com/api/rate/usd/ves',
         extraer: (data) => data?.price
       }
@@ -56,31 +178,44 @@ function TasaCambio() {
       try {
         const response = await fetch(fuente.url)
         
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`)
-        }
+        if (!response.ok) throw new Error(`HTTP ${response.status}`)
         
         const data = await response.json()
         const valor = fuente.extraer(data)
         
         if (valor && !isNaN(valor) && valor > 0) {
-          setTasaReferencia({
+          return {
             valor: Number(valor),
-            fuente: fuente.nombre,
-            fecha: new Date().toISOString()
-          })
-          setCargandoReferencia(false)
-          return // Éxito, salir
+            fuente: fuente.nombre
+          }
         }
       } catch (error) {
         console.log(`Fuente ${fuente.nombre} falló:`, error.message)
-        continue // Intentar siguiente fuente
+        continue
       }
     }
+    
+    return null
+  }
 
-    // Si todas fallaron
-    setErrorReferencia('No se pudo obtener tasa de referencia de ninguna fuente')
-    setTasaReferencia(null)
+  // Obtener solo referencia (sin actualizar backend)
+  async function obtenerTasaReferencia() {
+    setCargandoReferencia(true)
+    setErrorReferencia('')
+    
+    const tasa = await consultarTasaExterna()
+    
+    if (tasa) {
+      setTasaReferencia({
+        valor: tasa.valor,
+        fuente: tasa.fuente,
+        fecha: new Date().toISOString()
+      })
+    } else {
+      setErrorReferencia('No se pudo obtener tasa de referencia de ninguna fuente')
+      setTasaReferencia(null)
+    }
+    
     setCargandoReferencia(false)
   }
 
@@ -97,6 +232,11 @@ function TasaCambio() {
 
     try {
       await api.patch('/prices/tasa-cambio', { usd_a_ves: Number(nuevaTasa) })
+      
+      // Guardar que ya actualizamos (para no sobreescribir con automática)
+      const ahoraVzla = obtenerHoraVenezuela(new Date())
+      localStorage.setItem('ultima_actualizacion_tasa', ahoraVzla.toDateString())
+      
       setMensaje({ 
         tipo: 'exito', 
         texto: '✅ Tasa actualizada correctamente' 
@@ -104,7 +244,6 @@ function TasaCambio() {
       setNuevaTasa('')
       await cargarTasa()
       
-      // Limpiar mensaje después de 3 segundos
       setTimeout(() => setMensaje({ tipo: '', texto: '' }), 3000)
     } catch (err) {
       setMensaje({ 
@@ -122,6 +261,28 @@ function TasaCambio() {
     }
   }
 
+  // Formatear próxima actualización
+  function formatearProximaActualizacion(fecha) {
+    if (!fecha) return 'Calculando...'
+    
+    const ahora = obtenerHoraVenezuela(new Date())
+    const diffMs = fecha.getTime() - ahora.getTime()
+    const diffMin = Math.ceil(diffMs / 60000)
+    
+    if (diffMin <= 0) return 'Ahora'
+    if (diffMin < 60) return `en ${diffMin} minutos`
+    
+    const diffHoras = Math.floor(diffMin / 60)
+    const minRestantes = diffMin % 60
+    
+    if (diffHoras < 24) {
+      return `en ${diffHoras}h ${minRestantes}min`
+    }
+    
+    const dias = Math.floor(diffHoras / 24)
+    return `en ${dias} día(s)`
+  }
+
   if (cargando) {
     return (
       <div className="loading-container">
@@ -131,6 +292,11 @@ function TasaCambio() {
     )
   }
 
+  const ahoraVzla = obtenerHoraVenezuela(new Date())
+  const enHorarioBCV = [1,2,3,4,5].includes(ahoraVzla.getDay()) && 
+                       ahoraVzla.getHours() >= 15 && 
+                       ahoraVzla.getHours() < 17
+
   return (
     <div className="tasa-cambio-container">
       <div className="section-header">
@@ -138,6 +304,31 @@ function TasaCambio() {
         <p className="section-description">
           Administra la tasa de cambio para conversiones de moneda
         </p>
+      </div>
+
+      {/* Estado de actualización automática */}
+      <div className={`auto-update-status ${actualizacionAutomatica ? 'activa' : 'inactiva'}`}>
+        <div className="auto-update-info">
+          <span className="auto-update-icon">
+            {actualizacionAutomatica ? '🟢' : '🔴'}
+          </span>
+          <div>
+            <strong>Actualización Automática</strong>
+            <span className="auto-update-detalle">
+              {actualizacionAutomatica 
+                ? `Próxima actualización ${formatearProximaActualizacion(proximaActualizacion)}`
+                : 'Desactivada'}
+            </span>
+          </div>
+        </div>
+        <label className="toggle-switch">
+          <input
+            type="checkbox"
+            checked={actualizacionAutomatica}
+            onChange={(e) => setActualizacionAutomatica(e.target.checked)}
+          />
+          <span className="toggle-slider"></span>
+        </label>
       </div>
 
       {/* Tarjeta de tasa actual */}
@@ -161,6 +352,11 @@ function TasaCambio() {
               </span>
             </div>
           )}
+          {enHorarioBCV && (
+            <div className="horario-bcv-badge">
+              🏦 En horario BCV (3pm - 5pm)
+            </div>
+          )}
         </div>
         
         {/* Tasa de referencia automática */}
@@ -175,12 +371,6 @@ function TasaCambio() {
           ) : errorReferencia ? (
             <div className="referencia-error">
               <p className="no-disponible">{errorReferencia}</p>
-              <button 
-                className="btn-refrescar"
-                onClick={obtenerTasaReferencia}
-              >
-                🔄 Reintentar
-              </button>
             </div>
           ) : tasaReferencia ? (
             <div className="referencia-info">
@@ -208,7 +398,7 @@ function TasaCambio() {
             onClick={obtenerTasaReferencia}
             disabled={cargandoReferencia}
           >
-            {cargandoReferencia ? 'Consultando...' : '🔄 Actualizar tasa de referencia'}
+            {cargandoReferencia ? 'Consultando...' : '🔄 Consultar tasa de referencia'}
           </button>
         </div>
       </div>
