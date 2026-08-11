@@ -1,6 +1,6 @@
 iimport { useState, useEffect } from 'react'
 import api from '../../api/axios'
-import './DescuentoForm.css'
+import './DescuentosForm.css'
 
 const ALCANCES = [
   { valor: 'producto', label: 'Producto específico', icono: '📦' },
