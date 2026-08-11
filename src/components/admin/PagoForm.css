@@ -1,0 +1,141 @@
+/* ============================================
+   PAGO FORM
+   ============================================ */
+
+.pago-form-modal {
+  max-width: 550px;
+  width: 100%;
+}
+
+.pago-form-modal .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.pago-form-modal .modal-header h2 {
+  font-size: 1.2rem;
+  color: var(--dark);
+}
+
+/* Selector de tipo */
+.tipo-pago-selector {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+
+.tipo-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.75rem 0.5rem;
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.tipo-option:hover {
+  border-color: var(--gray-300);
+  background: var(--gray-50);
+}
+
+.tipo-option.active {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+
+.tipo-option input[type="radio"] {
+  display: none;
+}
+
+.tipo-icon {
+  font-size: 1.5rem;
+}
+
+.tipo-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--gray-700);
+}
+
+/* Facturas checklist */
+.facturas-checklist {
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius);
+  overflow: hidden;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.checklist-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 1rem;
+  background: var(--gray-50);
+  border-bottom: 1px solid var(--gray-200);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--gray-600);
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  transition: background 0.15s;
+  border-bottom: 1px solid var(--gray-100);
+}
+
+.checklist-item:hover {
+  background: var(--gray-50);
+}
+
+.checklist-item input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.checklist-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.checklist-item-info strong {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--dark);
+}
+
+.checklist-item-monto {
+  font-family: 'Courier New', monospace;
+  font-weight: 700;
+  color: var(--primary);
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+/* ============ RESPONSIVE ============ */
+
+@media (max-width: 480px) {
+  .tipo-pago-selector {
+    grid-template-columns: 1fr;
+  }
+  
+  .tipo-option {
+    flex-direction: row;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.6rem;
+  }
+}

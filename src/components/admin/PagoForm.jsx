@@ -1,13 +1,15 @@
 import { useState } from 'react'
 import api from '../../api/axios'
+import './PagoForm.css'
 
 function PagoForm({ clienteId, facturasPendientes, onClose, onGuardado }) {
   const [monto, setMonto] = useState('')
   const [tipo, setTipo] = useState('abono')
   const [detalle, setDetalle] = useState('')
-  const [facturasSeleccionadas, setFacturasSeleccionadas] = useState([]) // array de ids
+  const [facturasSeleccionadas, setFacturasSeleccionadas] = useState([])
   const [guardando, setGuardando] = useState(false)
   const [error, setError] = useState('')
+  const [errores, setErrores] = useState({})
 
   const detalleObligatorio = tipo !== 'abono'
 
@@ -19,14 +21,18 @@ function PagoForm({ clienteId, facturasPendientes, onClose, onGuardado }) {
     )
   }
 
+  function validar() {
+    const errs = {}
+    if (!monto || Number(monto) <= 0) errs.monto = 'Ingresa un monto válido'
+    if (detalleObligatorio && !detalle.trim()) errs.detalle = 'El detalle es obligatorio para este tipo'
+    setErrores(errs)
+    return Object.keys(errs).length === 0
+  }
+
   async function handleSubmit(e) {
     e.preventDefault()
     setError('')
-
-    if (detalleObligatorio && !detalle.trim()) {
-      setError('El detalle es obligatorio para devoluciones y notas de crédito')
-      return
-    }
+    if (!validar()) return
 
     setGuardando(true)
 
@@ -41,75 +47,138 @@ function PagoForm({ clienteId, facturasPendientes, onClose, onGuardado }) {
       onGuardado()
     } catch (err) {
       setError(err.response?.data?.message || 'Error al registrar el pago')
-    } finally {
       setGuardando(false)
     }
   }
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <button className="modal-close" onClick={onClose}>✕</button>
+      <div className="modal-content pago-form-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2>💰 Registrar Pago</h2>
+          <button className="modal-close" onClick={onClose}>✕</button>
+        </div>
 
-        <h2>Nuevo abono</h2>
-
-        {error && <p style={{ color: 'red' }}>{error}</p>}
+        {error && <div className="error-banner">{error}</div>}
 
         <form onSubmit={handleSubmit}>
-          <label>
-            Tipo
-            <select value={tipo} onChange={(e) => setTipo(e.target.value)}>
-              <option value="abono">Abono</option>
-              <option value="devolucion">Devolución</option>
-              <option value="nota_credito">Nota de crédito</option>
-            </select>
-          </label>
+          <div className="form-section">
+            <div className="form-group">
+              <label>Tipo de Movimiento</label>
+              <div className="tipo-pago-selector">
+                <label className={`tipo-option ${tipo === 'abono' ? 'active' : ''}`}>
+                  <input
+                    type="radio"
+                    name="tipo"
+                    value="abono"
+                    checked={tipo === 'abono'}
+                    onChange={(e) => setTipo(e.target.value)}
+                  />
+                  <span className="tipo-icon">💵</span>
+                  <span className="tipo-label">Abono</span>
+                </label>
+                <label className={`tipo-option ${tipo === 'devolucion' ? 'active' : ''}`}>
+                  <input
+                    type="radio"
+                    name="tipo"
+                    value="devolucion"
+                    checked={tipo === 'devolucion'}
+                    onChange={(e) => setTipo(e.target.value)}
+                  />
+                  <span className="tipo-icon">↩️</span>
+                  <span className="tipo-label">Devolución</span>
+                </label>
+                <label className={`tipo-option ${tipo === 'nota_credito' ? 'active' : ''}`}>
+                  <input
+                    type="radio"
+                    name="tipo"
+                    value="nota_credito"
+                    checked={tipo === 'nota_credito'}
+                    onChange={(e) => setTipo(e.target.value)}
+                  />
+                  <span className="tipo-icon">📝</span>
+                  <span className="tipo-label">Nota Crédito</span>
+                </label>
+              </div>
+            </div>
 
-          <label>
-            Monto (USD)
-            <input
-              type="number"
-              step="0.01"
-              min="0"
-              value={monto}
-              onChange={(e) => setMonto(e.target.value)}
-              required
-            />
-          </label>
+            <div className="form-group">
+              <label>Monto (USD) *</label>
+              <div className="input-precio">
+                <span className="precio-simbolo">$</span>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={monto}
+                  onChange={(e) => { setMonto(e.target.value); setErrores({...errores, monto: ''}) }}
+                  className={errores.monto ? 'error' : ''}
+                  placeholder="0.00"
+                  required
+                />
+              </div>
+              {errores.monto && <span className="error-text">{errores.monto}</span>}
+            </div>
 
-          <label>
-            Detalle {detalleObligatorio ? '(obligatorio)' : '(opcional)'}
-            <textarea
-              value={detalle}
-              onChange={(e) => setDetalle(e.target.value)}
-              required={detalleObligatorio}
-            />
-          </label>
+            <div className="form-group">
+              <label>
+                Detalle {detalleObligatorio ? '(obligatorio)' : '(opcional)'}
+              </label>
+              <textarea
+                value={detalle}
+                onChange={(e) => { setDetalle(e.target.value); setErrores({...errores, detalle: ''}) }}
+                className={errores.detalle ? 'error' : ''}
+                rows="2"
+                placeholder={
+                  tipo === 'abono' 
+                    ? 'Ej: Transferencia bancaria...' 
+                    : 'Describí el motivo de este movimiento...'
+                }
+              />
+              {errores.detalle && <span className="error-text">{errores.detalle}</span>}
+            </div>
 
-          <h4>Facturas pendientes (opcional)</h4>
+            <div className="form-group">
+              <label>Facturas pendientes (opcional)</label>
+              {facturasPendientes.length === 0 ? (
+                <p className="text-muted">Este cliente no tiene facturas pendientes</p>
+              ) : (
+                <div className="facturas-checklist">
+                  <div className="checklist-header">
+                    <span>{facturasSeleccionadas.length} seleccionadas</span>
+                  </div>
+                  {facturasPendientes.map((factura) => (
+                    <label key={factura.id} className="checklist-item">
+                      <input
+                        type="checkbox"
+                        checked={facturasSeleccionadas.includes(factura.id)}
+                        onChange={() => toggleFactura(factura.id)}
+                      />
+                      <div className="checklist-item-info">
+                        <strong>#{factura.numero_factura}</strong>
+                      </div>
+                      <span className="checklist-item-monto">
+                        ${Number(factura.monto_facturado).toFixed(2)}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
 
-          {facturasPendientes.length === 0 ? (
-            <p>Este cliente no tiene facturas pendientes</p>
-          ) : (
-            <ul className="checklist-facturas">
-              {facturasPendientes.map((factura) => (
-                <li key={factura.id}>
-                  <label>
-                    <input
-                      type="checkbox"
-                      checked={facturasSeleccionadas.includes(factura.id)}
-                      onChange={() => toggleFactura(factura.id)}
-                    />
-                    #{factura.numero_factura} — ${Number(factura.monto_facturado).toFixed(2)}
-                  </label>
-                </li>
-              ))}
-            </ul>
-          )}
-
-          <button type="submit" disabled={guardando}>
-            {guardando ? 'Guardando...' : 'Registrar pago'}
-          </button>
+          <div className="form-navegacion">
+            <button type="button" onClick={onClose} className="btn-secundario">
+              Cancelar
+            </button>
+            <button type="submit" disabled={guardando} className="btn-guardar">
+              {guardando ? (
+                <><span className="spinner-small"></span> Guardando...</>
+              ) : (
+                '💾 Registrar Pago'
+              )}
+            </button>
+          </div>
         </form>
       </div>
     </div>

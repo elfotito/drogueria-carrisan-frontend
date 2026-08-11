@@ -1,0 +1,454 @@
+/* ============================================
+   CLIENTE DETALLE
+   ============================================ */
+
+.cliente-detalle {
+  max-width: 1100px;
+}
+
+/* Header */
+.cd-header {
+  margin-bottom: 1.25rem;
+}
+
+.btn-volver {
+  background: white;
+  border: 1px solid var(--gray-300);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: var(--gray-700);
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.btn-volver:hover {
+  background: var(--gray-50);
+  border-color: var(--gray-400);
+}
+
+/* Cliente Card */
+.cd-cliente-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--gray-200);
+  margin-bottom: 1rem;
+}
+
+.cd-cliente-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.cd-cliente-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.cd-cliente-info h2 {
+  font-size: 1.2rem;
+  color: var(--dark);
+  margin: 0;
+}
+
+.cd-cliente-email {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--gray-500);
+}
+
+.cd-cliente-rif {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--gray-400);
+  margin-top: 0.15rem;
+}
+
+.cd-estado-badge {
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.cd-estado-badge.con-deuda {
+  background: var(--danger-light);
+  color: #991b1b;
+}
+
+.cd-estado-badge.al-dia {
+  background: var(--success-light);
+  color: #065f46;
+}
+
+/* Resumen */
+.cd-resumen-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.cd-resumen-item {
+  background: white;
+  border-radius: var(--radius);
+  padding: 1rem;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--gray-200);
+}
+
+.cd-saldo {
+  border: 2px solid var(--primary);
+}
+
+.cd-resumen-label {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.cd-resumen-valor {
+  font-family: 'Courier New', monospace;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--dark);
+}
+
+.cd-resumen-valor.facturado { color: var(--gray-700); }
+.cd-resumen-valor.pagado { color: var(--success); }
+.cd-resumen-valor.deuda { color: var(--danger); }
+.cd-resumen-valor.saldo.positivo { color: var(--success); font-size: 1.2rem; }
+.cd-resumen-valor.saldo.negativo { color: var(--danger); font-size: 1.2rem; }
+
+/* Acciones */
+.cd-acciones {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.btn-accion {
+  padding: 0.6rem 1.25rem;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.btn-factura {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-factura:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+.btn-pago {
+  background: var(--success);
+  color: white;
+}
+
+.btn-pago:hover {
+  background: #059669;
+  transform: translateY(-1px);
+}
+
+/* Tabs */
+.cd-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid var(--gray-200);
+  margin-bottom: 1rem;
+}
+
+.cd-tab {
+  padding: 0.7rem 1.5rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--gray-500);
+  transition: all 0.2s;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+}
+
+.cd-tab:hover {
+  color: var(--primary);
+}
+
+.cd-tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+/* Tablas */
+.table-container {
+  background: white;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--gray-200);
+  overflow-x: auto;
+}
+
+.cd-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.cd-table thead {
+  background: var(--gray-50);
+  border-bottom: 2px solid var(--gray-200);
+}
+
+.cd-table th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--gray-700);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.cd-table td {
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--gray-100);
+  vertical-align: middle;
+}
+
+.cd-table tbody tr:hover {
+  background: var(--gray-50);
+}
+
+.factura-row.estado-pendiente { border-left: 3px solid var(--warning); }
+.factura-row.estado-pagado { border-left: 3px solid var(--success); }
+.factura-row.estado-parcial { border-left: 3px solid #f59e0b; }
+
+.pago-row.tipo-abono { border-left: 3px solid var(--success); }
+.pago-row.tipo-devolucion { border-left: 3px solid var(--danger); }
+.pago-row.tipo-nota_credito { border-left: 3px solid #8b5cf6; }
+
+.factura-numero {
+  font-weight: 700;
+  font-family: 'Courier New', monospace;
+  color: var(--dark);
+}
+
+.monto-cell {
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+}
+
+.monto-cell.pagado { color: var(--success); }
+
+.estado-badge-factura {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.estado-badge-factura.pendiente {
+  background: var(--warning-light);
+  color: #92400e;
+}
+
+.estado-badge-factura.pagado {
+  background: var(--success-light);
+  color: #065f46;
+}
+
+.estado-badge-factura.parcial {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.tipo-pago-badge {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.tipo-pago-badge.abono { background: var(--success-light); color: #065f46; }
+.tipo-pago-badge.devolucion { background: var(--danger-light); color: #991b1b; }
+.tipo-pago-badge.nota_credito { background: #ede9fe; color: #5b21b6; }
+
+.detalle-cell {
+  max-width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fecha-cell {
+  white-space: nowrap;
+  color: var(--gray-500);
+  font-size: 0.85rem;
+}
+
+.btn-icon-editar,
+.btn-icon-eliminar {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--gray-300);
+  background: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+
+.btn-icon-editar:hover {
+  background: var(--primary-light);
+  border-color: var(--primary);
+}
+
+.btn-icon-eliminar:hover {
+  background: var(--danger-light);
+  border-color: var(--danger);
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--gray-500);
+}
+
+.empty-icon {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+.empty-state p {
+  font-size: 1rem;
+}
+
+/* Loading & Error */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4rem 2rem;
+  color: var(--gray-600);
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--gray-200);
+  border-top: 3px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.error-container {
+  text-align: center;
+  padding: 3rem;
+}
+
+.error-message {
+  background: var(--danger-light);
+  color: #991b1b;
+  padding: 1rem;
+  border-radius: var(--radius);
+  margin-bottom: 1rem;
+}
+
+.btn-reintentar {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.25rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* ============ RESPONSIVE ============ */
+
+@media (max-width: 1024px) {
+  .cd-resumen-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .cd-cliente-card {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .cd-cliente-info {
+    flex-direction: column;
+  }
+  
+  .cd-resumen-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .cd-acciones {
+    flex-direction: column;
+  }
+  
+  .btn-accion {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .cd-resumen-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
