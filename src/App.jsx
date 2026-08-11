@@ -29,6 +29,7 @@ import LineaFarmacia from './pages/LineaFarmacia'
 import LineaHospitalaria from './pages/LineaHospitalaria'
 
 
+
 function App() {
   return (
     <AuthProvider>
@@ -57,8 +58,8 @@ function App() {
           <Route path="/listas/:id" element={<PrivateRoute><ListaDetalle /></PrivateRoute>} />
           <Route path="/menu" element={<PrivateRoute><Menu /></PrivateRoute>} />
           <Route path="/ofertas" element={<PrivateRoute><Ofertas /></PrivateRoute>} />
-<Route path="/farmacia" element={<PrivateRoute><LineaFarmacia /></PrivateRoute>} />
-<Route path="/hospitalaria" element={<PrivateRoute><LineaHospitalaria /></PrivateRoute>} />
+          <Route path="/farmacia" element={<PrivateRoute><LineaFarmacia /></PrivateRoute>} />
+          <Route path="/hospitalaria" element={<PrivateRoute><LineaHospitalaria /></PrivateRoute>} />
         </Routes>
         </EnvioProvider>
       </CartProvider>
