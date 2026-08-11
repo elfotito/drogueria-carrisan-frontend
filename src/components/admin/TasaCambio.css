@@ -339,3 +339,20 @@
     justify-content: center;
   }
 }
+
+/* Referencia error */
+.referencia-error {
+  text-align: center;
+}
+
+.referencia-error .btn-refrescar {
+  margin-top: 0.5rem;
+  width: auto;
+  display: inline-flex;
+}
+
+.referencia-acciones {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}

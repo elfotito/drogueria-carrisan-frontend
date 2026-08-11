@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import api from '../../api/axios'
-import './TasaCambio.css' 
+import '../styles/admin/TasaCambio.css'
 
 function TasaCambio() {
   const [tasaActual, setTasaActual] = useState(null)
@@ -8,12 +8,13 @@ function TasaCambio() {
   const [cargando, setCargando] = useState(true)
   const [guardando, setGuardando] = useState(false)
   const [mensaje, setMensaje] = useState({ tipo: '', texto: '' })
-  const [tasaBCV, setTasaBCV] = useState(null)
-  const [cargandoBCV, setCargandoBCV] = useState(false)
+  const [tasaReferencia, setTasaReferencia] = useState(null)
+  const [cargandoReferencia, setCargandoReferencia] = useState(false)
+  const [errorReferencia, setErrorReferencia] = useState('')
 
   useEffect(() => {
     cargarTasa()
-    obtenerTasaAutomatica()
+    obtenerTasaReferencia()
   }, [])
 
   async function cargarTasa() {
@@ -28,34 +29,59 @@ function TasaCambio() {
     }
   }
 
-  async function obtenerTasaAutomatica() {
-    setCargandoBCV(true)
-    try {
-      // Opción 1: API del BCV
-      const response = await fetch('https://bcv-api.deno.dev/api/latest')
-      const data = await response.json()
-      setTasaBCV({
-        valor: data.usd,
-        fuente: 'BCV',
-        fecha: data.fecha
-      })
-    } catch (error) {
-      // Opción 2: API alternativa si la primera falla
-      try {
-        const response = await fetch('https://exchangemonitor.net/api/ves')
-        const data = await response.json()
-        setTasaBCV({
-          valor: data.promedio,
-          fuente: 'Monitor Dólar',
-          fecha: new Date().toISOString()
-        })
-      } catch (error2) {
-        console.error('No se pudo obtener tasa automática:', error2)
-        setTasaBCV(null)
+  async function obtenerTasaReferencia() {
+    setCargandoReferencia(true)
+    setErrorReferencia('')
+    
+    // Intentar múltiples fuentes en orden
+    const fuentes = [
+      {
+        nombre: 'ExchangeRate-API',
+        url: 'https://open.er-api.com/v6/latest/USD',
+        extraer: (data) => data?.rates?.VES
+      },
+      {
+        nombre: 'DolarToday',
+        url: 'https://s3.amazonaws.com/dolartoday/data.json',
+        extraer: (data) => data?.USD?.promedio
+      },
+      {
+        nombre: 'BCV (no oficial)',
+        url: 'https://ve.dolar-api.com/api/rate/usd/ves',
+        extraer: (data) => data?.price
       }
-    } finally {
-      setCargandoBCV(false)
+    ]
+
+    for (const fuente of fuentes) {
+      try {
+        const response = await fetch(fuente.url)
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`)
+        }
+        
+        const data = await response.json()
+        const valor = fuente.extraer(data)
+        
+        if (valor && !isNaN(valor) && valor > 0) {
+          setTasaReferencia({
+            valor: Number(valor),
+            fuente: fuente.nombre,
+            fecha: new Date().toISOString()
+          })
+          setCargandoReferencia(false)
+          return // Éxito, salir
+        }
+      } catch (error) {
+        console.log(`Fuente ${fuente.nombre} falló:`, error.message)
+        continue // Intentar siguiente fuente
+      }
     }
+
+    // Si todas fallaron
+    setErrorReferencia('No se pudo obtener tasa de referencia de ninguna fuente')
+    setTasaReferencia(null)
+    setCargandoReferencia(false)
   }
 
   async function handleSubmit(e) {
@@ -78,6 +104,7 @@ function TasaCambio() {
       setNuevaTasa('')
       await cargarTasa()
       
+      // Limpiar mensaje después de 3 segundos
       setTimeout(() => setMensaje({ tipo: '', texto: '' }), 3000)
     } catch (err) {
       setMensaje({ 
@@ -89,9 +116,9 @@ function TasaCambio() {
     }
   }
 
-  function usarTasaAutomatica() {
-    if (tasaBCV) {
-      setNuevaTasa(tasaBCV.valor.toString())
+  function usarTasaReferencia() {
+    if (tasaReferencia?.valor) {
+      setNuevaTasa(tasaReferencia.valor.toString())
     }
   }
 
@@ -119,10 +146,12 @@ function TasaCambio() {
           <div className="tasa-valor">
             <span className="label">Tasa Actual</span>
             <span className="valor">
-              {tasaActual ? `${tasaActual.usd_a_ves.toFixed(2)} Bs/USD` : 'No disponible'}
+              {tasaActual 
+                ? `${Number(tasaActual.usd_a_ves).toFixed(2)} Bs/USD` 
+                : 'No disponible'}
             </span>
           </div>
-          {tasaActual && (
+          {tasaActual?.updated_at && (
             <div className="tasa-meta">
               <span className="fecha-actualizacion">
                 📅 Actualizada: {new Date(tasaActual.updated_at).toLocaleString('es-VE', {
@@ -136,36 +165,50 @@ function TasaCambio() {
         
         {/* Tasa de referencia automática */}
         <div className="tasa-referencia">
-          <h4>📊 Tasa de Referencia</h4>
-          {cargandoBCV ? (
+          <h4>📊 Tasa de Referencia del Mercado</h4>
+          
+          {cargandoReferencia ? (
             <div className="loading-small">
               <div className="spinner-small"></div>
-              Consultando tasa oficial...
+              Consultando tasas del mercado...
             </div>
-          ) : tasaBCV ? (
+          ) : errorReferencia ? (
+            <div className="referencia-error">
+              <p className="no-disponible">{errorReferencia}</p>
+              <button 
+                className="btn-refrescar"
+                onClick={obtenerTasaReferencia}
+              >
+                🔄 Reintentar
+              </button>
+            </div>
+          ) : tasaReferencia ? (
             <div className="referencia-info">
               <div className="referencia-valor">
-                {tasaBCV.valor.toFixed(2)} Bs/USD
+                {tasaReferencia.valor.toFixed(2)} Bs/USD
               </div>
               <div className="referencia-fuente">
-                Fuente: {tasaBCV.fuente}
+                Fuente: {tasaReferencia.fuente}
               </div>
-              <button 
-                className="btn-usar-tasa"
-                onClick={usarTasaAutomatica}
-              >
-                Usar esta tasa
-              </button>
+              <div className="referencia-acciones">
+                <button 
+                  className="btn-usar-tasa"
+                  onClick={usarTasaReferencia}
+                >
+                  Usar esta tasa
+                </button>
+              </div>
             </div>
           ) : (
             <p className="no-disponible">Tasa de referencia no disponible</p>
           )}
+          
           <button 
             className="btn-refrescar"
-            onClick={obtenerTasaAutomatica}
-            disabled={cargandoBCV}
+            onClick={obtenerTasaReferencia}
+            disabled={cargandoReferencia}
           >
-            🔄 Actualizar tasa de referencia
+            {cargandoReferencia ? 'Consultando...' : '🔄 Actualizar tasa de referencia'}
           </button>
         </div>
       </div>
