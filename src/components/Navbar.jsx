@@ -418,11 +418,11 @@ function Navbar() {
                 <span className="action-dropdown-item__desc">Alertas y avisos</span>
               </div>
             </Link>
-            <Link to="/ajustes" className="action-dropdown-item" onClick={() => setShowAccountMenu(false)}>
+            <Link to="/admin" className="action-dropdown-item" onClick={() => setShowAccountMenu(false)}>
               <span className="action-dropdown-item__icono">⚙️</span>
               <div>
-                <span className="action-dropdown-item__label">Ajustes</span>
-                <span className="action-dropdown-item__desc">Configuración</span>
+                <span className="action-dropdown-item__label">Administracion</span>
+                <span className="action-dropdown-item__desc">Acceso solo para trabajadores</span>
               </div>
             </Link>
             <div className="action-dropdown-divider"></div>
