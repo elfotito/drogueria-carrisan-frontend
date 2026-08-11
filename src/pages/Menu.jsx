@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import './Menu.css'
-import LineaFarmacia from "./pages/Linea Farmacia"
-import LineaHospitalaria from "./pages/Linea Hospitalaria"
+import LineaFarmacia from "./pages/farmacia"
+import LineaHospitalaria from "./pages/hospitalaria"
 
 // --- Íconos SVG inline, stroke = currentColor (heredan color del tile) ---
 const ICONOS = {
