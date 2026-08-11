@@ -1,94 +1,265 @@
+import { useMemo } from 'react'
 import './OrdenDetalleModal.css'
 
-// Mismo mapa de estados que MisOrdenes.jsx — si agregas estados nuevos
-// en el backend, agrégalos aquí también para mantener el mismo color de badge.
 const ESTADOS_CONFIG = {
-  pendiente: { label: 'Pendiente', clase: 'badge--pendiente' },
-  finalizado: { label: 'Finalizado', clase: 'badge--finalizado' },
+  pendiente: { label: 'Pendiente', color: '#f59e0b', bg: '#fef3c7' },
+  confirmado: { label: 'Confirmado', color: '#3b82f6', bg: '#dbeafe' },
+  en_preparacion: { label: 'En Preparación', color: '#8b5cf6', bg: '#ede9fe' },
+  enviado: { label: 'Enviado', color: '#06b6d4', bg: '#cffafe' },
+  entregado: { label: 'Entregado', color: '#10b981', bg: '#d1fae5' },
+  finalizado: { label: 'Finalizado', color: '#059669', bg: '#d1fae5' },
+  cancelado: { label: 'Cancelado', color: '#ef4444', bg: '#fee2e2' }
 }
 
 function getEstadoConfig(estado) {
-  return ESTADOS_CONFIG[estado] || { label: estado, clase: 'badge--neutro' }
+  return ESTADOS_CONFIG[estado] || { label: estado || 'Desconocido', color: '#64748b', bg: '#f1f5f9' }
 }
 
 function formatUSD(valor) {
-  return Number(valor).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  return Number(valor || 0).toLocaleString('en-US', { 
+    minimumFractionDigits: 2, 
+    maximumFractionDigits: 2 
+  })
 }
 
-function OrdenDetalleModal({ orden, onClose }) {
-  if (!orden) return null
-
+function OrdenDetalleModal({ orden, onClose, onCambiarEstado, estados, estadoColores }) {
   const envioDetalle = useMemo(() => {
+    if (!orden) return null
+    
     if (!orden.tipo_envio || orden.tipo_envio === 'retiro') {
       return {
-        tipo: 'Retiro en tienda',
+        icono: '🏪',
+        tipo: 'Retiro en Tienda',
         costo: 'Gratis',
-        direccion: 'N/A',
-        agencia: 'N/A',
+        direccion: null,
+        agencia: null,
+        color: '#6366f1'
       }
     }
 
     if (orden.tipo_envio === 'delivery') {
       const esGratis = orden.usuario?.delivery_gratis || orden.costo_delivery === 0
       return {
+        icono: '🛵',
         tipo: 'Delivery',
-        costo: esGratis ? '¡Gratis!' : `$${orden.costo_delivery?.toFixed(2) || '8.00'}`,
-        direccion: orden.direccion_envio_texto || 'Dirección no disponible',
-        agencia: 'N/A',
+        costo: esGratis ? '¡Gratis!' : `$${formatUSD(orden.costo_delivery || 8)}`,
+        direccion: orden.direccion_envio_texto || null,
+        agencia: null,
+        color: '#f59e0b'
       }
     }
 
     if (orden.tipo_envio === 'envio_nacional') {
       return {
+        icono: '🚚',
         tipo: 'Envío Nacional',
         costo: 'Pago en destino',
-        direccion: orden.direccion_envio_texto || 'Dirección no disponible',
-        agencia: orden.agencia_envio || 'No especificada',
+        direccion: orden.direccion_envio_texto || null,
+        agencia: orden.agencia_envio || null,
+        color: '#06b6d4'
       }
     }
 
     return {
+      icono: '📦',
       tipo: 'No especificado',
       costo: 'N/A',
-      direccion: 'N/A',
-      agencia: 'N/A',
+      direccion: null,
+      agencia: null,
+      color: '#94a3b8'
     }
   }, [orden])
 
-  return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <button className="modal-close" onClick={onClose}>✕</button>
-        
-        <h2>Orden #{orden.id}</h2>
+  if (!orden) return null
 
-        <div className="modal-section">
-          <h3>📦 Información de envío</h3>
-          <div className="modal-info-grid">
-            <div className="modal-info-item">
-              <span className="modal-label">Tipo</span>
-              <span>{envioDetalle.tipo}</span>
-            </div>
-            <div className="modal-info-item">
-              <span className="modal-label">Costo</span>
-              <span>{envioDetalle.costo}</span>
-            </div>
-            {envioDetalle.agencia !== 'N/A' && (
-              <div className="modal-info-item">
-                <span className="modal-label">Agencia</span>
-                <span>{envioDetalle.agencia}</span>
-              </div>
-            )}
-            {envioDetalle.direccion !== 'N/A' && (
-              <div className="modal-info-item modal-info-item--full">
-                <span className="modal-label">Dirección</span>
-                <span>{envioDetalle.direccion}</span>
-              </div>
+  const estadoConfig = getEstadoConfig(orden.estado)
+  const items = orden.items || orden.productos || []
+
+  return (
+    <div className="odm-overlay" onClick={onClose}>
+      <div className="odm-content" onClick={(e) => e.stopPropagation()}>
+        {/* Botón cerrar */}
+        <button className="odm-close" onClick={onClose}>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+          </svg>
+        </button>
+
+        {/* Header */}
+        <div className="odm-header">
+          <div>
+            <h2 className="odm-numero">Orden #{orden.id}</h2>
+            <p className="odm-fecha">
+              {new Date(orden.created_at).toLocaleDateString('es-VE', {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+              })}
+              {' · '}
+              {new Date(orden.created_at).toLocaleTimeString('es-VE', {
+                hour: '2-digit',
+                minute: '2-digit'
+              })}
+            </p>
+          </div>
+          <span 
+            className="odm-badge"
+            style={{
+              backgroundColor: estadoConfig.bg,
+              color: estadoConfig.color
+            }}
+          >
+            {estadoConfig.label}
+          </span>
+        </div>
+
+        {/* Cliente */}
+        <div className="odm-cliente">
+          <div className="odm-cliente-avatar">
+            {orden.users?.nombre?.[0]?.toUpperCase() || 'C'}
+          </div>
+          <div className="odm-cliente-info">
+            <strong>{orden.users?.nombre || 'Cliente'}</strong>
+            <span>{orden.users?.email || 'Sin email'}</span>
+            {orden.users?.telefono && (
+              <span>📱 {orden.users.telefono}</span>
             )}
           </div>
         </div>
 
-        {/* ... resto del modal (productos, totales, etc.) ... */}
+        <div className="odm-divider" />
+
+        {/* Envío */}
+        {envioDetalle && (
+          <div className="odm-section">
+            <h3 className="odm-section-title">
+              <span className="odm-section-icon">{envioDetalle.icono}</span>
+              Información de Envío
+            </h3>
+            
+            <div className="odm-envio-card" style={{ borderLeftColor: envioDetalle.color }}>
+              <div className="odm-envio-row">
+                <span className="odm-envio-label">Tipo</span>
+                <span className="odm-envio-valor">{envioDetalle.tipo}</span>
+              </div>
+              <div className="odm-envio-row">
+                <span className="odm-envio-label">Costo</span>
+                <span className={`odm-envio-valor ${envioDetalle.costo === '¡Gratis!' ? 'odm-gratis' : ''}`}>
+                  {envioDetalle.costo}
+                </span>
+              </div>
+              {envioDetalle.agencia && (
+                <div className="odm-envio-row">
+                  <span className="odm-envio-label">Agencia</span>
+                  <span className="odm-envio-valor">{envioDetalle.agencia}</span>
+                </div>
+              )}
+              {envioDetalle.direccion && (
+                <div className="odm-envio-direccion">
+                  <span className="odm-envio-label">Dirección</span>
+                  <span className="odm-envio-valor">{envioDetalle.direccion}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        <div className="odm-divider" />
+
+        {/* Productos */}
+        <div className="odm-section">
+          <h3 className="odm-section-title">
+            <span className="odm-section-icon">🛒</span>
+            Productos ({items.length})
+          </h3>
+          
+          <div className="odm-items">
+            {items.map((item, index) => (
+              <div key={item.id || index} className="odm-item">
+                <div className="odm-item-media">
+                  {item.foto_url || item.producto?.foto_url ? (
+                    <img 
+                      src={item.foto_url || item.producto?.foto_url} 
+                      alt={item.nombre || item.producto?.nombre_comercial}
+                    />
+                  ) : (
+                    <span className="odm-item-placeholder">📦</span>
+                  )}
+                </div>
+                <div className="odm-item-body">
+                  <p className="odm-item-nombre">
+                    {item.nombre || item.producto?.nombre_comercial || 'Producto'}
+                  </p>
+                  <p className="odm-item-cantidad">
+                    {item.cantidad || 1} × ${formatUSD(item.precio || item.precio_unitario || 0)}
+                  </p>
+                </div>
+                <p className="odm-item-subtotal">
+                  ${formatUSD((item.cantidad || 1) * (item.precio || item.precio_unitario || 0))}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="odm-divider" />
+
+        {/* Totales */}
+        <div className="odm-totales">
+          <div className="odm-total-row">
+            <span>Subtotal</span>
+            <span>${formatUSD(orden.total_usd)}</span>
+          </div>
+          {orden.costo_delivery > 0 && (
+            <div className="odm-total-row">
+              <span>Envío</span>
+              <span>${formatUSD(orden.costo_delivery)}</span>
+            </div>
+          )}
+          <div className="odm-total-final">
+            <span>Total</span>
+            <span className="odm-total-valor">${formatUSD(orden.total_usd)}</span>
+          </div>
+        </div>
+
+        {/* Cambiar estado (si se proporciona la función) */}
+        {onCambiarEstado && estados && (
+          <>
+            <div className="odm-divider" />
+            <div className="odm-section">
+              <h3 className="odm-section-title">
+                <span className="odm-section-icon">🔄</span>
+                Actualizar Estado
+              </h3>
+              <select
+                value={orden.estado}
+                onChange={(e) => onCambiarEstado(orden.id, e.target.value)}
+                className="odm-estado-select"
+              >
+                {estados.map(estado => (
+                  <option key={estado} value={estado}>
+                    {(estadoColores || ESTADOS_CONFIG)[estado]?.label || estado}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </>
+        )}
+
+        {/* Notas adicionales */}
+        {orden.notas && (
+          <>
+            <div className="odm-divider" />
+            <div className="odm-section">
+              <h3 className="odm-section-title">
+                <span className="odm-section-icon">📝</span>
+                Notas
+              </h3>
+              <p className="odm-notas">{orden.notas}</p>
+            </div>
+          </>
+        )}
       </div>
     </div>
   )
