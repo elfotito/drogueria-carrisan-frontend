@@ -3,7 +3,7 @@ import api from '../../api/axios'
 import './DescuentosForm.css'
 
 const ALCANCES = [
-  { valor: 'producto', label: 'Producto específico', icono: '📦' },
+  { valor: 'producto', label: 'Producto', icono: '📦' },
   { valor: 'marca', label: 'Marca', icono: '🏷️' },
   { valor: 'laboratorio', label: 'Laboratorio', icono: '🧪' },
   { valor: 'molecula', label: 'Molécula', icono: '⚗️' },
@@ -12,6 +12,35 @@ const ALCANCES = [
 ]
 
 const CAMPOS_TEXTO = ['laboratorio', 'molecula', 'linea', 'forma']
+
+// Función para formatear fecha a YYYY-MM-DDTHH:MM
+function toDatetimeLocal(fecha) {
+  if (!fecha) return ''
+  const d = new Date(fecha)
+  const year = d.getFullYear()
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  const hours = String(d.getHours()).padStart(2, '0')
+  const minutes = String(d.getMinutes()).padStart(2, '0')
+  return `${year}-${month}-${day}T${hours}:${minutes}`
+}
+
+// Función para obtener fecha actual en formato YYYY-MM-DDTHH:MM
+function getAhora() {
+  return toDatetimeLocal(new Date())
+}
+
+// Formatear para mostrar: DD/MM/YY HH:MM
+function formatearFecha(fecha) {
+  if (!fecha) return '—'
+  const d = new Date(fecha)
+  const day = String(d.getDate()).padStart(2, '0')
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  const year = String(d.getFullYear()).slice(-2)
+  const hours = String(d.getHours()).padStart(2, '0')
+  const minutes = String(d.getMinutes()).padStart(2, '0')
+  return `${day}/${month}/${year} ${hours}:${minutes}`
+}
 
 export default function DescuentoForm({
   productoFijo = null,
@@ -36,9 +65,11 @@ export default function DescuentoForm({
   const [tipo, setTipo] = useState(descuentoExistente?.tipo || 'porcentaje')
   const [valor, setValor] = useState(descuentoExistente?.valor || '')
   const [fechaInicio, setFechaInicio] = useState(
-    descuentoExistente?.fecha_inicio?.slice(0, 16) || ''
+    descuentoExistente?.fecha_inicio ? toDatetimeLocal(descuentoExistente.fecha_inicio) : ''
   )
-  const [fechaFin, setFechaFin] = useState(descuentoExistente?.fecha_fin?.slice(0, 16) || '')
+  const [fechaFin, setFechaFin] = useState(
+    descuentoExistente?.fecha_fin ? toDatetimeLocal(descuentoExistente.fecha_fin) : ''
+  )
   const [activo, setActivo] = useState(descuentoExistente?.activo ?? true)
   const [descripcion, setDescripcion] = useState(descuentoExistente?.descripcion || '')
 
@@ -84,7 +115,7 @@ export default function DescuentoForm({
     setProductoLabel(p.nombre_comercial)
     setResultadosProducto([])
     setBusquedaProducto('')
-    setErrores({...errores, producto: ''})
+    setErrores(prev => ({ ...prev, producto: '' }))
   }
 
   function cambiarAlcance(nuevoAlcance) {
@@ -98,15 +129,24 @@ export default function DescuentoForm({
 
   function validarPaso1() {
     const errs = {}
-    if (alcance === 'producto' && !productoId) errs.producto = 'Selecciona un producto'
-    if (alcance === 'marca' && !marcaId) errs.marca = 'Selecciona una marca'
-    if (CAMPOS_TEXTO.includes(alcance) && !alcanceValor) errs.alcanceValor = 'Selecciona un valor'
+    if (alcance === 'producto' && !productoId) {
+      errs.producto = 'Selecciona un producto'
+    }
+    if (alcance === 'marca' && !marcaId) {
+      errs.marca = 'Selecciona una marca'
+    }
+    if (CAMPOS_TEXTO.includes(alcance) && !alcanceValor.trim()) {
+      errs.alcanceValor = 'Selecciona o escribe un valor'
+    }
     setErrores(errs)
     return Object.keys(errs).length === 0
   }
 
-  function validarPaso2() {
+  function validarTodo() {
     const errs = {}
+    if (alcance === 'producto' && !productoId) errs.producto = 'Selecciona un producto'
+    if (alcance === 'marca' && !marcaId) errs.marca = 'Selecciona una marca'
+    if (CAMPOS_TEXTO.includes(alcance) && !alcanceValor.trim()) errs.alcanceValor = 'Selecciona un valor'
     if (!valor || Number(valor) <= 0) errs.valor = 'Ingresa un valor mayor a 0'
     if (tipo === 'porcentaje' && Number(valor) > 100) errs.valor = 'Máximo 100%'
     if (!fechaInicio) errs.fechaInicio = 'La fecha de inicio es requerida'
@@ -117,19 +157,27 @@ export default function DescuentoForm({
     return Object.keys(errs).length === 0
   }
 
-  function handleSiguiente() {
-    if (paso === 1 && validarPaso1()) setPaso(2)
+  // CORREGIDO: Solo navega, NO hace submit
+  function handleSiguiente(e) {
+    e.preventDefault() // Prevenir cualquier submit accidental
+    if (paso === 1 && validarPaso1()) {
+      setPaso(2)
+    }
   }
 
-  function handleAnterior() {
+  // CORREGIDO: Solo navega hacia atrás
+  function handleAnterior(e) {
+    e.preventDefault()
     setPaso(1)
   }
 
+  // SOLO se ejecuta en el paso 2 al hacer clic en Guardar
   async function handleSubmit(e) {
     e.preventDefault()
-    if (!validarPaso2()) return
-    
     setError('')
+    
+    if (!validarTodo()) return
+
     setGuardando(true)
 
     const payload = {
@@ -188,7 +236,7 @@ export default function DescuentoForm({
             <div className="form-section">
               {!alcanceBloqueado && (
                 <div className="form-group">
-                  <label>Aplicar descuento a</label>
+                  <label>¿A qué aplica el descuento?</label>
                   <div className="alcance-grid">
                     {ALCANCES.map(a => (
                       <label
@@ -210,14 +258,12 @@ export default function DescuentoForm({
                 </div>
               )}
 
-              {/* Campo dinámico según alcance */}
               {alcance === 'producto' && (
                 <div className="form-group">
-                  <label>Producto *</label>
+                  <label>Buscar producto *</label>
                   {alcanceBloqueado ? (
                     <div className="producto-fijo">
-                      <span className="producto-fijo-icon">📦</span>
-                      {productoLabel}
+                      <span>📦 {productoLabel}</span>
                     </div>
                   ) : productoId ? (
                     <div className="producto-seleccionado">
@@ -237,7 +283,7 @@ export default function DescuentoForm({
                     <>
                       <input
                         type="text"
-                        placeholder="Buscar producto por nombre..."
+                        placeholder="Escribe el nombre del producto..."
                         value={busquedaProducto}
                         onChange={e => setBusquedaProducto(e.target.value)}
                         className={errores.producto ? 'error' : ''}
@@ -246,10 +292,10 @@ export default function DescuentoForm({
                         <ul className="resultados-busqueda">
                           {resultadosProducto.map(p => (
                             <li key={p.id} onClick={() => seleccionarProducto(p)}>
-                              <span>📦</span>
-                              <div>
+                              <span className="rb-icon">📦</span>
+                              <div className="rb-info">
                                 <strong>{p.nombre_comercial}</strong>
-                                <small>{p.laboratorio}</small>
+                                <small>{p.laboratorio} · ${Number(p.precio_usd).toFixed(2)}</small>
                               </div>
                             </li>
                           ))}
@@ -263,13 +309,13 @@ export default function DescuentoForm({
 
               {alcance === 'marca' && (
                 <div className="form-group">
-                  <label>Marca *</label>
+                  <label>Selecciona la marca *</label>
                   <select 
                     value={marcaId} 
-                    onChange={e => { setMarcaId(e.target.value); setErrores({...errores, marca: ''}) }}
+                    onChange={e => { setMarcaId(e.target.value); setErrores(prev => ({...prev, marca: ''})) }}
                     className={errores.marca ? 'error' : ''}
                   >
-                    <option value="">Selecciona una marca</option>
+                    <option value="">— Selecciona una marca —</option>
                     {marcas.map(m => (
                       <option key={m.id} value={m.id}>{m.nombre}</option>
                     ))}
@@ -281,16 +327,26 @@ export default function DescuentoForm({
               {CAMPOS_TEXTO.includes(alcance) && (
                 <div className="form-group">
                   <label>{alcanceActual?.label} *</label>
-                  <select 
-                    value={alcanceValor} 
-                    onChange={e => { setAlcanceValor(e.target.value); setErrores({...errores, alcanceValor: ''}) }}
-                    className={errores.alcanceValor ? 'error' : ''}
-                  >
-                    <option value="">Selecciona un valor</option>
-                    {valoresTexto.map(v => (
-                      <option key={v} value={v}>{v}</option>
-                    ))}
-                  </select>
+                  {valoresTexto.length > 0 ? (
+                    <select 
+                      value={alcanceValor} 
+                      onChange={e => { setAlcanceValor(e.target.value); setErrores(prev => ({...prev, alcanceValor: ''})) }}
+                      className={errores.alcanceValor ? 'error' : ''}
+                    >
+                      <option value="">— Selecciona —</option>
+                      {valoresTexto.map(v => (
+                        <option key={v} value={v}>{v}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input
+                      type="text"
+                      value={alcanceValor}
+                      onChange={e => { setAlcanceValor(e.target.value); setErrores(prev => ({...prev, alcanceValor: ''})) }}
+                      className={errores.alcanceValor ? 'error' : ''}
+                      placeholder={`Escribe el ${alcanceActual?.label?.toLowerCase()}`}
+                    />
+                  )}
                   {errores.alcanceValor && <span className="error-text">{errores.alcanceValor}</span>}
                 </div>
               )}
@@ -300,6 +356,7 @@ export default function DescuentoForm({
           {/* Paso 2: Valor y Fechas */}
           {paso === 2 && (
             <div className="form-section">
+              {/* Tipo de descuento */}
               <div className="form-group">
                 <label>Tipo de Descuento</label>
                 <div className="tipo-selector">
@@ -312,7 +369,10 @@ export default function DescuentoForm({
                       onChange={(e) => setTipo(e.target.value)}
                     />
                     <span className="tipo-icon">%</span>
-                    <span className="tipo-label">Porcentaje</span>
+                    <div className="tipo-texto">
+                      <strong>Porcentaje</strong>
+                      <small>Ej: 15% de descuento</small>
+                    </div>
                   </label>
                   <label className={`tipo-card ${tipo === 'monto' ? 'active' : ''}`}>
                     <input
@@ -323,11 +383,15 @@ export default function DescuentoForm({
                       onChange={(e) => setTipo(e.target.value)}
                     />
                     <span className="tipo-icon">$</span>
-                    <span className="tipo-label">Monto Fijo</span>
+                    <div className="tipo-texto">
+                      <strong>Monto Fijo</strong>
+                      <small>Ej: $5.00 de descuento</small>
+                    </div>
                   </label>
                 </div>
               </div>
 
+              {/* Valor */}
               <div className="form-group">
                 <label>Valor del Descuento *</label>
                 <div className="input-precio">
@@ -338,7 +402,7 @@ export default function DescuentoForm({
                     min="0"
                     max={tipo === 'porcentaje' ? 100 : undefined}
                     value={valor}
-                    onChange={e => { setValor(e.target.value); setErrores({...errores, valor: ''}) }}
+                    onChange={e => { setValor(e.target.value); setErrores(prev => ({...prev, valor: ''})) }}
                     className={errores.valor ? 'error' : ''}
                     placeholder={tipo === 'porcentaje' ? '15' : '5.00'}
                   />
@@ -346,30 +410,67 @@ export default function DescuentoForm({
                 {errores.valor && <span className="error-text">{errores.valor}</span>}
               </div>
 
+              {/* Fechas */}
               <div className="form-row">
                 <div className="form-group">
                   <label>Fecha de Inicio *</label>
-                  <input
-                    type="datetime-local"
-                    value={fechaInicio}
-                    onChange={e => { setFechaInicio(e.target.value); setErrores({...errores, fechaInicio: ''}) }}
-                    className={errores.fechaInicio ? 'error' : ''}
-                  />
+                  <div className="fecha-input-group">
+                    <input
+                      type="datetime-local"
+                      value={fechaInicio}
+                      onChange={e => { setFechaInicio(e.target.value); setErrores(prev => ({...prev, fechaInicio: ''})) }}
+                      className={errores.fechaInicio ? 'error' : ''}
+                    />
+                    <button
+                      type="button"
+                      className="btn-hoy"
+                      onClick={() => {
+                        setFechaInicio(getAhora())
+                        setErrores(prev => ({...prev, fechaInicio: ''}))
+                      }}
+                      title="Usar fecha y hora actual"
+                    >
+                      📍 Hoy
+                    </button>
+                  </div>
+                  {fechaInicio && (
+                    <span className="fecha-preview">{formatearFecha(fechaInicio)}</span>
+                  )}
                   {errores.fechaInicio && <span className="error-text">{errores.fechaInicio}</span>}
                 </div>
 
                 <div className="form-group">
                   <label>Fecha de Fin (opcional)</label>
-                  <input
-                    type="datetime-local"
-                    value={fechaFin}
-                    onChange={e => { setFechaFin(e.target.value); setErrores({...errores, fechaFin: ''}) }}
-                    className={errores.fechaFin ? 'error' : ''}
-                  />
+                  <div className="fecha-input-group">
+                    <input
+                      type="datetime-local"
+                      value={fechaFin}
+                      onChange={e => { setFechaFin(e.target.value); setErrores(prev => ({...prev, fechaFin: ''})) }}
+                      className={errores.fechaFin ? 'error' : ''}
+                    />
+                    <button
+                      type="button"
+                      className="btn-hoy"
+                      onClick={() => {
+                        // Por defecto, fin = inicio + 30 días
+                        const inicio = fechaInicio ? new Date(fechaInicio) : new Date()
+                        const fin = new Date(inicio.getTime() + 30 * 24 * 60 * 60 * 1000)
+                        setFechaFin(toDatetimeLocal(fin))
+                        setErrores(prev => ({...prev, fechaFin: ''}))
+                      }}
+                      title="Establecer 30 días después del inicio"
+                    >
+                      📅 +30d
+                    </button>
+                  </div>
+                  {fechaFin && (
+                    <span className="fecha-preview">{formatearFecha(fechaFin)}</span>
+                  )}
                   {errores.fechaFin && <span className="error-text">{errores.fechaFin}</span>}
                 </div>
               </div>
 
+              {/* Descripción */}
               <div className="form-group">
                 <label>Descripción (opcional)</label>
                 <textarea
@@ -380,6 +481,7 @@ export default function DescuentoForm({
                 />
               </div>
 
+              {/* Activo */}
               <div className="form-group">
                 <label className="checkbox-card">
                   <input
@@ -392,7 +494,7 @@ export default function DescuentoForm({
                       <span className="checkbox-card-icon">{activo ? '✅' : '⏸️'}</span>
                       <strong>Descuento Activo</strong>
                     </div>
-                    <small>Los descuentos inactivos no se aplican</small>
+                    <small>Los descuentos inactivos no se aplican en el catálogo</small>
                   </div>
                 </label>
               </div>
@@ -414,26 +516,29 @@ export default function DescuentoForm({
                 </div>
                 <div className="resumen-item">
                   <span>Tipo:</span>
-                  <strong>{tipo === 'porcentaje' ? 'Porcentaje' : 'Monto Fijo'}</strong>
+                  <strong>{tipo === 'porcentaje' ? '% Porcentaje' : '$ Monto Fijo'}</strong>
                 </div>
                 <div className="resumen-item">
                   <span>Valor:</span>
                   <strong className="valor-descuento">
-                    {tipo === 'porcentaje' ? `${valor}%` : `$${Number(valor).toFixed(2)}`}
+                    {tipo === 'porcentaje' ? `${valor}%` : `$${Number(valor || 0).toFixed(2)}`}
                   </strong>
                 </div>
                 <div className="resumen-item">
-                  <span>Vigencia:</span>
-                  <strong>
-                    {fechaInicio ? new Date(fechaInicio).toLocaleDateString('es-VE') : '—'}
-                    {fechaFin ? ` → ${new Date(fechaFin).toLocaleDateString('es-VE')}` : ' (sin fin)'}
-                  </strong>
+                  <span>Inicio:</span>
+                  <strong>{formatearFecha(fechaInicio)}</strong>
                 </div>
+                {fechaFin && (
+                  <div className="resumen-item">
+                    <span>Fin:</span>
+                    <strong>{formatearFecha(fechaFin)}</strong>
+                  </div>
+                )}
               </div>
             </div>
           )}
 
-          {/* Navegación */}
+          {/* Navegación - CORREGIDO: type="button" en Siguiente */}
           <div className="form-navegacion">
             {paso > 1 ? (
               <button type="button" onClick={handleAnterior} className="btn-secundario">
@@ -446,11 +551,19 @@ export default function DescuentoForm({
             )}
             
             {paso < 2 ? (
-              <button type="button" onClick={handleSiguiente} className="btn-primario">
+              <button 
+                type="button"  // IMPORTANTE: type="button" para NO hacer submit
+                onClick={handleSiguiente} 
+                className="btn-primario"
+              >
                 Siguiente →
               </button>
             ) : (
-              <button type="submit" disabled={guardando} className="btn-guardar">
+              <button 
+                type="submit"  // Solo este botón hace submit
+                disabled={guardando} 
+                className="btn-guardar"
+              >
                 {guardando ? (
                   <><span className="spinner-small"></span> Guardando...</>
                 ) : (

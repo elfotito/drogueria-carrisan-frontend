@@ -486,3 +486,213 @@
   .form-pasos { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
   .paso-linea { display: none; }
 }
+
+/* ============ FECHA INPUT GROUP ============ */
+
+.fecha-input-group {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.fecha-input-group input[type="datetime-local"] {
+  flex: 1;
+  padding: 0.625rem 0.875rem;
+  border: 2px solid var(--gray-300);
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  background: white;
+  color: var(--dark);  /* Color visible */
+  font-family: inherit;
+}
+
+.fecha-input-group input[type="datetime-local"]:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.fecha-input-group input[type="datetime-local"].error {
+  border-color: var(--danger);
+}
+
+.btn-hoy {
+  padding: 0.5rem 0.75rem;
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 2px solid var(--primary);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.btn-hoy:hover {
+  background: var(--primary);
+  color: white;
+}
+
+.fecha-preview {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.82rem;
+  color: var(--gray-600);
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+}
+
+/* ============ RESULTADOS BÚSQUEDA ============ */
+
+.resultados-busqueda {
+  list-style: none;
+  border: 2px solid var(--gray-300);
+  border-top: none;
+  border-radius: 0 0 var(--radius) var(--radius);
+  max-height: 200px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0;
+  background: white;
+}
+
+.resultados-busqueda li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.65rem 0.875rem;
+  cursor: pointer;
+  transition: background 0.15s;
+  border-bottom: 1px solid var(--gray-100);
+}
+
+.resultados-busqueda li:last-child {
+  border-bottom: none;
+}
+
+.resultados-busqueda li:hover {
+  background: var(--primary-light);
+}
+
+.rb-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.rb-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.rb-info strong {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--dark);
+}
+
+.rb-info small {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--gray-500);
+}
+
+/* ============ TIPO SELECTOR MEJORADO ============ */
+
+.tipo-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.tipo-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tipo-card:hover {
+  border-color: var(--gray-300);
+  background: var(--gray-50);
+}
+
+.tipo-card.active {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+
+.tipo-card input[type="radio"] {
+  display: none;
+}
+
+.tipo-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  background: var(--gray-100);
+  color: var(--gray-600);
+  transition: all 0.2s;
+}
+
+.tipo-card.active .tipo-icon {
+  background: var(--primary);
+  color: white;
+}
+
+.tipo-texto strong {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--dark);
+}
+
+.tipo-texto small {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--gray-500);
+  margin-top: 0.15rem;
+}
+
+/* Asegurar que todos los inputs tengan texto visible */
+.form-group input,
+.form-group textarea,
+.form-group select {
+  color: var(--dark);  /* Texto oscuro */
+  font-family: inherit;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: var(--gray-400);  /* Placeholder gris */
+}
+
+/* ============ RESPONSIVE ============ */
+
+@media (max-width: 768px) {
+  .tipo-selector {
+    grid-template-columns: 1fr;
+  }
+  
+  .fecha-input-group {
+    flex-direction: column;
+  }
+  
+  .btn-hoy {
+    width: 100%;
+    justify-content: center;
+  }
+}
