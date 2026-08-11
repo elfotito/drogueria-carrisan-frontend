@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import { CartProvider } from './context/CartContext'
 import { EnvioProvider } from './context/EnvioContext'
+import { FavoritosProvider } from './context/FavoritosContext'
 import Navbar from './components/Navbar'
 import PrivateRoute from './components/PrivateRoute'
 import Home from './pages/Home'
@@ -30,38 +31,41 @@ import LineaHospitalaria from './pages/LineaHospitalaria'
 
 
 
+
 function App() {
   return (
     <AuthProvider>
       <CartProvider>
-        <EnvioProvider>
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/catalogo" element={<Catalogo />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/registro" element={<Registro />} />
-          <Route path="/carrito" element={<PrivateRoute><Carrito /></PrivateRoute>} />
-          <Route path="/orders" element={<PrivateRoute><MisOrdenes /></PrivateRoute>} />
-          <Route path="/admin" element={<PrivateRoute adminOnly><Admin /></PrivateRoute>} />
-          <Route path="/quienes-somos" element={<QuienesSomos />} />
-          <Route path="/faq" element={<FAQ />} />
-          <Route path="/ayuda" element={<Ayuda />} />
-          <Route path="/contacto" element={<Contacto />} />
-          <Route path="/cuenta" element={<PrivateRoute><MiCuenta /></PrivateRoute>} />
-          <Route path="/mis-items" element={<PrivateRoute><MisItems /></PrivateRoute>} />
-          <Route path="/notificaciones" element={<PrivateRoute><Notificaciones /></PrivateRoute>} />
-          <Route path="/terminos" element={<Terminos />} />
-          <Route path="/privacidad" element={<Privacidad />} />
-          <Route path="/estado-cuenta" element={<PrivateRoute><EstadoCuenta /></PrivateRoute>} />
-          <Route path="/producto/:id" element={<ProductoDetalle />} />
-          <Route path="/listas/:id" element={<PrivateRoute><ListaDetalle /></PrivateRoute>} />
-          <Route path="/menu" element={<PrivateRoute><Menu /></PrivateRoute>} />
-          <Route path="/ofertas" element={<PrivateRoute><Ofertas /></PrivateRoute>} />
-          <Route path="/farmacia" element={<PrivateRoute><LineaFarmacia /></PrivateRoute>} />
-          <Route path="/hospitalaria" element={<PrivateRoute><LineaHospitalaria /></PrivateRoute>} />
-        </Routes>
-        </EnvioProvider>
+        <FavoritosProvider>
+          <EnvioProvider>
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/catalogo" element={<Catalogo />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/registro" element={<Registro />} />
+            <Route path="/carrito" element={<PrivateRoute><Carrito /></PrivateRoute>} />
+            <Route path="/orders" element={<PrivateRoute><MisOrdenes /></PrivateRoute>} />
+            <Route path="/admin" element={<PrivateRoute adminOnly><Admin /></PrivateRoute>} />
+            <Route path="/quienes-somos" element={<QuienesSomos />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/ayuda" element={<Ayuda />} />
+            <Route path="/contacto" element={<Contacto />} />
+            <Route path="/cuenta" element={<PrivateRoute><MiCuenta /></PrivateRoute>} />
+            <Route path="/mis-items" element={<PrivateRoute><MisItems /></PrivateRoute>} />
+            <Route path="/notificaciones" element={<PrivateRoute><Notificaciones /></PrivateRoute>} />
+            <Route path="/terminos" element={<Terminos />} />
+            <Route path="/privacidad" element={<Privacidad />} />
+            <Route path="/estado-cuenta" element={<PrivateRoute><EstadoCuenta /></PrivateRoute>} />
+            <Route path="/producto/:id" element={<ProductoDetalle />} />
+            <Route path="/listas/:id" element={<PrivateRoute><ListaDetalle /></PrivateRoute>} />
+            <Route path="/menu" element={<PrivateRoute><Menu /></PrivateRoute>} />
+            <Route path="/ofertas" element={<PrivateRoute><Ofertas /></PrivateRoute>} />
+            <Route path="/farmacia" element={<PrivateRoute><LineaFarmacia /></PrivateRoute>} />
+            <Route path="/hospitalaria" element={<PrivateRoute><LineaHospitalaria /></PrivateRoute>} />
+          </Routes>
+          </EnvioProvider>
+        </FavoritosProvider>
       </CartProvider>
     </AuthProvider>
   )
