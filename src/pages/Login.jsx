@@ -1,14 +1,10 @@
 import { useState } from 'react'
 import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import logo from '../assets/logo/minilogo color sin fondo.png';
+import logo from '../assets/logo/minilogo color sin fondo.png'
 import api from '../api/axios'
+import { validarEmail } from '../utils/validadores'
 import './Auth.css'
-
-function esEmailValido(email) {
-  const regex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/
-  return regex.test(email)
-}
 
 function Login() {
   const [paso, setPaso] = useState('email')
@@ -30,7 +26,7 @@ function Login() {
     const emailLimpio = email.trim().toLowerCase()
     setEmail(emailLimpio)
 
-    if (!esEmailValido(emailLimpio)) {
+    if (!validarEmail(emailLimpio)) {
       setError('Ingresá un correo electrónico válido (ejemplo@correo.com)')
       return
     }
@@ -73,16 +69,12 @@ function Login() {
   return (
     <div className="auth-page">
       <main className="auth-container">
-            <Link to="/" className="auth-logo">
-              <img 
-                src={logo} 
-                alt="Logo" 
-                className="logologin"
-              />
-            </Link>
+        <Link to="/" className="auth-logo">
+          <img src={logo} alt="Logo" className="logologin" />
+        </Link>
 
         {sesionExpirada && (
-          <div className="auth-banner">
+          <div className="auth-banner auth-banner--warning">
             Tu sesión expiró. Iniciá sesión de nuevo para continuar.
           </div>
         )}
@@ -91,9 +83,9 @@ function Login() {
 
         {paso === 'email' ? (
           <>
-            <h1 className="auth-title">Iniciar sesión o crear tu cuenta</h1>
+            <h1 className="auth-title">Iniciar sesión</h1>
             <p className="auth-subtitle">
-              ¿No estas seguro si tienes una cuenta? Ingresá tu correo y vemos si ya tienes una cuenta con nosotros.
+              Ingresá tu correo. Te ayudaremos a continuar con tu cuenta o crear una nueva.
             </p>
 
             <form className="auth-form" onSubmit={handleContinuar}>
@@ -106,6 +98,7 @@ function Login() {
                   onChange={(e) => setEmail(e.target.value)}
                   autoComplete="email"
                   autoFocus
+                  placeholder="tu@correo.com"
                   required
                 />
               </div>
@@ -124,26 +117,32 @@ function Login() {
                 />
               </div>
 
-              <p className="auth-privacy-text">
-                Proteger tu información personal es nuestra prioridad.<br />
-                Ve nuestras politicas de privacidad
-              </p>
-
               <button type="submit" className="auth-btn-primary" disabled={cargando}>
                 {cargando ? 'Verificando...' : 'Continuar'}
               </button>
             </form>
 
-            {/* Tarjeta promocional inferior */}
+            <p className="auth-privacy-text">
+              Proteger tu información personal es nuestra prioridad.<br />
+              <Link to="/privacidad" style={{ color: '#1B4B8F', textDecoration: 'none' }}>
+                Ve nuestras políticas de privacidad
+              </Link>
+            </p>
+
+            {/* Tarjeta promocional mejorada */}
             <div className="auth-promo-card">
-              <h2 className="auth-promo-title">Somos <span className="text-blue">Carrisan</span></h2>
-              <p className="auth-promo-subtitle">¿Compras insumos médicos de forma habitual para tu negocio o institución?</p>
-              <button 
-                type="button" 
+              <h2 className="auth-promo-title">
+                ¿No tienes cuenta aún?
+              </h2>
+              <p className="auth-promo-subtitle">
+                Crea tu cuenta en Droguería Carrisán y comienza a comprar insumos médicos de forma rápida y segura.
+              </p>
+              <button
+                type="button"
                 className="auth-btn-secondary"
-                onClick={() => navigate('/registro-empresas')}
+                onClick={() => navigate('/registro')}
               >
-                Crear una cuenta corporativa
+                Crear cuenta
               </button>
             </div>
           </>
@@ -176,6 +175,7 @@ function Login() {
                   onChange={(e) => setPassword(e.target.value)}
                   autoComplete="current-password"
                   autoFocus
+                  placeholder="••••••••"
                   required
                 />
               </div>
