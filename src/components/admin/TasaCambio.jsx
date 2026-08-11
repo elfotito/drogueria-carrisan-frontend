@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import api from '../../api/axios'
-import '../styles/admin/TasaCambio.css'
+import './TasaCambio.css'
 
 function TasaCambio() {
   const [tasaActual, setTasaActual] = useState(null)
