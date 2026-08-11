@@ -25,7 +25,7 @@ import ProductoDetalle from './pages/ProductoDetalle'
 import ListaDetalle from './pages/ListaDetalle'
 import Menu from './pages/Menu'
 import Ofertas from './pages/Ofertas'
-import LineaFarmacia from './pages/Linea Farmacia'
+import LineaFarmacia from './pages/LineaFarmacia'
 import LineaHospitalaria from './pages/LineaHospitalaria'
 
 
