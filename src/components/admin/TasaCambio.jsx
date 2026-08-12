@@ -39,43 +39,37 @@ function TasaCambio() {
 
   // Verificar si estamos en horario de actualización
   function verificarActualizacionAutomatica() {
-    const ahora = new Date()
-    const diaSemana = ahora.getDay() // 0=domingo, 1=lunes, ..., 6=sábado
-    const horaVenezuela = obtenerHoraVenezuela(ahora)
-    const horas = horaVenezuela.getHours()
-    const minutos = horaVenezuela.getMinutes()
-    const dia = horaVenezuela.getDay()
+  const ahoraVzla = obtenerHoraVenezuela(new Date())
+  const dia = ahoraVzla.getDay() // 0=domingo, 1=lunes, ..., 6=sábado
+  const horas = ahoraVzla.getHours()
+  const minutos = ahoraVzla.getMinutes()
+  
+  // Es fin de semana?
+  const esFinDeSemana = dia === 0 || dia === 6
+  
+  // Horario BCV: lunes a viernes entre 3pm y 5pm
+  const enHorarioBCV = !esFinDeSemana && horas >= 15 && horas < 17
+  
+  // Calcular próxima actualización
+  const proxima = calcularProximaActualizacion(ahoraVzla)
+  setProximaActualizacion(proxima)
+  
+  if (enHorarioBCV && actualizacionAutomatica) {
+    // Verificar si ya actualizamos hoy
+    const ultimaActualizacion = localStorage.getItem('ultima_actualizacion_tasa')
+    const hoy = ahoraVzla.toDateString()
     
-    // Es fin de semana?
-    const esFinDeSemana = dia === 0 || dia === 6
-    
-    // Horario BCV: lunes a viernes entre 3pm y 5pm
-    const enHorarioBCV = !esFinDeSemana && horas >= 15 && horas < 17
-    
-    // Calcular próxima actualización
-    const proxima = calcularProximaActualizacion(horaVenezuela)
-    setProximaActualizacion(proxima)
-    
-    if (enHorarioBCV && actualizacionAutomatica) {
-      // Verificar si ya actualizamos hoy
-      const ultimaActualizacion = localStorage.getItem('ultima_actualizacion_tasa')
-      const hoy = horaVenezuela.toDateString()
-      
-      if (ultimaActualizacion !== hoy) {
-        console.log('🕒 Horario BCV detectado, actualizando tasa automáticamente...')
-        obtenerTasaYActualizar()
-      }
+    if (ultimaActualizacion !== hoy) {
+      console.log('🕒 Horario BCV detectado, actualizando tasa automáticamente...')
+      obtenerTasaYActualizar()
     }
   }
+}
 
   // Obtener hora de Venezuela (UTC-4)
   function obtenerHoraVenezuela(fecha) {
-    // Venezuela está en UTC-4
-    const offsetVenezuela = -4 * 60 // minutos
-    const offsetLocal = fecha.getTimezoneOffset()
-    const diferencia = offsetVenezuela - offsetLocal
-    return new Date(fecha.getTime() + diferencia * 60000)
-  }
+  return new Date(fecha.toLocaleString('en-US', { timeZone: 'America/Caracas' }))
+}
 
   // Calcular próxima actualización
   function calcularProximaActualizacion(fechaVzla) {
