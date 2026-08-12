@@ -128,6 +128,7 @@ function Home() {
       {/* VITRINA — bloques estilo Walmart, mismo componente que usa el dashboard */}
       <HomeCarrusel
         titulo="Ofertas destacadas"
+        subtitulo="Hasta un 25% de descuento"
         productos={ofertas}
         tasaVes={tasaVes}
         verTodoTo="/catalogo"
@@ -135,6 +136,7 @@ function Home() {
       />
       <HomeCarrusel
         titulo="Algunos de nuestros productos"
+        subtitulo="Mas destacados de esta semana"
         productos={productos}
         tasaVes={tasaVes}
         verTodoTo="/catalogo"

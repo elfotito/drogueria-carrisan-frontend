@@ -100,6 +100,7 @@ function DashboardMobile({ user }) {
       {/* VITRINA — bloques estilo Walmart, mismo componente que usa el landing público */}
       <HomeCarrusel
         titulo="Ofertas destacadas"
+        subtitulo="Hasta un 25% de descuento"
         productos={ofertas}
         tasaVes={tasa}
         verTodoTo="/catalogo"
@@ -107,6 +108,7 @@ function DashboardMobile({ user }) {
       />
       <HomeCarrusel
         titulo="Recomendados para ti"
+        subtitulo="Descubre lo que tenemos para ti"
         productos={productos}
         tasaVes={tasa}
         verTodoTo="/catalogo"

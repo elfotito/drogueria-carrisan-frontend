@@ -20,6 +20,7 @@ function HomeCarrusel({ titulo, productos, tasaVes, verTodoTo = '/catalogo', car
     <section className="home-carrusel">
       <div className="home-carrusel__header">
         <h2>{titulo}</h2>
+        <p className="home-carrusel__subtitulo">{subtitulo}</p>
         <div className="home-carrusel__acciones">
           <Link to={verTodoTo} className="home-carrusel__ver-todo">Ver todo</Link>
           <div className="home-carrusel__flechas">
