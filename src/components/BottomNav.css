@@ -1,23 +1,34 @@
+/* ============================================
+   BottomNav — dock flotante (mobile + tablet)
+   Paleta: Azul #0052DC · Índigo #1A1A3A
+   ============================================ */
+
 .bottom-nav {
-  display: none; /* oculto por default: solo aparece en mobile, ver media query */
+  display: none; /* solo aparece <1024px, ver media query */
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1023px) {
   .bottom-nav {
     display: flex;
-    justify-content: space-around;
     align-items: center;
+    justify-content: center;
+    gap: 2px;
     position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 64px;
-    background: #FBFAF7;
-    border-top: 1px solid rgba(35, 43, 69, 0.1);
-    box-shadow: 0 -2px 12px rgba(20, 24, 42, 0.06);
+    left: 50%;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0));
+    transform: translateX(-50%);
+    width: calc(100% - 24px);
+    max-width: 420px;
+    padding: 6px 8px;
+    background: rgba(255, 255, 255, 0.86);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(26, 26, 58, 0.06);
+    border-radius: 999px;
+    box-shadow:
+      0 10px 30px rgba(26, 26, 58, 0.16),
+      0 2px 8px rgba(26, 26, 58, 0.08);
     z-index: 100;
-    /* respeta el "notch" / gesture bar de móviles con safe-area */
-    padding-bottom: env(safe-area-inset-bottom, 0);
   }
 
   /* --- Items normales (Inicio, Mis Items, Mis Órdenes, Cuenta) --- */
@@ -27,42 +38,70 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 3px;
-    flex: 1;
-    height: 100%;
     justify-content: center;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+    padding: 6px 2px;
     text-decoration: none;
-    color: rgba(20, 24, 42, 0.45);
+    color: rgba(26, 26, 58, 0.5);
     font-family: 'Inter', sans-serif;
-    font-size: 0.68rem;
-    font-weight: 500;
+    font-size: 0.62rem;
+    font-weight: 600;
+    border-radius: 18px;
     transition: color 0.15s ease;
   }
 
-  /* indicador — franja arriba, a todo lo ancho del botón */
-  .bottom-nav__item::before {
-    content: '';
+  .bottom-nav__item svg {
+    position: relative;
+    z-index: 1;
+    width: 20px;
+    height: 20px;
+    transition: stroke 0.15s ease;
+  }
+
+  .bottom-nav__label {
+    position: relative;
+    z-index: 1;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Ícono envuelto para poder animar el "pill" de fondo detrás, sin
+     tocar los SVG — así se pueden reemplazar por otros íconos sin
+     romper el efecto. */
+  .bottom-nav__icon-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 26px;
+  }
+
+  .bottom-nav__icon-pill {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    border-radius: 0 0 3px 3px;
-    background: #1B4B8F;
+    inset: 0;
+    border-radius: 13px;
+    background: #E5EDFC; /* tinte claro del Azul de marca */
     opacity: 0;
-    transition: opacity 0.15s ease;
+    transform: scale(0.6);
+    transition: opacity 0.18s ease, transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
   .bottom-nav__item--activo {
-    color: #1B4B8F;
+    color: #0052DC;
   }
 
   .bottom-nav__item--activo svg {
-    stroke: #1B4B8F;
+    stroke: #0052DC;
   }
 
-  .bottom-nav__item--activo::before {
+  .bottom-nav__item--activo .bottom-nav__icon-pill {
     opacity: 1;
+    transform: scale(1);
   }
 
   /* --- Botón central "Menú" (FAB elevado) --- */
@@ -73,43 +112,83 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    flex: 1;
-    height: 100%;
+    flex: 0 0 auto;
+    padding: 0 6px;
     text-decoration: none;
-    color: rgba(20, 24, 42, 0.55);
+    color: rgba(26, 26, 58, 0.6);
     font-family: 'Inter', sans-serif;
-    font-size: 0.68rem;
-    font-weight: 500;
+    font-size: 0.62rem;
+    font-weight: 600;
   }
 
   .bottom-nav__fab {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 50px;
-    height: 50px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
-    margin-top: -22px; /* eleva el botón por encima del bottom-nav */
-    background: linear-gradient(145deg, #1B4B8F, #232B45);
-    color: #FBFAF7; /* íconos usan currentColor */
-    box-shadow: 0 4px 14px rgba(27, 75, 143, 0.35);
-    border: 3px solid #FBFAF7; /* separa visualmente el FAB del fondo */
+    margin-top: -20px; /* eleva el botón por encima del dock */
+    background: linear-gradient(145deg, #0052DC, #1A1A3A);
+    color: #FFFFFF; /* íconos usan currentColor */
+    box-shadow: 0 6px 16px rgba(0, 82, 220, 0.35);
+    border: 3px solid #FBFAF7;
     transition: transform 0.15s ease, background 0.15s ease;
   }
 
+  .bottom-nav__fab svg {
+    width: 20px;
+    height: 20px;
+  }
+
   .bottom-nav__fab-label {
-    margin-top: 3px;
+    margin-top: 4px;
   }
 
   .bottom-nav__fab-wrapper:active .bottom-nav__fab {
-    transform: scale(0.94);
+    transform: scale(0.92);
   }
 
   .bottom-nav__fab-wrapper--activo .bottom-nav__fab {
-    background: linear-gradient(145deg, #12A594, #1B4B8F);
+    background: linear-gradient(145deg, #12A594, #0052DC);
   }
 
   .bottom-nav__fab-wrapper--activo .bottom-nav__fab-label {
-    color: #1B4B8F;
+    color: #0052DC;
+  }
+}
+
+/* ---------- Tablet: dock un poco más grande y más separado del borde ---------- */
+@media (min-width: 600px) and (max-width: 1023px) {
+  .bottom-nav {
+    max-width: 480px;
+    padding: 8px 12px;
+    bottom: calc(20px + env(safe-area-inset-bottom, 0));
+  }
+
+  .bottom-nav__item,
+  .bottom-nav__fab-wrapper {
+    font-size: 0.68rem;
+  }
+
+  .bottom-nav__icon-wrap {
+    width: 46px;
+    height: 28px;
+  }
+
+  .bottom-nav__item svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .bottom-nav__fab {
+    width: 54px;
+    height: 54px;
+    margin-top: -24px;
+  }
+
+  .bottom-nav__fab svg {
+    width: 22px;
+    height: 22px;
   }
 }
