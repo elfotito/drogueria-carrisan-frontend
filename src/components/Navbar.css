@@ -109,11 +109,14 @@ body {
 /* PANEL DE ENVÍO (Base)                        */
 /* ============================================ */
 .envio-panel-content {
-  background: var(--wm-blue);
-  color: white;
-  padding: 16px;
-  animation: slideDownFade 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-  transform-origin: top center;
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 400px;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: #333333;
 }
 
 /* Desktop: Panel flotante */
@@ -128,6 +131,17 @@ body {
     border-radius: 0 0 12px 12px;
     box-shadow: 0 12px 24px rgba(0,0,0,0.2);
     z-index: 850;
+  }
+}
+
+@media (max-width: 768px) {
+  .envio-panel-content {
+    border-radius: 20px 20px 0 0; /* Bordes redondeados solo arriba para versión móvil */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 }
 
@@ -146,24 +160,25 @@ body {
 
 .envio-types {
   display: flex;
-  justify-content: space-around;
-  margin-bottom: 20px;
   gap: 8px;
+  background-color: #f3f4f6;
+  padding: 6px;
+  border-radius: 12px;
+  margin-bottom: 24px;
 }
 
 .envio-type-btn {
-  background: transparent;
-  border: 2px solid transparent;
-  color: white;
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  padding: 12px 8px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
   cursor: pointer;
-  padding: 8px;
-  border-radius: 12px;
-  transition: all 0.2s;
-  flex: 1;
+  transition: all 0.2s ease-in-out;
 }
 
 .envio-type-btn:hover {
@@ -171,8 +186,8 @@ body {
 }
 
 .envio-type-btn.active {
-  background: white;
-  color: var(--wm-blue);
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .envio-type-btn.active .envio-circle {
@@ -189,11 +204,25 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  font-size: 20px;
+  margin-bottom: 4px;
 }
 
-.envio-label { font-weight: 700; font-size: 14px; }
-.envio-costo { font-size: 11px; opacity: 0.9; }
+.envio-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.envio-costo {
+  font-size: 11px;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+.envio-type-btn.active .envio-label {
+  color: #111827;
+}
 
 .envio-cards {
   display: flex;
@@ -242,22 +271,51 @@ body {
   border-radius: 8px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
 
-.envio-form input, 
-.envio-form textarea, 
-.envio-form select {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
+.envio-form input,
+.envio-form select,
+.envio-form textarea {
   width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 14px;
+  background-color: #f9fafb;
+  transition: border-color 0.2s, box-shadow 0.2s;
   box-sizing: border-box;
 }
+
+.envio-form input:focus,
+.envio-form select:focus,
+.envio-form textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  background-color: #ffffff;
+}
+
 .envio-form .input-disabled { 
   background: #eee; 
   color: #888; 
+}
+
+.envio-form textarea {
+  resize: none;
+}
+
+.envio-card-info {
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.envio-card-info p {
+  margin: 8px 0;
+  font-size: 14px;
+  color: #4b5563;
 }
 
 .form-actions { 
@@ -265,16 +323,24 @@ body {
   gap: 8px; 
   margin-top: 8px; 
 }
-.btn-guardar { 
-  background: var(--wm-blue); 
-  color: white; 
-  border: none; 
-  padding: 10px; 
-  border-radius: 20px; 
-  flex: 1; 
-  cursor: pointer; 
-  font-weight: bold; 
+.btn-guardar {
+  width: 100%;
+  padding: 14px;
+  background-color: #111827;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 8px;
 }
+
+.btn-guardar:hover {
+  background-color: #374151;
+}
+
 .btn-cancelar { 
   background: white; 
   border: 1px solid #ccc; 
