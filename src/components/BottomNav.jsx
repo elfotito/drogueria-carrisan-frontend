@@ -59,8 +59,11 @@ function BottomNavItem({ item }) {
         `bottom-nav__item ${isActive ? 'bottom-nav__item--activo' : ''}`
       }
     >
-      {ICONOS[item.icono]}
-      <span>{item.label}</span>
+      <span className="bottom-nav__icon-wrap">
+        <span className="bottom-nav__icon-pill" aria-hidden="true" />
+        {ICONOS[item.icono]}
+      </span>
+      <span className="bottom-nav__label">{item.label}</span>
     </NavLink>
   )
 }
