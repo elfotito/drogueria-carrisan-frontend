@@ -12,6 +12,13 @@ import './Navbar.css'
 
 const RUTAS_SIN_NAVBAR = ['/login', '/registro', '/recuperar']
 
+const EMOJIS_ENVIO = {
+  retiro: '🏪',
+  delivery: '🛵',
+  envio_nacional: '📦',
+  default: '📲'
+};
+
 // 🆕 Datos de departamentos y sus subcategorías
 const DEPARTAMENTOS = [
   {
@@ -237,6 +244,8 @@ function Navbar() {
     ? `${direccionSeleccionada.ciudad || 'Ciudad'}, ${direccionSeleccionada.estado || 'Estado'}`
     : 'Valencia, Carabobo'
 
+  const emojiActual = EMOJIS_ENVIO[tipoEnvio] || EMOJIS_ENVIO.default;
+
   return (
     <>
       <header className="navbar-container">
@@ -250,11 +259,17 @@ function Navbar() {
           <div className="navbar__desktop-pickup-wrapper desktop-only" ref={panelRef}>
             <button className="navbar__pickup-btn" onClick={() => setShowEnvioPanel(!showEnvioPanel)}>
               <div className="pickup-btn__icon">
-                📲
+                {emojiActual}
               </div>
               <div className="pickup-btn__text">
-                <span className="pickup-btn__title">¿Retiro o delivery?</span>
-                <span className="pickup-btn__subtitle">{ciudadEstado}</span>
+                <span className="pickup-btn__title">
+                  {tipoEnvio === 'retiro' ? 'Retiro en Tienda' : 
+                  tipoEnvio === 'delivery' ? 'Delivery' : 
+                  tipoEnvio === 'envio_nacional' ? 'Envío Nacional' : '¿Retiro o delivery?'}
+                </span>
+                <span className="pickup-btn__subtitle">
+                  {tipoEnvio === 'retiro' ? 'Sede Valencia' : ciudadEstado}
+                </span>
               </div>
               <svg className={`pickup-btn__arrow ${showEnvioPanel ? 'rotated' : ''}`} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
             </button>
@@ -263,12 +278,7 @@ function Navbar() {
               <PanelEnvio
                 tipoEnvio={tipoEnvio}
                 cambiarTipoEnvio={cambiarTipoEnvio}
-                opcionesEnvio={opcionesEnvio}
-                direcciones={direcciones}
-                direccionSeleccionada={direccionSeleccionada}
-                setDireccionSeleccionada={setDireccionSeleccionada}
-                guardarDireccion={guardarDireccion}
-                cargarDirecciones={cargarDirecciones}
+                // ... pasa el resto de las props necesarias
                 onClose={() => setShowEnvioPanel(false)}
               />
             )}
@@ -667,161 +677,119 @@ function Navbar() {
 // -------------------------------------------------------------
 // COMPONENTE PANEL ENVÍO INTEGRADO
 // -------------------------------------------------------------
-function PanelEnvio({
-  tipoEnvio,
-  cambiarTipoEnvio,
-  opcionesEnvio,
-  direcciones,
-  direccionSeleccionada,
-  setDireccionSeleccionada,
-  guardarDireccion,
-  cargarDirecciones,
-  onClose,
-}) {
-  const [mostrarForm, setMostrarForm] = useState(false)
+function PanelEnvio({ tipoEnvio, cambiarTipoEnvio, onClose }) {
   const [formData, setFormData] = useState({
-    nombre: '', direccion: '', ciudad: '', estado: '',
-    telefono_contacto: '', referencia: '', agencia_preferida: '',
-  })
-  const [guardando, setGuardando] = useState(false)
-  const [mensaje, setMensaje] = useState('')
+    nombre: '', direccion: '', ciudad: 'Valencia', estado: 'Carabobo',
+    telefono_contacto: '', agencia_preferida: '', coordenadas: null
+  });
 
-  const CIUDADES = ['Caracas', 'Maracay', 'Valencia']
-  const opcionActual = opcionesEnvio?.find(op => op.id === tipoEnvio)
-  const direccionesFiltradas = direcciones?.filter(
-    d => d.tipo_direccion === opcionActual?.tipoDireccion
-  ) || []
+  // Tarifas de delivery exactas
+  const TARIFAS_DELIVERY = {
+    'Valencia': 3,
+    'Naguanagua': 4,
+    'San Diego': 5,
+    'Guacara': 5,
+    'Los Guayos': 5
+  };
 
-  const handleGuardar = async (e) => {
-    e.preventDefault()
-    if (!formData.nombre || !formData.direccion) {
-      setMensaje('Completa nombre y dirección')
-      return
-    }
-
-    setGuardando(true)
-    setMensaje('')
-
-    try {
-      await guardarDireccion({
-        ...formData,
-        tipo_direccion: opcionActual?.tipoDireccion || 'delivery',
-        estado: tipoEnvio === 'delivery' ? 'Distrito Capital' : formData.estado,
-      })
-      await cargarDirecciones(opcionActual?.tipoDireccion)
-      setMostrarForm(false)
-      setFormData({
-        nombre: '', direccion: '', ciudad: '', estado: '',
-        telefono_contacto: '', referencia: '', agencia_preferida: '',
-      })
-      setMensaje('✅ Dirección guardada')
-      setTimeout(() => setMensaje(''), 2000)
-    } catch (err) {
-      setMensaje('❌ Error al guardar')
-    } finally {
-      setGuardando(false)
-    }
-  }
+  const handleGuardar = (e) => {
+    e.preventDefault();
+    // Aquí conectas con tu función guardarDireccion del contexto
+    console.log("Guardando datos:", formData, "Costo delivery:", TARIFAS_DELIVERY[formData.ciudad]);
+  };
 
   return (
     <div className="envio-panel-content">
       <div className="envio-panel-header mobile-only">
-        <button onClick={onClose} className="close-panel-btn" aria-label="Cerrar panel">
-          ✕
+        <button onClick={onClose} className="close-panel-btn">✕</button>
+      </div>
+
+      {/* Selectores Superiores */}
+      <div className="envio-types">
+        <button className={`envio-type-btn ${tipoEnvio === 'retiro' ? 'active' : ''}`} onClick={() => cambiarTipoEnvio('retiro')}>
+          <div className="envio-circle">🏪</div>
+          <span className="envio-label">Retiro</span>
+          <span className="envio-costo">Gratis</span>
+        </button>
+        <button className={`envio-type-btn ${tipoEnvio === 'delivery' ? 'active' : ''}`} onClick={() => cambiarTipoEnvio('delivery')}>
+          <div className="envio-circle">🛵</div>
+          <span className="envio-label">Delivery</span>
+          <span className="envio-costo">Calculado</span>
+        </button>
+        <button className={`envio-type-btn ${tipoEnvio === 'envio_nacional' ? 'active' : ''}`} onClick={() => cambiarTipoEnvio('envio_nacional')}>
+          <div className="envio-circle">📦</div>
+          <span className="envio-label">Nacional</span>
+          <span className="envio-costo">Cobro Destino</span>
         </button>
       </div>
 
-      {mensaje && (
-        <div className={`envio-mensaje ${mensaje.includes('✅') ? 'success' : 'error'}`}>
-          {mensaje}
+      {/* CONTENIDO DINÁMICO SEGÚN SELECCIÓN */}
+      
+      {/* 1. RETIRO EN TIENDA */}
+      {tipoEnvio === 'retiro' && (
+        <div className="envio-card selected">
+          <div className="envio-card-info" style={{ width: '100%', textAlign: 'center', padding: '10px' }}>
+            <strong>Nuestra Oficina</strong>
+            <p>Av Urdaneta (99) Urb. El Recreo, Qta Mirabal Local 04C</p>
+            <small>📍 Valencia, Carabobo</small>
+            <button className="btn-guardar" style={{ marginTop: '12px', width: '100%' }} onClick={onClose}>
+              Confirmar Retiro
+            </button>
+          </div>
         </div>
       )}
 
-      <div className="envio-types">
-        {(opcionesEnvio || []).map(opcion => (
-          <button
-            key={opcion.id}
-            className={`envio-type-btn ${tipoEnvio === opcion.id ? 'active' : ''}`}
-            onClick={() => cambiarTipoEnvio(opcion.id)}
+      {/* 2. DELIVERY EN MOTO */}
+      {tipoEnvio === 'delivery' && (
+        <form onSubmit={handleGuardar} className="envio-form">
+          <select 
+            value={formData.ciudad} 
+            onChange={(e) => setFormData({ ...formData, ciudad: e.target.value })} 
+            required
           >
-            <div className="envio-circle">{opcion.icono}</div>
-            <span className="envio-label">{opcion.label}</span>
-            <span className="envio-costo">{opcion.textoCosto}</span>
-          </button>
-        ))}
-      </div>
-
-      {tipoEnvio !== 'retiro' && (
-        <div className="envio-cards">
+            {Object.keys(TARIFAS_DELIVERY).map(ciudad => (
+              <option key={ciudad} value={ciudad}>{ciudad} - ${TARIFAS_DELIVERY[ciudad]}</option>
+            ))}
+          </select>
           
-          {direccionesFiltradas.length > 0 && direccionesFiltradas.map(dir => (
-            <label
-              key={dir.id}
-              className={`envio-card ${direccionSeleccionada?.id === dir.id ? 'selected' : ''}`}
-            >
-              <input
-                type="radio"
-                name="direccion_envio"
-                className="envio-radio"
-                checked={direccionSeleccionada?.id === dir.id}
-                onChange={() => setDireccionSeleccionada(dir)}
-              />
-              <div className="envio-card-info">
-                <strong>{dir.nombre}</strong>
-                <p>{dir.direccion}</p>
-                <small>📍 {dir.ciudad}, {dir.estado} {dir.telefono_contacto && `• 📞 ${dir.telefono_contacto}`}</small>
-              </div>
-            </label>
-          ))}
+          <input type="text" placeholder="Teléfono de contacto" required />
+          <textarea placeholder="Dirección exacta de entrega" rows="2" required />
+          
+          {/* Aquí inyectamos el Mapa Picker (creado abajo) */}
+          <div style={{ height: '200px', width: '100%', borderRadius: '8px', overflow: 'hidden', marginBottom: '8px' }}>
+            <MapaPicker onLocationSelect={(coords) => setFormData({...formData, coordenadas: coords})} />
+          </div>
 
-          {!mostrarForm ? (
-            <button className="envio-add-btn" onClick={() => setMostrarForm(true)}>
-              + Agregar nueva dirección
-            </button>
-          ) : (
-            <form onSubmit={handleGuardar} className="envio-form">
-              <input type="text" placeholder="Nombre (Casa, Oficina...)" value={formData.nombre} onChange={(e) => setFormData({ ...formData, nombre: e.target.value })} required />
-              <textarea placeholder="Dirección completa" value={formData.direccion} onChange={(e) => setFormData({ ...formData, direccion: e.target.value })} required rows="2" />
-              
-              {tipoEnvio === 'delivery' ? (
-                <>
-                  <select value={formData.ciudad} onChange={(e) => setFormData({ ...formData, ciudad: e.target.value })} required>
-                    <option value="">Seleccionar ciudad</option>
-                    {CIUDADES.map(c => <option key={c} value={c}>{c}</option>)}
-                  </select>
-                  <input type="text" value="Distrito Capital" disabled className="input-disabled" />
-                </>
-              ) : (
-                <>
-                  <input type="text" placeholder="Ciudad" value={formData.ciudad} onChange={(e) => setFormData({ ...formData, ciudad: e.target.value })} />
-                  <input type="text" placeholder="Estado" value={formData.estado} onChange={(e) => setFormData({ ...formData, estado: e.target.value })} />
-                </>
-              )}
-              
-              <input type="text" placeholder="Teléfono de contacto" value={formData.telefono_contacto} onChange={(e) => setFormData({ ...formData, telefono_contacto: e.target.value })} />
-              <input type="text" placeholder="Referencia (opcional)" value={formData.referencia} onChange={(e) => setFormData({ ...formData, referencia: e.target.value })} />
-              
-              {tipoEnvio === 'envio_nacional' && (
-                <select value={formData.agencia_preferida} onChange={(e) => setFormData({ ...formData, agencia_preferida: e.target.value })}>
-                  <option value="">Agencia preferida</option>
-                  <option value="MRW">MRW</option>
-                  <option value="Domesa">Domesa</option>
-                  <option value="Tealca">Tealca</option>
-                  <option value="Zoom">Zoom</option>
-                </select>
-              )}
-              
-              <div className="form-actions">
-                <button type="submit" className="btn-guardar" disabled={guardando}>
-                  {guardando ? 'Guardando...' : 'Guardar'}
-                </button>
-                <button type="button" className="btn-cancelar" onClick={() => setMostrarForm(false)}>
-                  Cancelar
-                </button>
-              </div>
-            </form>
-          )}
-        </div>
+          <div className="form-actions">
+            <button type="submit" className="btn-guardar">Confirmar Delivery (${TARIFAS_DELIVERY[formData.ciudad]})</button>
+          </div>
+        </form>
+      )}
+
+      {/* 3. ENVÍO NACIONAL */}
+      {tipoEnvio === 'envio_nacional' && (
+        <form onSubmit={handleGuardar} className="envio-form">
+          <p style={{ fontSize: '13px', color: 'white', textAlign: 'center', margin: '0 0 10px 0' }}>Modalidad: Pago en Destino</p>
+          
+          <select required onChange={(e) => setFormData({ ...formData, agencia_preferida: e.target.value })}>
+            <option value="">Selecciona la Agencia</option>
+            <option value="MRW">MRW</option>
+            <option value="Domesa">Domesa</option>
+            <option value="Tealca">Tealca</option>
+            <option value="Zoom">Zoom</option>
+          </select>
+
+          <input type="text" placeholder="Estado" required />
+          <input type="text" placeholder="Ciudad" required />
+          <input type="text" placeholder="Nombre de quien recibe" required />
+          <input type="text" placeholder="Cédula" required />
+          <input type="text" placeholder="Teléfono" required />
+          <textarea placeholder="Dirección de la agencia o destino" rows="2" required />
+
+          <div className="form-actions">
+            <button type="submit" className="btn-guardar">Confirmar Envío</button>
+          </div>
+        </form>
       )}
     </div>
   )
