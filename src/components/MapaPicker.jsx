@@ -1,122 +1,130 @@
-import React, { useState, useEffect, useCallback, lazy, Suspense } from 'react';
-import './MapaPicker.css';
+import React, { useEffect } from 'react';
+import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+// Importa el control de búsqueda y el proveedor de OpenStreetMap
+import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
+import 'leaflet-geosearch/dist/geosearch.css'; // Estilos para el buscador
 
-// ✅ Carga el mapa solo cuando se necesita (lazy loading)
-const LeafletMap = lazy(() => import('./LeafletMap'));
+// Solución al bug del icono de Leaflet
+import icon from 'leaflet/dist/images/marker-icon.png';
+import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 
-export default function MapaPicker({ onDireccionSelected, initialDireccion = '' }) {
-  const [direccion, setDireccion] = useState(initialDireccion);
-  const [modalAbierto, setModalAbierto] = useState(false);
-  const [coordenadas, setCoordenadas] = useState(null);
+const DefaultIcon = L.icon({
+  iconUrl: icon,
+  shadowUrl: iconShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41]
+});
+L.Marker.prototype.options.icon = DefaultIcon;
 
-  // Centro de Venezuela (aproximado)
-  const defaultCenter = { lat: 8.0, lng: -66.0 };
-  const defaultZoom = 6;
+// Límites de Venezuela (aproximados)
+const VENEZUELA_BOUNDS = {
+  north: 12.2,
+  south: 0.6,
+  west: -73.4,
+  east: -59.8
+};
+
+// Componente para manejar el clic en el mapa
+function LocationMarker({ position, onMapClick }) {
+  const map = useMap();
+  
+  useEffect(() => {
+    if (position) {
+      map.setView([position.lat, position.lng], 14);
+    }
+  }, [position, map]);
+
+  useMapEvents({
+    click(e) {
+      const { lat, lng } = e.latlng;
+      if (lat >= VENEZUELA_BOUNDS.south && 
+          lat <= VENEZUELA_BOUNDS.north && 
+          lng >= VENEZUELA_BOUNDS.west && 
+          lng <= VENEZUELA_BOUNDS.east) {
+        if (onMapClick) {
+          onMapClick({ lat, lng });
+        }
+      }
+    },
+  });
+
+  return position ? <Marker position={[position.lat, position.lng]} /> : null;
+}
+
+// ✅ NUEVO: Componente para añadir el control de búsqueda
+function SearchControl() {
+  const map = useMap();
 
   useEffect(() => {
-    setDireccion(initialDireccion);
-  }, [initialDireccion]);
+    // Configura el proveedor de búsqueda (OpenStreetMap Nominatim)
+    const provider = new OpenStreetMapProvider();
 
-  const handleMapClick = useCallback((coords) => {
-    setCoordenadas(coords);
-    const direccionGenerada = `Ubicación seleccionada (${coords.lat.toFixed(6)}, ${coords.lng.toFixed(6)})`;
-    setDireccion(direccionGenerada);
-  }, []);
+    // Crea el control de búsqueda
+    const searchControl = new GeoSearchControl({
+      provider: provider,
+      // Opciones para personalizar el comportamiento
+      showMarker: true, // Muestra un marcador en el resultado
+      showPopup: true, // Muestra un popup con la dirección
+      marker: {
+        icon: new L.Icon.Default(), // Usa el icono por defecto de Leaflet
+        draggable: false,
+      },
+      popupFormat: ({ result }) => result.label, // Muestra la dirección en el popup
+      maxMarkers: 1, // Solo permite un resultado a la vez
+      retainZoomLevel: false, // Ajusta el zoom al resultado
+      animateZoom: true, // Animación suave al moverse al resultado
+      autoClose: false,
+      searchLabel: 'Buscar urbanización o dirección...', // Texto en el campo de búsqueda
+      keepResult: true,
+      providerOptions: {
+        // Opcional: Limita la búsqueda a Venezuela para resultados más relevantes
+        params: {
+          countrycodes: 've',
+        },
+      },
+    });
 
-  const handleConfirmar = useCallback(() => {
-    if (direccion) {
-      onDireccionSelected(direccion);
-    }
-    setModalAbierto(false);
-  }, [direccion, onDireccionSelected]);
+    map.addControl(searchControl);
 
-  const handleCancelar = useCallback(() => {
-    setDireccion(initialDireccion);
-    setModalAbierto(false);
-    setCoordenadas(null);
-  }, [initialDireccion]);
+    // Limpia el control al desmontar el componente
+    return () => {
+      map.removeControl(searchControl);
+    };
+  }, [map]);
 
-  const handleAbrirModal = useCallback(() => {
-    setModalAbierto(true);
-    setCoordenadas(null);
-  }, []);
+  return null;
+}
 
-  // Vista en modo resumen
-  if (!modalAbierto) {
-    return (
-      <div className="mapa-picker">
-        <div className="mapa-picker__resumen">
-          <div className="mapa-picker__contenido">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
-              <circle cx="12" cy="9" r="3" />
-            </svg>
-            <span className="mapa-picker__direccion-texto">
-              {direccion || 'Seleccionar ubicación en el mapa'}
-            </span>
-          </div>
-          <button
-            type="button"
-            className="mapa-picker__boton-editar"
-            onClick={handleAbrirModal}
-          >
-            {direccion ? 'Editar' : 'Seleccionar'}
-          </button>
-        </div>
-      </div>
-    );
-  }
+export default function LeafletMap({ coordenadas, onMapClick }) {
+  // ✅ Centro en Valencia, Carabobo
+  const center = { lat: 10.1620, lng: -68.0077 };
+  const zoom = 13;
 
-  // Vista modal con el mapa
+  const bounds = L.latLngBounds(
+    [VENEZUELA_BOUNDS.south, VENEZUELA_BOUNDS.west],
+    [VENEZUELA_BOUNDS.north, VENEZUELA_BOUNDS.east]
+  );
+
   return (
-    <div className="mapa-picker__modal" onClick={handleCancelar}>
-      <div className="mapa-picker__editor" onClick={(e) => e.stopPropagation()}>
-        <div className="mapa-picker__header">
-          <h3>Selecciona tu ubicación</h3>
-          <button type="button" className="mapa-picker__cerrar" onClick={handleCancelar}>
-            ✕
-          </button>
-        </div>
-
-        <div className="mapa-picker__mapa-container">
-          <Suspense fallback={
-            <div className="mapa-picker__cargando">
-              Cargando mapa...
-            </div>
-          }>
-            <LeafletMap 
-              coordenadas={coordenadas}
-              onMapClick={handleMapClick}
-              defaultCenter={defaultCenter}
-              defaultZoom={defaultZoom}
-            />
-          </Suspense>
-        </div>
-
-        <div className="mapa-picker__hint">
-          Toca en el mapa para seleccionar tu ubicación de entrega
-        </div>
-
-        <div className="mapa-picker__direccion-preview">
-          <label>Dirección seleccionada:</label>
-          <input
-            type="text"
-            value={direccion}
-            onChange={(e) => setDireccion(e.target.value)}
-            placeholder="Escribe la dirección manualmente"
-            className="mapa-picker__input-direccion"
-          />
-        </div>
-
-        <div className="mapa-picker__acciones">
-          <button type="button" className="mapa-picker__cancelar" onClick={handleCancelar}>
-            Cancelar
-          </button>
-          <button type="button" className="mapa-picker__confirmar" onClick={handleConfirmar}>
-            Confirmar ubicación
-          </button>
-        </div>
-      </div>
-    </div>
+    <MapContainer 
+      center={[center.lat, center.lng]} 
+      zoom={zoom}
+      minZoom={5}
+      maxZoom={18}
+      maxBounds={bounds}
+      maxBoundsViscosity={0.9}
+      style={{ height: '100%', width: '100%' }}
+    >
+      <TileLayer
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      <LocationMarker position={coordenadas} onMapClick={onMapClick} />
+      
+      {/* ✅ AÑADE EL BUSCADOR AQUÍ */}
+      <SearchControl />
+    </MapContainer>
   );
 }
