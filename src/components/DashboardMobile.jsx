@@ -43,7 +43,7 @@ function DashboardMobile({ user }) {
   useEffect(() => {
     api
       .get('/prices')
-      .then((res) => setTasa(res.data.usd_a_ves))
+      .then((res) => setTasa(Number(res.data.usd_a_ves)))
       .catch((err) => console.error(err))
 
     api

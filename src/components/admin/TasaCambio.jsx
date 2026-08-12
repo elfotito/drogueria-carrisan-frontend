@@ -185,7 +185,7 @@ function TasaCambio() {
         
         if (valor && !isNaN(valor) && valor > 0) {
           return {
-            valor: Number(valor).toFixed(2),
+            valor: Number(parseFloat(valor).toFixed(2)),
             fuente: fuente.nombre
           }
         }
