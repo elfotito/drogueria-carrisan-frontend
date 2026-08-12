@@ -1,11 +1,10 @@
 import React, { useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, useMap, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
 import 'leaflet-geosearch/dist/geosearch.css';
 
-// Solución al bug del icono de Leaflet
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 
@@ -17,7 +16,6 @@ const DefaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
-// Límites de Venezuela (aproximados)
 const VENEZUELA_BOUNDS = {
   north: 12.2,
   south: 0.6,
@@ -25,7 +23,7 @@ const VENEZUELA_BOUNDS = {
   east: -59.8
 };
 
-// ✅ Componente para manejar el clic en el mapa
+// ✅ Versión alternativa SIN useMapEvents
 function LocationMarker({ position, onMapClick }) {
   const map = useMap();
   
@@ -35,8 +33,9 @@ function LocationMarker({ position, onMapClick }) {
     }
   }, [position, map]);
 
-  useMapEvents({
-    click(e) {
+  // ✅ Manejador de clics con event listener nativo
+  useEffect(() => {
+    function handleClick(e) {
       const { lat, lng } = e.latlng;
       if (lat >= VENEZUELA_BOUNDS.south && 
           lat <= VENEZUELA_BOUNDS.north && 
@@ -46,13 +45,17 @@ function LocationMarker({ position, onMapClick }) {
           onMapClick({ lat, lng });
         }
       }
-    },
-  });
+    }
+
+    map.on('click', handleClick);
+    return () => {
+      map.off('click', handleClick);
+    };
+  }, [map, onMapClick]);
 
   return position ? <Marker position={[position.lat, position.lng]} /> : null;
 }
 
-// ✅ Componente para añadir el control de búsqueda
 function SearchControl() {
   const map = useMap();
 
@@ -91,7 +94,6 @@ function SearchControl() {
   return null;
 }
 
-// ✅ Componente principal
 export default function LeafletMap({ coordenadas, onMapClick }) {
   const center = { lat: 10.1620, lng: -68.0077 };
   const zoom = 13;
