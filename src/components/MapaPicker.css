@@ -1,4 +1,4 @@
-/* MapaPicker - Estilos mejorados para react-map-free */
+/* MapaPicker - Estilos optimizados */
 
 .mapa-picker {
   width: 100%;
@@ -80,12 +80,8 @@
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .mapa-picker__editor {
@@ -101,14 +97,8 @@
 }
 
 @keyframes slideUp {
-  from {
-    transform: translateY(30px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
 /* Header */
@@ -158,6 +148,16 @@
   border-radius: 8px;
   overflow: hidden;
   height: 350px;
+}
+
+.mapa-picker__cargando {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-family: 'Inter', sans-serif;
+  color: #6B7280;
+  background: #f3f4f6;
 }
 
 .mapa-picker__mapa {
@@ -251,6 +251,74 @@
 
 .mapa-picker__cancelar:hover {
   background: #e5e7eb;
+}
+
+/* ============ DARK MODE ============ */
+
+@media (prefers-color-scheme: dark) {
+  .mapa-picker__resumen {
+    background: #1F2937;
+    border-color: #374151;
+  }
+
+  .mapa-picker__direccion-texto {
+    color: #E5E7EB;
+  }
+
+  .mapa-picker__editor {
+    background: #1F2937;
+  }
+
+  .mapa-picker__header {
+    border-bottom-color: #374151;
+  }
+
+  .mapa-picker__header h3 {
+    color: #E5E7EB;
+  }
+
+  .mapa-picker__cerrar {
+    color: #9CA3AF;
+  }
+
+  .mapa-picker__cerrar:hover {
+    background: #374151;
+    color: #E5E7EB;
+  }
+
+  .mapa-picker__hint {
+    background: #111827;
+    color: #9CA3AF;
+  }
+
+  .mapa-picker__direccion-preview label {
+    color: #E5E7EB;
+  }
+
+  .mapa-picker__input-direccion {
+    background: #111827;
+    border-color: #374151;
+    color: #E5E7EB;
+  }
+
+  .mapa-picker__input-direccion:focus {
+    border-color: #0052DC;
+  }
+
+  .mapa-picker__cancelar {
+    background: #374151;
+    color: #E5E7EB;
+    border-color: #4B5563;
+  }
+
+  .mapa-picker__cancelar:hover {
+    background: #4B5563;
+  }
+
+  .mapa-picker__cargando {
+    background: #111827;
+    color: #9CA3AF;
+  }
 }
 
 /* ============ RESPONSIVE ============ */

@@ -772,7 +772,7 @@
 }
 /* Estilo base para el logo */
 .logologin {
-  height: 180px;
+  height: 60px;
   width: auto;
   display: block;
   object-fit: contain;
@@ -782,21 +782,21 @@
 /* Desktop (pantallas grandes) */
 @media (min-width: 1024px) {
   .logologin {
-    height: 250px;
+    height: 64px;
   }
 }
 
 /* Tablet (pantallas medianas) */
 @media (max-width: 1023px) and (min-width: 768px) {
   .logologin {
-    height: 200px;
+    height: 63px;
   }
 }
 
 /* Móvil (pantallas pequeñas) */
 @media (max-width: 767px) {
   .logologin {
-    height: 130px; /* Como pediste para móvil */
+    height: 120px; /* Como pediste para móvil */
   }
 }
 

@@ -1,41 +1,45 @@
-import React, { useState, useEffect } from 'react';
-import { Map } from 'react-map-free';
+import React, { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import './MapaPicker.css';
+
+// ✅ Carga el mapa solo cuando se necesita (lazy loading)
+const LeafletMap = lazy(() => import('./LeafletMap'));
 
 export default function MapaPicker({ onDireccionSelected, initialDireccion = '' }) {
   const [direccion, setDireccion] = useState(initialDireccion);
   const [modalAbierto, setModalAbierto] = useState(false);
-  const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(null);
   const [coordenadas, setCoordenadas] = useState(null);
 
-  // Centrado por defecto en Valencia, Carabobo
-  const defaultCenter = { lat: 10.1620, lng: -68.0077 };
+  // Centro de Venezuela (aproximado)
+  const defaultCenter = { lat: 8.0, lng: -66.0 };
+  const defaultZoom = 6;
 
-  // Actualizar dirección cuando cambia initialDireccion
   useEffect(() => {
     setDireccion(initialDireccion);
   }, [initialDireccion]);
 
-  const handleMapClick = (coords) => {
+  const handleMapClick = useCallback((coords) => {
     setCoordenadas(coords);
-    // Aquí deberías hacer una geocodificación inversa para obtener la dirección
-    // Por simplicidad, usamos una dirección genérica
     const direccionGenerada = `Ubicación seleccionada (${coords.lat.toFixed(6)}, ${coords.lng.toFixed(6)})`;
     setDireccion(direccionGenerada);
-    setUbicacionSeleccionada(coords);
-  };
+  }, []);
 
-  const handleConfirmar = () => {
+  const handleConfirmar = useCallback(() => {
     if (direccion) {
       onDireccionSelected(direccion);
     }
     setModalAbierto(false);
-  };
+  }, [direccion, onDireccionSelected]);
 
-  const handleCancelar = () => {
+  const handleCancelar = useCallback(() => {
     setDireccion(initialDireccion);
     setModalAbierto(false);
-  };
+    setCoordenadas(null);
+  }, [initialDireccion]);
+
+  const handleAbrirModal = useCallback(() => {
+    setModalAbierto(true);
+    setCoordenadas(null);
+  }, []);
 
   // Vista en modo resumen
   if (!modalAbierto) {
@@ -54,7 +58,7 @@ export default function MapaPicker({ onDireccionSelected, initialDireccion = '' 
           <button
             type="button"
             className="mapa-picker__boton-editar"
-            onClick={() => setModalAbierto(true)}
+            onClick={handleAbrirModal}
           >
             {direccion ? 'Editar' : 'Seleccionar'}
           </button>
@@ -75,20 +79,18 @@ export default function MapaPicker({ onDireccionSelected, initialDireccion = '' 
         </div>
 
         <div className="mapa-picker__mapa-container">
-          <div style={{ height: '350px', width: '100%', borderRadius: '8px', overflow: 'hidden' }}>
-            <Map
-              initialCenter={defaultCenter}
-              initialZoom={13}
-              markers={coordenadas ? [{ lat: coordenadas.lat, lng: coordenadas.lng }] : []}
-              onMapClick={(e) => {
-                // react-map-free pasa el evento con lat/lng
-                handleMapClick(e);
-              }}
-              className="mapa-picker__mapa"
-              width="100%"
-              height="100%"
+          <Suspense fallback={
+            <div className="mapa-picker__cargando">
+              Cargando mapa...
+            </div>
+          }>
+            <LeafletMap 
+              coordenadas={coordenadas}
+              onMapClick={handleMapClick}
+              defaultCenter={defaultCenter}
+              defaultZoom={defaultZoom}
             />
-          </div>
+          </Suspense>
         </div>
 
         <div className="mapa-picker__hint">
