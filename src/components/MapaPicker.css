@@ -1,6 +1,10 @@
+/* MapaPicker v2 - Estilos mejorados */
+
 .mapa-picker {
   width: 100%;
 }
+
+/* ============ VISTA COMPACTA ============ */
 
 .mapa-picker__resumen {
   display: flex;
@@ -10,86 +14,108 @@
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   padding: 12px 14px;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.9rem;
+  gap: 12px;
 }
 
-.mapa-picker__direccion {
+.mapa-picker__contenido {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #232B45;
   flex: 1;
   min-width: 0;
 }
 
-.mapa-picker__direccion svg {
+.mapa-picker__contenido svg {
   flex-shrink: 0;
   color: #1B4B8F;
+  stroke-width: 2;
 }
 
-.mapa-picker__direccion span {
+.mapa-picker__direccion-texto {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  color: #232B45;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: 1.3;
 }
 
 .mapa-picker__boton-editar {
   background: none;
   border: none;
   color: #1B4B8F;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 0.85rem;
-  text-decoration: underline;
+  font-family: 'Inter', sans-serif;
   cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: all 0.15s ease;
   flex-shrink: 0;
-  margin-left: 12px;
-  transition: color 0.15s ease;
 }
 
 .mapa-picker__boton-editar:hover {
+  background: rgba(27, 75, 143, 0.08);
   color: #232B45;
 }
 
-/* Editor modal */
-.mapa-picker__editor {
+/* ============ MODAL EDITOR ============ */
+
+.mapa-picker__modal {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.4);
   display: flex;
   align-items: flex-end;
   z-index: 1000;
-  animation: slideUp 0.3s ease-out;
+  animation: slideUpIn 0.3s ease-out;
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
 }
 
-@keyframes slideUp {
+@keyframes slideUpIn {
   from {
     opacity: 0;
-    transform: translateY(20px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 
-.mapa-picker__editor > div {
+.mapa-picker__editor {
   width: 100%;
   background: white;
   border-radius: 16px 16px 0 0;
   padding: 20px;
   max-height: 90vh;
   overflow-y: auto;
+  animation: slideUp 0.3s ease-out;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
 }
 
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Header */
 .mapa-picker__header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .mapa-picker__header h3 {
@@ -106,57 +132,79 @@
   font-size: 1.5rem;
   color: #6B7280;
   cursor: pointer;
-  padding: 0;
+  padding: 4px;
   width: 32px;
   height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.15s ease;
+  transition: all 0.15s ease;
+  border-radius: 6px;
 }
 
 .mapa-picker__cerrar:hover {
+  background: #f3f4f6;
   color: #232B45;
 }
 
+/* Búsqueda */
 .mapa-picker__busqueda {
   margin-bottom: 16px;
   position: relative;
 }
 
-.mapa-picker__busqueda input {
-  width: 100%;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.95rem;
-  padding: 12px 14px;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
+.mapa-picker__input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
   background: white;
-  color: #14182A;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0 12px;
   transition: border-color 0.15s ease;
 }
 
-.mapa-picker__busqueda input:focus {
-  outline: none;
+.mapa-picker__input-wrapper:focus-within {
   border-color: #1B4B8F;
   box-shadow: 0 0 0 2px rgba(27, 75, 143, 0.1);
 }
 
+.mapa-picker__input-wrapper svg {
+  color: #9ca3af;
+  flex-shrink: 0;
+  margin-right: 8px;
+}
+
+.mapa-picker__input-wrapper input {
+  flex: 1;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  border: none;
+  background: none;
+  padding: 12px 0;
+  color: #14182A;
+}
+
+.mapa-picker__input-wrapper input:focus {
+  outline: none;
+}
+
+.mapa-picker__input-wrapper input::placeholder {
+  color: #9ca3af;
+}
+
 .mapa-picker__spinner {
-  position: absolute;
-  right: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 0.8rem;
-  color: #6B7280;
-  animation: pulse 1.5s ease-in-out infinite;
+  font-size: 1.2rem;
+  color: #1B4B8F;
+  animation: spin 1s linear infinite;
 }
 
-@keyframes pulse {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 1; }
+@keyframes spin {
+  0% { transform: rotateZ(0deg); }
+  100% { transform: rotateZ(360deg); }
 }
 
+/* Sugerencias */
 .mapa-picker__sugerencias {
   position: absolute;
   top: 100%;
@@ -168,14 +216,14 @@
   border-radius: 0 0 8px 8px;
   list-style: none;
   margin: 0;
-  padding: 8px 0;
+  padding: 0;
   z-index: 10;
   max-height: 200px;
   overflow-y: auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
 }
 
 .mapa-picker__sugerencias li {
-  padding: 0;
   margin: 0;
 }
 
@@ -184,45 +232,80 @@
   background: none;
   border: none;
   text-align: left;
-  padding: 10px 14px;
+  padding: 12px 14px;
   font-size: 0.9rem;
   color: #14182A;
   cursor: pointer;
-  transition: background-color 0.1s ease;
   font-family: 'Inter', sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: background-color 0.1s ease;
 }
 
 .mapa-picker__sugerencias button:hover {
-  background-color: #f3f4f6;
+  background-color: #f9fafb;
+}
+
+.mapa-picker__sugerencias svg {
+  flex-shrink: 0;
+  color: #1B4B8F;
+  opacity: 0.5;
+}
+
+/* Mapa container */
+.mapa-picker__mapa-container {
+  position: relative;
+  margin-bottom: 16px;
+  background: #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.mapa-picker__cargando {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #6B7280;
+  z-index: 5;
+  white-space: nowrap;
 }
 
 .mapa-picker__mapa {
-  border-radius: 8px;
-  margin-bottom: 12px;
-  border: 1px solid #e5e7eb;
+  z-index: 1;
 }
 
+/* Hint */
 .mapa-picker__hint {
   font-family: 'Inter', sans-serif;
   font-size: 0.8rem;
   color: #6B7280;
   text-align: center;
-  margin: 0 0 16px;
+  padding: 12px;
+  background: #f9fafb;
+  border-radius: 8px;
+  margin-bottom: 16px;
   line-height: 1.4;
 }
 
+/* Acciones */
 .mapa-picker__acciones {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
 
 .mapa-picker__confirmar,
 .mapa-picker__cancelar {
-  flex: 1;
   font-family: 'Inter', sans-serif;
   font-weight: 700;
   font-size: 0.95rem;
-  padding: 12px;
+  padding: 12px 16px;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -235,33 +318,73 @@
 }
 
 .mapa-picker__confirmar:hover {
-  background: #1B4B8F;
-  opacity: 0.9;
+  background: #162d5c;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(27, 75, 143, 0.3);
+}
+
+.mapa-picker__confirmar:active {
+  transform: translateY(0);
 }
 
 .mapa-picker__cancelar {
   background: #f3f4f6;
-  color: #14182A;
-  border: 1px solid #e5e7eb;
+  color: #232B45;
+  border: 1px solid #d1d5db;
 }
 
 .mapa-picker__cancelar:hover {
   background: #eeeff2;
 }
 
+/* ============ LEAFLET OVERRIDES ============ */
+
+.mapa-picker__mapa .leaflet-container {
+  font-family: 'Inter', sans-serif;
+}
+
+.mapa-picker__mapa .leaflet-control-attribution {
+  font-size: 10px !important;
+}
+
+.mapa-picker__mapa .leaflet-marker-icon {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+/* ============ RESPONSIVE ============ */
+
 @media (max-width: 640px) {
-  .mapa-picker__editor > div {
+  .mapa-picker__editor {
     padding: 16px;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .mapa-picker__mapa {
+    height: 250px !important;
   }
 
   .mapa-picker__resumen {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
+    flex-wrap: wrap;
   }
 
-  .mapa-picker__boton-editar {
-    margin-left: 0;
-    align-self: flex-start;
+  .mapa-picker__acciones {
+    grid-template-columns: 1fr;
+  }
+
+  .mapa-picker__header {
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .mapa-picker__modal {
+    align-items: center;
+  }
+
+  .mapa-picker__editor {
+    border-radius: 12px;
+    max-width: 100%;
+    margin: 20px;
   }
 }
