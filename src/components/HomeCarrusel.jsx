@@ -7,7 +7,7 @@ import './HomeCarrusel.css'
 // navegación, con una fila de PromoCard con scroll horizontal.
 // Reutilizable: se usa tanto en Home.jsx (invitados) como en
 // DashboardMobile (usuarios logueados).
-function HomeCarrusel({ titulo, productos, tasaVes, verTodoTo = '/catalogo', cargando = false }) {
+function HomeCarrusel({ titulo, subtitulo, productos, tasaVes, verTodoTo = '/catalogo', cargando = false }) {
   const carruselRef = useRef(null)
 
   function scrollCarrusel(direccion) {
