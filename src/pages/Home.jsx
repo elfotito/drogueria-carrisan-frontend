@@ -4,6 +4,8 @@ import api from '../api/axios'
 import { useAuth } from '../context/AuthContext'
 import DashboardMobile from '../components/DashboardMobile'
 import HomeCarrusel from '../components/HomeCarrusel'
+import SeccionesCarrusel from '../components/SeccionesCarrusel'
+import { agruparPorLinea } from '../utils/agruparPorLinea'
 import './Home.css'
 
 const DIAS = ['L', 'M', 'M', 'J', 'V', 'S', 'D']
@@ -13,6 +15,7 @@ function Home() {
   const [stats, setStats] = useState(null)
   const [productos, setProductos] = useState([])
   const [ofertas, setOfertas] = useState([])
+  const [secciones, setSecciones] = useState([])
   const [tasaVes, setTasaVes] = useState(null)
   const [cargando, setCargando] = useState(true)
 
@@ -40,6 +43,7 @@ function Home() {
         setTasaVes(resTasa.data.usd_a_ves)
         setProductos(activos.slice(0, 12))
         setOfertas(activos.filter((p) => p.descuento_activo).slice(0, 12))
+        setSecciones(agruparPorLinea(activos))
       } catch (err) {
         console.error(err)
       } finally {
@@ -128,7 +132,6 @@ function Home() {
       {/* VITRINA — bloques estilo Walmart, mismo componente que usa el dashboard */}
       <HomeCarrusel
         titulo="Ofertas destacadas"
-        subtitulo="Hasta un 25% de descuento"
         productos={ofertas}
         tasaVes={tasaVes}
         verTodoTo="/catalogo"
@@ -136,10 +139,15 @@ function Home() {
       />
       <HomeCarrusel
         titulo="Algunos de nuestros productos"
-        subtitulo="Mas destacados de esta semana"
         productos={productos}
         tasaVes={tasaVes}
         verTodoTo="/catalogo"
+        cargando={cargando}
+      />
+      <SeccionesCarrusel
+        titulo="Rollbacks y más"
+        secciones={secciones}
+        tasaVes={tasaVes}
         cargando={cargando}
       />
 

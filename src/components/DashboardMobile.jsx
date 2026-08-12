@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import api from '../api/axios'
 import BottomNav from './BottomNav'
 import HomeCarrusel from './HomeCarrusel'
+import SeccionesCarrusel from './SeccionesCarrusel'
+import { agruparPorLinea } from '../utils/agruparPorLinea'
 import './DashboardMobile.css'
 
 // Tiles de acceso rápido. Centralizados acá para agregar/quitar fácil.
@@ -38,12 +40,13 @@ function DashboardMobile({ user }) {
   const [tasa, setTasa] = useState(null)
   const [ofertas, setOfertas] = useState([])
   const [productos, setProductos] = useState([])
+  const [secciones, setSecciones] = useState([])
   const [cargandoVitrina, setCargandoVitrina] = useState(true)
 
   useEffect(() => {
     api
       .get('/prices')
-      .then((res) => setTasa(Number(res.data.usd_a_ves)))
+      .then((res) => setTasa(res.data.usd_a_ves))
       .catch((err) => console.error(err))
 
     api
@@ -52,6 +55,7 @@ function DashboardMobile({ user }) {
         const activos = res.data.filter((p) => p.activo)
         setProductos(activos.slice(0, 12))
         setOfertas(activos.filter((p) => p.descuento_activo).slice(0, 12))
+        setSecciones(agruparPorLinea(activos))
       })
       .catch((err) => console.error(err))
       .finally(() => setCargandoVitrina(false))
@@ -100,18 +104,22 @@ function DashboardMobile({ user }) {
       {/* VITRINA — bloques estilo Walmart, mismo componente que usa el landing público */}
       <HomeCarrusel
         titulo="Ofertas destacadas"
-        subtitulo="Hasta un 25% de descuento"
         productos={ofertas}
         tasaVes={tasa}
-        verTodoTo="/ofertas"
+        verTodoTo="/catalogo"
         cargando={cargandoVitrina}
       />
       <HomeCarrusel
         titulo="Recomendados para ti"
-        subtitulo="Descubre lo que tenemos para ti"
         productos={productos}
         tasaVes={tasa}
-        verTodoTo="/hospitalaria"
+        verTodoTo="/catalogo"
+        cargando={cargandoVitrina}
+      />
+      <SeccionesCarrusel
+        titulo="Rollbacks y más"
+        secciones={secciones}
+        tasaVes={tasa}
         cargando={cargandoVitrina}
       />
 
