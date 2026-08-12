@@ -129,7 +129,7 @@ function TasaCambio() {
       
       // Actualizar automáticamente en el backend
       try {
-        await api.patch('/prices/tasa-cambio', { usd_a_ves: tasa.valor })
+        await api.patch('/prices/tasa-cambio', { usd_a_ves: Number(tasa.valor) })
         
         // Guardar que ya actualizamos hoy
         const ahoraVzla = obtenerHoraVenezuela(new Date())
@@ -185,7 +185,7 @@ function TasaCambio() {
         
         if (valor && !isNaN(valor) && valor > 0) {
           return {
-            valor: Number(valor),
+            valor: Number(valor).toFixed(2),
             fuente: fuente.nombre
           }
         }
