@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../api/axios'
 import { useAuth } from '../context/AuthContext'
 import DashboardMobile from '../components/DashboardMobile'
+import HomeCarrusel from '../components/HomeCarrusel'
 import './Home.css'
 
 const DIAS = ['L', 'M', 'M', 'J', 'V', 'S', 'D']
@@ -11,8 +12,9 @@ function Home() {
   const { user } = useAuth()
   const [stats, setStats] = useState(null)
   const [productos, setProductos] = useState([])
+  const [ofertas, setOfertas] = useState([])
+  const [tasaVes, setTasaVes] = useState(null)
   const [cargando, setCargando] = useState(true)
-  const carruselRef = useRef(null)
 
   useEffect(() => {
     // Si hay sesión activa, no hace falta cargar los datos del landing
@@ -35,7 +37,9 @@ function Home() {
           marcas: resMarcas.data.length,
           tasa: resTasa.data.usd_a_ves,
         })
-        setProductos(activos.slice(0, 8))
+        setTasaVes(resTasa.data.usd_a_ves)
+        setProductos(activos.slice(0, 12))
+        setOfertas(activos.filter((p) => p.descuento_activo).slice(0, 12))
       } catch (err) {
         console.error(err)
       } finally {
@@ -44,10 +48,6 @@ function Home() {
     }
     cargarDatos()
   }, [user])
-
-  function scrollCarrusel(direccion) {
-    carruselRef.current?.scrollBy({ left: direccion * 320, behavior: 'smooth' })
-  }
 
   // Usuario logueado -> dashboard mobile (bottom nav + accesos rápidos)
   // en vez del landing público. Todos los hooks de arriba ya se ejecutaron,
@@ -125,39 +125,21 @@ function Home() {
         </div>
       </section>
 
-      {/* CATÁLOGO */}
-      <section className="catalogo">
-        <div className="catalogo__header">
-          <div>
-            <span className="eyebrow">
-              <span className="dot dot--teal" /><span className="dot dot--indigo" />
-              Catálogo
-            </span>
-            <h2>Algunos de nuestros productos</h2>
-          </div>
-          <div className="catalogo__nav">
-            <button onClick={() => scrollCarrusel(-1)} aria-label="Anterior">‹</button>
-            <button onClick={() => scrollCarrusel(1)} aria-label="Siguiente">›</button>
-          </div>
-        </div>
-
-        {cargando ? (
-          <p>Cargando productos...</p>
-        ) : (
-          <div className="carrusel" ref={carruselRef}>
-            {productos.map((producto) => (
-              <div key={producto.id} className="carrusel__card">
-                <img src={producto.foto_url || '/placeholder.png'} alt={producto.nombre_comercial} />
-                <h4>{producto.nombre_comercial}</h4>
-                <p className="carrusel__marca">{producto.marcas?.nombre}</p>
-                <p className="carrusel__precio">${producto.precio_usd.toFixed(2)}</p>
-              </div>
-            ))}
-          </div>
-        )}
-
-        <Link to="/catalogo" className="ver-todo">Ver catálogo completo →</Link>
-      </section>
+      {/* VITRINA — bloques estilo Walmart, mismo componente que usa el dashboard */}
+      <HomeCarrusel
+        titulo="Ofertas destacadas"
+        productos={ofertas}
+        tasaVes={tasaVes}
+        verTodoTo="/catalogo"
+        cargando={cargando}
+      />
+      <HomeCarrusel
+        titulo="Algunos de nuestros productos"
+        productos={productos}
+        tasaVes={tasaVes}
+        verTodoTo="/catalogo"
+        cargando={cargando}
+      />
 
       {/* ABOUT — cierra el loop con el hero */}
       <section className="about">

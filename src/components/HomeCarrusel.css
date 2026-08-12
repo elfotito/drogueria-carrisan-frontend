@@ -1,0 +1,120 @@
+/* ============================================
+   HomeCarrusel — bloque de vitrina estilo Walmart
+   ============================================ */
+
+.home-carrusel {
+  width: 100%;
+  padding: 20px 16px;
+}
+
+.home-carrusel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.home-carrusel__header h2 {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: #14182A;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.home-carrusel__acciones {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.home-carrusel__ver-todo {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1B4B8F;
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
+.home-carrusel__flechas {
+  display: none;
+  gap: 8px;
+}
+
+.home-carrusel__flechas button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid #e3e4e5;
+  background: #FFFFFF;
+  color: #14182A;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.home-carrusel__flechas button:hover {
+  background: #EFF4FB;
+  border-color: #1B4B8F;
+  color: #1B4B8F;
+}
+
+.home-carrusel__fila {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  padding-bottom: 4px;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.home-carrusel__fila::-webkit-scrollbar {
+  display: none;
+}
+
+.home-carrusel__skeleton {
+  flex: 0 0 156px;
+  aspect-ratio: 0.72 / 1;
+  background: linear-gradient(90deg, #f0f1f3 25%, #f7f8f9 37%, #f0f1f3 63%);
+  background-size: 400% 100%;
+  border-radius: 12px;
+  animation: home-carrusel-shimmer 1.4s ease infinite;
+}
+
+@keyframes home-carrusel-shimmer {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+
+/* ---------- Tablet: más padding, flechas visibles ---------- */
+@media (min-width: 768px) {
+  .home-carrusel {
+    padding: 28px 32px;
+  }
+  .home-carrusel__header h2 {
+    font-size: 1.35rem;
+  }
+  .home-carrusel__flechas {
+    display: flex;
+  }
+  .home-carrusel__skeleton {
+    flex: 0 0 190px;
+  }
+}
+
+/* ---------- Desktop ---------- */
+@media (min-width: 1200px) {
+  .home-carrusel {
+    padding: 32px 48px;
+    max-width: 1800px;
+    margin: 0 auto;
+  }
+  .home-carrusel__skeleton {
+    flex: 0 0 210px;
+  }
+}
