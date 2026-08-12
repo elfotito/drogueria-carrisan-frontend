@@ -1055,6 +1055,6 @@ body {
 @media (min-width: 1600px) {
   .navbar__main,
   .navbar__secondary-inner {
-    max-width: 1600px;
+    max-width: 1780px;
   }
 }
