@@ -103,7 +103,7 @@ function DashboardMobile({ user }) {
         subtitulo="Hasta un 25% de descuento"
         productos={ofertas}
         tasaVes={tasa}
-        verTodoTo="/catalogo"
+        verTodoTo="/ofertas"
         cargando={cargandoVitrina}
       />
       <HomeCarrusel
@@ -111,7 +111,7 @@ function DashboardMobile({ user }) {
         subtitulo="Descubre lo que tenemos para ti"
         productos={productos}
         tasaVes={tasa}
-        verTodoTo="/catalogo"
+        verTodoTo="/hospitalaria"
         cargando={cargandoVitrina}
       />
 

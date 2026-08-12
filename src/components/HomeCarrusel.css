@@ -10,11 +10,25 @@
 
 .home-carrusel__header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
   margin-bottom: 25px;
   margin-top: 25px;
+}
+
+.home-carrusel__header-textos {
+  display: flex;
+  flex-direction: column;
+}
+
+.home-carrusel__subtitulo {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 500;
+  font-size: 0.85rem;
+  color: #737780;
+  margin: 2px 0 0 0;
+  letter-spacing: -0.01em;
 }
 
 .home-carrusel__header h2 {
@@ -22,21 +36,6 @@
   font-weight: 700;
   font-size: 1.15rem;
   color: #14182A;
-  margin: 0;
-  letter-spacing: -0.01em;
-}
-
-.home-carrusel__header-textos {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.home-carrusel__subtitulo {
-  font-family: 'Manrope', sans-serif;
-  font-weight: 500;
-  font-size: 0.875rem;
-  color: #737780;
   margin: 0;
   letter-spacing: -0.01em;
 }
