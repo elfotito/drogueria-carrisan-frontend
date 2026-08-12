@@ -1,5 +1,5 @@
 // Agrupa productos activos por su "linea" (categoría) y arma columnas de
-// 4 productos c/u, listas para el bloque estilo "Rollbacks & more".
+
 export function agruparPorLinea(productos, maxSecciones = 6) {
   const grupos = {}
   for (const p of productos) {
