@@ -129,7 +129,7 @@ function TasaCambio() {
       
       // Actualizar automáticamente en el backend
       try {
-        await api.patch('/prices/tasa-cambio', { usd_a_ves: Number(tasa.valor) })
+        await api.patch('/prices/tasa-cambio', { usd_a_ves: Number(parseFloat(tasa.valor).toFixed(2)) })
         
         // Guardar que ya actualizamos hoy
         const ahoraVzla = obtenerHoraVenezuela(new Date())
@@ -185,7 +185,7 @@ function TasaCambio() {
         
         if (valor && !isNaN(valor) && valor > 0) {
           return {
-            valor: Number(parseFloat(valor).toFixed(2)),
+            valor: parseFloat(valor),
             fuente: fuente.nombre
           }
         }
@@ -257,7 +257,7 @@ function TasaCambio() {
 
   function usarTasaReferencia() {
     if (tasaReferencia?.valor) {
-      setNuevaTasa(tasaReferencia.valor.toString())
+      setNuevaTasa(Number(tasaReferencia.valor).toString())
     }
   }
 
@@ -375,7 +375,7 @@ function TasaCambio() {
           ) : tasaReferencia ? (
             <div className="referencia-info">
               <div className="referencia-valor">
-                {tasaReferencia.valor.toFixed(2)} Bs/USD
+                {Number(tasaReferencia.valor).toFixed(2)} Bs/USD
               </div>
               <div className="referencia-fuente">
                 Fuente: {tasaReferencia.fuente}
