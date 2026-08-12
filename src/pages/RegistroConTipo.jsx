@@ -229,7 +229,7 @@ function RegistroConTipo() {
         <main className="auth-container">
           <Link to="/" className="auth-logo">
             <img
-              src={require('../assets/logo/minilogo color sin fondo.png')}
+              src={require('../assets/minilogo color sin fondo.png')}
               alt="Logo"
               className="logologin"
             />
@@ -293,7 +293,7 @@ function RegistroConTipo() {
         <main className="auth-container">
           <Link to="/" className="auth-logo">
             <img
-              src={require('../assets/logo/minilogo color sin fondo.png')}
+              src={require('../assets/minilogo color sin fondo.png')}
               alt="Logo"
               className="logologin"
             />
@@ -538,7 +538,7 @@ function RegistroConTipo() {
       <main className="auth-container">
         <Link to="/" className="auth-logo">
           <img
-            src={require('../assets/logo/minilogo color sin fondo.png')}
+            src={require('../assets/minilogo color sin fondo.png')}
             alt="Logo"
             className="logologin"
           />

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import logo from '../assets/logo/minilogo color sin fondo.png'
+import logo from '../assets/minilogo color sin fondo.png'
 import api from '../api/axios'
 import { validarEmail } from '../utils/validadores'
 import './Auth.css'
