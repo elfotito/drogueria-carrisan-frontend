@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import api from '../api/axios'
 import MapaPicker from '../components/MapaPicker'
+import logo from '../assets/minilogo color sin fondo.png'
+import { Map } from 'react-map-free';
 import {
   validarEmail,
   validarPassword,
@@ -229,7 +231,7 @@ function RegistroConTipo() {
         <main className="auth-container">
           <Link to="/" className="auth-logo">
             <img
-              src={require('../assets/minilogo color sin fondo.png')}
+              src={logo}
               alt="Logo"
               className="logologin"
             />
@@ -293,7 +295,7 @@ function RegistroConTipo() {
         <main className="auth-container">
           <Link to="/" className="auth-logo">
             <img
-              src={require('../assets/minilogo color sin fondo.png')}
+              src={logo}
               alt="Logo"
               className="logologin"
             />
@@ -538,7 +540,7 @@ function RegistroConTipo() {
       <main className="auth-container">
         <Link to="/" className="auth-logo">
           <img
-            src={require('../assets/minilogo color sin fondo.png')}
+            src={logo}
             alt="Logo"
             className="logologin"
           />
