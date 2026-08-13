@@ -1,0 +1,270 @@
+/* ============================================
+   Aviso de Privacidad — layout tipo Walmart:
+   índice con anclas + secciones numeradas.
+   Paleta: Azul #0052DC · Índigo #1A1A3A · Paper #FBFAF7
+   ============================================ */
+
+.privacidad-page {
+  background: #FBFAF7;
+  min-height: 100vh;
+  padding: 24px 16px 60px;
+}
+
+.privacidad-header {
+  max-width: 900px;
+  margin: 0 auto 16px;
+}
+
+.privacidad-header h1 {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.5rem;
+  color: #1A1A3A;
+  margin: 0 0 6px;
+}
+
+.privacidad-header__fecha {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: #74767c;
+  margin: 0;
+}
+
+/* ---------- Aviso destacado superior ---------- */
+.privacidad-aviso {
+  max-width: 900px;
+  margin: 0 auto 16px;
+  background: #E9EFFC;
+  border: 1px solid #0052DC;
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.88rem;
+  color: #1A1A3A;
+  line-height: 1.5;
+}
+
+/* ---------- Toggle del índice (solo mobile) ---------- */
+.privacidad-indice__toggle {
+  max-width: 900px;
+  margin: 0 auto 12px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #FFFFFF;
+  border: 1px solid #e3e4e5;
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #1A1A3A;
+  cursor: pointer;
+}
+
+.privacidad-indice__toggle svg {
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.privacidad-indice__toggle svg.rotado {
+  transform: rotate(180deg);
+}
+
+/* ---------- Layout general: índice + contenido ---------- */
+.privacidad-layout {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+}
+
+/* ---------- Índice ---------- */
+.privacidad-indice__titulo {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #74767c;
+  margin: 0 0 10px;
+}
+
+.privacidad-indice__lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.privacidad-indice__lista a {
+  display: block;
+  padding: 7px 10px;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #464646;
+  text-decoration: none;
+  line-height: 1.35;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.privacidad-indice__lista a:hover {
+  background: #E9EFFC;
+  color: #0052DC;
+}
+
+/* Índice mobile: caja abierta debajo del toggle, grid de 2 columnas */
+.privacidad-indice--mobile {
+  max-width: 900px;
+  margin: 0 auto 16px;
+  background: #FFFFFF;
+  border: 1px solid #e3e4e5;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.privacidad-indice--mobile .privacidad-indice__lista {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2px;
+}
+
+/* ---------- Contenido ---------- */
+.privacidad-contenido {
+  flex: 1;
+  min-width: 0;
+  max-width: 900px;
+  margin: 0 auto;
+  background: #FFFFFF;
+  border: 1px solid #e3e4e5;
+  border-radius: 16px;
+  padding: 24px 20px;
+}
+
+.privacidad-seccion {
+  scroll-margin-top: 90px; /* offset para que el ancla no quede tapada */
+  padding: 20px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.privacidad-seccion:first-child {
+  padding-top: 0;
+}
+
+.privacidad-seccion:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.privacidad-seccion h2 {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: #1A1A3A;
+  margin: 0 0 10px;
+}
+
+.privacidad-seccion h3 {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: #1A1A3A;
+  margin: 16px 0 6px;
+}
+
+.privacidad-seccion p {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  color: #464646;
+  line-height: 1.6;
+  margin: 0 0 12px;
+}
+
+.privacidad-seccion p:last-child {
+  margin-bottom: 0;
+}
+
+.privacidad-seccion a {
+  color: #0052DC;
+  font-weight: 600;
+}
+
+.privacidad-lista {
+  margin: 0 0 12px;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.privacidad-lista li {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  color: #464646;
+  line-height: 1.55;
+}
+
+.privacidad-lista li:last-child {
+  margin-bottom: 0;
+}
+
+/* ---------- Caja destacada dentro de una sección ---------- */
+.privacidad-destacado {
+  background: #F5F5F7;
+  border-left: 3px solid #1A1A3A;
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.87rem;
+  color: #1A1A3A;
+  line-height: 1.55;
+  margin: 0 0 12px;
+}
+
+/* ---------- Visibilidad responsive ---------- */
+.privacidad-desktop-only {
+  display: none;
+}
+
+.privacidad-mobile-only {
+  display: flex;
+}
+
+@media (min-width: 900px) {
+  .privacidad-desktop-only {
+    display: block;
+  }
+
+  .privacidad-mobile-only {
+    display: none !important;
+  }
+
+  .privacidad-page {
+    padding: 40px 40px 80px;
+  }
+
+  .privacidad-header h1 {
+    font-size: 2rem;
+  }
+
+  .privacidad-indice {
+    flex: 0 0 260px;
+    position: sticky;
+    top: 130px; /* debajo del navbar desktop (fila principal + secundaria) */
+  }
+
+  .privacidad-contenido {
+    margin: 0;
+    padding: 36px 40px;
+  }
+
+  .privacidad-seccion h2 {
+    font-size: 1.2rem;
+  }
+}
