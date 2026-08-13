@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import BottomNav from './BottomNav'
 import './Ayuda.css'
 
 // ---------------------------------------------------------
@@ -324,6 +325,7 @@ function Ayuda() {
           <a href="mailto:ventas@carrisan.com" className="ayuda-banner__cta">Escríbenos</a>
         </div>
       </div>
+      <BottomNav />
     </div>
   )
 }

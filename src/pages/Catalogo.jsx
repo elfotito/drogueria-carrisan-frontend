@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import api from '../api/axios'
 import ProductCard from '../components/ProductCard'
 import ProductCardSkeleton from '../components/Productcardskeleton'
+import BottomNav from './BottomNav'
 import './Catalogo.css'
 
 const categoriasFiltro = [
@@ -444,6 +445,7 @@ useEffect(() => {
           )}
         </main>
       </div>
+      <BottomNav />
     </div>
   )
 }
