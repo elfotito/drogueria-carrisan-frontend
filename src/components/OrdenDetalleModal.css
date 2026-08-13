@@ -93,20 +93,51 @@
   text-transform: capitalize;
 }
 
-.odm-cliente {
-  font-size: 0.85rem;
-  color: #5B6270;
-  margin: 0 0 4px;
-}
-
-.odm-cliente strong {
-  color: #14182A;
-}
-
 .odm-divider {
   height: 1px;
   background: #E7E5DE;
   margin: 16px 0;
+}
+
+/* ---------------------------------------------------------
+   Cliente
+--------------------------------------------------------- */
+.odm-cliente {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 4px 0 0;
+}
+
+.odm-cliente-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1B4B8F, #12A594);
+  color: #FBFAF7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.odm-cliente-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.odm-cliente-info strong {
+  color: #14182A;
+  font-size: 0.9rem;
+}
+
+.odm-cliente-info span {
+  color: #5B6270;
+  font-size: 0.8rem;
 }
 
 /* ---------------------------------------------------------
@@ -126,7 +157,17 @@
   color: #93650B;
 }
 
-.badge--finalizado {
+.badge--verificado {
+  background: #E7EFFA;
+  color: #1B4B8F;
+}
+
+.badge--enviado {
+  background: #E8E8EE;
+  color: #232B45;
+}
+
+.badge--entregado {
   background: #E1F5EF;
   color: #0E7C63;
 }
@@ -137,7 +178,82 @@
 }
 
 /* ---------------------------------------------------------
+   Secciones genéricas
+--------------------------------------------------------- */
+.odm-section {
+  margin: 0;
+}
+
+.odm-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: #14182A;
+  margin: 0 0 12px;
+}
+
+.odm-section-icon {
+  font-size: 1rem;
+}
+
+/* ---------------------------------------------------------
+   Tarjeta de envío
+--------------------------------------------------------- */
+.odm-envio-card {
+  background: #F7F6F1;
+  border-left: 3px solid;
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.odm-envio-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.odm-envio-label {
+  font-size: 0.76rem;
+  color: #5B6270;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.odm-envio-valor {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #14182A;
+  text-align: right;
+}
+
+.odm-gratis {
+  color: #0E7C63;
+}
+
+.odm-envio-direccion {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 6px;
+  border-top: 1px solid #E7E5DE;
+}
+
+.odm-envio-direccion .odm-envio-valor {
+  text-align: left;
+  font-weight: 500;
+}
+
+/* ---------------------------------------------------------
    Lista de productos
+   (antes usaba nombres BEM con "__" que no coincidían con el
+   JSX, que usa guiones simples — quedaron unificados acá)
 --------------------------------------------------------- */
 .odm-items {
   display: flex;
@@ -151,7 +267,7 @@
   gap: 12px;
 }
 
-.odm-item__media {
+.odm-item-media {
   width: 52px;
   height: 52px;
   flex-shrink: 0;
@@ -163,25 +279,23 @@
   justify-content: center;
 }
 
-.odm-item__media img {
+.odm-item-media img {
   width: 100%;
   height: 100%;
   object-fit: contain;
   padding: 4px;
 }
 
-.odm-item__media-placeholder {
-  font-size: 0.6rem;
-  color: #A9AC9F;
-  text-align: center;
+.odm-item-placeholder {
+  font-size: 1.3rem;
 }
 
-.odm-item__body {
+.odm-item-body {
   flex: 1;
   min-width: 0;
 }
 
-.odm-item__nombre {
+.odm-item-nombre {
   font-weight: 600;
   font-size: 0.88rem;
   color: #14182A;
@@ -189,14 +303,14 @@
   line-height: 1.3;
 }
 
-.odm-item__cantidad {
+.odm-item-cantidad {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.78rem;
   color: #5B6270;
   margin: 0;
 }
 
-.odm-item__subtotal {
+.odm-item-subtotal {
   font-family: 'JetBrains Mono', monospace;
   font-weight: 700;
   font-size: 0.9rem;
@@ -206,20 +320,70 @@
 }
 
 /* ---------------------------------------------------------
-   Total
+   Totales
 --------------------------------------------------------- */
-.odm-total {
+.odm-totales {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.odm-total-row {
+  display: flex;
   justify-content: space-between;
+  font-size: 0.85rem;
+  color: #5B6270;
+}
+
+.odm-total-final {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 8px;
+  border-top: 1px solid #E7E5DE;
   font-weight: 700;
   font-size: 1rem;
   color: #14182A;
 }
 
-.odm-total__valor {
+.odm-total-valor {
   font-family: 'JetBrains Mono', monospace;
   font-weight: 800;
   font-size: 1.25rem;
   color: #12A594;
+}
+
+/* ---------------------------------------------------------
+   Select para cambiar estado (uso admin)
+--------------------------------------------------------- */
+.odm-estado-select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1.5px solid #E7E5DE;
+  background: #FFFFFF;
+  color: #14182A;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.odm-estado-select:focus {
+  outline: none;
+  border-color: #1B4B8F;
+  box-shadow: 0 0 0 3px rgba(27, 75, 143, 0.12);
+}
+
+/* ---------------------------------------------------------
+   Notas
+--------------------------------------------------------- */
+.odm-notas {
+  font-size: 0.85rem;
+  color: #5B6270;
+  line-height: 1.5;
+  margin: 0;
+  background: #F7F6F1;
+  border-radius: 10px;
+  padding: 10px 12px;
 }
