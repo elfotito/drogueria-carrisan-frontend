@@ -1,402 +1,236 @@
-/* MapaPicker - Estilos optimizados */
+import { useEffect, useRef, useState, useCallback } from 'react';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import './MapaPicker.css';
 
-.mapa-picker {
-  width: 100%;
-}
+// Corrige el problema común de íconos rotos de Leaflet con bundlers (Vite/Webpack)
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+});
 
-/* ============ VISTA COMPACTA ============ */
+// Centro por defecto: Valencia, Carabobo. Cámbialo con la prop initialPosition.
+const CENTRO_DEFECTO = { lat: 10.1620, lng: -67.9944 };
+const ZOOM_DEFECTO = 13;
 
-.mapa-picker__resumen {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 12px 14px;
-  gap: 12px;
-  min-height: 48px;
-}
+/**
+ * MapaPicker
+ * Selector de dirección sobre un mapa Leaflet, con geocodificación inversa
+ * gratuita: usa LocationIQ si se provee apiKey (5000 solicitudes/día gratis),
+ * y cae automáticamente a Nominatim/OpenStreetMap si no hay key o falla.
+ *
+ * Props:
+ * - apiKey           (string, opcional) API key gratuita de LocationIQ.
+ * - initialPosition  ({lat, lng}, opcional) posición inicial del marcador.
+ * - onSelect         (function) recibe { lat, lng, direccion, detalle }
+ *                     cada vez que se confirma una ubicación.
+ */
+export default function MapaPicker({ apiKey, initialPosition, onSelect }) {
+  const mapRef = useRef(null);
+  const mapInstance = useRef(null);
+  const markerRef = useRef(null);
+  const debounceRef = useRef(null);
 
-.mapa-picker__contenido {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex: 1;
-  min-width: 0;
-}
+  const [position, setPosition] = useState(initialPosition || CENTRO_DEFECTO);
+  const [direccion, setDireccion] = useState('');
+  const [detalle, setDetalle] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [query, setQuery] = useState('');
+  const [sugerencias, setSugerencias] = useState([]);
 
-.mapa-picker__contenido svg {
-  flex-shrink: 0;
-  color: #0052DC;
-  stroke-width: 2;
-}
+  const parsearDireccion = (data) => {
+    const a = data.address || {};
+    const calle = a.road || a.pedestrian || a.footway || '';
+    const sector = a.suburb || a.neighbourhood || a.quarter || '';
+    const ciudad = a.city || a.town || a.village || a.municipality || '';
+    const estado = a.state || '';
+    const resumen =
+      [calle, sector, ciudad, estado].filter(Boolean).join(', ') ||
+      data.display_name ||
+      'Ubicación sin nombre de calle disponible';
+    return { calle, sector, ciudad, estado, resumen, raw: data.display_name || '' };
+  };
 
-.mapa-picker__direccion-texto {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.9rem;
-  color: #1F2937;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 1.3;
-}
+  const reverseGeocodeNominatim = async (lat, lng) => {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`,
+      { headers: { 'Accept-Language': 'es' } }
+    );
+    if (!res.ok) throw new Error('nominatim-fail');
+    return parsearDireccion(await res.json());
+  };
 
-.mapa-picker__boton-editar {
-  background: none;
-  border: none;
-  color: #0052DC;
-  font-weight: 700;
-  font-size: 0.85rem;
-  font-family: 'Inter', sans-serif;
-  cursor: pointer;
-  padding: 6px 12px;
-  border-radius: 6px;
-  transition: all 0.15s ease;
-  flex-shrink: 0;
-}
+  // --- Geocodificación inversa: coordenadas -> dirección ---
+  const reverseGeocode = useCallback(async (lat, lng) => {
+    setLoading(true);
+    setError('');
+    try {
+      let resultado;
+      if (apiKey) {
+        try {
+          const res = await fetch(
+            `https://us1.locationiq.com/v1/reverse?key=${apiKey}&lat=${lat}&lon=${lng}&format=json&addressdetails=1`
+          );
+          if (!res.ok) throw new Error('locationiq-fail');
+          resultado = parsearDireccion(await res.json());
+        } catch {
+          resultado = await reverseGeocodeNominatim(lat, lng); // respaldo automático
+        }
+      } else {
+        resultado = await reverseGeocodeNominatim(lat, lng);
+      }
+      setDireccion(resultado.resumen);
+      setDetalle(resultado);
+    } catch {
+      setError('No se pudo obtener la dirección automáticamente. Puedes escribirla manualmente.');
+      setDireccion('');
+      setDetalle(null);
+    } finally {
+      setLoading(false);
+    }
+  }, [apiKey]);
 
-.mapa-picker__boton-editar:hover {
-  background: rgba(0, 82, 220, 0.08);
-  color: #1E293B;
-}
+  // --- Búsqueda de direcciones para el buscador (autocompletar) ---
+  const buscarDireccion = useCallback((texto) => {
+    clearTimeout(debounceRef.current);
+    if (!texto || texto.length < 4) {
+      setSugerencias([]);
+      return;
+    }
+    debounceRef.current = setTimeout(async () => {
+      try {
+        const url = apiKey
+          ? `https://us1.locationiq.com/v1/search?key=${apiKey}&q=${encodeURIComponent(texto + ', Venezuela')}&format=json&countrycodes=ve&limit=5`
+          : `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(texto + ', Venezuela')}&format=json&countrycodes=ve&limit=5`;
+        const res = await fetch(url, apiKey ? undefined : { headers: { 'Accept-Language': 'es' } });
+        const data = await res.json();
+        setSugerencias(Array.isArray(data) ? data : []);
+      } catch {
+        setSugerencias([]);
+      }
+    }, 500);
+  }, [apiKey]);
 
-/* ============ MODAL EDITOR ============ */
+  const moverA = (lat, lng) => {
+    setPosition({ lat, lng });
+    mapInstance.current?.setView([lat, lng], 17);
+    markerRef.current?.setLatLng([lat, lng]);
+    reverseGeocode(lat, lng);
+  };
 
-.mapa-picker__modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  animation: fadeIn 0.25s ease-out;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-}
+  const seleccionarSugerencia = (s) => {
+    setQuery(s.display_name);
+    setSugerencias([]);
+    moverA(parseFloat(s.lat), parseFloat(s.lon));
+  };
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
+  const usarMiUbicacion = () => {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition((pos) => {
+      moverA(pos.coords.latitude, pos.coords.longitude);
+    });
+  };
 
-.mapa-picker__editor {
-  width: 90%;
-  max-width: 700px;
-  background: white;
-  border-radius: 16px;
-  padding: 24px;
-  max-height: 90vh;
-  overflow-y: auto;
-  animation: slideUp 0.3s ease-out;
-  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.25);
-}
+  // --- Inicializar el mapa una sola vez ---
+  useEffect(() => {
+    if (mapInstance.current) return;
 
-@keyframes slideUp {
-  from { transform: translateY(30px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
+    const map = L.map(mapRef.current).setView([position.lat, position.lng], ZOOM_DEFECTO);
 
-/* Header */
-.mapa-picker__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #e5e7eb;
-}
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      maxZoom: 19,
+    }).addTo(map);
 
-.mapa-picker__header h3 {
-  font-family: 'Manrope', sans-serif;
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #1E293B;
-  margin: 0;
-}
+    const marker = L.marker([position.lat, position.lng], { draggable: true }).addTo(map);
 
-.mapa-picker__cerrar {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  color: #6B7280;
-  cursor: pointer;
-  padding: 4px;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.15s ease;
-  border-radius: 6px;
-}
+    marker.on('dragend', () => {
+      const { lat, lng } = marker.getLatLng();
+      setPosition({ lat, lng });
+      reverseGeocode(lat, lng);
+    });
 
-.mapa-picker__cerrar:hover {
-  background: #f3f4f6;
-  color: #1E293B;
-}
+    map.on('click', (e) => {
+      const { lat, lng } = e.latlng;
+      marker.setLatLng([lat, lng]);
+      setPosition({ lat, lng });
+      reverseGeocode(lat, lng);
+    });
 
-/* Mapa container */
-.mapa-picker__mapa-container {
-  position: relative;
-  margin-bottom: 16px;
-  background: #e5e7eb;
-  border-radius: 8px;
-  overflow: hidden;
-  height: 350px;
-}
+    mapInstance.current = map;
+    markerRef.current = marker;
+    reverseGeocode(position.lat, position.lng);
 
-.mapa-picker__cargando {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  font-family: 'Inter', sans-serif;
-  color: #6B7280;
-  background: #f3f4f6;
-}
+    return () => {
+      map.remove();
+      mapInstance.current = null;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-.mapa-picker__mapa {
-  width: 100%;
-  height: 100%;
-  border-radius: 8px;
-}
+  // --- Notificar al componente padre cuando cambia la selección ---
+  useEffect(() => {
+    if (!onSelect || !detalle) return;
+    onSelect({ lat: position.lat, lng: position.lng, direccion, detalle });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [direccion, detalle]);
 
-/* Hint */
-.mapa-picker__hint {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.85rem;
-  color: #6B7280;
-  text-align: center;
-  padding: 10px;
-  background: #f9fafb;
-  border-radius: 8px;
-  margin-bottom: 16px;
-  line-height: 1.4;
-}
+  return (
+    <div className="mapa-picker">
+      <div className="mapa-picker__buscador">
+        <input
+          type="text"
+          value={query}
+          placeholder="Busca una calle, sector o punto de referencia…"
+          onChange={(e) => {
+            setQuery(e.target.value);
+            buscarDireccion(e.target.value);
+          }}
+        />
+        <button
+          type="button"
+          className="mapa-picker__ubicacion-btn"
+          onClick={usarMiUbicacion}
+          title="Usar mi ubicación actual"
+        >
+          📍
+        </button>
+        {sugerencias.length > 0 && (
+          <ul className="mapa-picker__sugerencias">
+            {sugerencias.map((s) => (
+              <li key={s.place_id} onClick={() => seleccionarSugerencia(s)}>
+                {s.display_name}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
 
-/* Dirección preview */
-.mapa-picker__direccion-preview {
-  margin-bottom: 16px;
-}
+      <div ref={mapRef} className="mapa-picker__mapa" />
 
-.mapa-picker__direccion-preview label {
-  display: block;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: #1F2937;
-  margin-bottom: 4px;
-}
-
-.mapa-picker__input-direccion {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1.5px solid #d1d5db;
-  border-radius: 8px;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.95rem;
-  transition: border-color 0.15s ease;
-}
-
-.mapa-picker__input-direccion:focus {
-  outline: none;
-  border-color: #0052DC;
-  box-shadow: 0 0 0 3px rgba(0, 82, 220, 0.1);
-}
-
-/* Acciones */
-.mapa-picker__acciones {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.mapa-picker__confirmar,
-.mapa-picker__cancelar {
-  font-family: 'Inter', sans-serif;
-  font-weight: 700;
-  font-size: 0.95rem;
-  padding: 12px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border: none;
-}
-
-.mapa-picker__confirmar {
-  background: #0052DC;
-  color: white;
-}
-
-.mapa-picker__confirmar:hover {
-  background: #003d9e;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 82, 220, 0.35);
-}
-
-.mapa-picker__confirmar:active {
-  transform: translateY(0);
-}
-
-.mapa-picker__cancelar {
-  background: #f3f4f6;
-  color: #1E293B;
-  border: 1px solid #d1d5db;
-}
-
-.mapa-picker__cancelar:hover {
-  background: #e5e7eb;
-}
-
-/* ============ DARK MODE ============ */
-
-@media (prefers-color-scheme: dark) {
-  .mapa-picker__resumen {
-    background: #1F2937;
-    border-color: #374151;
-  }
-
-  .mapa-picker__direccion-texto {
-    color: #E5E7EB;
-  }
-
-  .mapa-picker__editor {
-    background: #1F2937;
-  }
-
-  .mapa-picker__header {
-    border-bottom-color: #374151;
-  }
-
-  .mapa-picker__header h3 {
-    color: #E5E7EB;
-  }
-
-  .mapa-picker__cerrar {
-    color: #9CA3AF;
-  }
-
-  .mapa-picker__cerrar:hover {
-    background: #374151;
-    color: #E5E7EB;
-  }
-
-  .mapa-picker__hint {
-    background: #111827;
-    color: #9CA3AF;
-  }
-
-  .mapa-picker__direccion-preview label {
-    color: #E5E7EB;
-  }
-
-  .mapa-picker__input-direccion {
-    background: #111827;
-    border-color: #374151;
-    color: #E5E7EB;
-  }
-
-  .mapa-picker__input-direccion:focus {
-    border-color: #0052DC;
-  }
-
-  .mapa-picker__cancelar {
-    background: #374151;
-    color: #E5E7EB;
-    border-color: #4B5563;
-  }
-
-  .mapa-picker__cancelar:hover {
-    background: #4B5563;
-  }
-
-  .mapa-picker__cargando {
-    background: #111827;
-    color: #9CA3AF;
-  }
-}
-
-/* ============ RESPONSIVE ============ */
-
-@media (max-width: 640px) {
-  .mapa-picker__editor {
-    padding: 16px;
-    width: 95%;
-    border-radius: 12px;
-  }
-
-  .mapa-picker__mapa-container {
-    height: 250px;
-  }
-
-  .mapa-picker__resumen {
-    flex-wrap: wrap;
-  }
-
-  .mapa-picker__acciones {
-    grid-template-columns: 1fr;
-  }
-
-  .mapa-picker__header {
-    margin-bottom: 12px;
-    padding-bottom: 12px;
-  }
-}
-
-@media (max-width: 480px) {
-  .mapa-picker__modal {
-    align-items: flex-end;
-  }
-
-  .mapa-picker__editor {
-    border-radius: 16px 16px 0 0;
-    width: 100%;
-    max-height: 92vh;
-  }
-}
-
-/* Estilos para el control de búsqueda de leaflet-geosearch */
-.leaflet-geosearch-bar {
-  border: 2px solid #0052DC !important;
-  border-radius: 8px !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
-}
-
-.leaflet-geosearch-bar input {
-  font-family: 'Inter', sans-serif !important;
-  font-size: 0.9rem !important;
-  padding: 8px 12px !important;
-}
-
-.leaflet-geosearch-button {
-  background-color: #0052DC !important;
-  color: white !important;
-  border-radius: 0 8px 8px 0 !important;
-}
-
-.leaflet-geosearch-button:hover {
-  background-color: #003d9e !important;
-}
-
-.leaflet-geosearch-results {
-  font-family: 'Inter', sans-serif !important;
-  border-radius: 8px !important;
-  border: 1px solid #e5e7eb !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
-  margin-top: 4px !important;
-}
-
-.leaflet-geosearch-results li {
-  padding: 8px 12px !important;
-  border-bottom: 1px solid #f3f4f6 !important;
-}
-
-.leaflet-geosearch-results li:hover {
-  background-color: #f9fafb !important;
-  color: #0052DC !important;
+      <div className="mapa-picker__resultado">
+        {loading && <p className="mapa-picker__estado">Buscando dirección…</p>}
+        {!loading && error && (
+          <p className="mapa-picker__estado mapa-picker__estado--error">{error}</p>
+        )}
+        {!loading && !error && direccion && (
+          <p className="mapa-picker__direccion">
+            <strong>Dirección seleccionada:</strong> {direccion}
+          </p>
+        )}
+        <p className="mapa-picker__coords">
+          Lat: {position.lat.toFixed(6)} · Lng: {position.lng.toFixed(6)}
+        </p>
+        {!detalle?.calle && !loading && (
+          <p className="mapa-picker__aviso">
+            No se detectó el nombre de la calle automáticamente. Mueve el marcador a un punto de
+            referencia cercano o completa la dirección manualmente en el formulario.
+          </p>
+        )}
+      </div>
+    </div>
+  );
 }
