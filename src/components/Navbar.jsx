@@ -131,22 +131,21 @@ function Navbar() {
   const [sugerencias, setSugerencias] = useState([])
   const [mostrarSugerencias, setMostrarSugerencias] = useState(false)
   const [buscadorMovilAbierto, setBuscadorMovilAbierto] = useState(false)
+  const [notificacionesNoLeidas, setNotificacionesNoLeidas] = useState(0)
   
   const searchRef = useRef(null)
   const panelRef = useRef(null)
-  const mobilePanelRef = useRef(null)
   const deptosRef = useRef(null) //
 
       useEffect(() => {
       function handleClickOutside(event) {
         const isOutsideDesktop = panelRef.current && !panelRef.current.contains(event.target)
-        const isOutsideMobile = mobilePanelRef.current && !mobilePanelRef.current.contains(event.target)
         const isOutsideDeptos = deptosRef.current && !deptosRef.current.contains(event.target)
         const isOutsideServicios = serviciosRef.current && !serviciosRef.current.contains(event.target)
         const isOutsideMyItems = myItemsRef.current && !myItemsRef.current.contains(event.target)
         const isOutsideAccount = accountRef.current && !accountRef.current.contains(event.target)
 
-        if (isOutsideDesktop && isOutsideMobile) {
+        if (isOutsideDesktop) {
           setShowEnvioPanel(false)
         }
         
@@ -207,6 +206,17 @@ function Navbar() {
     return () => clearTimeout(debounce)
   }, [busqueda])
 
+  useEffect(() => {
+    if (!user) {
+      setNotificacionesNoLeidas(0)
+      return
+    }
+    api
+      .get('/notifications/unread-count')
+      .then(({ data }) => setNotificacionesNoLeidas(data.count || 0))
+      .catch((err) => console.error('Error al contar notificaciones:', err))
+  }, [user])
+
   if (RUTAS_SIN_NAVBAR.includes(location.pathname)) return null
 
   function handleBuscar(e) {
@@ -253,7 +263,8 @@ function Navbar() {
         <div className="navbar__main">
 
           <Link to="/" className="navbar__logo" aria-label="Ir a inicio">
-            <img src={logo} alt="Droguería Carrisán" />
+            <img src={logoBlanco} alt="Droguería Carrisán" className="desktop-only" />
+            <img src={logoColor} alt="Droguería Carrisán" className="mobile-only" />
           </Link>
 
           {/* Botón Pickup/Delivery (ESCRITORIO) */}
@@ -467,6 +478,17 @@ function Navbar() {
   </div>
 </div>
 
+          {/* Notificaciones */}
+          <Link to="/notificaciones" className="navbar__bell" aria-label="Notificaciones">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+            </svg>
+            {notificacionesNoLeidas > 0 && (
+              <span className="bell-badge">{notificacionesNoLeidas > 9 ? '9+' : notificacionesNoLeidas}</span>
+            )}
+          </Link>
+
           {/* Carrito */}
           <Link to="/carrito" className="navbar__cart">
             <div className="cart-icon-wrapper">
@@ -488,38 +510,6 @@ function Navbar() {
             </div>
             <span className="cart-price" style={{ fontSize: "12px", marginTop: "-8px" }}>$0.00</span>
           </Link>
-        </div>
-
-        {/* Botón Pickup/Delivery (MÓVIL) */}
-        <div className="navbar__mobile-pickup-wrapper mobile-only" ref={mobilePanelRef}>
-          <button className="navbar__pickup-btn" onClick={() => setShowEnvioPanel(!showEnvioPanel)}>
-            <div className="pickup-btn__left">
-              <div className="pickup-btn__icon">
-                📲
-              </div>
-              <span className="pickup-btn__title">¿Retiro o entrega?</span>
-            </div>
-            <div className="pickup-btn__right">
-              <span className="pickup-btn__subtitle">{ciudadEstado}</span>
-              <svg className={`pickup-btn__arrow ${showEnvioPanel ? 'rotated' : ''}`} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-            </div>
-          </button>
-          
-          {showEnvioPanel && (
-            <div className="mobile-dropdown-container">
-              <PanelEnvio
-                tipoEnvio={tipoEnvio}
-                cambiarTipoEnvio={cambiarTipoEnvio}
-                opcionesEnvio={opcionesEnvio}
-                direcciones={direcciones}
-                direccionSeleccionada={direccionSeleccionada}
-                setDireccionSeleccionada={setDireccionSeleccionada}
-                guardarDireccion={guardarDireccion}
-                cargarDirecciones={cargarDirecciones}
-                onClose={() => setShowEnvioPanel(false)}
-              />
-            </div>
-          )}
         </div>
 
         {/* 🆕 Barra Secundaria (Categorías) con menú desplegable */}

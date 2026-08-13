@@ -568,91 +568,119 @@ body {
   margin: 0 4px; 
 }
 /* ============================================ */
-/* MÓVIL: Panel se despliega desde el navbar    */
+/* MÓVIL + TABLET (<1024px): navbar liviano,     */
 /* ============================================ */
-@media (max-width: 767px) {
-  .desktop-only { 
-    display: none !important; 
+@media (max-width: 1023px) {
+  .desktop-only {
+    display: none !important;
   }
-  
+
+  .navbar-container {
+    background: rgba(255, 255, 255, 0.86);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    color: #1A1A3A;
+    box-shadow: 0 1px 0 rgba(26, 26, 58, 0.08);
+  }
+
   .navbar__logo img {
-  height: 48px;
+    height: 40px;
   }
 
-  .navbar__main {  
-    gap: 12px; 
-  }
-  
-  .navbar__menu-mobile { 
-    display: flex; 
+  .navbar__main {
+    gap: 10px;
+    padding: 10px 12px;
   }
 
-  /* Wrapper móvil con position relative para que el dropdown sea absoluto respecto a él */
-  .navbar__mobile-pickup-wrapper {
+  .navbar__menu-mobile {
+    display: flex;
+    color: #1A1A3A;
+  }
+
+  .navbar__search-wrapper {
+    padding-left: 0;
+  }
+
+  .navbar__search {
+    background: #F0F1F3;
+    border: 1px solid #e3e4e5;
+  }
+
+  .navbar__search input {
+    color: #1A1A3A;
+  }
+
+  .navbar__cart,
+  .navbar__bell {
+    color: #1A1A3A;
+  }
+}
+
+/* ============================================ */
+/* CAMPANITA de notificaciones                   */
+/* ============================================ */
+.navbar__bell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-decoration: none;
+  padding: 8px;
+  margin-right: 2px;
+  flex-shrink: 0;
+}
+
+.bell-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background: #12A594;
+  color: white;
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 3px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* ============================================ */
+/* DESKTOP REAL (≥1024px): navbar completo,      */
+/* acá no hay bottom nav, así que recupera todo. */
+/* ============================================ */
+@media (min-width: 1024px) {
+  .mobile-only {
+    display: none !important;
+  }
+
+  .navbar__menu-mobile {
+    display: none;
+  }
+
+  .navbar__desktop-pickup-wrapper {
     display: block;
     position: relative;
-    background: var(--wm-dark-blue);
-    z-index: 200;
   }
 
-  .navbar__mobile-pickup-wrapper .navbar__pickup-btn {
-    width: 100%; 
-    border-radius: 0; 
-    background: transparent;
-    justify-content: space-between; 
-  }
-  
-  .pickup-btn__left, 
-  .pickup-btn__right { 
-    display: flex; 
-    align-items: center;
-    padding-left: 15px; 
-    gap: 10px; 
+  .navbar__actions.desktop-only {
+    display: flex !important;
   }
 
-  /* CONTENEDOR: absolute respecto al wrapper para que baje desde el botón */
-  .mobile-dropdown-container {
+  /* Panel desktop flotante */
+  .navbar__desktop-pickup-wrapper .envio-panel-content {
     position: absolute;
+    top: calc(100% + 8px);
     left: 0;
-    right: 0;
-    top: 100%;
-    z-index: 300;
-    max-height: calc(100vh - 200px);
-    overflow-y: auto;
-  }
-
-  .mobile-dropdown-container .envio-panel-content {
-    width: 100%;
+    width: 360px;
     border-radius: 0 0 12px 12px;
-    box-sizing: border-box;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-  }
-
-  /* Header del panel móvil con X fija arriba */
-  .envio-panel-header.mobile-only {
-    position: sticky;
-    top: 0;
-    background: var(--wm-blue);
-    padding: 8px 16px;
-    margin: -16px -16px 12px -16px;
-    border-radius: 0;
-    z-index: 10;
-    display: flex;
-    justify-content: flex-end;
-  }
-
-  .close-panel-btn {
-    background: rgba(255,255,255,0.2);
-    border: none;
-    color: white;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    font-size: 16px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+    z-index: 100;
   }
 }
 
