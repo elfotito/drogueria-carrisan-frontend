@@ -1,203 +1,442 @@
-/* ==========================================================
-   Ayuda — Droguería Carrisán
-   Paleta: Índigo #232B45 · Azul #1B4B8F · Teal #12A594
-           Ink #14182A · Paper #FBFAF7
-   ========================================================== */
+/* ============================================
+   Ayuda — bloques estilo Walmart Farmacia
+   Paleta: Azul #0052DC · Índigo #1A1A3A · Teal #12A594 · Paper #FBFAF7
+   ============================================ */
 
 .ayuda-page {
-  min-height: 100vh;
   background: #FBFAF7;
+  min-height: 100vh;
+  padding-bottom: 40px;
+}
+
+/* ---------- Header ---------- */
+.ayuda-header {
+  background: #0052DC;
+  padding: 22px 20px;
+}
+
+.ayuda-header h1 {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.5rem;
+  color: #FFFFFF;
+  margin: 0;
+}
+
+/* ---------- Pills de categoría ---------- */
+.ayuda-pills {
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  padding: 20px 20px 16px;
+  background: #FFFFFF;
+  border-bottom: 1px solid #e3e4e5;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.ayuda-pills::-webkit-scrollbar {
+  display: none;
+}
+
+.ayuda-pill {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+  background: none;
+  border: none;
+  cursor: pointer;
   font-family: 'Inter', sans-serif;
+  color: #74767c;
 }
 
+.ayuda-pill__icono {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #E9EFFC;
+  color: #0052DC;
+  border: 2px solid transparent;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.ayuda-pill__label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  max-width: 84px;
+  text-align: center;
+  line-height: 1.25;
+}
+
+.ayuda-pill--activa {
+  color: #0052DC;
+}
+
+.ayuda-pill--activa .ayuda-pill__icono {
+  background: #FFFFFF;
+  border-color: #0052DC;
+}
+
+/* ---------- Contenedor general ---------- */
 .ayuda-container {
-  max-width: 720px;
+  max-width: 900px;
   margin: 0 auto;
-  padding: 20px 16px 48px;
+  padding: 20px 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-/* ---------------------------------------------------------
-   Banner de contacto
---------------------------------------------------------- */
+/* ---------- Card blanca con lista (ícono + texto + chevron) ---------- */
+.ayuda-card {
+  background: #FFFFFF;
+  border: 1px solid #e3e4e5;
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.ayuda-card__titulo {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: #1A1A3A;
+  margin: 0 0 12px;
+}
+
+.ayuda-lista {
+  display: flex;
+  flex-direction: column;
+}
+
+.ayuda-fila {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid #eee;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  background: none;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  width: 100%;
+  text-align: left;
+}
+
+.ayuda-lista .ayuda-fila:last-child {
+  border-bottom: none;
+}
+
+.ayuda-fila__icono-circulo {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #E9EFFC;
+  color: #0052DC;
+}
+
+.ayuda-fila__texto {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ayuda-fila__titulo {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #1A1A3A;
+}
+
+.ayuda-fila__desc {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+  color: #74767c;
+  line-height: 1.4;
+}
+
+.ayuda-fila__chevron {
+  flex-shrink: 0;
+  color: #1A1A3A;
+  display: flex;
+}
+
+/* --- Variante FAQ: botón full-width, sin ícono circular --- */
+.ayuda-fila--faq {
+  padding: 0;
+  border-bottom: 1px solid #eee;
+}
+
+.ayuda-fila--faq:last-child {
+  border-bottom: none;
+}
+
+.ayuda-fila__boton {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+}
+
+.ayuda-fila__chevron--abierto {
+  transform: rotate(180deg);
+}
+
+/* ---------- Placeholder de imagen ---------- */
+.ayuda-imagen-placeholder {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #F0F1F3;
+  border: 1.5px dashed #c7cbd6;
+  border-radius: 16px;
+  color: #74767c;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* ---------- Bloque de texto grande ---------- */
+.ayuda-texto-grande h2 {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.4rem;
+  color: #1A1A3A;
+  margin: 0 0 8px;
+}
+
+.ayuda-texto-grande p {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  color: #464646;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ---------- Pasos (íconos + texto) ---------- */
+.ayuda-pasos {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: #FFFFFF;
+  border: 1px solid #e3e4e5;
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.ayuda-paso {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.ayuda-paso__icono {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  color: #0052DC;
+}
+
+.ayuda-paso h3 {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #1A1A3A;
+  margin: 0 0 4px;
+}
+
+.ayuda-paso p {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: #74767c;
+  line-height: 1.45;
+  margin: 0;
+}
+
+/* ---------- "Para todas tus necesidades" (carrusel) ---------- */
+.ayuda-necesidades h2 {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: #1A1A3A;
+  margin: 0 0 14px;
+}
+
+.ayuda-necesidades__fila {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 4px;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.ayuda-necesidades__fila::-webkit-scrollbar {
+  display: none;
+}
+
+.ayuda-necesidad-card {
+  flex: 0 0 240px;
+  scroll-snap-align: start;
+  background: #FFFFFF;
+  border: 1px solid #e3e4e5;
+  border-radius: 16px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+}
+
+.ayuda-necesidad-card h3 {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 0.98rem;
+  color: #1A1A3A;
+  margin: 12px 0 6px;
+}
+
+.ayuda-necesidad-card p {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+  color: #74767c;
+  line-height: 1.45;
+  margin: 0 0 14px;
+  flex: 1;
+}
+
+.ayuda-necesidad-card__boton {
+  display: inline-block;
+  text-align: center;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1.5px solid #1A1A3A;
+  color: #1A1A3A;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.ayuda-necesidad-card__boton:hover {
+  background: #1A1A3A;
+  color: #FFFFFF;
+}
+
+/* ---------- Banner de contacto final ---------- */
 .ayuda-banner {
-  background: #EEF3FB;
-  border-radius: 18px;
+  background: linear-gradient(135deg, #1A1A3A, #0052DC);
+  border-radius: 16px;
   padding: 32px 24px;
   text-align: center;
-  margin-bottom: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
 }
 
 .ayuda-banner__titulo {
   font-family: 'Manrope', sans-serif;
   font-weight: 800;
-  font-size: 1.35rem;
-  color: #14182A;
-  margin: 0 0 20px;
-  line-height: 1.3;
+  font-size: 1.2rem;
+  color: #FFFFFF;
+  margin: 0;
 }
 
 .ayuda-banner__cta {
-  display: inline-block;
-  background: #1B4B8F;
-  color: #FBFAF7;
+  background: #FFFFFF;
+  color: #0052DC;
+  font-family: 'Inter', sans-serif;
   font-weight: 700;
-  font-size: 0.95rem;
-  padding: 14px 32px;
+  font-size: 0.9rem;
+  padding: 12px 28px;
   border-radius: 999px;
   text-decoration: none;
+  transition: transform 0.15s ease;
 }
 
 .ayuda-banner__cta:hover {
-  background: #163c72;
+  transform: translateY(-1px);
 }
 
-/* ---------------------------------------------------------
-   Accordion de categorías
---------------------------------------------------------- */
-.ayuda-categorias {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+/* ============================================
+   Tablet / Desktop
+   ============================================ */
+@media (min-width: 768px) {
+  .ayuda-header {
+    padding: 32px 40px;
+  }
+
+  .ayuda-header h1 {
+    font-size: 1.9rem;
+  }
+
+  .ayuda-pills {
+    padding: 24px 40px;
+    gap: 36px;
+  }
+
+  .ayuda-container {
+    max-width: 1000px;
+    padding: 28px 40px 0;
+    gap: 28px;
+  }
+
+  .ayuda-card {
+    padding: 28px;
+  }
+
+  .ayuda-necesidad-card {
+    flex: 0 0 260px;
+  }
 }
 
-.ayuda-categoria {
-  background: #FFFFFF;
-  border: 1px solid #E7E5DE;
-  border-radius: 14px;
-  overflow: hidden;
-}
+@media (min-width: 1200px) {
+  .ayuda-container {
+    max-width: 1100px;
+  }
 
-.ayuda-categoria__header {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 16px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  text-align: left;
-}
+  .ayuda-pasos {
+    flex-direction: row;
+    gap: 28px;
+  }
 
-.ayuda-categoria__icon {
-  flex-shrink: 0;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: #EEF3FB;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.25rem;
-}
+  .ayuda-paso {
+    flex: 1;
+    flex-direction: column;
+    align-items: flex-start;
+  }
 
-.ayuda-categoria__titulo {
-  flex: 1;
-  font-family: 'Manrope', sans-serif;
-  font-weight: 700;
-  font-size: 1rem;
-  color: #14182A;
-}
-
-.ayuda-categoria__chevron {
-  flex-shrink: 0;
-  color: #5B6270;
-  display: flex;
-  transition: transform 0.2s ease;
-}
-
-.ayuda-categoria__chevron--abierto {
-  transform: rotate(180deg);
-}
-
-.ayuda-categoria__body {
-  padding: 0 16px 16px;
-  border-top: 1px solid #F0EEE7;
-}
-
-/* ---------------------------------------------------------
-   Links dentro de una categoría (no-FAQ)
---------------------------------------------------------- */
-.ayuda-links-list {
-  list-style: none;
-  padding: 0;
-  margin: 12px 0 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.ayuda-links-list li {
-  border-bottom: 1px solid #F0EEE7;
-}
-
-.ayuda-links-list li:last-child {
-  border-bottom: none;
-}
-
-.ayuda-link {
-  display: block;
-  padding: 13px 4px;
-  color: #1B4B8F;
-  font-size: 0.9rem;
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.ayuda-link:hover {
-  text-decoration: underline;
-}
-
-/* ---------------------------------------------------------
-   FAQ anidado (dentro de la categoría "faq")
---------------------------------------------------------- */
-.faq-list {
-  margin-top: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.faq-item {
-  border: 1px solid #F0EEE7;
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.faq-item__pregunta {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 12px 14px;
-  background: #FBFAF7;
-  border: none;
-  cursor: pointer;
-  text-align: left;
-  font-weight: 600;
-  font-size: 0.87rem;
-  color: #14182A;
-}
-
-.faq-item__chevron {
-  flex-shrink: 0;
-  color: #5B6270;
-  display: flex;
-  transition: transform 0.2s ease;
-}
-
-.faq-item__chevron--abierto {
-  transform: rotate(180deg);
-}
-
-.faq-item__respuesta {
-  padding: 4px 14px 14px;
-  background: #FFFFFF;
-}
-
-.faq-item__respuesta p {
-  margin: 0;
-  font-size: 0.85rem;
-  color: #5B6270;
-  line-height: 1.5;
+  .ayuda-paso__icono {
+    width: 48px;
+    height: 48px;
+    background: #E9EFFC;
+    border-radius: 50%;
+    margin-bottom: 4px;
+  }
 }
