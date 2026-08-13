@@ -264,6 +264,8 @@ export default function EstadoCuenta() {
       {modalPagoAbierto && (
         <ModalReportarPago onCerrar={() => setModalPagoAbierto(false)} onEnviar={reportarPago} />
       )}
+      
+      <BottomNav />
     </div>
   )
 }
@@ -298,7 +300,7 @@ function ModalOrden({ orden, onCerrar }) {
           )}
         </div>
       </div>
-            <BottomNav />
+            
     </div>
   )
 }
