@@ -192,6 +192,45 @@
 }
 
 /* ---------------------------------------------------------
+   Indicador de progreso (puntos conectados)
+--------------------------------------------------------- */
+.orden-progreso {
+  display: flex;
+  align-items: center;
+}
+
+.orden-progreso__paso {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.orden-progreso__punto {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #E7E5DE;
+  flex-shrink: 0;
+  transition: background 0.2s ease;
+}
+
+.orden-progreso__punto--activo {
+  background: #12A594;
+}
+
+.orden-progreso__linea {
+  flex: 1;
+  height: 2px;
+  background: #E7E5DE;
+  margin: 0 4px;
+  transition: background 0.2s ease;
+}
+
+.orden-progreso__linea--activa {
+  background: #12A594;
+}
+
+/* ---------------------------------------------------------
    Badges de estado
 --------------------------------------------------------- */
 .orden-badge {
@@ -208,6 +247,17 @@
   color: #93650B;
 }
 
+.badge--verificado {
+  background: #E7EFFA;
+  color: #1B4B8F;
+}
+
+.badge--enviado {
+  background: #E8E8EE;
+  color: #232B45;
+}
+
+.badge--entregado,
 .badge--finalizado {
   background: #E1F5EF;
   color: #0E7C63;
