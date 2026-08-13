@@ -5,6 +5,7 @@ import {
   Wallet, TrendingDown, CheckCircle2, FileText, DollarSign,
   Eye, Download, Upload, X, Loader2, AlertCircle, CreditCard
 } from 'lucide-react'
+import BottomNav from '../components/BottomNav'
 import './EstadoCuenta.css'
 
 // Dependencias nuevas: npm install lucide-react jspdf
@@ -382,6 +383,7 @@ function ModalReportarPago({ onCerrar, onEnviar }) {
           </button>
         </div>
       </form>
+      <BottomNav />
     </div>
   )
 }

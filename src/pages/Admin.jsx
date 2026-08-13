@@ -5,7 +5,7 @@ import ProductosAdmin from '../components/admin/ProductosAdmin'
 import UsuariosAdmin from '../components/admin/UsuariosAdmin'
 import EstadoCuentaAdmin from '../components/admin/EstadoCuentaAdmin'
 import DescuentosPanel from '../components/admin/DescuentosAdmin'
-import BottomNav from './BottomNav'
+import BottomNav from '../components/BottomNav'
 import './Admin.css'
 
 function Admin() {
