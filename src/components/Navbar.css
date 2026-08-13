@@ -45,7 +45,7 @@ body {
 .navbar__menu-mobile {
   background: none;
   border: none;
-  color: white;
+  color: #0052dc;
   padding: 4px;
   cursor: pointer;
   display: flex;
@@ -610,10 +610,6 @@ body {
     color: #1A1A3A;
   }
 
-  .navbar__cart,
-  .navbar__bell {
-    color: #1A1A3A;
-  }
 }
 
 /* ============================================ */

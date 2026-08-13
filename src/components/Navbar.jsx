@@ -264,7 +264,6 @@ function Navbar() {
 
           <Link to="/" className="navbar__logo" aria-label="Ir a inicio">
             <img src={logoBlanco} alt="Droguería Carrisán" className="desktop-only" />
-            <img src={logoColor} alt="Droguería Carrisán" className="mobile-only" />
           </Link>
 
           {/* Botón Pickup/Delivery (ESCRITORIO) */}
