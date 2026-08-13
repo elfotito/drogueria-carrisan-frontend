@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import api from '../api/axios'
 import { useCart } from '../context/CartContext'
 import { useFavoritos } from '../context/FavoritosContext'
+import BottomNav from '../components/BottomNav'
 import './MisItems.css'
 
 
@@ -425,6 +426,7 @@ function MisItems() {
         {tabActivo === 'listas' && <TabListas />}
         {tabActivo === 'recomprar' && <TabReComprar />}
       </div>
+      <BottomNav />
     </div>
   )
 }

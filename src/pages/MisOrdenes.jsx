@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import api from '../api/axios'
 import { useAuth } from '../context/AuthContext'
 import OrdenDetalleModal from '../components/OrdenDetalleModal'
+import BottomNav from '../components/BottomNav'
 import './MisOrdenes.css'
 
 // Etapas del ciclo de vida de una orden, en orden cronológico.
@@ -250,6 +251,7 @@ function MisOrdenes() {
         orden={ordenSeleccionada}
         onClose={() => setOrdenSeleccionada(null)}
       />
+      <BottomNav />
     </div>
   )
 }
