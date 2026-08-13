@@ -8,7 +8,6 @@ import {
 import BottomNav from '../components/BottomNav'
 import './EstadoCuenta.css'
 
-// Dependencias nuevas: npm install lucide-react jspdf
 
 function formatearMonto(valor) {
   return new Intl.NumberFormat('es-VE', { style: 'currency', currency: 'USD' }).format(valor || 0)
@@ -299,6 +298,7 @@ function ModalOrden({ orden, onCerrar }) {
           )}
         </div>
       </div>
+            <BottomNav />
     </div>
   )
 }
@@ -383,7 +383,6 @@ function ModalReportarPago({ onCerrar, onEnviar }) {
           </button>
         </div>
       </form>
-      <BottomNav />
     </div>
   )
 }
