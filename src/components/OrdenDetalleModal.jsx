@@ -1,18 +1,17 @@
 import { useMemo } from 'react'
 import './OrdenDetalleModal.css'
 
+// Mismos 4 estados operativos definidos en MisOrdenes.jsx — pagado/cancelado
+// no viven acá, se gestionan en Estado de Cuenta.
 const ESTADOS_CONFIG = {
-  pendiente: { label: 'Pendiente', color: '#f59e0b', bg: '#fef3c7' },
-  confirmado: { label: 'Confirmado', color: '#3b82f6', bg: '#dbeafe' },
-  en_preparacion: { label: 'En Preparación', color: '#8b5cf6', bg: '#ede9fe' },
-  enviado: { label: 'Enviado', color: '#06b6d4', bg: '#cffafe' },
-  entregado: { label: 'Entregado', color: '#10b981', bg: '#d1fae5' },
-  finalizado: { label: 'Finalizado', color: '#059669', bg: '#d1fae5' },
-  cancelado: { label: 'Cancelado', color: '#ef4444', bg: '#fee2e2' }
+  pendiente_verificacion: { label: 'Pendiente por verificar', clase: 'badge--pendiente' },
+  verificado: { label: 'Verificado', clase: 'badge--verificado' },
+  enviado: { label: 'Enviado', clase: 'badge--enviado' },
+  entregado: { label: 'Entregado', clase: 'badge--entregado' },
 }
 
 function getEstadoConfig(estado) {
-  return ESTADOS_CONFIG[estado] || { label: estado || 'Desconocido', color: '#64748b', bg: '#f1f5f9' }
+  return ESTADOS_CONFIG[estado] || { label: estado || 'Desconocido', clase: 'badge--neutro' }
 }
 
 function formatUSD(valor) {
@@ -25,7 +24,7 @@ function formatUSD(valor) {
 function OrdenDetalleModal({ orden, onClose, onCambiarEstado, estados, estadoColores }) {
   const envioDetalle = useMemo(() => {
     if (!orden) return null
-    
+
     if (!orden.tipo_envio || orden.tipo_envio === 'retiro') {
       return {
         icono: '🏪',
@@ -33,7 +32,7 @@ function OrdenDetalleModal({ orden, onClose, onCambiarEstado, estados, estadoCol
         costo: 'Gratis',
         direccion: null,
         agencia: null,
-        color: '#6366f1'
+        color: '#232B45'
       }
     }
 
@@ -45,7 +44,7 @@ function OrdenDetalleModal({ orden, onClose, onCambiarEstado, estados, estadoCol
         costo: esGratis ? '¡Gratis!' : `$${formatUSD(orden.costo_delivery || 8)}`,
         direccion: orden.direccion_envio_texto || null,
         agencia: null,
-        color: '#f59e0b'
+        color: '#D97706'
       }
     }
 
@@ -56,7 +55,7 @@ function OrdenDetalleModal({ orden, onClose, onCambiarEstado, estados, estadoCol
         costo: 'Pago en destino',
         direccion: orden.direccion_envio_texto || null,
         agencia: orden.agencia_envio || null,
-        color: '#06b6d4'
+        color: '#1B4B8F'
       }
     }
 
@@ -66,7 +65,7 @@ function OrdenDetalleModal({ orden, onClose, onCambiarEstado, estados, estadoCol
       costo: 'N/A',
       direccion: null,
       agencia: null,
-      color: '#94a3b8'
+      color: '#5B6270'
     }
   }, [orden])
 
@@ -103,13 +102,7 @@ function OrdenDetalleModal({ orden, onClose, onCambiarEstado, estados, estadoCol
               })}
             </p>
           </div>
-          <span 
-            className="odm-badge"
-            style={{
-              backgroundColor: estadoConfig.bg,
-              color: estadoConfig.color
-            }}
-          >
+          <span className={`odm-badge ${estadoConfig.clase}`}>
             {estadoConfig.label}
           </span>
         </div>
@@ -137,7 +130,7 @@ function OrdenDetalleModal({ orden, onClose, onCambiarEstado, estados, estadoCol
               <span className="odm-section-icon">{envioDetalle.icono}</span>
               Información de Envío
             </h3>
-            
+
             <div className="odm-envio-card" style={{ borderLeftColor: envioDetalle.color }}>
               <div className="odm-envio-row">
                 <span className="odm-envio-label">Tipo</span>
@@ -173,7 +166,7 @@ function OrdenDetalleModal({ orden, onClose, onCambiarEstado, estados, estadoCol
             <span className="odm-section-icon">🛒</span>
             Productos ({items.length})
           </h3>
-          
+
           <div className="odm-items">
             {items.map((item, index) => (
               <div key={item.id || index} className="odm-item">
@@ -223,7 +216,7 @@ function OrdenDetalleModal({ orden, onClose, onCambiarEstado, estados, estadoCol
           </div>
         </div>
 
-        {/* Cambiar estado (si se proporciona la función) */}
+        {/* Cambiar estado — lo usará OrdenAdmin pasando onCambiarEstado + estados */}
         {onCambiarEstado && estados && (
           <>
             <div className="odm-divider" />
@@ -239,7 +232,7 @@ function OrdenDetalleModal({ orden, onClose, onCambiarEstado, estados, estadoCol
               >
                 {estados.map(estado => (
                   <option key={estado} value={estado}>
-                    {(estadoColores || ESTADOS_CONFIG)[estado]?.label || estado}
+                    {estadoColores?.[estado]?.label || getEstadoConfig(estado).label}
                   </option>
                 ))}
               </select>
