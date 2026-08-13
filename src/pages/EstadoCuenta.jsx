@@ -222,6 +222,7 @@ export default function EstadoCuenta() {
               </button>
             ))}
           </div>
+          <BottomNav />
         </div>
 
         {historialFiltrado.length === 0 ? (
@@ -264,8 +265,8 @@ export default function EstadoCuenta() {
       {modalPagoAbierto && (
         <ModalReportarPago onCerrar={() => setModalPagoAbierto(false)} onEnviar={reportarPago} />
       )}
+
       
-      <BottomNav />
     </div>
   )
 }
