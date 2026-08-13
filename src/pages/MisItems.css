@@ -51,12 +51,30 @@
   margin-bottom: 8px;
 }
 
+.misitems-section__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
 .misitems-section-title {
   font-family: 'Manrope', sans-serif;
   font-weight: 800;
   font-size: 1.15rem;
   color: #14182A;
   margin: 0 0 16px;
+}
+
+.misitems-section__header .misitems-section-title {
+  margin: 0;
+}
+
+.misitems-section-subtitulo {
+  font-size: 0.8rem;
+  color: #5B6270;
+  margin: 2px 0 0;
 }
 
 .misitems-section-title--sugerencias {
@@ -73,37 +91,81 @@
 }
 
 /* ---------------------------------------------------------
-   Carrusel horizontal (Mis Items)
+   Agregar todos al carrito
 --------------------------------------------------------- */
-.itemcard-carousel {
+.misitems-agregar-todos {
+  flex-shrink: 0;
+  background: none;
+  border: 1.5px solid #1B4B8F;
+  color: #1B4B8F;
+  font-weight: 700;
+  font-size: 0.8rem;
+  padding: 8px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.misitems-agregar-todos:hover {
+  background: #1B4B8F;
+  color: #FBFAF7;
+}
+
+/* ---------------------------------------------------------
+   Buscador de favoritos
+--------------------------------------------------------- */
+.misitems-buscador {
   display: flex;
-  gap: 14px;
-  overflow-x: auto;
-  padding-bottom: 8px;
-  scroll-snap-type: x proximity;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
+  align-items: center;
+  gap: 8px;
+  background: #FFFFFF;
+  border: 1px solid #E7E5DE;
+  border-radius: 10px;
+  padding: 9px 12px;
+  margin-bottom: 16px;
+  color: #A9AC9F;
 }
 
-.itemcard-carousel::-webkit-scrollbar {
-  display: none;
+.misitems-buscador:focus-within {
+  border-color: #1B4B8F;
+  color: #1B4B8F;
 }
 
-/* Grid para ReComprar (no carrusel, es catálogo completo) */
-.product-grid-recomprar {
+.misitems-buscador input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: none;
+  font-family: inherit;
+  font-size: 0.88rem;
+  color: #14182A;
+}
+
+.misitems-vacio-filtro {
+  text-align: center;
+  color: #5B6270;
+  font-size: 0.9rem;
+  padding: 40px 20px;
+}
+
+/* ---------------------------------------------------------
+   Grid de productos (Mis Favoritos y ReComprar)
+--------------------------------------------------------- */
+.product-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 14px;
 }
 
 @media (min-width: 640px) {
-  .product-grid-recomprar {
+  .product-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
 @media (min-width: 960px) {
-  .product-grid-recomprar {
+  .product-grid {
     grid-template-columns: repeat(4, 1fr);
   }
 }
@@ -112,14 +174,8 @@
    Item card
 --------------------------------------------------------- */
 .itemcard {
-  flex: 0 0 152px;
-  scroll-snap-align: start;
   display: flex;
   flex-direction: column;
-}
-
-.product-grid-recomprar .itemcard {
-  flex: unset;
   width: 100%;
 }
 
@@ -133,6 +189,12 @@
   justify-content: center;
   margin-bottom: 10px;
   overflow: hidden;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.itemcard:hover .itemcard__media {
+  box-shadow: 0 6px 18px rgba(20, 24, 42, 0.08);
+  transform: translateY(-2px);
 }
 
 .itemcard__media img {
@@ -254,8 +316,14 @@
 --------------------------------------------------------- */
 .misitems-vacio {
   text-align: center;
-  padding: 40px 20px;
+  padding: 48px 20px;
   color: #5B6270;
+}
+
+.misitems-vacio__icon {
+  font-size: 2.6rem;
+  display: block;
+  margin-bottom: 12px;
 }
 
 .misitems-vacio p {
@@ -304,6 +372,13 @@
   color: inherit;
   cursor: pointer;
   min-height: 100px;
+  transition: box-shadow 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
+}
+
+.lista-card:hover {
+  box-shadow: 0 6px 18px rgba(20, 24, 42, 0.06);
+  transform: translateY(-2px);
+  border-color: #C7D6EA;
 }
 
 .lista-card__icon {
@@ -349,6 +424,11 @@
   color: #1B4B8F;
 }
 
+.lista-card--nueva:hover {
+  border-color: #1B4B8F;
+  color: #1B4B8F;
+}
+
 .lista-card--skeleton {
   background: #EFEEE9;
   border-color: transparent;
@@ -367,6 +447,11 @@
 .lista-card--crear-form {
   cursor: default;
   align-items: stretch;
+}
+
+.lista-card--crear-form:hover {
+  transform: none;
+  box-shadow: none;
 }
 
 .lista-crear-input {
