@@ -20,7 +20,7 @@ function formatUSD(valor) {
 }
 
 // ---------------------------------------------------------
-// Card de item en carrusel horizontal (usada en Mis Items y ReComprar)
+// Card de item en grid (usada en Mis Items y ReComprar)
 // ---------------------------------------------------------
 function ItemCard({ producto, cantidadEnCarrito, onAgregar, onQuitar, mostrarQuitar }) {
   return (
@@ -69,6 +69,14 @@ function CarruselSkeleton() {
   )
 }
 
+function IconoBuscar() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M11.5 11.5L15 15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  )
+}
 
 function TabMisItems() {
   const { items: cartItems, addItem } = useCart()
@@ -76,6 +84,7 @@ function TabMisItems() {
   const [items, setItems] = useState([])
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
+  const [busqueda, setBusqueda] = useState('')
 
   useEffect(() => {
     if (cargandoFav) return // espera a que el contexto termine de cargar
@@ -97,24 +106,61 @@ function TabMisItems() {
     return linea?.cantidad || 0
   }
 
+  function agregarTodos() {
+    itemsFiltrados.forEach((producto) => addItem(producto, 1))
+  }
+
   if (error) return <p className="misitems-error">{error}</p>
+
+  const itemsFiltrados = busqueda.trim()
+    ? items.filter((p) => p.nombre_comercial?.toLowerCase().includes(busqueda.trim().toLowerCase()))
+    : items
 
   return (
     <section className="misitems-section">
-      <h2 className="misitems-section-title">Mis Favoritos</h2>
+      <div className="misitems-section__header">
+        <div>
+          <h2 className="misitems-section-title">Mis Favoritos</h2>
+          {!cargando && items.length > 0 && (
+            <p className="misitems-section-subtitulo">
+              {items.length} producto{items.length !== 1 ? 's' : ''} guardado{items.length !== 1 ? 's' : ''}
+            </p>
+          )}
+        </div>
+        {!cargando && items.length > 0 && (
+          <button type="button" className="misitems-agregar-todos" onClick={agregarTodos}>
+            + Agregar todos
+          </button>
+        )}
+      </div>
+
+      {!cargando && items.length > 0 && (
+        <div className="misitems-buscador">
+          <IconoBuscar />
+          <input
+            type="text"
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+            placeholder="Buscar en tus favoritos…"
+          />
+        </div>
+      )}
 
       {cargando ? (
-        <div className="itemcard-carousel">
+        <div className="product-grid">
           {Array.from({ length: 4 }).map((_, i) => <CarruselSkeleton key={i} />)}
         </div>
       ) : items.length === 0 ? (
         <div className="misitems-vacio">
+          <span className="misitems-vacio__icon">⭐</span>
           <p>Todavía no tienes productos favoritos.</p>
           <Link to="/catalogo" className="misitems-vacio__cta">Explorar catálogo</Link>
         </div>
+      ) : itemsFiltrados.length === 0 ? (
+        <p className="misitems-vacio-filtro">No hay favoritos que coincidan con "{busqueda}".</p>
       ) : (
-        <div className="itemcard-carousel">
-          {items.map((producto) => (
+        <div className="product-grid">
+          {itemsFiltrados.map((producto) => (
             <ItemCard
               key={producto.id}
               producto={producto}
@@ -321,16 +367,17 @@ function TabReComprar() {
       <h2 className="misitems-section-title">Productos que ya compraste</h2>
 
       {cargando ? (
-        <div className="product-grid-recomprar">
+        <div className="product-grid">
           {Array.from({ length: 6 }).map((_, i) => <CarruselSkeleton key={i} />)}
         </div>
       ) : productos.length === 0 ? (
         <div className="misitems-vacio">
+          <span className="misitems-vacio__icon">🔁</span>
           <p>Todavía no tenemos historial de compras para sugerirte recompras.</p>
           <Link to="/pedidos" className="misitems-vacio__cta">Ver mis órdenes</Link>
         </div>
       ) : (
-        <div className="product-grid-recomprar">
+        <div className="product-grid">
           {productos.map((producto) => (
             <ItemCard
               key={producto.id}
