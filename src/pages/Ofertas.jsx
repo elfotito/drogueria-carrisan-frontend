@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import api from '../api/axios'
 import ProductCard from '../components/ProductCard'
 import ProductCardSkeleton from '../components/Productcardskeleton'
+import BottomNav from '../components/BottomNav'
 import './Ofertas.css'
 
 // NOTA: por ahora el único criterio es "producto.descuento_activo" (ya lo
@@ -101,6 +102,7 @@ function Ofertas() {
           </div>
         )}
       </main>
+      <BottomNav />
     </div>
   )
 }

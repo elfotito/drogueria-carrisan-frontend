@@ -6,6 +6,7 @@ import {
   Package, Wallet, MapPin, Star, Bell, ShoppingBag, ShoppingCart,
   ChevronRight, Loader2, AlertCircle
 } from 'lucide-react'
+import BottomNav from '../components/BottomNav'
 import './MiCuenta.css'
 
 // Dependencia: npm install lucide-react (la misma que usa EstadoCuenta.jsx)
@@ -173,6 +174,7 @@ function MiCuenta() {
           </ul>
         )}
       </section>
+      <BottomNav />
     </div>
   )
 }
