@@ -6,6 +6,13 @@
   overflow-x: hidden;
 }
 
+/* Espacio para que el bottom nav fijo no tape el último tile */
+.dashboard__espaciador {
+  height: 24px;
+}
+
+
+
 /* ---------- Topbar: saludo + tasa ---------- */
 .dashboard__topbar {
   display: flex;
@@ -24,7 +31,7 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #1B4B8F, #12A594);
+  background: linear-gradient(135deg, #0052DC, #12A594);
   color: #fff;
   display: flex;
   align-items: center;
@@ -46,7 +53,7 @@
   font-family: 'Manrope', sans-serif;
   font-weight: 700;
   font-size: 0.95rem;
-  color: #232B45;
+  color: #1A1A3A;
   margin: 0;
   max-width: 160px;
   overflow: hidden;
@@ -79,7 +86,7 @@
   font-family: 'Manrope', sans-serif;
   font-weight: 700;
   font-size: 1.1rem;
-  color: #232B45;
+  color: #1A1A3A;
   margin: 0 0 14px;
 }
 
@@ -117,7 +124,7 @@
   font-family: 'Manrope', sans-serif;
   font-weight: 700;
   font-size: 0.95rem;
-  color: #232B45;
+  color: #1A1A3A;
 }
 
 .dashboard__tile-subtitulo {
@@ -126,12 +133,12 @@
   color: rgba(20, 24, 42, 0.55);
 }
 
-/* Espacio para que el bottom nav fijo no tape el último tile */
+/* Espacio para que el dock flotante del bottom nav no tape el último tile */
 .dashboard__espaciador {
-  height: 24px;
+  height: 92px;
 }
 
-/* ---------- Desktop: dashboard más ancho, sin bottom nav ---------- */
+/* ---------- Tablet ancho (grid): el dock sigue visible hasta 1023px ---------- */
 @media (min-width: 769px) {
   .dashboard {
     padding: 32px 24px 0;
@@ -141,15 +148,19 @@
     grid-template-columns: repeat(4, 1fr);
   }
 
+}
+
+/* ---------- Desktop real: acá el bottom nav ya no se muestra ---------- */
+@media (min-width: 1024px) {
   .dashboard__espaciador {
-    height: 40px;
+    height: 24px;
   }
 }
 
 /* ---------- Desktop grande: recién acá se limita el ancho ---------- */
-@media (min-width: 1640px) {
+@media (min-width: 1440px) {
   .dashboard {
-    max-width: 1615px;
+    max-width: 1400px;
     padding: 32px 24px 0;
   }
 }
