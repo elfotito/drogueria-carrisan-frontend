@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext'
 import HomeCarrusel from '../components/HomeCarrusel'
 import SeccionesCarrusel from '../components/SeccionesCarrusel'
 import { agruparPorLinea } from '../utils/agruparPorLinea'
+import BottomNav from '../components/BottomNav'
 import './ProductoDetalle.css'
 
 // Cuántos carruseles mostrar al final de la página (elegidos al azar del pool).
@@ -318,6 +319,7 @@ function ProductoDetalle() {
           ))}
         </div>
       )}
+      <BottomNav />
     </div>
   )
 }
