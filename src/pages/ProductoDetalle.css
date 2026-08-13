@@ -1,44 +1,68 @@
+/* ==========================================================
+   ProductoDetalle — Droguería Carrisán
+   Paleta: Índigo #232B45 · Azul #1B4B8F · Teal #12A594
+           Ink #14182A · Paper #FBFAF7
+   ========================================================== */
+
 .detalle-container {
-  max-width: 1100px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 20px 24px 60px;
+  font-family: 'Inter', sans-serif;
+  background: #FBFAF7;
 }
 
-/* Breadcrumb */
+/* ---------------------------------------------------------
+   Breadcrumb
+--------------------------------------------------------- */
 .detalle-breadcrumb {
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: #5B6270;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
 }
 
 .detalle-breadcrumb a {
-  color: #1976d2;
+  color: #1B4B8F;
   text-decoration: none;
+  font-weight: 600;
 }
 
 .detalle-breadcrumb a:hover {
   text-decoration: underline;
 }
 
-/* Sección principal: imagen + info */
-.detalle-main {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  margin-bottom: 50px;
+.detalle-breadcrumb__actual {
+  color: #14182A;
+  font-weight: 600;
 }
 
-@media (max-width: 768px) {
+/* ---------------------------------------------------------
+   Sección principal: imagen + info
+--------------------------------------------------------- */
+.detalle-main {
+  display: grid;
+  grid-template-columns: minmax(0, 480px) 1fr;
+  gap: 48px;
+  margin-bottom: 56px;
+}
+
+@media (max-width: 860px) {
   .detalle-main {
     grid-template-columns: 1fr;
+    gap: 24px;
   }
 }
 
 /* Imagen */
 .detalle-imagen-wrapper {
   position: relative;
-  background: #fafafa;
-  border-radius: 12px;
+  background: #F7F6F1;
+  border: 1px solid #E7E5DE;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -54,82 +78,119 @@
 
 .detalle-no-disponible {
   position: absolute;
-  top: 10px;
-  left: 10px;
-  background: #d32f2f;
-  color: white;
+  top: 14px;
+  left: 14px;
+  background: #B3261E;
+  color: #FBFAF7;
   padding: 5px 12px;
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: bold;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 700;
 }
 
 /* Info */
 .detalle-info {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 14px;
+}
+
+.detalle-marca {
+  font-size: 0.85rem;
+  color: #1B4B8F;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0;
 }
 
 .detalle-titulo {
-  font-size: 28px;
-  font-weight: 600;
-  color: #1a1a1a;
+  font-family: 'Manrope', sans-serif;
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: #14182A;
   margin: 0;
   line-height: 1.3;
 }
 
-.detalle-marca {
-  font-size: 16px;
-  color: #666;
+.detalle-disponibilidad {
+  align-self: flex-start;
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 999px;
+}
+
+.detalle-disponibilidad.disponible {
+  background: #E1F5EF;
+  color: #0E7C63;
+}
+
+.detalle-disponibilidad.agotado {
+  background: #FDECEC;
+  color: #B3261E;
 }
 
 /* Precios */
 .detalle-precios {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 16px 0;
+  border-top: 1px solid #E7E5DE;
+  border-bottom: 1px solid #E7E5DE;
 }
 
 .detalle-precio-usd {
-  font-size: 32px;
-  font-weight: 700;
-  color: #1a1a1a;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 2.1rem;
+  font-weight: 800;
+  color: #12A594;
+}
+
+.detalle-precio-usd--consultar {
+  font-family: 'Manrope', sans-serif;
+  font-size: 1.3rem;
+  color: #5B6270;
 }
 
 .detalle-precio-ves {
-  font-size: 18px;
-  color: #666;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.05rem;
+  color: #5B6270;
 }
 
 /* Acciones */
 .detalle-acciones {
   display: flex;
-  gap: 15px;
+  gap: 12px;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .detalle-cantidad {
   display: flex;
   align-items: center;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
+  border: 1.5px solid #E7E5DE;
+  border-radius: 999px;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .detalle-cantidad button {
   width: 40px;
   height: 40px;
   border: none;
-  background: #f5f5f5;
-  font-size: 20px;
+  background: #FFFFFF;
+  font-size: 1.1rem;
   cursor: pointer;
-  color: #333;
-  transition: background 0.2s;
+  color: #14182A;
+  transition: background 0.15s ease;
 }
 
 .detalle-cantidad button:hover:not(:disabled) {
-  background: #e0e0e0;
+  background: #F7F6F1;
 }
 
 .detalle-cantidad button:disabled {
@@ -138,102 +199,117 @@
 }
 
 .detalle-cantidad span {
-  width: 50px;
+  width: 44px;
   text-align: center;
-  font-size: 18px;
-  font-weight: 600;
+  font-weight: 700;
+  color: #14182A;
+  font-family: 'JetBrains Mono', monospace;
 }
 
 .detalle-btn-agregar {
   flex: 1;
-  padding: 12px 30px;
-  background: #1976d2;
-  color: white;
+  min-width: 180px;
+  padding: 12px 28px;
+  background: #1B4B8F;
+  color: #FBFAF7;
   border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.92rem;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.15s ease;
 }
 
 .detalle-btn-agregar:hover:not(:disabled) {
-  background: #1565c0;
+  background: #163c72;
 }
 
 .detalle-btn-agregar:disabled {
-  background: #ccc;
+  background: #D8D6CE;
+  color: #8B8D85;
   cursor: not-allowed;
 }
 
 .detalle-btn-agregar.agregado {
-  background: #2e7d32;
+  background: #0E7C63;
 }
 
 .detalle-login-aviso {
-  font-size: 14px;
-  color: #666;
+  font-size: 0.85rem;
+  color: #5B6270;
+  margin: 0;
 }
 
 .detalle-login-aviso a {
-  color: #1976d2;
-  font-weight: 600;
+  color: #1B4B8F;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.detalle-login-aviso a:hover {
+  text-decoration: underline;
 }
 
 .detalle-nota-precio {
-  font-size: 12px;
-  color: #999;
-  margin-top: 10px;
+  font-size: 0.76rem;
+  color: #A9AC9F;
+  margin: 4px 0 0;
 }
 
-/* Sección de detalles */
+/* ---------------------------------------------------------
+   Sección de detalles
+--------------------------------------------------------- */
 .detalle-detalles {
-  border-top: 1px solid #e0e0e0;
-  padding-top: 30px;
+  border-top: 1px solid #E7E5DE;
+  padding-top: 32px;
+  margin-bottom: 40px;
 }
 
 .detalle-detalles h2 {
-  font-size: 22px;
-  margin-bottom: 20px;
-  color: #1a1a1a;
+  font-family: 'Manrope', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin: 0 0 18px;
+  color: #14182A;
 }
 
 .detalle-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 20px;
-  margin-bottom: 30px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+  margin-bottom: 28px;
 }
 
 .detalle-campo {
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  padding: 15px;
-  background: #fafafa;
-  border-radius: 8px;
+  gap: 4px;
+  padding: 14px 16px;
+  background: #FFFFFF;
+  border: 1px solid #E7E5DE;
+  border-radius: 12px;
 }
 
 .detalle-label {
-  font-size: 12px;
+  font-size: 0.72rem;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: #999;
-  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #A9AC9F;
+  font-weight: 700;
 }
 
 .detalle-valor {
-  font-size: 16px;
-  color: #333;
-  font-weight: 500;
+  font-size: 0.92rem;
+  color: #14182A;
+  font-weight: 600;
 }
 
 .detalle-valor.disponible {
-  color: #2e7d32;
+  color: #0E7C63;
 }
 
 .detalle-valor.agotado {
-  color: #d32f2f;
+  color: #B3261E;
 }
 
 .detalle-descripcion {
@@ -241,46 +317,70 @@
 }
 
 .detalle-descripcion h3 {
-  font-size: 18px;
-  margin-bottom: 10px;
-  color: #1a1a1a;
+  font-family: 'Manrope', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 8px;
+  color: #14182A;
 }
 
 .detalle-descripcion p {
-  font-size: 15px;
+  font-size: 0.92rem;
   line-height: 1.7;
-  color: #555;
+  color: #5B6270;
+  margin: 0;
 }
 
-/* Skeleton */
+/* ---------------------------------------------------------
+   Carruseles relacionados
+--------------------------------------------------------- */
+.detalle-carruseles {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  border-top: 1px solid #E7E5DE;
+  padding-top: 36px;
+}
+
+/* ---------------------------------------------------------
+   Skeleton
+--------------------------------------------------------- */
 .detalle-skeleton {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
+  grid-template-columns: minmax(0, 480px) 1fr;
+  gap: 48px;
+}
+
+@media (max-width: 860px) {
+  .detalle-skeleton {
+    grid-template-columns: 1fr;
+  }
 }
 
 .skeleton-imagen {
-  background: #e0e0e0;
-  border-radius: 12px;
+  background: #EFEEE9;
+  border-radius: 16px;
   min-height: 400px;
-  animation: pulse 1.5s infinite;
+  position: relative;
+  overflow: hidden;
 }
 
 .skeleton-info {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 16px;
 }
 
 .skeleton-line {
   height: 20px;
-  background: #e0e0e0;
-  border-radius: 4px;
-  animation: pulse 1.5s infinite;
+  background: #EFEEE9;
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
 }
 
 .skeleton-titulo {
-  height: 35px;
+  height: 32px;
   width: 70%;
 }
 
@@ -288,26 +388,44 @@
   width: 40%;
 }
 
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+.skeleton-imagen::after,
+.skeleton-line::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+  animation: detalle-shimmer 1.4s infinite;
 }
 
-/* Error */
+@keyframes detalle-shimmer {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
+
+/* ---------------------------------------------------------
+   Error
+--------------------------------------------------------- */
 .detalle-error {
   text-align: center;
-  padding: 60px 20px;
+  padding: 80px 20px;
 }
 
 .detalle-error h2 {
+  font-family: 'Manrope', sans-serif;
+  color: #14182A;
   margin-bottom: 20px;
 }
 
 .detalle-error button {
-  padding: 10px 20px;
-  background: #1976d2;
-  color: white;
+  padding: 10px 24px;
+  background: #1B4B8F;
+  color: #FBFAF7;
   border: none;
-  border-radius: 8px;
+  border-radius: 999px;
+  font-weight: 700;
   cursor: pointer;
+}
+
+.detalle-error button:hover {
+  background: #163c72;
 }
