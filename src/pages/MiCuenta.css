@@ -10,35 +10,13 @@
   --color-text: #1f2a2e;
   --color-text-muted: #6b7a7d;
 
-  max-width: 1400px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 24px 20px 60px;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   color: var(--color-text);
   background: var(--color-bg);
   font-variant-numeric: tabular-nums;
-}
-
-/* Tablet */
-@media (max-width: 1024px) {
-  .mi-cuenta {
-    max-width: 100%;
-    padding: 20px 16px 50px;
-  }
-}
-
-/* Mobile */
-@media (max-width: 768px) {
-  .mi-cuenta {
-    padding: 16px 12px 40px;
-  }
-}
-
-/* Mobile pequeño */
-@media (max-width: 480px) {
-  .mi-cuenta {
-    padding: 12px 8px 30px;
-  }
 }
 
 .mi-cuenta h1 {
