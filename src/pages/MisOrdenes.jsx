@@ -5,11 +5,24 @@ import { useAuth } from '../context/AuthContext'
 import OrdenDetalleModal from '../components/OrdenDetalleModal'
 import './MisOrdenes.css'
 
+// Etapas del ciclo de vida de una orden, en orden cronológico.
+// El estado de PAGO (pagado/cancelado/etc.) vive en Estado de Cuenta, no acá:
+// esta pantalla solo refleja el avance operativo del pedido, que asigna el
+// administrador manualmente a medida que lo va procesando.
+const ETAPAS_ORDEN = [
+  { id: 'pendiente_verificacion', label: 'Pendiente por verificar' },
+  { id: 'verificado', label: 'Verificado' },
+  { id: 'enviado', label: 'Enviado' },
+  { id: 'entregado', label: 'Entregado' },
+]
+
 // Mapa de estado -> config visual. Cualquier estado nuevo que agregues
 // más adelante cae en ESTADO_FALLBACK automáticamente (no rompe el diseño).
 const ESTADOS_CONFIG = {
-  pendiente: { label: 'Pendiente', clase: 'badge--pendiente' },
-  finalizado: { label: 'Finalizado', clase: 'badge--finalizado' },
+  pendiente_verificacion: { label: 'Pendiente por verificar', clase: 'badge--pendiente' },
+  verificado: { label: 'Verificado', clase: 'badge--verificado' },
+  enviado: { label: 'Enviado', clase: 'badge--enviado' },
+  entregado: { label: 'Entregado', clase: 'badge--entregado' },
 }
 
 const ESTADO_FALLBACK = { label: null, clase: 'badge--neutro' }
@@ -26,6 +39,27 @@ function OrdenCardSkeleton() {
       <div className="skeleton-line skeleton-line--md" />
       <div className="skeleton-line skeleton-line--sm" />
       <div className="skeleton-line skeleton-line--btn" />
+    </div>
+  )
+}
+
+// Indicador visual de avance (puntos conectados). Si el estado de la orden
+// no está en ETAPAS_ORDEN (por ejemplo, uno legado), no se muestra —
+// el badge de arriba sigue funcionando igual gracias al fallback.
+function ProgresoOrden({ estado }) {
+  const pasoActual = ETAPAS_ORDEN.findIndex((e) => e.id === estado)
+  if (pasoActual === -1) return null
+
+  return (
+    <div className="orden-progreso">
+      {ETAPAS_ORDEN.map((etapa, i) => (
+        <div className="orden-progreso__paso" key={etapa.id}>
+          <span className={`orden-progreso__punto ${i <= pasoActual ? 'orden-progreso__punto--activo' : ''}`} />
+          {i < ETAPAS_ORDEN.length - 1 && (
+            <span className={`orden-progreso__linea ${i < pasoActual ? 'orden-progreso__linea--activa' : ''}`} />
+          )}
+        </div>
+      ))}
     </div>
   )
 }
@@ -67,7 +101,8 @@ function OrdenCard({ orden, esAdmin, onVerDetalle }) {
         <span className={`orden-badge ${estadoConfig.clase}`}>{estadoConfig.label}</span>
       </div>
 
-      {/* ⭐ NUEVO: Indicador de tipo de envío */}
+      <ProgresoOrden estado={orden.estado} />
+
       <div className="orden-card__envio">
         <span>{envioInfo.icono}</span>
         <span>{envioInfo.texto}</span>
@@ -118,16 +153,27 @@ function MisOrdenes() {
   }, [])
 
   // Tabs dinámicos: "Todos" + un tab por cada estado que exista realmente
-  // en las órdenes cargadas. Así, si agregas un estado nuevo en el backend,
-  // el tab aparece solo sin tocar este archivo.
+  // en las órdenes cargadas, ordenados según el ciclo de vida (ETAPAS_ORDEN).
+  // Si agregas un estado nuevo en el backend que no está en ETAPAS_ORDEN,
+  // el tab igual aparece, solo que al final de la lista.
   const tabs = useMemo(() => {
     const estadosPresentes = [...new Set(ordenes.map((o) => o.estado))]
+    const ordenEtapas = ETAPAS_ORDEN.map((e) => e.id)
 
-    const tabsEstados = estadosPresentes.map((estado) => ({
-      id: estado,
-      label: getEstadoConfig(estado).label,
-      count: ordenes.filter((o) => o.estado === estado).length,
-    }))
+    const tabsEstados = estadosPresentes
+      .sort((a, b) => {
+        const ia = ordenEtapas.indexOf(a)
+        const ib = ordenEtapas.indexOf(b)
+        if (ia === -1 && ib === -1) return 0
+        if (ia === -1) return 1
+        if (ib === -1) return -1
+        return ia - ib
+      })
+      .map((estado) => ({
+        id: estado,
+        label: getEstadoConfig(estado).label,
+        count: ordenes.filter((o) => o.estado === estado).length,
+      }))
 
     return [
       { id: 'todos', label: 'Todos', count: ordenes.length },
