@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import faqCategorias from '../data/faqData'
+import BottomNav from '../components/BottomNav'
 import './FAQ.css'
 
 // ---------------------------------------------------------
@@ -199,6 +200,7 @@ function Faq() {
           </div>
         </div>
       </div>
+      <BottomNav />
     </div>
   )
 }

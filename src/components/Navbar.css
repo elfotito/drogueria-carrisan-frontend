@@ -43,9 +43,9 @@ body {
 }
 
 .navbar__menu-mobile {
-  background: none;
+  background: #0052dc;
   border: none;
-  color: #0052dc;
+  color: #ffffff;
   padding: 4px;
   cursor: pointer;
   display: flex;

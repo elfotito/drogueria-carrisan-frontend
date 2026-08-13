@@ -6,6 +6,7 @@ import DashboardMobile from '../components/DashboardMobile'
 import HomeCarrusel from '../components/HomeCarrusel'
 import SeccionesCarrusel from '../components/SeccionesCarrusel'
 import { agruparPorLinea } from '../utils/agruparPorLinea'
+
 import './Home.css'
 
 const DIAS = ['L', 'M', 'M', 'J', 'V', 'S', 'D']

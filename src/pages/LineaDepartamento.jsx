@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import api from '../api/axios'
 import ProductCard from '../components/ProductCard'
 import ProductCardSkeleton from '../components/Productcardskeleton'
+import BottomNav from '../components/BottomNav'
 import './LineaDepartamento.css'
 
 // Configuración de cada línea. Cuando exista un campo real que distinga
@@ -110,6 +111,7 @@ function LineaDepartamento({ linea }) {
           )}
         </div>
       </div>
+      <BottomNav />
     </div>
   )
 }
