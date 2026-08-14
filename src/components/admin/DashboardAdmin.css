@@ -1,0 +1,370 @@
+/* ============================================================
+   DASHBOARD ADMIN — resumen general del panel
+   Namespacing: todo bajo el prefijo dash-* para no colisionar
+   con .stats-grid/.stat-card ya usados en OrdenesAdmin.css etc.
+   ============================================================ */
+
+.dash-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.dash-error {
+  padding: 2rem;
+  text-align: center;
+  color: var(--slate-500);
+}
+
+/* ============================================================
+   KPIs
+   ============================================================ */
+.dash-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.dash-kpi {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  background: var(--surface);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: box-shadow 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
+}
+
+.dash-kpi:hover {
+  box-shadow: var(--shadow);
+  border-color: var(--blue-100);
+  transform: translateY(-1px);
+}
+
+.dash-kpi--static {
+  cursor: default;
+}
+
+.dash-kpi--static:hover {
+  box-shadow: var(--shadow-sm);
+  transform: none;
+  border-color: var(--slate-200);
+}
+
+.dash-kpi-icon {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+}
+
+.dash-kpi-icon--warn { background: var(--warn-tint); }
+.dash-kpi-icon--good { background: var(--good-tint); }
+.dash-kpi-icon--alert { background: var(--alert-tint); }
+.dash-kpi-icon--blue { background: var(--blue-50); }
+
+.dash-kpi-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.dash-kpi-valor {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+.dash-kpi-label {
+  font-size: 0.8rem;
+  color: var(--slate-500);
+  margin-top: 0.15rem;
+}
+
+/* ============================================================
+   Tarjetas de contenido
+   ============================================================ */
+.dash-card {
+  background: var(--surface);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.dash-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.1rem;
+}
+
+.dash-card-header h3 {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.dash-card-total {
+  font-size: 0.8rem;
+  color: var(--slate-500);
+}
+
+.dash-ver-todas {
+  background: none;
+  border: none;
+  color: var(--blue);
+  font-weight: 600;
+  font-size: 0.825rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+.dash-ver-todas:hover {
+  color: var(--blue-600);
+  text-decoration: underline;
+}
+
+.dash-vacio {
+  color: var(--slate-500);
+  font-size: 0.9rem;
+  padding: 1rem 0;
+}
+
+/* ============================================================
+   Distribución de órdenes por estado
+   ============================================================ */
+.dash-distribucion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.dash-distribucion-fila {
+  display: grid;
+  grid-template-columns: 150px 1fr 32px;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.dash-distribucion-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--slate-700);
+  white-space: nowrap;
+}
+
+.dash-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dash-distribucion-barra {
+  height: 8px;
+  background: var(--slate-100);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.dash-distribucion-relleno {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.dash-distribucion-cantidad {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============================================================
+   Columnas: órdenes recientes / clientes nuevos
+   ============================================================ */
+.dash-columnas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.dash-lista {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+/* --- Fila de orden --- */
+.dash-orden-fila {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.7rem 0.6rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: background 0.15s ease;
+}
+
+.dash-orden-fila:hover {
+  background: var(--slate-100);
+}
+
+.dash-orden-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.dash-orden-id {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.dash-orden-cliente {
+  font-size: 0.8rem;
+  color: var(--slate-500);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dash-orden-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-shrink: 0;
+}
+
+.dash-estado-badge {
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.dash-orden-total {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink);
+  min-width: 60px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Fila de cliente --- */
+.dash-cliente-fila {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem;
+  border-radius: var(--radius-sm);
+}
+
+.dash-cliente-avatar {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--blue-50);
+  color: var(--blue);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dash-cliente-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.dash-cliente-nombre {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dash-cliente-email {
+  font-size: 0.78rem;
+  color: var(--slate-500);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dash-cliente-fecha {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  color: var(--slate-500);
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width: 1024px) {
+  .dash-kpis {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dash-columnas {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .dash-distribucion-fila {
+    grid-template-columns: 110px 1fr 28px;
+  }
+
+  .dash-distribucion-label {
+    font-size: 0.78rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .dash-kpis {
+    grid-template-columns: 1fr;
+  }
+
+  .dash-orden-cliente,
+  .dash-cliente-email {
+    max-width: 120px;
+  }
+}

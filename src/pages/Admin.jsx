@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
+import DashboardAdmin from '../components/admin/DashboardAdmin'
 import TasaCambio from '../components/admin/TasaCambio'
 import api from '../api/axios'
 import OrdenesAdmin from '../components/admin/OrdenesAdmin'
@@ -17,6 +18,7 @@ function Admin() {
   const [menuMobileAbierto, setMenuMobileAbierto] = useState(false)
   const { user } = useAuth()
   const secciones = [
+    { id: 'dashboard', nombre: 'Resumen', icono: '📊' },
     { id: 'tasa', nombre: 'Tasa de cambio', icono: '💱' },
     { id: 'productos', nombre: 'Productos', icono: '🛍️' },
     { id: 'ordenes', nombre: 'Órdenes', icono: '📊' },
