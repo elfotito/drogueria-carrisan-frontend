@@ -30,6 +30,7 @@ import Ofertas from './pages/Ofertas'
 import LineaFarmacia from './pages/LineaFarmacia'
 import LineaHospitalaria from './pages/LineaHospitalaria'
 import OrdenDetalle from './pages/OrdenDetalle'
+import Direcciones from './pages/Direcciones'
 
 
 
@@ -67,6 +68,7 @@ function App() {
             <Route path="/ofertas" element={<PrivateRoute><Ofertas /></PrivateRoute>} />
             <Route path="/farmacia" element={<PrivateRoute><LineaFarmacia /></PrivateRoute>} />
             <Route path="/hospitalaria" element={<PrivateRoute><LineaHospitalaria /></PrivateRoute>} />
+            <Route path="/direcciones" element={<PrivateRoute><Direcciones /></PrivateRoute>} />
           </Routes>
           </EnvioProvider>
         </FavoritosProvider>
