@@ -4,6 +4,7 @@ import { CartProvider } from './context/CartContext'
 import { EnvioProvider } from './context/EnvioContext'
 import { FavoritosProvider } from './context/FavoritosContext'
 import Navbar from './components/Navbar'
+import ScrollToTop from './components/ScrollToTop'
 import PrivateRoute from './components/PrivateRoute'
 import Home from './pages/Home'
 import Catalogo from './pages/Catalogo'
@@ -39,6 +40,7 @@ function App() {
       <CartProvider>
         <FavoritosProvider>
           <EnvioProvider>
+            <ScrollToTop />
           <Navbar />
           <Routes>
             <Route path="/" element={<Home />} />

@@ -519,7 +519,7 @@ body {
   align-items: center; 
   justify-content: center;
 }
-.cart-price { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; margin-top: -8px; }
+.cart-price { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; }
 
 /* ============================================ */
 /* BARRA SECUNDARIA (Blanca)                    */
