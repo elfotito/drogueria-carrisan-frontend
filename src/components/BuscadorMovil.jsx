@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../api/axios'
 import './BuscadorMovil.css'
-import { IconoFlecha } from './components/icons/IconoFlecha';
+import { IconoFlecha } from './icons/IconoFlecha';
 
 const STORAGE_KEY = 'carrisan_busquedas_recientes'
 const MAX_RECIENTES = 8
