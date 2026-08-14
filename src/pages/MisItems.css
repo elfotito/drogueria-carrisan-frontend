@@ -1,40 +1,528 @@
-.mi-cuenta,
-.mi-cuenta *,
-.mi-cuenta *::before,
-.mi-cuenta *::after {
-  box-sizing: border-box;
+/* ==========================================================
+   MisItems — Droguería Carrisán
+   Paleta: Índigo #232B45 · Azul #1B4B8F · Teal #12A594
+           Ink #14182A · Paper #FBFAF7
+   ========================================================== */
+
+.misitems-page {
+  min-height: 100vh;
+  background: #FBFAF7;
+  font-family: 'Inter', sans-serif;
 }
 
-.mi-cuenta {
-  --color-brand: #0f766e;
-  --color-brand-light: #f0fdfa;
-  --color-positive: #15803d;
-  --color-negative: #dc2626;
-  --color-warning: #d97706;
-  --color-bg: #f7f9f9;
-  --color-surface: #ffffff;
-  --color-border: #e4e9e7;
-  --color-text: #1f2a2e;
-  --color-text-muted: #6b7a7d;
-
-  width: 100%;
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 24px 20px 60px;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  color: var(--color-text);
-  background: var(--color-bg);
-  font-variant-numeric: tabular-nums;
-  overflow-x: hidden; /* red de seguridad: nada dentro debería poder empujar la página */
+/* ---------------------------------------------------------
+   Tabs superiores (Mis Items / Listas / ReComprar)
+--------------------------------------------------------- */
+.misitems-tabs {
+  display: flex;
+  background: #FFFFFF;
+  border-bottom: 1px solid #E7E5DE;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
-.mi-cuenta h1 {
-  font-size: 1.5rem;
+.misitems-tab {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 16px 8px 13px;
+  font-family: 'Manrope', sans-serif;
   font-weight: 700;
-  margin: 0;
-  letter-spacing: -0.01em;
+  font-size: 0.88rem;
+  color: #5B6270;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: color 0.15s ease, border-color 0.15s ease;
 }
 
+.misitems-tab--activo {
+  color: #14182A;
+  border-bottom-color: #1B4B8F;
+}
+
+.misitems-container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 20px 16px 40px;
+}
+
+.misitems-section {
+  margin-bottom: 8px;
+}
+
+.misitems-section__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.misitems-section-title {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: #14182A;
+  margin: 0 0 16px;
+}
+
+.misitems-section__header .misitems-section-title {
+  margin: 0;
+}
+
+.misitems-section-subtitulo {
+  font-size: 0.8rem;
+  color: #5B6270;
+  margin: 2px 0 0;
+}
+
+.misitems-section-title--sugerencias {
+  margin-top: 28px;
+}
+
+.misitems-error {
+  color: #B3261E;
+  background: #FDECEC;
+  border: 1px solid #F3C6C4;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 0.9rem;
+}
+
+/* ---------------------------------------------------------
+   Agregar todos al carrito
+--------------------------------------------------------- */
+.misitems-agregar-todos {
+  flex-shrink: 0;
+  background: none;
+  border: 1.5px solid #1B4B8F;
+  color: #1B4B8F;
+  font-weight: 700;
+  font-size: 0.8rem;
+  padding: 8px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.misitems-agregar-todos:hover {
+  background: #1B4B8F;
+  color: #FBFAF7;
+}
+
+/* ---------------------------------------------------------
+   Buscador de favoritos
+--------------------------------------------------------- */
+.misitems-buscador {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #FFFFFF;
+  border: 1px solid #E7E5DE;
+  border-radius: 10px;
+  padding: 9px 12px;
+  margin-bottom: 16px;
+  color: #A9AC9F;
+}
+
+.misitems-buscador:focus-within {
+  border-color: #1B4B8F;
+  color: #1B4B8F;
+}
+
+.misitems-buscador input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: none;
+  font-family: inherit;
+  font-size: 0.88rem;
+  color: #14182A;
+}
+
+.misitems-vacio-filtro {
+  text-align: center;
+  color: #5B6270;
+  font-size: 0.9rem;
+  padding: 40px 20px;
+}
+
+/* ---------------------------------------------------------
+   Grid de productos (Mis Favoritos y ReComprar)
+--------------------------------------------------------- */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+@media (min-width: 640px) {
+  .product-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 960px) {
+  .product-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ---------------------------------------------------------
+   Item card
+--------------------------------------------------------- */
+.itemcard {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.itemcard__media {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  background: #F7F6F1;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  overflow: hidden;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.itemcard:hover .itemcard__media {
+  box-shadow: 0 6px 18px rgba(20, 24, 42, 0.08);
+  transform: translateY(-2px);
+}
+
+.itemcard__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 10px;
+}
+
+.itemcard__media-placeholder {
+  font-size: 0.68rem;
+  color: #A9AC9F;
+  text-align: center;
+  padding: 6px;
+}
+
+.itemcard__quitar {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.92);
+  color: #5B6270;
+  font-size: 0.78rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 4px rgba(20, 24, 42, 0.15);
+}
+
+.itemcard__quitar:hover {
+  color: #B3261E;
+}
+
+.itemcard__cta {
+  align-self: flex-start;
+  background: #1B4B8F;
+  color: #FBFAF7;
+  border: none;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  padding: 7px 16px;
+  cursor: pointer;
+  margin-bottom: 8px;
+  transition: background 0.15s ease;
+}
+
+.itemcard__cta:hover {
+  background: #163c72;
+}
+
+.itemcard__cta--cantidad {
+  background: #14182A;
+  min-width: 34px;
+  padding: 7px 14px;
+  border-radius: 50%;
+  text-align: center;
+}
+
+.itemcard__precio {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800;
+  font-size: 1rem;
+  color: #12A594;
+  margin: 0 0 4px;
+}
+
+.itemcard__nombre {
+  font-size: 0.82rem;
+  color: #14182A;
+  line-height: 1.3;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Skeleton */
+.itemcard--skeleton .itemcard__media--skeleton {
+  background: #EFEEE9;
+  position: relative;
+  overflow: hidden;
+}
+
+.itemcard--skeleton .itemcard__media--skeleton::after,
+.skel-line::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+  animation: misitems-shimmer 1.4s infinite;
+}
+
+.skel-line {
+  position: relative;
+  overflow: hidden;
+  background: #EFEEE9;
+  border-radius: 6px;
+  margin-bottom: 6px;
+}
+
+.skel-line--btn { width: 70px; height: 24px; border-radius: 999px; }
+.skel-line--sm { width: 40%; height: 14px; }
+.skel-line--md { width: 80%; height: 14px; }
+
+@keyframes misitems-shimmer {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
+
+/* ---------------------------------------------------------
+   Vacío
+--------------------------------------------------------- */
+.misitems-vacio {
+  text-align: center;
+  padding: 48px 20px;
+  color: #5B6270;
+}
+
+.misitems-vacio__icon {
+  font-size: 2.6rem;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.misitems-vacio p {
+  margin: 0 0 14px;
+  font-size: 0.9rem;
+}
+
+.misitems-vacio__cta {
+  display: inline-block;
+  background: #1B4B8F;
+  color: #FBFAF7;
+  font-weight: 700;
+  padding: 10px 22px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-size: 0.88rem;
+}
+
+/* ---------------------------------------------------------
+   Listas (grid de cards)
+--------------------------------------------------------- */
+.listas-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+@media (min-width: 640px) {
+  .listas-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.lista-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #FFFFFF;
+  border: 1.5px solid #E7E5DE;
+  border-radius: 14px;
+  padding: 22px 12px;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  min-height: 100px;
+  transition: box-shadow 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
+}
+
+.lista-card:hover {
+  box-shadow: 0 6px 18px rgba(20, 24, 42, 0.06);
+  transform: translateY(-2px);
+  border-color: #C7D6EA;
+}
+
+.lista-card__icon {
+  font-size: 1.5rem;
+}
+
+.lista-card__nombre {
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: #14182A;
+  text-align: center;
+}
+
+.lista-card__eliminar {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: none;
+  background: #F7F6F1;
+  color: #5B6270;
+  font-size: 0.72rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lista-card__eliminar:hover {
+  background: #FDECEC;
+  color: #B3261E;
+}
+
+.lista-card--nueva {
+  border-style: dashed;
+  border-color: #A9AC9F;
+  color: #5B6270;
+}
+
+.lista-card--nueva .lista-card__icon {
+  color: #1B4B8F;
+}
+
+.lista-card--nueva:hover {
+  border-color: #1B4B8F;
+  color: #1B4B8F;
+}
+
+.lista-card--skeleton {
+  background: #EFEEE9;
+  border-color: transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.lista-card--skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+  animation: misitems-shimmer 1.4s infinite;
+}
+
+.lista-card--crear-form {
+  cursor: default;
+  align-items: stretch;
+}
+
+.lista-card--crear-form:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.lista-crear-input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #E7E5DE;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-family: inherit;
+}
+
+.lista-crear-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.lista-crear-btn {
+  flex: 1;
+  border: 1px solid #E7E5DE;
+  background: #FFFFFF;
+  border-radius: 8px;
+  padding: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #5B6270;
+  cursor: pointer;
+}
+
+.lista-crear-btn--confirmar {
+  background: #1B4B8F;
+  border-color: #1B4B8F;
+  color: #FBFAF7;
+}
+
+/* ---------------------------------------------------------
+   Sugerencias rápidas (chips en carrusel)
+--------------------------------------------------------- */
+.sugerencias-carousel {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.sugerencias-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.sugerencia-chip {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #EEF3FB;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #1B4B8F;
+  cursor: pointer;
+}
+
+.sugerencia-chip:hover {
+  border-color: #1B4B8F;
+}
+
+.sugerencia-chip__icon {
+  font-size: 1rem;
+  }
 .mi-cuenta h2 {
   font-size: 1.1rem;
   font-weight: 700;
