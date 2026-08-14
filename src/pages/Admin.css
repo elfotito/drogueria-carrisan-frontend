@@ -73,7 +73,88 @@ body {
 }
 
 /* ============================================================
+   Admin.css — Panel administrativo de Droguería Carrisán
+   Rediseño: sistema de marca (azul #0052DC + índigo #1A1A3A),
+   inspirado en paneles B2B tipo Walmart Seller Center / Amazon
+   Seller Central. Sidebar fijo al borde real de la ventana +
+   topbar delgado en vez del header-hero anterior.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+
+  /* --- Marca --- */
+  --blue: #0052dc;
+  --blue-600: #0043b3;   /* hover / pressed */
+  --blue-700: #003689;
+  --blue-50: #eef3fe;    /* tinte muy claro, fondos */
+  --blue-100: #dce6fd;   /* tinte claro, hover suave */
+
+  --indigo: #1a1a3a;     /* superficie oscura de marca (sidebar) */
+  --indigo-700: #24244d; /* hover sobre superficie oscura */
+  --indigo-900: #101024; /* acentos más oscuros */
+
+  --alert: #d6274b;      /* tercer color de marca — uso deliberadamente escaso */
+  --alert-tint: #fbe7ec;
+
+  /* --- Neutrales con matiz frío (coherentes con el índigo) --- */
+  --ink: #14142b;
+  --slate-700: #3f4159;
+  --slate-500: #6c6e8a;
+  --slate-300: #b9bbd1;
+  --slate-200: #dedfec;
+  --slate-100: #eeeff6;
+  --paper: #f5f6fb;
+  --surface: #ffffff;
+
+  /* --- Semántica (evitan competir con el rojo de marca) --- */
+  --good: #0e7c5e;
+  --good-tint: #e4f5ee;
+  --warn: #a2650a;
+  --warn-tint: #fbf0de;
+
+  /* --- Elevación --- */
+  --shadow-sm: 0 1px 2px rgba(16, 16, 38, 0.06);
+  --shadow: 0 2px 8px rgba(16, 16, 38, 0.08);
+  --shadow-md: 0 10px 24px rgba(16, 16, 38, 0.10);
+  --shadow-lg: 0 20px 44px rgba(16, 16, 38, 0.16);
+
+  /* --- Radio --- */
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 18px;
+
+  /* --- Tipografía --- */
+  --font-display: 'Space Grotesk', 'Segoe UI', sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Contenedor Principal */
+.admin-container {
+  min-height: 100vh;
+  background: var(--paper);
+}
+
+/* ============================================================
    Sidebar — fija al borde real de la ventana, alto completo.
+   Ya no vive dentro de un box centrado de 1400px: por eso deja
+   de "flotar" hacia el centro en pantallas anchas y queda
+   anclada como se espera de un panel admin.
    ============================================================ */
 .admin-sidebar {
   position: fixed;
@@ -92,7 +173,7 @@ body {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 6rem 1.25rem 1rem;
+  padding: 1.5rem 1.25rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   flex-shrink: 0;
 }
@@ -155,7 +236,7 @@ body {
    pegadas al borde del sidebar y respiran entre sí */
 .nav-list {
   list-style: none;
-  padding: 0.75rem 1.25rem 1rem;;
+  padding: 1rem 0.75rem;
   flex: 1;
   overflow-y: auto;
   display: flex;
@@ -687,64 +768,4 @@ body {
     width: 100%;
     justify-content: center;
   }
-}
-
-.sidebar-user__hola {
-  font-size: 0.75rem;
-  color: var(--slate-300);
-  font-weight: 500;
-  letter-spacing: 0.02em;
-}
-
-.sidebar-user__nombre {
-  font-family: var(--font-display);
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: white;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* ============================================================
-   Botón de volver en el sidebar
-   ============================================================ */
-.btn-volver {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  width: calc(100% - 1.5rem); /* Para que tenga el mismo margen que sidebar-user */
-  margin: 0.5rem 0.75rem 0.75rem;
-  padding: 0.7rem 1rem;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius);
-  color: var(--slate-300);
-  cursor: pointer;
-  font-family: var(--font-body);
-  font-size: 0.875rem;
-  font-weight: 500;
-  transition: all 0.15s ease;
-  flex-shrink: 0;
-}
-
-.btn-volver:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-  border-color: rgba(255, 255, 255, 0.2);
-  transform: translateX(-2px); /* Sutil desplazamiento a la izquierda */
-}
-
-.btn-volver__icon {
-  font-size: 1.1rem;
-  line-height: 1;
-  transition: transform 0.15s ease;
-}
-
-.btn-volver:hover .btn-volver__icon {
-  transform: translateX(-3px); /* La flecha se mueve más a la izquierda */
-}
-
-.btn-volver__text {
-  font-weight: 500;
 }
