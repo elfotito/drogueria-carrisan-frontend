@@ -1,0 +1,315 @@
+/* ============================================
+   Quiénes Somos
+   Paleta: Azul #0052DC · Índigo #1A1A3A · Teal #12A594 · Paper #FBFAF7
+   ============================================ */
+
+.qs-page {
+  background: #FBFAF7;
+  min-height: 100vh;
+}
+
+/* ---------- Hero ---------- */
+.qs-hero {
+  background: linear-gradient(135deg, #1A1A3A, #0052DC);
+  padding: 48px 20px 40px;
+}
+
+.qs-hero__contenido {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.qs-hero__eyebrow {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #8FB2F5;
+  margin: 0 0 12px;
+}
+
+.qs-hero h1 {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.7rem;
+  line-height: 1.25;
+  color: #FFFFFF;
+  margin: 0 0 16px;
+}
+
+.qs-hero__texto {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0;
+}
+
+/* ---------- Franja de identidad ---------- */
+.qs-franja {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  background: #FFFFFF;
+  border-bottom: 1px solid #e3e4e5;
+  padding: 24px 20px;
+}
+
+.qs-franja__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 110px;
+  text-align: center;
+}
+
+.qs-franja__valor {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.4rem;
+  color: #0052DC;
+}
+
+.qs-franja__label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  color: #74767c;
+}
+
+/* ---------- Contenedor general ---------- */
+.qs-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 16px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.qs-seccion h2 {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.3rem;
+  color: #1A1A3A;
+  margin: 0 0 12px;
+}
+
+.qs-seccion p {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.94rem;
+  line-height: 1.65;
+  color: #464646;
+  margin: 0;
+}
+
+/* ---------- Bloque destacado (COVID) ---------- */
+.qs-destacado {
+  background: #1A1A3A;
+  border-radius: 20px;
+  padding: 32px 24px;
+  text-align: center;
+}
+
+.qs-destacado__texto {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-style: italic;
+  font-size: 1.15rem;
+  line-height: 1.5;
+  color: #FFFFFF;
+  margin: 0 0 16px;
+}
+
+.qs-destacado__contexto {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.7);
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+/* ---------- Valores ---------- */
+.qs-valores {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+.qs-valor-card {
+  background: #FFFFFF;
+  border: 1px solid #e3e4e5;
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.qs-valor-card__icono {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #E9EFFC;
+  color: #0052DC;
+  margin-bottom: 12px;
+}
+
+.qs-valor-card h3 {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #1A1A3A;
+  margin: 0 0 6px;
+}
+
+.qs-valor-card p {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: #74767c;
+  margin: 0;
+}
+
+/* ---------- Misión y Visión ---------- */
+.qs-mision-vision {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+.qs-mv-card {
+  background: #FFFFFF;
+  border: 1px solid #e3e4e5;
+  border-left: 3px solid #12A594;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.qs-mv-card h3 {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #1A1A3A;
+  margin: 0 0 8px;
+}
+
+.qs-mv-card p {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: #464646;
+  margin: 0;
+}
+
+/* ---------- Contacto ---------- */
+.qs-contacto {
+  background: #FFFFFF;
+  border: 1px solid #e3e4e5;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.qs-contacto h2 {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: #1A1A3A;
+  margin: 0 0 16px;
+}
+
+.qs-contacto__grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.qs-contacto__grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.qs-contacto__label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #74767c;
+}
+
+.qs-contacto__grid a,
+.qs-contacto__grid span:not(.qs-contacto__label) {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.94rem;
+  font-weight: 600;
+  color: #1A1A3A;
+  text-decoration: none;
+}
+
+.qs-contacto__grid a {
+  color: #0052DC;
+}
+
+/* ============================================
+   Tablet / Desktop
+   ============================================ */
+@media (min-width: 768px) {
+  .qs-hero {
+    padding: 72px 40px 56px;
+  }
+
+  .qs-hero h1 {
+    font-size: 2.4rem;
+  }
+
+  .qs-hero__texto {
+    font-size: 1.05rem;
+  }
+
+  .qs-franja {
+    padding: 32px 40px;
+    gap: 48px;
+  }
+
+  .qs-franja__valor {
+    font-size: 1.7rem;
+  }
+
+  .qs-container {
+    padding: 48px 40px 80px;
+    gap: 40px;
+  }
+
+  .qs-destacado {
+    padding: 48px 60px;
+  }
+
+  .qs-destacado__texto {
+    font-size: 1.4rem;
+  }
+
+  .qs-valores {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+
+  .qs-mision-vision {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .qs-contacto__grid {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+@media (min-width: 1100px) {
+  .qs-valores {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
