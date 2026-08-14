@@ -4,12 +4,21 @@
            Ink #14182A · Paper #FBFAF7
    ========================================================== */
 
+.detalle-container,
+.detalle-container *,
+.detalle-container *::before,
+.detalle-container *::after {
+  box-sizing: border-box;
+}
+
 .detalle-container {
+  width: 100%;
   max-width: 1400px;
   margin: 0 auto;
   padding: 20px 24px 60px;
   font-family: 'Inter', sans-serif;
   background: #FBFAF7;
+  overflow-x: hidden; /* red de seguridad contra desborde horizontal */
 }
 
 /* ---------------------------------------------------------
@@ -93,6 +102,7 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
+  min-width: 0;
 }
 
 .detalle-marca {
@@ -111,6 +121,7 @@
   color: #14182A;
   margin: 0;
   line-height: 1.3;
+  overflow-wrap: break-word;
 }
 
 .detalle-disponibilidad {
@@ -207,8 +218,8 @@
 }
 
 .detalle-btn-agregar {
-  flex: 1;
-  min-width: 180px;
+  flex: 1 1 180px;
+  min-width: 0;
   padding: 12px 28px;
   background: #1B4B8F;
   color: #FBFAF7;
@@ -275,7 +286,7 @@
 
 .detalle-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr));
   gap: 12px;
   margin-bottom: 28px;
 }
@@ -288,6 +299,7 @@
   background: #FFFFFF;
   border: 1px solid #E7E5DE;
   border-radius: 12px;
+  min-width: 0;
 }
 
 .detalle-label {
@@ -302,6 +314,7 @@
   font-size: 0.92rem;
   color: #14182A;
   font-weight: 600;
+  overflow-wrap: break-word;
 }
 
 .detalle-valor.disponible {
@@ -329,6 +342,7 @@
   line-height: 1.7;
   color: #5B6270;
   margin: 0;
+  overflow-wrap: break-word;
 }
 
 /* ---------------------------------------------------------
@@ -340,6 +354,7 @@
   gap: 40px;
   border-top: 1px solid #E7E5DE;
   padding-top: 36px;
+  min-width: 0;
 }
 
 /* ---------------------------------------------------------
@@ -369,6 +384,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  min-width: 0;
 }
 
 .skeleton-line {
@@ -428,4 +444,41 @@
 
 .detalle-error button:hover {
   background: #163c72;
+}
+
+/* ---------------------------------------------------------
+   Responsive — tablet y móvil
+--------------------------------------------------------- */
+@media (max-width: 860px) {
+  .detalle-container {
+    padding: 16px 16px 48px;
+  }
+
+  .detalle-imagen-wrapper {
+    padding: 24px;
+    min-height: 280px;
+  }
+
+  .detalle-imagen {
+    max-height: 260px;
+  }
+
+  .detalle-titulo {
+    font-size: 1.35rem;
+  }
+
+  .detalle-precio-usd {
+    font-size: 1.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .detalle-imagen-wrapper {
+    padding: 16px;
+    min-height: 240px;
+  }
+
+  .detalle-btn-agregar {
+    flex-basis: 100%;
+  }
 }
