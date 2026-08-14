@@ -1,4 +1,7 @@
+import { useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
+import api from '../api/axios'
+import { useAuth } from '../context/AuthContext'
 import './BottomNav.css'
 
 // Íconos simples en SVG inline — evita depender de una librería de íconos
@@ -37,6 +40,12 @@ const ICONOS = {
       <rect x="14" y="14" width="7" height="7" rx="1.5" />
     </svg>
   ),
+  campana: (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M6 8a6 6 0 0 1 12 0c0 4 1.4 5.6 2 6.5H4c.6-.9 2-2.5 2-6.5Z" />
+      <path d="M10 19a2 2 0 0 0 4 0" />
+    </svg>
+  ),
 }
 
 // Items normales (izquierda y derecha del FAB central)
@@ -68,7 +77,65 @@ function BottomNavItem({ item }) {
   )
 }
 
+// Ítem de "Alertas" — igual que BottomNavItem, pero con el badge y el
+// efecto de campana que se activan solo cuando hay notificaciones sin leer
+function BottomNavCampana({ noLeidas }) {
+  const hayPendientes = noLeidas > 0
+
+  return (
+    <NavLink
+      to="/notificaciones"
+      className={({ isActive }) =>
+        `bottom-nav__item ${isActive ? 'bottom-nav__item--activo' : ''} ${
+          hayPendientes ? 'bottom-nav__item--alerta' : ''
+        }`
+      }
+    >
+      <span className="bottom-nav__icon-wrap">
+        <span className="bottom-nav__icon-pill" aria-hidden="true" />
+        {hayPendientes && <span className="bottom-nav__ping" aria-hidden="true" />}
+        {ICONOS.campana}
+        {hayPendientes && (
+          <span className="bottom-nav__badge">{noLeidas > 9 ? '9+' : noLeidas}</span>
+        )}
+      </span>
+      <span className="bottom-nav__label">Alertas</span>
+    </NavLink>
+  )
+}
+
 function BottomNav() {
+  const { user } = useAuth()
+  const [notificacionesNoLeidas, setNotificacionesNoLeidas] = useState(0)
+
+  useEffect(() => {
+    if (!user) {
+      setNotificacionesNoLeidas(0)
+      return
+    }
+
+    let cancelado = false
+
+    function cargarConteo() {
+      api
+        .get('/notifications/unread-count')
+        .then(({ data }) => {
+          if (!cancelado) setNotificacionesNoLeidas(data.count || 0)
+        })
+        .catch((err) => console.error('Error al contar notificaciones:', err))
+    }
+
+    cargarConteo()
+    // Poll ligero: así el efecto de la campana reacciona mientras el
+    // usuario navega, sin necesitar sockets para algo tan puntual.
+    const intervalo = setInterval(cargarConteo, 45000)
+
+    return () => {
+      cancelado = true
+      clearInterval(intervalo)
+    }
+  }, [user])
+
   return (
     <nav className="bottom-nav" aria-label="Navegación principal">
       {ITEMS_IZQUIERDA.map((item) => (
@@ -91,6 +158,7 @@ function BottomNav() {
       {ITEMS_DERECHA.map((item) => (
         <BottomNavItem key={item.to} item={item} />
       ))}
+      <BottomNavCampana noLeidas={notificacionesNoLeidas} />
     </nav>
   )
 }

@@ -156,6 +156,76 @@
   .bottom-nav__fab-wrapper--activo .bottom-nav__fab-label {
     color: #0052DC;
   }
+
+  /* --- Ítem "Alertas": badge + efecto, solo cuando hay pendientes --- */
+
+  .bottom-nav__badge {
+    position: absolute;
+    top: -2px;
+    right: 3px;
+    z-index: 2;
+    min-width: 15px;
+    height: 15px;
+    padding: 0 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #D64550;
+    color: #FFFFFF;
+    font-size: 0.58rem;
+    font-weight: 700;
+    line-height: 1;
+    border-radius: 999px;
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    animation: campana-badge-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* Anillo tipo "radar" detrás del badge — respira mientras haya pendientes */
+  .bottom-nav__ping {
+    position: absolute;
+    top: 1px;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(214, 69, 80, 0.55);
+    animation: campana-ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+
+  /* La campana "suena": un balanceo breve y periódico, no continuo,
+     para llamar la atención sin volverse molesto */
+  .bottom-nav__item--alerta svg {
+    transform-origin: 50% 12%;
+    animation: campana-sonar 3.2s ease-in-out infinite;
+  }
+
+  @keyframes campana-badge-pop {
+    0% { transform: scale(0); opacity: 0; }
+    70% { transform: scale(1.15); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  @keyframes campana-ping {
+    0% { transform: scale(1); opacity: 0.7; }
+    75%, 100% { transform: scale(2.6); opacity: 0; }
+  }
+
+  @keyframes campana-sonar {
+    0%, 12%, 100% { transform: rotate(0deg); }
+    2% { transform: rotate(-14deg); }
+    4% { transform: rotate(12deg); }
+    6% { transform: rotate(-9deg); }
+    8% { transform: rotate(6deg); }
+    10% { transform: rotate(-3deg); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bottom-nav__item--alerta svg,
+    .bottom-nav__ping,
+    .bottom-nav__badge {
+      animation: none;
+    }
+  }
 }
 
 /* ---------- Tablet: dock un poco más grande y más separado del borde ---------- */
@@ -190,5 +260,11 @@
   .bottom-nav__fab svg {
     width: 22px;
     height: 22px;
+  }
+
+  .bottom-nav__badge {
+    min-width: 16px;
+    height: 16px;
+    font-size: 0.62rem;
   }
 }
