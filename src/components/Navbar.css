@@ -499,6 +499,7 @@ body {
   text-decoration: none; 
   padding: 4px; 
   border-radius: 8px;
+  padding-right: 15px;
 }
 .cart-icon-wrapper { position: relative; }
 .cart-badge {
@@ -574,7 +575,7 @@ body {
   }
 
   .navbar-container {
-    background: #0052dc;
+    background: #1A1A3A;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     color: #1A1A3A;
