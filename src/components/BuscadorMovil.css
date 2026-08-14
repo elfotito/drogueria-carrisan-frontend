@@ -44,9 +44,10 @@
   align-items: center;
   gap: 8px;
   background: #FFFFFF;
-  border-radius: 24px;
   height: 42px;
   padding: 0 14px;
+  outline: 2px solid #FFFFFF;
+  outline-offset: 3px;
 }
 
 .buscador-movil__form svg {
