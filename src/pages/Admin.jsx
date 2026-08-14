@@ -77,12 +77,13 @@ function Admin() {
             ✕
           </button>
         </div>
-        <button className="btn-volver" onClick={handleVolver}>
-              <span className="btn-volver__icon">←</span>
-              <span className="btn-volver__text">Volver</span>
-            </button>
+        
         
         <ul className="nav-list">
+          <button className="btn-volver" onClick={handleVolver}>
+              <span className="btn-volver__icon">←</span>
+              <span className="btn-volver__text">Volver</span>
+          </button>
           {secciones.map(seccion => (
             <li key={seccion.id}>
               <button
