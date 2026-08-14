@@ -98,7 +98,7 @@ function Notificaciones() {
       marcarLeida(notificacion.id)
     }
     if (notificacion.orden_id) {
-      navigate('/ordenes')
+      navigate('/orders')
     }
   }
 
