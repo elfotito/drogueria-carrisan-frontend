@@ -1,3 +1,10 @@
+.mi-cuenta,
+.mi-cuenta *,
+.mi-cuenta *::before,
+.mi-cuenta *::after {
+  box-sizing: border-box;
+}
+
 .mi-cuenta {
   --color-brand: #0f766e;
   --color-brand-light: #f0fdfa;
@@ -10,6 +17,7 @@
   --color-text: #1f2a2e;
   --color-text-muted: #6b7a7d;
 
+  width: 100%;
   max-width: 1000px;
   margin: 0 auto;
   padding: 24px 20px 60px;
@@ -17,6 +25,7 @@
   color: var(--color-text);
   background: var(--color-bg);
   font-variant-numeric: tabular-nums;
+  overflow-x: hidden; /* red de seguridad: nada dentro debería poder empujar la página */
 }
 
 .mi-cuenta h1 {
@@ -54,10 +63,17 @@
   flex-shrink: 0;
 }
 
+.mi-cuenta__header > div {
+  min-width: 0; /* permite que el email largo se trunque en vez de empujar */
+}
+
 .mi-cuenta__email {
   margin: 2px 0 0;
   color: var(--color-text-muted);
   font-size: 0.88rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .mi-cuenta__alerta {
@@ -80,11 +96,17 @@
   overflow-x: auto;
   margin-bottom: 16px;
   padding-bottom: 2px;
+  scrollbar-width: none; /* Firefox */
+  -webkit-overflow-scrolling: touch;
+}
+
+.franja-financiera::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
 }
 
 .franja-financiera__item {
-  flex: 1;
-  min-width: 150px;
+  flex: 1 0 auto;
+  min-width: 140px;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: 12px;
@@ -127,6 +149,7 @@
   border-color: var(--color-brand);
   font-weight: 600;
   font-size: 0.88rem;
+  white-space: nowrap;
 }
 
 /* --- Accesos rápidos --- */
@@ -134,6 +157,7 @@
   display: flex;
   gap: 8px;
   margin-bottom: 28px;
+  flex-wrap: wrap;
 }
 
 .accesos-rapidos__item {
@@ -149,6 +173,7 @@
   font-size: 0.85rem;
   font-weight: 600;
   transition: border-color 0.15s ease, color 0.15s ease;
+  white-space: nowrap;
 }
 
 .accesos-rapidos__item:hover {
@@ -163,7 +188,7 @@
 
 .secciones-cuenta__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
   gap: 12px;
 }
 
@@ -178,6 +203,7 @@
   text-decoration: none;
   color: var(--color-text);
   transition: box-shadow 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
+  min-width: 0;
 }
 
 .seccion-card:hover {
@@ -214,6 +240,9 @@
 .seccion-card__descripcion {
   font-size: 0.8rem;
   color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .seccion-card__flecha {
@@ -234,6 +263,7 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 10px;
+  gap: 8px;
 }
 
 .ver-todas {
@@ -244,6 +274,8 @@
   text-decoration: none;
   font-size: 0.85rem;
   font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .ordenes-lista {
@@ -289,17 +321,24 @@
 .orden-card__titulo {
   font-weight: 600;
   font-size: 0.92rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .orden-card__meta {
   font-size: 0.78rem;
   color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .orden-card__monto {
   font-size: 0.92rem;
   font-weight: 700;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 /* --- Badges de estado de orden --- */
@@ -313,6 +352,7 @@
   background: #f1f5f4;
   color: var(--color-text-muted);
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .estado-badge--pendiente,
@@ -382,8 +422,8 @@
 
 /* --- Responsive --- */
 @media (max-width: 560px) {
-  .franja-financiera {
-    flex-wrap: nowrap;
+  .mi-cuenta {
+    padding: 20px 16px 48px;
   }
 
   .secciones-cuenta__grid {
