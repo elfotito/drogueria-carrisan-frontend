@@ -1,0 +1,464 @@
+/* ==========================================================
+   Direcciones — Droguería Carrisán
+   Paleta: Índigo #232B45 · Azul #1B4B8F · Teal #12A594
+           Ink #14182A · Paper #FBFAF7
+   ========================================================== */
+
+.direcciones-page {
+  min-height: 100vh;
+  background: #FBFAF7;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Contenedor exterior a 1400px (igual al resto de la plataforma), pero el
+   contenido en sí —una lista de tarjetas y un formulario— se lee mejor
+   centrado y angosto, así que va envuelto en .direcciones-contenido. */
+.direcciones-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px 24px 60px;
+}
+
+.direcciones-contenido {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* ---------------------------------------------------------
+   Encabezado
+--------------------------------------------------------- */
+.direcciones-header {
+  margin-bottom: 20px;
+}
+
+.direcciones-header h1 {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.4rem;
+  color: #14182A;
+  margin: 0 0 4px;
+}
+
+.direcciones-header p {
+  font-size: 0.88rem;
+  color: #5B6270;
+  margin: 0;
+}
+
+/* ---------------------------------------------------------
+   Mensaje de éxito/error
+--------------------------------------------------------- */
+.direccion-mensaje {
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+.direccion-mensaje--exito {
+  background: #E1F5EF;
+  color: #0E7C63;
+  border: 1px solid #BEE8DB;
+}
+
+.direccion-mensaje--error {
+  background: #FDECEC;
+  color: #B3261E;
+  border: 1px solid #F3C6C4;
+}
+
+/* ---------------------------------------------------------
+   Tabs
+--------------------------------------------------------- */
+.direcciones-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.direccion-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1.5px solid #E7E5DE;
+  background: #FFFFFF;
+  color: #14182A;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.direccion-tab--activo {
+  background: #14182A;
+  border-color: #14182A;
+  color: #FBFAF7;
+}
+
+.direccion-tab__count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: rgba(20, 24, 42, 0.08);
+  color: inherit;
+  border-radius: 999px;
+  padding: 1px 7px;
+}
+
+.direccion-tab--activo .direccion-tab__count {
+  background: rgba(251, 250, 247, 0.18);
+}
+
+.direcciones-descripcion {
+  font-size: 0.82rem;
+  color: #5B6270;
+  margin: 0 0 20px;
+}
+
+/* ---------------------------------------------------------
+   Lista y tarjetas
+--------------------------------------------------------- */
+.direcciones-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.direcciones-vacio {
+  text-align: center;
+  padding: 48px 20px;
+  background: #FFFFFF;
+  border: 1px dashed #E7E5DE;
+  border-radius: 14px;
+  color: #5B6270;
+}
+
+.direcciones-vacio__icon {
+  font-size: 2.4rem;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.direcciones-vacio p {
+  margin: 0;
+  font-size: 0.88rem;
+}
+
+.direccion-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background: #FFFFFF;
+  border: 1px solid #E7E5DE;
+  border-radius: 14px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.direccion-card:hover {
+  border-color: #C7D6EA;
+  box-shadow: 0 4px 14px rgba(20, 24, 42, 0.05);
+}
+
+.direccion-card__nombre {
+  margin: 0 0 6px;
+  font-family: 'Manrope', sans-serif;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #14182A;
+}
+
+.direccion-card__direccion {
+  margin: 0 0 8px;
+  font-size: 0.85rem;
+  color: #14182A;
+  line-height: 1.4;
+}
+
+.direccion-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 0.78rem;
+  color: #5B6270;
+}
+
+.direccion-card__referencia {
+  margin: 8px 0 0;
+  font-size: 0.78rem;
+  color: #8B8D85;
+}
+
+.direccion-card__acciones {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.direccion-card__accion {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  border: 1px solid #E7E5DE;
+  background: #FFFFFF;
+  color: #5B6270;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.direccion-card__accion:hover {
+  background: #EEF3FB;
+  border-color: #1B4B8F;
+  color: #1B4B8F;
+}
+
+.direccion-card__accion--eliminar:hover {
+  background: #FDECEC;
+  border-color: #B3261E;
+  color: #B3261E;
+}
+
+/* Skeleton */
+.direccion-card--skeleton {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.skel-line {
+  position: relative;
+  overflow: hidden;
+  background: #EFEEE9;
+  border-radius: 6px;
+  height: 14px;
+}
+
+.skel-line--sm { width: 35%; }
+.skel-line--md { width: 65%; height: 16px; }
+
+.skel-line::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+  animation: direcciones-shimmer 1.4s infinite;
+}
+
+@keyframes direcciones-shimmer {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
+
+/* ---------------------------------------------------------
+   Botón agregar
+--------------------------------------------------------- */
+.direcciones-agregar-btn {
+  width: 100%;
+  padding: 13px;
+  background: #1B4B8F;
+  color: #FBFAF7;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 700;
+  transition: background 0.15s ease;
+}
+
+.direcciones-agregar-btn:hover {
+  background: #163c72;
+}
+
+/* ---------------------------------------------------------
+   Modal (bottom-sheet en mobile, centrado en desktop —
+   mismo patrón que OrdenDetalleModal)
+--------------------------------------------------------- */
+.direccion-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 24, 42, 0.45);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.direccion-modal {
+  background: #FBFAF7;
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 20px 20px 0 0;
+  animation: direccion-slide-up 0.2s ease-out;
+}
+
+@keyframes direccion-slide-up {
+  from { transform: translateY(24px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@media (min-width: 640px) {
+  .direccion-overlay {
+    align-items: center;
+    padding: 20px;
+  }
+
+  .direccion-modal {
+    border-radius: 20px;
+    max-height: 85vh;
+  }
+}
+
+.direccion-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 22px;
+  border-bottom: 1px solid #E7E5DE;
+}
+
+.direccion-modal__header h3 {
+  margin: 0;
+  font-family: 'Manrope', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #14182A;
+}
+
+.direccion-modal__close {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: #F0EEE7;
+  color: #5B6270;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.direccion-modal__close:hover {
+  background: #E7E5DE;
+  color: #14182A;
+}
+
+.direccion-modal__cuerpo {
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.direccion-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.direccion-campo label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #5B6270;
+}
+
+.direccion-campo input,
+.direccion-campo select,
+.direccion-campo textarea {
+  padding: 10px 12px;
+  border: 1px solid #E7E5DE;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-family: inherit;
+  color: #14182A;
+  background: #FFFFFF;
+}
+
+.direccion-campo input:focus,
+.direccion-campo select:focus,
+.direccion-campo textarea:focus {
+  outline: none;
+  border-color: #1B4B8F;
+  box-shadow: 0 0 0 3px rgba(27, 75, 143, 0.12);
+}
+
+.direccion-campo--disabled {
+  background: #F0EEE7 !important;
+  color: #A9AC9F !important;
+  cursor: not-allowed !important;
+}
+
+.direccion-campo__fila {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.direccion-modal__pie {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 16px 22px;
+  border-top: 1px solid #E7E5DE;
+}
+
+/* ---------------------------------------------------------
+   Botones genéricos
+--------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-size: 0.86rem;
+  font-weight: 700;
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn--primario {
+  background: #1B4B8F;
+  color: #FBFAF7;
+}
+
+.btn--primario:hover:not(:disabled) {
+  background: #163c72;
+}
+
+.btn--secundario {
+  background: #FFFFFF;
+  border-color: #E7E5DE;
+  color: #14182A;
+}
+
+.btn--secundario:hover {
+  border-color: #1B4B8F;
+  color: #1B4B8F;
+}
+
+/* ---------------------------------------------------------
+   Responsive
+--------------------------------------------------------- */
+@media (max-width: 560px) {
+  .direccion-campo__fila {
+    grid-template-columns: 1fr;
+  }
+}
