@@ -4,14 +4,24 @@ import './OrdenDetalleModal.css'
 // Mismos 4 estados operativos definidos en MisOrdenes.jsx — pagado/cancelado
 // no viven acá, se gestionan en Estado de Cuenta.
 const ESTADOS_CONFIG = {
-  pendiente_verificacion: { label: 'Pendiente por verificar', clase: 'badge--pendiente' },
-  verificado: { label: 'Verificado', clase: 'badge--verificado' },
-  enviado: { label: 'Enviado', clase: 'badge--enviado' },
-  entregado: { label: 'Entregado', clase: 'badge--entregado' },
+  pedido_creado: { label: 'Pedido Creado', color: '#f59e0b', bg: '#fef3c7' },
+  procesando: { label: 'Procesando', color: '#3b82f6', bg: '#dbeafe' },
+  preparando: { label: 'Preparando', color: '#8b5cf6', bg: '#ede9fe' },
+  enviado: { label: 'Enviado', color: '#06b6d4', bg: '#cffafe' },
+  entregado: { label: 'Entregado', color: '#10b981', bg: '#d1fae5' },
+  cancelado: { label: 'Cancelado', color: '#ef4444', bg: '#fee2e2' }
+}
+
+const ESTADOS_LEGACY = {
+  pendiente: 'pedido_creado',
+  confirmado: 'procesando',
+  en_preparacion: 'preparando',
+  finalizado: 'entregado'
 }
 
 function getEstadoConfig(estado) {
-  return ESTADOS_CONFIG[estado] || { label: estado || 'Desconocido', clase: 'badge--neutro' }
+  const normalizado = ESTADOS_LEGACY[estado] || estado
+  return ESTADOS_CONFIG[normalizado] || { label: estado || 'Desconocido', color: '#64748b', bg: '#f1f5f9' }
 }
 
 function formatUSD(valor) {

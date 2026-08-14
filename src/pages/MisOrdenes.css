@@ -263,6 +263,13 @@
   color: #0E7C63;
 }
 
+.badge--pedido_creado { background: #FFF3D6; color: #93650B; }
+.badge--procesando { background: #DBEAFE; color: #1D4ED8; }
+.badge--preparando { background: #EDE9FE; color: #6D28D9; }
+.badge--enviado { background: #CFFAFE; color: #0E7490; }
+.badge--entregado { background: #E1F5EF; color: #0E7C63; }
+.badge--cancelado { background: #FEE2E2; color: #B91C1C; }
+
 /* Fallback para cualquier estado nuevo que se agregue después */
 .badge--neutro {
   background: #EFEEE9;

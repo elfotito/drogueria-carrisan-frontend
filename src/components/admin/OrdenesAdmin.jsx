@@ -3,16 +3,16 @@ import api from '../../api/axios'
 import OrdenDetalleModal from '../OrdenDetalleModal'
 import './OrdenesAdmin.css'
 
-const ESTADOS = ['pendiente', 'confirmado', 'en_preparacion', 'enviado', 'entregado', 'finalizado', 'cancelado']
 const ITEMS_POR_PAGINA = 10
 
+const ESTADOS = ['pedido_creado', 'procesando', 'preparando', 'enviado', 'entregado', 'cancelado']
+
 const ESTADO_COLORES = {
-  pendiente: { color: '#f59e0b', bg: '#fef3c7', label: 'Pendiente' },
-  confirmado: { color: '#3b82f6', bg: '#dbeafe', label: 'Confirmado' },
-  en_preparacion: { color: '#8b5cf6', bg: '#ede9fe', label: 'En Preparación' },
+  pedido_creado: { color: '#f59e0b', bg: '#fef3c7', label: 'Pedido Creado' },
+  procesando: { color: '#3b82f6', bg: '#dbeafe', label: 'Procesando' },
+  preparando: { color: '#8b5cf6', bg: '#ede9fe', label: 'Preparando' },
   enviado: { color: '#06b6d4', bg: '#cffafe', label: 'Enviado' },
   entregado: { color: '#10b981', bg: '#d1fae5', label: 'Entregado' },
-  finalizado: { color: '#059669', bg: '#d1fae5', label: 'Finalizado' },
   cancelado: { color: '#ef4444', bg: '#fee2e2', label: 'Cancelado' }
 }
 

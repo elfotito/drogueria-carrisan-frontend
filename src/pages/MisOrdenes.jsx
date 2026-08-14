@@ -1,8 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Link } from 'react-router-dom'
 import api from '../api/axios'
 import { useAuth } from '../context/AuthContext'
-import OrdenDetalleModal from '../components/OrdenDetalleModal'
+import { Link, useNavigate } from 'react-router-dom'
 import BottomNav from '../components/BottomNav'
 import './MisOrdenes.css'
 
@@ -17,13 +16,13 @@ const ETAPAS_ORDEN = [
   { id: 'entregado', label: 'Entregado' },
 ]
 
-// Mapa de estado -> config visual. Cualquier estado nuevo que agregues
-// más adelante cae en ESTADO_FALLBACK automáticamente (no rompe el diseño).
 const ESTADOS_CONFIG = {
-  pendiente_verificacion: { label: 'Pendiente por verificar', clase: 'badge--pendiente' },
-  verificado: { label: 'Verificado', clase: 'badge--verificado' },
+  pedido_creado: { label: 'Pedido Creado', clase: 'badge--pedido_creado' },
+  procesando: { label: 'Procesando', clase: 'badge--procesando' },
+  preparando: { label: 'Preparando', clase: 'badge--preparando' },
   enviado: { label: 'Enviado', clase: 'badge--enviado' },
   entregado: { label: 'Entregado', clase: 'badge--entregado' },
+  cancelado: { label: 'Cancelado', clase: 'badge--cancelado' },
 }
 
 const ESTADO_FALLBACK = { label: null, clase: 'badge--neutro' }
@@ -133,7 +132,7 @@ function MisOrdenes() {
   const [ordenes, setOrdenes] = useState([])
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
-  const [ordenSeleccionada, setOrdenSeleccionada] = useState(null)
+  const navigate = useNavigate()
   const [filtroEstado, setFiltroEstado] = useState('todos')
   const { user } = useAuth()
 
@@ -240,17 +239,12 @@ function MisOrdenes() {
                 key={orden.id}
                 orden={orden}
                 esAdmin={user?.es_admin}
-                onVerDetalle={setOrdenSeleccionada}
+                onVerDetalle={() => navigate(`/orders/${orden.id}`)}
               />
             ))}
           </div>
         )}
       </div>
-
-      <OrdenDetalleModal
-        orden={ordenSeleccionada}
-        onClose={() => setOrdenSeleccionada(null)}
-      />
       <BottomNav />
     </div>
   )

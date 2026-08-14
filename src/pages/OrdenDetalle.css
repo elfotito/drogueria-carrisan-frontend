@@ -1,0 +1,336 @@
+/* ============================================
+   OrdenDetalle — página de detalle con timeline
+   Paleta: Azul #0052DC · Índigo #1A1A3A · Paper #FBFAF7
+   ============================================ */
+
+.od-page {
+  background: #FBFAF7;
+  min-height: 100vh;
+  padding: 20px 16px 100px;
+}
+
+.od-page--centrado {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+  padding-top: 80px;
+  color: #74767c;
+  font-family: 'Inter', sans-serif;
+}
+
+.od-container {
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.od-volver {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #0052DC;
+  text-decoration: none;
+  align-self: flex-start;
+}
+
+/* ---------- Header ---------- */
+.od-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.od-header h1 {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.3rem;
+  color: #1A1A3A;
+  margin: 0 0 4px;
+}
+
+.od-header__fecha {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+  color: #74767c;
+  margin: 0;
+  text-transform: capitalize;
+}
+
+.od-badge {
+  flex-shrink: 0;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+/* ---------- Intro ---------- */
+.od-intro {
+  background: #E9EFFC;
+  border: 1px solid #0052DC;
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.87rem;
+  color: #1A1A3A;
+  line-height: 1.5;
+}
+
+/* ---------- Secciones genéricas ---------- */
+.od-seccion {
+  background: #FFFFFF;
+  border: 1px solid #e3e4e5;
+  border-radius: 16px;
+  padding: 18px;
+}
+
+.od-seccion__titulo {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #1A1A3A;
+  margin: 0 0 12px;
+}
+
+/* ---------- Timeline ---------- */
+.od-timeline {
+  display: flex;
+  flex-direction: column;
+}
+
+.od-timeline__cancelado {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fee2e2;
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+}
+
+.od-timeline__cancelado-icono {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #ef4444;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.od-timeline__cancelado strong {
+  display: block;
+  color: #b91c1c;
+  font-family: 'Manrope', sans-serif;
+  font-size: 0.92rem;
+}
+
+.od-timeline__cancelado p {
+  margin: 2px 0 0;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  color: #b91c1c;
+}
+
+.od-timeline__paso {
+  display: flex;
+  gap: 14px;
+  opacity: 0.5;
+}
+
+.od-timeline__paso--completo,
+.od-timeline__paso--actual {
+  opacity: 1;
+}
+
+.od-timeline__marcador {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.od-timeline__punto {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #e3e4e5;
+  border: 2px solid #e3e4e5;
+  flex-shrink: 0;
+}
+
+.od-timeline__paso--completo .od-timeline__punto {
+  background: #0052DC;
+  border-color: #0052DC;
+}
+
+.od-timeline__paso--actual .od-timeline__punto {
+  background: #FFFFFF;
+  border-color: #0052DC;
+  box-shadow: 0 0 0 3px rgba(0, 82, 220, 0.2);
+}
+
+.od-timeline__linea {
+  width: 2px;
+  flex: 1;
+  min-height: 28px;
+  background: #e3e4e5;
+  margin: 2px 0;
+}
+
+.od-timeline__paso--completo .od-timeline__linea {
+  background: #0052DC;
+}
+
+.od-timeline__contenido {
+  padding-bottom: 20px;
+}
+
+.od-timeline__paso:last-child .od-timeline__contenido {
+  padding-bottom: 0;
+}
+
+.od-timeline__label {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: #1A1A3A;
+  margin: 0 0 3px;
+}
+
+.od-timeline__desc {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+  color: #74767c;
+  line-height: 1.45;
+  margin: 0 0 4px;
+}
+
+.od-timeline__fecha {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #0052DC;
+  margin: 0;
+}
+
+/* ---------- Productos ---------- */
+.od-items {
+  display: flex;
+  flex-direction: column;
+}
+
+.od-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.od-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.od-item__nombre {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: #1A1A3A;
+  margin: 0 0 2px;
+}
+
+.od-item__cantidad {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  color: #74767c;
+  margin: 0;
+}
+
+.od-item__subtotal {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: #1A1A3A;
+  flex-shrink: 0;
+}
+
+/* ---------- Totales ---------- */
+.od-total-final {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: #1A1A3A;
+}
+
+.od-total-valor {
+  color: #0052DC;
+}
+
+/* ---------- Acciones ---------- */
+.od-acciones {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.od-boton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 13px 20px;
+  border-radius: 999px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.od-boton:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.od-boton--primario {
+  background: #0052DC;
+  color: #FFFFFF;
+}
+
+.od-boton--secundario {
+  background: #FFFFFF;
+  color: #1A1A3A;
+  border: 1.5px solid #1A1A3A;
+}
+
+/* ---------- Tablet / Desktop ---------- */
+@media (min-width: 768px) {
+  .od-page {
+    padding: 40px 40px 80px;
+  }
+
+  .od-acciones {
+    flex-direction: row;
+  }
+
+  .od-boton {
+    flex: 1;
+  }
+}

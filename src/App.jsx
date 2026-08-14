@@ -28,6 +28,8 @@ import Menu from './pages/Menu'
 import Ofertas from './pages/Ofertas'
 import LineaFarmacia from './pages/LineaFarmacia'
 import LineaHospitalaria from './pages/LineaHospitalaria'
+import MisOrdenes from './pages/MisOrdenes'
+import OrdenDetalle from './pages/OrdenDetalle'
 
 
 
@@ -46,6 +48,7 @@ function App() {
             <Route path="/registro" element={<Registro />} />
             <Route path="/carrito" element={<PrivateRoute><Carrito /></PrivateRoute>} />
             <Route path="/orders" element={<PrivateRoute><MisOrdenes /></PrivateRoute>} />
+            <Route path="/orders/:id" element={<PrivateRoute><OrdenDetalle /></PrivateRoute>} />  {/* ← nuevo */}
             <Route path="/admin" element={<PrivateRoute adminOnly><Admin /></PrivateRoute>} />
             <Route path="/quienes-somos" element={<QuienesSomos />} />
             <Route path="/faq" element={<FAQ />} />

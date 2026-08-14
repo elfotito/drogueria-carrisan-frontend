@@ -266,3 +266,34 @@
     font-size: 1.2rem;
   }
 }
+
+/* ---------- Botón flotante "ir arriba" ---------- */
+.privacidad-ir-arriba {
+  position: fixed;
+  right: 16px;
+  bottom: calc(90px + env(safe-area-inset-bottom, 0)); /* encima del dock del BottomNav */
+  z-index: 90;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0052DC;
+  color: #FFFFFF;
+  border: none;
+  box-shadow: 0 6px 16px rgba(0, 82, 220, 0.35);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.privacidad-ir-arriba:active {
+  transform: scale(0.92);
+}
+
+@media (min-width: 900px) {
+  .privacidad-ir-arriba {
+    right: 32px;
+    bottom: 32px; /* sin BottomNav en desktop */
+  }
+}
