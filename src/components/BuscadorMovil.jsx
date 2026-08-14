@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../api/axios'
 import './BuscadorMovil.css'
+import { IconoFlecha } from './components/icons/IconoFlecha';
 
 const STORAGE_KEY = 'carrisan_busquedas_recientes'
 const MAX_RECIENTES = 8
@@ -248,6 +249,7 @@ function BuscadorMovil({ onClose }) {
                     <span className="buscador-movil__sugerencia-precio">
                       ${Number(producto.precio_usd).toFixed(2)}
                     </span>
+                    <IconoFlecha size={20} />
                   </button>
                 ))}
 
