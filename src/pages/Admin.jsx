@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
+import { useNavigate } from 'react-router-dom'
 import TasaCambio from '../components/admin/TasaCambio'
 import api from '../api/axios'
 import OrdenesAdmin from '../components/admin/OrdenesAdmin'
@@ -7,9 +8,11 @@ import ProductosAdmin from '../components/admin/ProductosAdmin'
 import UsuariosAdmin from '../components/admin/UsuariosAdmin'
 import EstadoCuentaAdmin from '../components/admin/EstadoCuentaAdmin'
 import DescuentosPanel from '../components/admin/DescuentosAdmin'
+
 import './Admin.css'
 
 function Admin() {
+  const navigate = useNavigate()
   const [seccionActiva, setSeccionActiva] = useState('tasa')
   const [menuMobileAbierto, setMenuMobileAbierto] = useState(false)
   const { user } = useAuth()
