@@ -74,9 +74,6 @@ body {
 
 /* ============================================================
    Sidebar — fija al borde real de la ventana, alto completo.
-   Ya no vive dentro de un box centrado de 1400px: por eso deja
-   de "flotar" hacia el centro en pantallas anchas y queda
-   anclada como se espera de un panel admin.
    ============================================================ */
 .admin-sidebar {
   position: fixed;

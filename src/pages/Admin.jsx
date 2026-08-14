@@ -10,7 +10,7 @@ import './Admin.css'
 function Admin() {
   const [seccionActiva, setSeccionActiva] = useState('tasa')
   const [menuMobileAbierto, setMenuMobileAbierto] = useState(false)
-
+  const user = JSON.parse(localStorage.getItem('user') || 'null')
   const secciones = [
     { id: 'tasa', nombre: 'Tasa de cambio', icono: '💱' },
     { id: 'productos', nombre: 'Productos', icono: '🛍️' },
