@@ -28,7 +28,6 @@ import Menu from './pages/Menu'
 import Ofertas from './pages/Ofertas'
 import LineaFarmacia from './pages/LineaFarmacia'
 import LineaHospitalaria from './pages/LineaHospitalaria'
-import MisOrdenes from './pages/MisOrdenes'
 import OrdenDetalle from './pages/OrdenDetalle'
 
 
