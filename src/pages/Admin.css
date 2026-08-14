@@ -155,7 +155,7 @@ body {
    pegadas al borde del sidebar y respiran entre sí */
 .nav-list {
   list-style: none;
-  padding: 6rem 1.25rem 1rem;;
+  padding: 0.75rem 1.25rem 1rem;;
   flex: 1;
   overflow-y: auto;
   display: flex;
@@ -704,4 +704,47 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* ============================================================
+   Botón de volver en el sidebar
+   ============================================================ */
+.btn-volver {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: calc(100% - 1.5rem); /* Para que tenga el mismo margen que sidebar-user */
+  margin: 0.5rem 0.75rem 0.75rem;
+  padding: 0.7rem 1rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius);
+  color: var(--slate-300);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.btn-volver:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateX(-2px); /* Sutil desplazamiento a la izquierda */
+}
+
+.btn-volver__icon {
+  font-size: 1.1rem;
+  line-height: 1;
+  transition: transform 0.15s ease;
+}
+
+.btn-volver:hover .btn-volver__icon {
+  transform: translateX(-3px); /* La flecha se mueve más a la izquierda */
+}
+
+.btn-volver__text {
+  font-weight: 500;
 }

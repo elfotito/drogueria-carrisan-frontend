@@ -13,12 +13,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     if (token) {
       try {
-        const decoded = jwtDecode(token); // { id, email, es_admin, iat, exp }
-
-        // jwtDecode solo lee el contenido, no valida si ya venció.
-        // Sin este chequeo, un token vencido se sigue tratando como sesión
-        // activa en el frontend hasta que algún request al backend falle
-        // con 401 -- lo cual explica el bug de "sesión abierta pero rota".
+        const decoded = jwtDecode(token); 
         const yaVencio = decoded.exp * 1000 < Date.now();
 
         if (yaVencio) {
@@ -26,7 +21,17 @@ export function AuthProvider({ children }) {
           setToken(null);
           setUser(null);
         } else {
-          setUser(decoded);
+          
+          const savedUser = localStorage.getItem('user');
+          if (savedUser) {
+            try {
+              setUser(JSON.parse(savedUser));
+            } catch (e) {
+              setUser(decoded); // Si falla, usar el decoded
+            }
+          } else {
+            setUser(decoded);
+          }
         }
       } catch (err) {
         // token corrupto o malformado -> lo tiramos
@@ -39,15 +44,23 @@ export function AuthProvider({ children }) {
     setLoading(false); // ya terminamos de chequear, la app puede renderizar
   }, [token]);
 
-  async function login(email, password) {
+    async function login(email, password) {
     const { data } = await api.post('/auth/login', { email, password });
     localStorage.setItem('token', data.token);
-    setToken(data.token); // esto dispara el useEffect de arriba y decodifica el user
+    
+    // MODIFICADO: Guardar usuario completo en localStorage
+    localStorage.setItem('user', JSON.stringify(data.user));
+    
+    setToken(data.token);
+    // También setear el user directamente para tener acceso inmediato
+    setUser(data.user);
+    
     return data.user;
   }
 
   function logout() {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     setToken(null);
     setUser(null);
   }

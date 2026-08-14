@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import TasaCambio from '../components/admin/TasaCambio'
+import api from '../api/axios'
 import OrdenesAdmin from '../components/admin/OrdenesAdmin'
 import ProductosAdmin from '../components/admin/ProductosAdmin'
 import UsuariosAdmin from '../components/admin/UsuariosAdmin'
@@ -10,7 +11,7 @@ import './Admin.css'
 function Admin() {
   const [seccionActiva, setSeccionActiva] = useState('tasa')
   const [menuMobileAbierto, setMenuMobileAbierto] = useState(false)
-  const user = JSON.parse(localStorage.getItem('user') || 'null')
+  const { user } = useAuth()
   const secciones = [
     { id: 'tasa', nombre: 'Tasa de cambio', icono: '💱' },
     { id: 'productos', nombre: 'Productos', icono: '🛍️' },
@@ -21,6 +22,18 @@ function Admin() {
   ]
 
   const seccionActual = secciones.find(s => s.id === seccionActiva)
+
+  const getUserName = () => {
+    if (!user) return 'Usuario'
+    return user.nombre || user.email?.split('@')[0] || 'Usuario'
+  }
+
+  const getUserInitial = () => {
+    if (!user) return '?'
+    if (user.nombre) return user.nombre[0].toUpperCase()
+    if (user.email) return user.email[0].toUpperCase()
+    return '?'
+  }
 
   const renderSeccion = () => {
     switch(seccionActiva) {
@@ -34,17 +47,21 @@ function Admin() {
     }
   }
 
+  const handleVolver = () => {
+    navigate(-1)
+  }
+
   return (
     <div className="admin-container">
       {/* Sidebar — fija al borde real de la ventana, alto completo */}
       <nav className={`admin-sidebar ${menuMobileAbierto ? 'mobile-open' : ''}`}>
         <div className="sidebar-brand">
-          <span className="brand-mark">DC</span>
+          <span className="brand-mark">{getUserInitial()}</span>
           <div className="brand-text">
             <strong>Droguería Carrisan, C.A.</strong>
             <span className="sidebar-user__hola">Hola,</span>
             <span className="sidebar-user__nombre">
-              {user?.email?.split('@')[0] || 'Usuario'}
+              {getUserName()}
             </span>
           </div>
           <button
@@ -54,6 +71,11 @@ function Admin() {
             ✕
           </button>
         </div>
+        <button className="btn-volver" onClick={handleVolver}>
+          <span className="btn-volver__icon">←</span>
+          <span className="btn-volver__text">Volver</span>
+        </button>
+        
         <ul className="nav-list">
           {secciones.map(seccion => (
             <li key={seccion.id}>
