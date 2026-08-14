@@ -20,7 +20,7 @@
   align-items: center;
   gap: 10px;
   padding: 12px 14px;
-  background: #1B4B8F;
+  background: #0052dc;
   padding-top: max(12px, env(safe-area-inset-top));
 }
 

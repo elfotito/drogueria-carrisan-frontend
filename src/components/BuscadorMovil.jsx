@@ -147,7 +147,7 @@ function BuscadorMovil({ onClose }) {
             ref={inputRef}
             type="text"
             inputMode="search"
-            placeholder="Buscar en Droguería Carrisán"
+            placeholder="Buscar en Drogueria Carrisan"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
