@@ -1,26 +1,59 @@
-/* Admin.css - Diseño completo responsivo */
+/* ============================================================
+   Admin.css — Panel administrativo de Droguería Carrisán
+   Rediseño: sistema de marca (azul #0052DC + índigo #1A1A3A),
+   inspirado en paneles B2B tipo Walmart Seller Center / Amazon
+   Seller Central. Se conserva la estructura y el comportamiento
+   del drawer (menú lateral tipo cajón) — solo cambia el vestido.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
-  --primary: #2563eb;
-  --primary-dark: #1d4ed8;
-  --primary-light: #dbeafe;
-  --secondary: #64748b;
-  --success: #10b981;
-  --danger: #ef4444;
-  --warning: #f59e0b;
-  --dark: #1e293b;
-  --gray-50: #f8fafc;
-  --gray-100: #f1f5f9;
-  --gray-200: #e2e8f0;
-  --gray-300: #cbd5e1;
-  --gray-600: #475569;
-  --gray-700: #334155;
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --radius: 0.5rem;
-  --radius-lg: 0.75rem;
+
+  /* --- Marca --- */
+  --blue: #0052dc;
+  --blue-600: #0043b3;   /* hover / pressed */
+  --blue-700: #003689;
+  --blue-50: #eef3fe;    /* tinte muy claro, fondos */
+  --blue-100: #dce6fd;   /* tinte claro, hover suave */
+
+  --indigo: #1a1a3a;     /* superficie oscura de marca (sidebar/header) */
+  --indigo-700: #24244d; /* hover sobre superficie oscura */
+  --indigo-900: #101024; /* acentos más oscuros */
+
+  --alert: #d6274b;      /* tercer color de marca — uso deliberadamente escaso */
+  --alert-tint: #fbe7ec;
+
+  /* --- Neutrales con matiz frío (coherentes con el índigo) --- */
+  --ink: #14142b;
+  --slate-700: #3f4159;
+  --slate-500: #6c6e8a;
+  --slate-300: #b9bbd1;
+  --slate-200: #dedfec;
+  --slate-100: #eeeff6;
+  --paper: #f5f6fb;
+  --surface: #ffffff;
+
+  /* --- Semántica (evitan competir con el rojo de marca) --- */
+  --good: #0e7c5e;
+  --good-tint: #e4f5ee;
+  --warn: #a2650a;
+  --warn-tint: #fbf0de;
+
+  /* --- Elevación --- */
+  --shadow-sm: 0 1px 2px rgba(16, 16, 38, 0.06);
+  --shadow: 0 2px 8px rgba(16, 16, 38, 0.08);
+  --shadow-md: 0 10px 24px rgba(16, 16, 38, 0.10);
+  --shadow-lg: 0 20px 44px rgba(16, 16, 38, 0.16);
+
+  /* --- Radio --- */
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 18px;
+
+  /* --- Tipografía --- */
+  --font-display: 'Space Grotesk', 'Segoe UI', sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 * {
@@ -30,10 +63,11 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-  background: var(--gray-50);
-  color: var(--dark);
+  font-family: var(--font-body);
+  background: var(--paper);
+  color: var(--ink);
   line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Contenedor Principal */
@@ -41,12 +75,14 @@ body {
   min-height: 100vh;
 }
 
-/* Header */
+/* ============================================================
+   Header
+   ============================================================ */
 .admin-header {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  background: var(--indigo);
   color: white;
-  padding: 1.5rem 2rem;
-  box-shadow: var(--shadow-lg);
+  padding: 1.25rem 2rem;
+  border-bottom: 3px solid var(--blue);
 }
 
 .header-content {
@@ -58,24 +94,29 @@ body {
 }
 
 .admin-title {
-  font-size: 1.75rem;
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
   display: flex;
   align-items: center;
   gap: 0.75rem;
 }
 
 .title-icon {
-  font-size: 2rem;
+  font-size: 1.75rem;
+  color: var(--blue);
 }
 
 .admin-subtitle {
-  opacity: 0.9;
+  color: var(--slate-300);
   margin-top: 0.25rem;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
 }
 
-/* Layout Principal */
+/* ============================================================
+   Layout Principal
+   ============================================================ */
 .admin-layout {
   display: flex;
   max-width: 1400px;
@@ -83,11 +124,13 @@ body {
   min-height: calc(100vh - 100px);
 }
 
-/* Sidebar */
+/* ============================================================
+   Sidebar (drawer) — superficie oscura de marca
+   ============================================================ */
 .admin-sidebar {
   width: 280px;
-  background: white;
-  border-right: 1px solid var(--gray-200);
+  background: var(--indigo);
+  border-right: 1px solid var(--indigo-900);
   padding: 1.5rem 0;
   position: sticky;
   top: 0;
@@ -97,7 +140,7 @@ body {
 
 .sidebar-header {
   padding: 0 1.5rem 1rem;
-  border-bottom: 1px solid var(--gray-200);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   margin-bottom: 1rem;
   display: flex;
   justify-content: space-between;
@@ -105,10 +148,12 @@ body {
 }
 
 .sidebar-header h3 {
-  font-size: 1.1rem;
-  color: var(--gray-600);
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--slate-300);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
 }
 
 .close-sidebar {
@@ -117,7 +162,11 @@ body {
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
-  color: var(--gray-600);
+  color: var(--slate-300);
+}
+
+.close-sidebar:hover {
+  color: white;
 }
 
 .nav-list {
@@ -133,21 +182,22 @@ body {
   border: none;
   background: none;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background 0.15s ease, color 0.15s ease;
   position: relative;
-  font-size: 0.95rem;
-  color: var(--gray-700);
+  font-family: var(--font-body);
+  font-size: 0.925rem;
+  color: var(--slate-300);
   text-align: left;
 }
 
 .nav-item:hover {
-  background: var(--primary-light);
-  color: var(--primary);
+  background: var(--indigo-700);
+  color: white;
 }
 
 .nav-item.active {
-  background: var(--primary-light);
-  color: var(--primary);
+  background: var(--indigo-700);
+  color: white;
   font-weight: 600;
 }
 
@@ -158,46 +208,58 @@ body {
   transform: translateY(-50%);
   width: 4px;
   height: 60%;
-  background: var(--primary);
+  background: var(--blue);
   border-radius: 0 4px 4px 0;
 }
 
 .nav-icon {
   margin-right: 0.75rem;
-  font-size: 1.25rem;
+  font-size: 1.15rem;
+  color: var(--slate-300);
+  transition: color 0.15s ease;
+}
+
+.nav-item:hover .nav-icon,
+.nav-item.active .nav-icon {
+  color: var(--blue);
 }
 
 .nav-text {
   flex: 1;
 }
 
-/* Contenido Principal */
+/* ============================================================
+   Contenido Principal
+   ============================================================ */
 .admin-main {
   flex: 1;
   padding: 2rem;
-  background: var(--gray-50);
+  background: var(--paper);
 }
 
 .content-wrapper {
   max-width: 100%;
 }
 
-/* Loading */
+/* ============================================================
+   Loading
+   ============================================================ */
 .loading-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 4rem 2rem;
+  color: var(--slate-500);
 }
 
 .spinner {
   width: 40px;
   height: 40px;
-  border: 4px solid var(--gray-200);
-  border-top: 4px solid var(--primary);
+  border: 4px solid var(--slate-200);
+  border-top: 4px solid var(--blue);
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  animation: spin 0.9s linear infinite;
   margin-bottom: 1rem;
 }
 
@@ -205,10 +267,10 @@ body {
   display: inline-block;
   width: 16px;
   height: 16px;
-  border: 2px solid var(--gray-200);
-  border-top: 2px solid var(--primary);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top: 2px solid white;
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  animation: spin 0.9s linear infinite;
   margin-right: 0.5rem;
 }
 
@@ -217,7 +279,11 @@ body {
   100% { transform: rotate(360deg); }
 }
 
-/* Tasa de Cambio Styles */
+/* ============================================================
+   Tasa de Cambio — pieza distintiva del panel: se trata como un
+   "ticker" cambiario (dato en tiempo real relevante para un
+   comercio B2B en Venezuela), no como una tarjeta genérica.
+   ============================================================ */
 .tasa-cambio-container {
   max-width: 800px;
 }
@@ -227,17 +293,21 @@ body {
 }
 
 .section-header h2 {
-  font-size: 1.75rem;
-  color: var(--dark);
-  margin-bottom: 0.5rem;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 0.4rem;
+  letter-spacing: -0.01em;
 }
 
 .section-description {
-  color: var(--gray-600);
+  color: var(--slate-500);
+  font-size: 0.925rem;
 }
 
 .tasa-actual-card {
-  background: white;
+  background: var(--indigo);
   border-radius: var(--radius-lg);
   padding: 2rem;
   margin-bottom: 1.5rem;
@@ -245,10 +315,11 @@ body {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 2rem;
+  color: white;
 }
 
 .tasa-info {
-  border-right: 1px solid var(--gray-200);
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
   padding-right: 2rem;
 }
 
@@ -258,21 +329,27 @@ body {
 
 .label {
   display: block;
-  color: var(--gray-600);
-  font-size: 0.875rem;
+  color: var(--slate-300);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
   margin-bottom: 0.5rem;
 }
 
 .valor {
   display: block;
-  font-size: 2rem;
+  font-family: var(--font-display);
+  font-size: 2.5rem;
   font-weight: 700;
-  color: var(--primary);
+  font-variant-numeric: tabular-nums;
+  color: white;
+  letter-spacing: -0.02em;
 }
 
 .tasa-meta {
-  color: var(--gray-600);
-  font-size: 0.875rem;
+  color: var(--slate-300);
+  font-size: 0.825rem;
 }
 
 .tasa-referencia {
@@ -280,8 +357,11 @@ body {
 }
 
 .tasa-referencia h4 {
-  color: var(--dark);
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: white;
   margin-bottom: 1rem;
+  font-size: 0.95rem;
 }
 
 .referencia-info {
@@ -289,79 +369,92 @@ body {
 }
 
 .referencia-valor {
+  font-family: var(--font-display);
   font-size: 1.5rem;
-  font-weight: 600;
-  color: var(--success);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #6fd3a8; /* verde suave sobre fondo índigo, solo aquí */
   margin-bottom: 0.5rem;
 }
 
 .referencia-fuente {
-  font-size: 0.875rem;
-  color: var(--gray-600);
+  font-size: 0.8rem;
+  color: var(--slate-300);
   margin-bottom: 1rem;
 }
 
 .btn-usar-tasa {
-  background: var(--success);
+  background: var(--blue);
   color: white;
   border: none;
-  padding: 0.5rem 1rem;
-  border-radius: var(--radius);
+  padding: 0.55rem 1.1rem;
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  font-size: 0.875rem;
-  transition: background 0.2s;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: background 0.15s ease;
 }
 
 .btn-usar-tasa:hover {
-  background: #059669;
+  background: var(--blue-600);
 }
 
 .btn-refrescar {
-  background: none;
-  border: 1px solid var(--gray-300);
-  padding: 0.5rem 1rem;
-  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: white;
+  padding: 0.55rem 1rem;
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  font-size: 0.875rem;
-  transition: all 0.2s;
+  font-size: 0.85rem;
+  transition: all 0.15s ease;
   width: 100%;
 }
 
 .btn-refrescar:hover {
-  background: var(--gray-100);
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.4);
 }
 
-/* Mensajes */
+/* ============================================================
+   Mensajes
+   ============================================================ */
 .mensaje {
-  padding: 1rem;
-  border-radius: var(--radius);
+  padding: 1rem 1.1rem;
+  border-radius: var(--radius-sm);
   margin-bottom: 1.5rem;
   font-weight: 500;
+  border-left: 3px solid transparent;
 }
 
 .mensaje.exito {
-  background: #d1fae5;
-  color: #065f46;
-  border: 1px solid #a7f3d0;
+  background: var(--good-tint);
+  color: #0a5c46;
+  border-left-color: var(--good);
 }
 
 .mensaje.error {
-  background: #fee2e2;
-  color: #991b1b;
-  border: 1px solid #fecaca;
+  background: var(--alert-tint);
+  color: #8a1130;
+  border-left-color: var(--alert);
 }
 
-/* Formulario */
+/* ============================================================
+   Formulario
+   ============================================================ */
 .form-container {
-  background: white;
+  background: var(--surface);
+  border: 1px solid var(--slate-200);
   border-radius: var(--radius-lg);
   padding: 2rem;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
 }
 
 .form-container h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
   margin-bottom: 1.5rem;
-  color: var(--dark);
+  color: var(--ink);
 }
 
 .tasa-form {
@@ -377,37 +470,42 @@ body {
 }
 
 .input-group label {
-  font-weight: 500;
-  color: var(--gray-700);
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--slate-700);
 }
 
 .input-wrapper {
   display: flex;
   align-items: center;
-  border: 2px solid var(--gray-300);
-  border-radius: var(--radius);
+  border: 1.5px solid var(--slate-200);
+  border-radius: var(--radius-sm);
   overflow: hidden;
-  transition: border-color 0.2s;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .input-wrapper:focus-within {
-  border-color: var(--primary);
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px var(--blue-50);
 }
 
 .input-prefix,
 .input-suffix {
   padding: 0.75rem 1rem;
-  background: var(--gray-100);
-  color: var(--gray-600);
-  font-weight: 500;
+  background: var(--slate-100);
+  color: var(--slate-500);
+  font-weight: 600;
+  font-size: 0.9rem;
 }
 
 .input-wrapper input {
   flex: 1;
   border: none;
   padding: 0.75rem;
+  font-family: var(--font-body);
   font-size: 1rem;
   outline: none;
+  color: var(--ink);
 }
 
 .input-wrapper input:focus {
@@ -420,30 +518,36 @@ body {
 }
 
 .btn-primary {
-  background: var(--primary);
+  background: var(--blue);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
-  border-radius: var(--radius);
-  font-size: 1rem;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: var(--primary-dark);
+  background: var(--blue-600);
+  box-shadow: var(--shadow);
 }
 
 .btn-primary:disabled {
-  opacity: 0.6;
+  opacity: 0.55;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
-/* Mobile Menu Button */
+/* ============================================================
+   Botón de menú móvil
+   ============================================================ */
 .mobile-menu-btn {
   display: none;
   background: none;
@@ -479,7 +583,7 @@ body {
   transform: rotate(-45deg) translate(7px, -6px);
 }
 
-/* Sidebar Overlay */
+/* Overlay del drawer */
 .sidebar-overlay {
   display: none;
   position: fixed;
@@ -487,28 +591,31 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(16, 16, 36, 0.55);
+  backdrop-filter: blur(1px);
   z-index: 90;
 }
 
-/* Responsive Design */
+/* ============================================================
+   Responsive
+   ============================================================ */
 @media (max-width: 1024px) {
   .admin-sidebar {
     width: 250px;
   }
-  
+
   .admin-main {
     padding: 1.5rem;
   }
-  
+
   .tasa-actual-card {
     grid-template-columns: 1fr;
     gap: 1.5rem;
   }
-  
+
   .tasa-info {
     border-right: none;
-    border-bottom: 1px solid var(--gray-200);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
     padding-right: 0;
     padding-bottom: 1.5rem;
   }
@@ -518,19 +625,19 @@ body {
   .admin-header {
     padding: 1rem;
   }
-  
+
   .admin-title {
-    font-size: 1.25rem;
+    font-size: 1.2rem;
   }
-  
+
   .mobile-menu-btn {
     display: block;
   }
-  
+
   .admin-layout {
     position: relative;
   }
-  
+
   .admin-sidebar {
     position: fixed;
     left: -280px;
@@ -539,28 +646,29 @@ body {
     height: 100vh;
     transition: left 0.3s ease;
     width: 280px;
+    box-shadow: var(--shadow-lg);
   }
-  
+
   .admin-sidebar.mobile-open {
     left: 0;
   }
-  
+
   .close-sidebar {
     display: block;
   }
-  
+
   .sidebar-overlay {
     display: block;
   }
-  
+
   .admin-main {
     padding: 1rem;
   }
-  
+
   .form-container {
     padding: 1.5rem;
   }
-  
+
   .tasa-actual-card {
     padding: 1.5rem;
   }
@@ -568,23 +676,23 @@ body {
 
 @media (max-width: 480px) {
   .valor {
-    font-size: 1.5rem;
+    font-size: 1.9rem;
   }
-  
+
   .referencia-valor {
     font-size: 1.25rem;
   }
-  
+
   .input-wrapper {
     flex-direction: column;
   }
-  
+
   .input-prefix,
   .input-suffix {
     width: 100%;
     text-align: center;
   }
-  
+
   .btn-primary {
     width: 100%;
     justify-content: center;
