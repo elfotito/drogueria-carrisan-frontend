@@ -25,9 +25,9 @@ function getEstadoConfig(estado) {
 }
 
 function formatUSD(valor) {
-  return Number(valor || 0).toLocaleString('en-US', { 
-    minimumFractionDigits: 2, 
-    maximumFractionDigits: 2 
+  return Number(valor || 0).toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
   })
 }
 
@@ -42,7 +42,7 @@ function OrdenDetalleModal({ orden, onClose, onCambiarEstado, estados, estadoCol
         costo: 'Gratis',
         direccion: null,
         agencia: null,
-        color: '#232B45'
+        color: '#1A1A3A'
       }
     }
 
@@ -65,7 +65,7 @@ function OrdenDetalleModal({ orden, onClose, onCambiarEstado, estados, estadoCol
         costo: 'Pago en destino',
         direccion: orden.direccion_envio_texto || null,
         agencia: orden.agencia_envio || null,
-        color: '#1B4B8F'
+        color: '#0052DC'
       }
     }
 
@@ -75,7 +75,7 @@ function OrdenDetalleModal({ orden, onClose, onCambiarEstado, estados, estadoCol
       costo: 'N/A',
       direccion: null,
       agencia: null,
-      color: '#5B6270'
+      color: '#6C6E8A'
     }
   }, [orden])
 
@@ -112,7 +112,13 @@ function OrdenDetalleModal({ orden, onClose, onCambiarEstado, estados, estadoCol
               })}
             </p>
           </div>
-          <span className={`odm-badge ${estadoConfig.clase}`}>
+          {/* Antes: className={`odm-badge ${estadoConfig.clase}`} — estadoConfig.clase
+              nunca existió, así que el badge siempre caía en el estilo por defecto.
+              Ahora el color/fondo se aplica directo desde ESTADOS_CONFIG. */}
+          <span
+            className="odm-badge"
+            style={{ color: estadoConfig.color, background: estadoConfig.bg }}
+          >
             {estadoConfig.label}
           </span>
         </div>
@@ -140,7 +146,6 @@ function OrdenDetalleModal({ orden, onClose, onCambiarEstado, estados, estadoCol
               <span className="odm-section-icon">{envioDetalle.icono}</span>
               Información de Envío
             </h3>
-
             <div className="odm-envio-card" style={{ borderLeftColor: envioDetalle.color }}>
               <div className="odm-envio-row">
                 <span className="odm-envio-label">Tipo</span>
@@ -176,14 +181,13 @@ function OrdenDetalleModal({ orden, onClose, onCambiarEstado, estados, estadoCol
             <span className="odm-section-icon">🛒</span>
             Productos ({items.length})
           </h3>
-
           <div className="odm-items">
             {items.map((item, index) => (
               <div key={item.id || index} className="odm-item">
                 <div className="odm-item-media">
                   {item.foto_url || item.producto?.foto_url ? (
-                    <img 
-                      src={item.foto_url || item.producto?.foto_url} 
+                    <img
+                      src={item.foto_url || item.producto?.foto_url}
                       alt={item.nombre || item.producto?.nombre_comercial}
                     />
                   ) : (
