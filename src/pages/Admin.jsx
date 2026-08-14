@@ -14,7 +14,7 @@ import './Admin.css'
 
 function Admin() {
   const navigate = useNavigate()
-  const [seccionActiva, setSeccionActiva] = useState('tasa')
+  const [seccionActiva, setSeccionActiva] = useState('dashboard')
   const [menuMobileAbierto, setMenuMobileAbierto] = useState(false)
   const { user } = useAuth()
   const secciones = [
