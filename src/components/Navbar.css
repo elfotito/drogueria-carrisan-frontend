@@ -3,8 +3,8 @@
 /* ============================================ */
 
 :root {
-  --wm-blue: #1B4B8F;
-  --wm-dark-blue: #1B4B8F;
+  --wm-blue: #0052dc;
+  --wm-dark-blue: #0052dc;
   --wm-teal: #12A594;
   --wm-blue-light: #EAF1FB;
   --wm-yellow: #ffc220;
@@ -575,7 +575,7 @@ body {
   }
 
   .navbar-container {
-    background: #1A1A3A;
+    background: #0052dc;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     color: #1A1A3A;
