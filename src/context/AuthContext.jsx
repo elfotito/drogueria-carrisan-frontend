@@ -9,51 +9,55 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Al montar la app (o si el token cambia), reconstruimos el estado del usuario
   useEffect(() => {
     if (token) {
       try {
-        const decoded = jwtDecode(token); 
+        const decoded = jwtDecode(token);
         const yaVencio = decoded.exp * 1000 < Date.now();
 
         if (yaVencio) {
           localStorage.removeItem('token');
+          localStorage.removeItem('user'); // También limpiar user
           setToken(null);
           setUser(null);
         } else {
-          
+          // Intentar obtener el usuario completo del localStorage
           const savedUser = localStorage.getItem('user');
           if (savedUser) {
             try {
-              setUser(JSON.parse(savedUser));
+              const parsedUser = JSON.parse(savedUser);
+              setUser(parsedUser);
             } catch (e) {
-              setUser(decoded); // Si falla, usar el decoded
+              console.error('Error parsing user:', e);
+              setUser(decoded);
             }
           } else {
             setUser(decoded);
           }
         }
       } catch (err) {
-        // token corrupto o malformado -> lo tiramos
         console.error('Token inválido:', err);
         localStorage.removeItem('token');
+        localStorage.removeItem('user');
         setToken(null);
         setUser(null);
       }
     }
-    setLoading(false); // ya terminamos de chequear, la app puede renderizar
+    setLoading(false);
   }, [token]);
 
-    async function login(email, password) {
+  async function login(email, password) {
     const { data } = await api.post('/auth/login', { email, password });
+    
+    console.log('Respuesta del login:', data); // Para debug
+    
     localStorage.setItem('token', data.token);
     
-    // MODIFICADO: Guardar usuario completo en localStorage
+    // Guardar el usuario COMPLETO (incluye nombre)
     localStorage.setItem('user', JSON.stringify(data.user));
     
     setToken(data.token);
-    // También setear el user directamente para tener acceso inmediato
-    setUser(data.user);
+    setUser(data.user); // Setear directamente el usuario completo
     
     return data.user;
   }
@@ -70,7 +74,6 @@ export function AuthProvider({ children }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-// Hook custom para no tener que importar useContext + AuthContext en cada página
 export function useAuth() {
   return useContext(AuthContext);
 }
