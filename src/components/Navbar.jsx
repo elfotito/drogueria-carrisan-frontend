@@ -506,7 +506,7 @@ function Navbar() {
                     fontWeight: "bold" 
                   }}>{cantidadItems}</span>
             </div>
-            <span className="cart-price" style={{ fontSize: "12px", marginTop: "-8px" }}>$0.00</span>
+            <span className="cart-price" style={{ fontSize: "12px" }}>$0.00</span>
           </Link>
         </div>
 

@@ -73,94 +73,83 @@ body {
 /* Contenedor Principal */
 .admin-container {
   min-height: 100vh;
+  background: var(--paper);
 }
 
 /* ============================================================
-   Header
+   Sidebar — fija al borde real de la ventana, alto completo.
+   Ya no vive dentro de un box centrado de 1400px: por eso deja
+   de "flotar" hacia el centro en pantallas anchas y queda
+   anclada como se espera de un panel admin.
    ============================================================ */
-.admin-header {
+.admin-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 280px;
+  height: 100vh;
   background: var(--indigo);
-  color: white;
-  padding: 1.25rem 2rem;
-  border-bottom: 3px solid var(--blue);
-}
-
-.header-content {
+  border-right: 1px solid var(--indigo-900);
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  max-width: 1400px;
-  margin: 0 auto;
+  flex-direction: column;
+  z-index: 100;
 }
 
-.admin-title {
-  font-family: var(--font-display);
-  font-size: 1.5rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
+.sidebar-brand {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-}
-
-.title-icon {
-  font-size: 1.75rem;
-  color: var(--blue);
-}
-
-.admin-subtitle {
-  color: var(--slate-300);
-  margin-top: 0.25rem;
-  font-size: 0.9rem;
-}
-
-/* ============================================================
-   Layout Principal
-   ============================================================ */
-.admin-layout {
-  display: flex;
-  max-width: 1400px;
-  margin: 0 auto;
-  min-height: calc(100vh - 100px);
-}
-
-/* ============================================================
-   Sidebar (drawer) — superficie oscura de marca
-   ============================================================ */
-.admin-sidebar {
-  width: 280px;
-  background: var(--indigo);
-  border-right: 1px solid var(--indigo-900);
-  padding: 1.5rem 0;
-  position: sticky;
-  top: 0;
-  height: calc(100vh - 100px);
-  overflow-y: auto;
-}
-
-.sidebar-header {
-  padding: 0 1.5rem 1rem;
+  padding: 1.5rem 1.25rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  margin-bottom: 1rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-shrink: 0;
 }
 
-.sidebar-header h3 {
+.brand-mark {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: var(--blue);
+  color: white;
   font-family: var(--font-display);
-  font-size: 0.8rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.brand-text strong {
+  font-family: var(--font-display);
+  font-size: 0.875rem;
   font-weight: 600;
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.brand-text span {
+  font-size: 0.68rem;
   color: var(--slate-300);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.07em;
+  margin-top: 0.15rem;
 }
 
 .close-sidebar {
   display: none;
+  flex-shrink: 0;
   background: none;
   border: none;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   cursor: pointer;
   color: var(--slate-300);
 }
@@ -169,59 +158,51 @@ body {
   color: white;
 }
 
+/* Padding real alrededor de la lista: las tabs dejan de estar
+   pegadas al borde del sidebar y respiran entre sí */
 .nav-list {
   list-style: none;
-  padding: 0;
+  padding: 1rem 0.75rem;
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
 .nav-item {
   display: flex;
   align-items: center;
+  gap: 0.75rem;
   width: 100%;
-  padding: 0.875rem 1.5rem;
+  padding: 0.75rem 1rem;
   border: none;
+  border-radius: var(--radius-lg);
   background: none;
   cursor: pointer;
   transition: background 0.15s ease, color 0.15s ease;
-  position: relative;
   font-family: var(--font-body);
-  font-size: 0.925rem;
+  font-size: 0.9rem;
   color: var(--slate-300);
   text-align: left;
 }
 
 .nav-item:hover {
-  background: var(--indigo-700);
+  background: rgba(255, 255, 255, 0.07);
   color: white;
 }
 
+/* Pill sólida en azul: más contraste que índigo-sobre-índigo */
 .nav-item.active {
-  background: var(--indigo-700);
+  background: var(--blue);
   color: white;
   font-weight: 600;
-}
-
-.active-indicator {
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 4px;
-  height: 60%;
-  background: var(--blue);
-  border-radius: 0 4px 4px 0;
+  box-shadow: var(--shadow);
 }
 
 .nav-icon {
-  margin-right: 0.75rem;
-  font-size: 1.15rem;
-  color: var(--slate-300);
-  transition: color 0.15s ease;
-}
-
-.nav-item:hover .nav-icon,
-.nav-item.active .nav-icon {
-  color: var(--blue);
+  font-size: 1.1rem;
+  line-height: 1;
 }
 
 .nav-text {
@@ -229,16 +210,52 @@ body {
 }
 
 /* ============================================================
-   Contenido Principal
+   Columna de contenido — desplazada por el ancho del sidebar
+   ============================================================ */
+.admin-content-col {
+  margin-left: 280px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Topbar delgado: reemplaza el header-hero anterior */
+.admin-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  height: 64px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 2rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--slate-200);
+}
+
+.topbar-title {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+
+/* ============================================================
+   Contenido Principal — el wrapper interno mide 1120px
+   (1400 - 280 del sidebar) y se centra en el espacio restante
    ============================================================ */
 .admin-main {
   flex: 1;
   padding: 2rem;
-  background: var(--paper);
+  display: flex;
+  justify-content: center;
 }
 
 .content-wrapper {
-  max-width: 100%;
+  width: 100%;
+  max-width: 1120px;
 }
 
 /* ============================================================
@@ -546,14 +563,16 @@ body {
 }
 
 /* ============================================================
-   Botón de menú móvil
+   Botón de menú móvil (vive en el topbar, ya no en el header)
    ============================================================ */
 .mobile-menu-btn {
   display: none;
+  flex-shrink: 0;
   background: none;
   border: none;
   cursor: pointer;
-  padding: 0.5rem;
+  padding: 0.4rem;
+  margin-left: -0.4rem;
 }
 
 .hamburger {
@@ -564,23 +583,10 @@ body {
 
 .hamburger span {
   display: block;
-  width: 25px;
-  height: 3px;
-  background: white;
-  transition: all 0.3s ease;
+  width: 22px;
+  height: 2.5px;
+  background: var(--ink);
   border-radius: 2px;
-}
-
-.hamburger.active span:nth-child(1) {
-  transform: rotate(45deg) translate(5px, 5px);
-}
-
-.hamburger.active span:nth-child(2) {
-  opacity: 0;
-}
-
-.hamburger.active span:nth-child(3) {
-  transform: rotate(-45deg) translate(7px, -6px);
 }
 
 /* Overlay del drawer */
@@ -597,15 +603,45 @@ body {
 }
 
 /* ============================================================
-   Responsive
+   Responsive — el breakpoint del proyecto es 1024px: por debajo,
+   el sidebar pasa a ser un drawer (fuera de pantalla por defecto)
+   y el BottomNav flotante ya está visible, así que el contenido
+   necesita espacio abajo para no quedar tapado.
    ============================================================ */
-@media (max-width: 1024px) {
+@media (max-width: 1023px) {
   .admin-sidebar {
-    width: 250px;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .admin-sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  .close-sidebar {
+    display: block;
+  }
+
+  .sidebar-overlay {
+    display: block;
+  }
+
+  .admin-content-col {
+    margin-left: 0;
+  }
+
+  .mobile-menu-btn {
+    display: block;
+  }
+
+  .admin-topbar {
+    padding: 0 1.25rem;
   }
 
   .admin-main {
-    padding: 1.5rem;
+    padding: 1.5rem 1.25rem 100px; /* espacio para el BottomNav flotante */
+    justify-content: stretch;
   }
 
   .tasa-actual-card {
@@ -622,47 +658,8 @@ body {
 }
 
 @media (max-width: 768px) {
-  .admin-header {
-    padding: 1rem;
-  }
-
-  .admin-title {
-    font-size: 1.2rem;
-  }
-
-  .mobile-menu-btn {
-    display: block;
-  }
-
-  .admin-layout {
-    position: relative;
-  }
-
-  .admin-sidebar {
-    position: fixed;
-    left: -280px;
-    top: 0;
-    z-index: 100;
-    height: 100vh;
-    transition: left 0.3s ease;
-    width: 280px;
-    box-shadow: var(--shadow-lg);
-  }
-
-  .admin-sidebar.mobile-open {
-    left: 0;
-  }
-
-  .close-sidebar {
-    display: block;
-  }
-
-  .sidebar-overlay {
-    display: block;
-  }
-
-  .admin-main {
-    padding: 1rem;
+  .topbar-title {
+    font-size: 0.95rem;
   }
 
   .form-container {
