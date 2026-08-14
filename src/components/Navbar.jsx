@@ -476,16 +476,6 @@ function Navbar() {
   </div>
 </div>
 
-          {/* Notificaciones */}
-          <Link to="/notificaciones" className="navbar__bell" aria-label="Notificaciones">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
-              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-            </svg>
-            {notificacionesNoLeidas > 0 && (
-              <span className="bell-badge">{notificacionesNoLeidas > 9 ? '9+' : notificacionesNoLeidas}</span>
-            )}
-          </Link>
 
           {/* Carrito */}
           <Link to="/carrito" className="navbar__cart">

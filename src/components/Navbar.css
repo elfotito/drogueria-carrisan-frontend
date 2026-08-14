@@ -497,7 +497,7 @@ body {
   align-items: center; 
   color: white;
   text-decoration: none; 
-  padding: 4px 8px; 
+  padding: 4px; 
   border-radius: 8px;
 }
 .cart-icon-wrapper { position: relative; }
