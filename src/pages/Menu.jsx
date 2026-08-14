@@ -171,7 +171,12 @@ function Menu() {
   return (
     <div className="menu-page">
       <h1 className="menu-page__titulo">Menú</h1>
-
+      <button
+            className="close-sidebar"
+            onClick={() => setMenuMobileAbierto(false)}
+          >
+            ✕
+          </button>
       <section className="menu-seccion">
         <div className="menu-grid">
           {GRID_PRINCIPAL.map((item) => (

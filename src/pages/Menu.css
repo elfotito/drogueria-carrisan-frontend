@@ -148,3 +148,17 @@
   font-size: 1.4rem;
   color: rgba(20, 24, 42, 0.3);
 }
+
+.close-sidebar {
+  display: none;
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  cursor: pointer;
+  color: var(--slate-300);
+}
+
+.close-sidebar:hover {
+  color: white;
+}
