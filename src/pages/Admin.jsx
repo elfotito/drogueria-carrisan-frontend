@@ -59,11 +59,14 @@ function Admin() {
         <div className="sidebar-brand">
           <span className="brand-mark">{getUserInitial()}</span>
           <div className="brand-text">
-            <strong>Droguería Carrisan, C.A.</strong>
             <span className="sidebar-user__hola">Hola,</span>
             <span className="sidebar-user__nombre">
               {getUserName()}
             </span>
+            <button className="btn-volver" onClick={handleVolver}>
+              <span className="btn-volver__icon">←</span>
+              <span className="btn-volver__text">Volver</span>
+            </button>
           </div>
           <button
             className="close-sidebar"
@@ -72,10 +75,7 @@ function Admin() {
             ✕
           </button>
         </div>
-        <button className="btn-volver" onClick={handleVolver}>
-          <span className="btn-volver__icon">←</span>
-          <span className="btn-volver__text">Volver</span>
-        </button>
+        
         
         <ul className="nav-list">
           {secciones.map(seccion => (
