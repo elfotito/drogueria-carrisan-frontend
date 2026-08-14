@@ -43,6 +43,7 @@ function Admin() {
 
   const renderSeccion = () => {
     switch(seccionActiva) {
+      case 'dashboard': return <DashboardAdmin onIrA={setSeccionActiva} />
       case 'tasa': return <TasaCambio />
       case 'productos': return <ProductosAdmin />
       case 'ordenes': return <OrdenesAdmin />
