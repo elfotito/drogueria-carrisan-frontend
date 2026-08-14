@@ -1,23 +1,26 @@
 /* ==========================================================
    OrdenDetalleModal — Droguería Carrisán
-   Paleta: Índigo #232B45 · Azul #1B4B8F · Teal #12A594
-           Ink #14182A · Paper #FBFAF7
+   Usa los tokens de Admin.css (--blue #0052DC, --indigo #1A1A3A,
+   --good, --alert, --slate-*, --paper, --surface, --font-display,
+   --font-body). Este componente siempre se monta dentro de Admin,
+   así que esos tokens ya están disponibles en :root.
    ========================================================== */
 
 .odm-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(20, 24, 42, 0.45);
+  background: rgba(16, 16, 38, 0.5);
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  z-index: 100;
-  font-family: 'Inter', sans-serif;
+  z-index: 1000;
+  font-family: var(--font-body);
+  backdrop-filter: blur(2px);
 }
 
 .odm-content {
   position: relative;
-  background: #FBFAF7;
+  background: var(--surface);
   width: 100%;
   max-width: 520px;
   max-height: 85vh;
@@ -25,6 +28,7 @@
   border-radius: 20px 20px 0 0;
   padding: 24px 20px calc(20px + env(safe-area-inset-bottom));
   animation: odm-slide-up 0.2s ease-out;
+  box-shadow: var(--shadow-lg);
 }
 
 @keyframes odm-slide-up {
@@ -34,14 +38,8 @@
 
 /* Desktop: modal centrado en vez de bottom-sheet */
 @media (min-width: 640px) {
-  .odm-overlay {
-    align-items: center;
-  }
-
-  .odm-content {
-    border-radius: 20px;
-    max-height: 80vh;
-  }
+  .odm-overlay { align-items: center; padding: 1rem; }
+  .odm-content { border-radius: var(--radius-lg); max-height: 80vh; }
 }
 
 .odm-close {
@@ -52,23 +50,22 @@
   height: 32px;
   border-radius: 50%;
   border: none;
-  background: #F0EEE7;
-  color: #5B6270;
+  background: var(--slate-100);
+  color: var(--slate-500);
   font-size: 0.85rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.15s ease;
 }
 
 .odm-close:hover {
-  background: #E7E5DE;
-  color: #14182A;
+  background: var(--slate-200);
+  color: var(--ink);
 }
 
-/* ---------------------------------------------------------
-   Header
---------------------------------------------------------- */
+/* ---------- Header ---------- */
 .odm-header {
   display: flex;
   align-items: center;
@@ -79,29 +76,27 @@
 }
 
 .odm-numero {
-  font-family: 'Manrope', sans-serif;
-  font-weight: 800;
+  font-family: var(--font-display);
+  font-weight: 700;
   font-size: 1.2rem;
-  color: #14182A;
+  color: var(--ink);
   margin: 0;
 }
 
 .odm-fecha {
   font-size: 0.85rem;
-  color: #5B6270;
+  color: var(--slate-500);
   margin: 0 0 10px;
   text-transform: capitalize;
 }
 
 .odm-divider {
   height: 1px;
-  background: #E7E5DE;
+  background: var(--slate-200);
   margin: 16px 0;
 }
 
-/* ---------------------------------------------------------
-   Cliente
---------------------------------------------------------- */
+/* ---------- Cliente ---------- */
 .odm-cliente {
   display: flex;
   align-items: center;
@@ -113,8 +108,8 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #1B4B8F, #12A594);
-  color: #FBFAF7;
+  background: linear-gradient(135deg, var(--blue), var(--indigo));
+  color: white;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -131,18 +126,18 @@
 }
 
 .odm-cliente-info strong {
-  color: #14182A;
+  color: var(--ink);
   font-size: 0.9rem;
 }
 
 .odm-cliente-info span {
-  color: #5B6270;
+  color: var(--slate-500);
   font-size: 0.8rem;
 }
 
-/* ---------------------------------------------------------
-   Badge de estado (mismo lenguaje visual que MisOrdenes)
---------------------------------------------------------- */
+/* ---------- Badge de estado ----------
+   El color se aplica inline desde ESTADOS_CONFIG (ver JSX);
+   esta clase solo da la forma. */
 .odm-badge {
   flex-shrink: 0;
   font-size: 0.72rem;
@@ -150,36 +145,11 @@
   padding: 5px 12px;
   border-radius: 999px;
   white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
-.badge--pendiente {
-  background: #FFF3D6;
-  color: #93650B;
-}
-
-.badge--verificado {
-  background: #E7EFFA;
-  color: #1B4B8F;
-}
-
-.badge--enviado {
-  background: #E8E8EE;
-  color: #232B45;
-}
-
-.badge--entregado {
-  background: #E1F5EF;
-  color: #0E7C63;
-}
-
-.badge--neutro {
-  background: #EFEEE9;
-  color: #5B6270;
-}
-
-/* ---------------------------------------------------------
-   Secciones genéricas
---------------------------------------------------------- */
+/* ---------- Secciones genéricas ---------- */
 .odm-section {
   margin: 0;
 }
@@ -188,24 +158,24 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-family: 'Manrope', sans-serif;
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-weight: 600;
   font-size: 0.92rem;
-  color: #14182A;
+  color: var(--ink);
   margin: 0 0 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
 .odm-section-icon {
   font-size: 1rem;
 }
 
-/* ---------------------------------------------------------
-   Tarjeta de envío
---------------------------------------------------------- */
+/* ---------- Tarjeta de envío ---------- */
 .odm-envio-card {
-  background: #F7F6F1;
+  background: var(--paper);
   border-left: 3px solid;
-  border-radius: 10px;
+  border-radius: var(--radius);
   padding: 12px 14px;
   display: flex;
   flex-direction: column;
@@ -221,7 +191,7 @@
 
 .odm-envio-label {
   font-size: 0.76rem;
-  color: #5B6270;
+  color: var(--slate-500);
   text-transform: uppercase;
   letter-spacing: 0.03em;
 }
@@ -229,12 +199,12 @@
 .odm-envio-valor {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #14182A;
+  color: var(--ink);
   text-align: right;
 }
 
 .odm-gratis {
-  color: #0E7C63;
+  color: var(--good);
 }
 
 .odm-envio-direccion {
@@ -242,7 +212,7 @@
   flex-direction: column;
   gap: 4px;
   padding-top: 6px;
-  border-top: 1px solid #E7E5DE;
+  border-top: 1px solid var(--slate-200);
 }
 
 .odm-envio-direccion .odm-envio-valor {
@@ -250,11 +220,7 @@
   font-weight: 500;
 }
 
-/* ---------------------------------------------------------
-   Lista de productos
-   (antes usaba nombres BEM con "__" que no coincidían con el
-   JSX, que usa guiones simples — quedaron unificados acá)
---------------------------------------------------------- */
+/* ---------- Lista de productos ---------- */
 .odm-items {
   display: flex;
   flex-direction: column;
@@ -271,8 +237,8 @@
   width: 52px;
   height: 52px;
   flex-shrink: 0;
-  border-radius: 10px;
-  background: #F7F6F1;
+  border-radius: var(--radius-sm);
+  background: var(--paper);
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -298,30 +264,28 @@
 .odm-item-nombre {
   font-weight: 600;
   font-size: 0.88rem;
-  color: #14182A;
+  color: var(--ink);
   margin: 0 0 2px;
   line-height: 1.3;
 }
 
 .odm-item-cantidad {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-display);
   font-size: 0.78rem;
-  color: #5B6270;
+  color: var(--slate-500);
   margin: 0;
 }
 
 .odm-item-subtotal {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-display);
   font-weight: 700;
   font-size: 0.9rem;
-  color: #14182A;
+  color: var(--ink);
   margin: 0;
   flex-shrink: 0;
 }
 
-/* ---------------------------------------------------------
-   Totales
---------------------------------------------------------- */
+/* ---------- Totales ---------- */
 .odm-totales {
   display: flex;
   flex-direction: column;
@@ -332,7 +296,7 @@
   display: flex;
   justify-content: space-between;
   font-size: 0.85rem;
-  color: #5B6270;
+  color: var(--slate-500);
 }
 
 .odm-total-final {
@@ -340,30 +304,28 @@
   justify-content: space-between;
   align-items: center;
   padding-top: 8px;
-  border-top: 1px solid #E7E5DE;
+  border-top: 1px solid var(--slate-200);
   font-weight: 700;
   font-size: 1rem;
-  color: #14182A;
+  color: var(--ink);
 }
 
 .odm-total-valor {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-display);
   font-weight: 800;
   font-size: 1.25rem;
-  color: #12A594;
+  color: var(--blue);
 }
 
-/* ---------------------------------------------------------
-   Select para cambiar estado (uso admin)
---------------------------------------------------------- */
+/* ---------- Select para cambiar estado (uso admin) ---------- */
 .odm-estado-select {
   width: 100%;
   padding: 10px 12px;
-  border-radius: 10px;
-  border: 1.5px solid #E7E5DE;
-  background: #FFFFFF;
-  color: #14182A;
-  font-family: 'Inter', sans-serif;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--slate-200);
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-body);
   font-size: 0.88rem;
   font-weight: 600;
   cursor: pointer;
@@ -371,19 +333,17 @@
 
 .odm-estado-select:focus {
   outline: none;
-  border-color: #1B4B8F;
-  box-shadow: 0 0 0 3px rgba(27, 75, 143, 0.12);
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px var(--blue-50);
 }
 
-/* ---------------------------------------------------------
-   Notas
---------------------------------------------------------- */
+/* ---------- Notas ---------- */
 .odm-notas {
   font-size: 0.85rem;
-  color: #5B6270;
+  color: var(--slate-700);
   line-height: 1.5;
   margin: 0;
-  background: #F7F6F1;
-  border-radius: 10px;
+  background: var(--paper);
+  border-radius: var(--radius-sm);
   padding: 10px 12px;
 }
