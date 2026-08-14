@@ -5,7 +5,6 @@ import ProductosAdmin from '../components/admin/ProductosAdmin'
 import UsuariosAdmin from '../components/admin/UsuariosAdmin'
 import EstadoCuentaAdmin from '../components/admin/EstadoCuentaAdmin'
 import DescuentosPanel from '../components/admin/DescuentosAdmin'
-import BottomNav from '../components/BottomNav'
 import './Admin.css'
 
 function Admin() {
@@ -42,8 +41,11 @@ function Admin() {
         <div className="sidebar-brand">
           <span className="brand-mark">DC</span>
           <div className="brand-text">
-            <strong>Droguería Carrisán</strong>
-            <span>Panel admin</span>
+            <strong>Droguería Carrisan, C.A.</strong>
+            <span className="sidebar-user__hola">Hola,</span>
+            <span className="sidebar-user__nombre">
+              {user?.email?.split('@')[0] || 'Usuario'}
+            </span>
           </div>
           <button
             className="close-sidebar"
@@ -100,8 +102,6 @@ function Admin() {
           </div>
         </main>
       </div>
-
-      <BottomNav />
     </div>
   )
 }

@@ -1,9 +1,5 @@
 /* ============================================================
-   Admin.css — Panel administrativo de Droguería Carrisán
-   Rediseño: sistema de marca (azul #0052DC + índigo #1A1A3A),
-   inspirado en paneles B2B tipo Walmart Seller Center / Amazon
-   Seller Central. Se conserva la estructura y el comportamiento
-   del drawer (menú lateral tipo cajón) — solo cambia el vestido.
+   Admin.css — Panel administrativo
    ============================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
@@ -162,7 +158,7 @@ body {
    pegadas al borde del sidebar y respiran entre sí */
 .nav-list {
   list-style: none;
-  padding: 1rem 0.75rem;
+  padding: 6rem 1.25rem 1rem;;
   flex: 1;
   overflow-y: auto;
   display: flex;
@@ -694,4 +690,21 @@ body {
     width: 100%;
     justify-content: center;
   }
+}
+
+.sidebar-user__hola {
+  font-size: 0.75rem;
+  color: var(--slate-300);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.sidebar-user__nombre {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
