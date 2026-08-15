@@ -186,6 +186,13 @@ function MisOrdenes() {
     return ordenes.filter((o) => o.estado === filtroEstado)
   }, [ordenes, filtroEstado])
 
+  // Cuántas órdenes propias (no aplica a la vista admin) están esperando
+  // pago o fueron rechazadas — para ofrecer el acceso directo a /pagos.
+  const ordenesPendientesPago = useMemo(
+    () => ordenes.filter((o) => o.forma_pago === 'contado' && ['esperando', 'rechazado'].includes(o.estado_pago)),
+    [ordenes]
+  )
+
   if (error) {
     return (
       <div className="misordenes-page">
@@ -200,6 +207,19 @@ function MisOrdenes() {
         <h1 className="misordenes-title">
           {user?.es_admin ? 'Todas las Órdenes' : 'Mis Órdenes'}
         </h1>
+
+        {!user?.es_admin && ordenesPendientesPago.length > 0 && (
+          <button
+            type="button"
+            className="misordenes-banner-pago"
+            onClick={() => navigate('/pagos')}
+          >
+            <span>
+              Tienes {ordenesPendientesPago.length} {ordenesPendientesPago.length === 1 ? 'orden pendiente de pago' : 'órdenes pendientes de pago'}
+            </span>
+            <span className="misordenes-banner-pago__cta">Gestionar pagos →</span>
+          </button>
+        )}
 
         {!cargando && ordenes.length > 0 && (
           <div className="misordenes-tabs">
