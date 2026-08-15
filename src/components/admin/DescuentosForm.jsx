@@ -42,6 +42,79 @@ function formatearFecha(fecha) {
   return `${day}/${month}/${year} ${hours}:${minutes}`
 }
 
+// ============================================================
+// Buscador reutilizable — usado por marca y los campos de texto.
+// Filtra en el cliente sobre una lista ya cargada (no pega a la
+// API en cada tecleo, a diferencia de la búsqueda de producto que
+// sí es server-side por el volumen del catálogo).
+// ============================================================
+function SelectorBuscador({
+  opciones,           // [{ valor, etiqueta }]
+  valorSeleccionado,
+  etiquetaSeleccionada,
+  onSeleccionar,      // (valor, etiqueta) => void
+  onLimpiar,
+  placeholder,
+  permitirLibre = false,
+  error,
+}) {
+  const [query, setQuery] = useState('')
+
+  if (valorSeleccionado) {
+    return (
+      <div className="producto-seleccionado">
+        <span>{etiquetaSeleccionada}</span>
+        <button type="button" className="btn-cambiar" onClick={onLimpiar}>
+          Cambiar
+        </button>
+      </div>
+    )
+  }
+
+  const texto = query.trim().toLowerCase()
+  const filtradas = texto
+    ? opciones.filter(o => o.etiqueta.toLowerCase().includes(texto))
+    : opciones
+  const hayExacta = opciones.some(o => o.etiqueta.toLowerCase() === texto)
+
+  return (
+    <>
+      <input
+        type="text"
+        placeholder={placeholder}
+        value={query}
+        onChange={e => setQuery(e.target.value)}
+        className={error ? 'error' : ''}
+      />
+      {texto && (filtradas.length > 0 || (permitirLibre && !hayExacta)) && (
+        <ul className="resultados-busqueda">
+          {filtradas.slice(0, 8).map(o => (
+            <li
+              key={o.valor}
+              onClick={() => { onSeleccionar(o.valor, o.etiqueta); setQuery('') }}
+            >
+              <div className="rb-info">
+                <strong>{o.etiqueta}</strong>
+              </div>
+            </li>
+          ))}
+          {permitirLibre && !hayExacta && (
+            <li
+              className="rb-libre"
+              onClick={() => { onSeleccionar(query.trim(), query.trim()); setQuery('') }}
+            >
+              <div className="rb-info">
+                <strong>Usar "{query.trim()}"</strong>
+                <small>No está en la lista — se guardará como valor nuevo</small>
+              </div>
+            </li>
+          )}
+        </ul>
+      )}
+    </>
+  )
+}
+
 export default function DescuentoForm({
   productoFijo = null,
   descuentoExistente = null,
@@ -75,8 +148,14 @@ export default function DescuentoForm({
 
   const [marcas, setMarcas] = useState([])
   const [valoresTexto, setValoresTexto] = useState([])
+
   const [busquedaProducto, setBusquedaProducto] = useState('')
   const [resultadosProducto, setResultadosProducto] = useState([])
+
+  // Etiqueta de la marca ya seleccionada (para edición, donde solo tenemos el id)
+  const [marcaLabel, setMarcaLabel] = useState(
+    descuentoExistente?.marcas?.nombre || ''
+  )
 
   const [guardando, setGuardando] = useState(false)
   const [error, setError] = useState('')
@@ -110,6 +189,14 @@ export default function DescuentoForm({
     return () => clearTimeout(timeout)
   }, [busquedaProducto, alcance, alcanceBloqueado])
 
+  // Si estamos editando y ya cargó la lista de marcas, resolvemos la etiqueta
+  useEffect(() => {
+    if (marcaId && !marcaLabel) {
+      const m = marcas.find(m => m.id == marcaId)
+      if (m) setMarcaLabel(m.nombre)
+    }
+  }, [marcas, marcaId, marcaLabel])
+
   function seleccionarProducto(p) {
     setProductoId(p.id)
     setProductoLabel(p.nombre_comercial)
@@ -123,6 +210,7 @@ export default function DescuentoForm({
     setProductoId(null)
     setProductoLabel('')
     setMarcaId('')
+    setMarcaLabel('')
     setAlcanceValor('')
     setErrores({})
   }
@@ -157,29 +245,25 @@ export default function DescuentoForm({
     return Object.keys(errs).length === 0
   }
 
-  // CORREGIDO: Solo navega, NO hace submit
+  // Solo navega, NO hace submit
   function handleSiguiente(e) {
-    e.preventDefault() // Prevenir cualquier submit accidental
+    e.preventDefault()
     if (paso === 1 && validarPaso1()) {
       setPaso(2)
     }
   }
 
-  // CORREGIDO: Solo navega hacia atrás
   function handleAnterior(e) {
     e.preventDefault()
     setPaso(1)
   }
 
-  // SOLO se ejecuta en el paso 2 al hacer clic en Guardar
   async function handleSubmit(e) {
     e.preventDefault()
     setError('')
-    
     if (!validarTodo()) return
 
     setGuardando(true)
-
     const payload = {
       alcance,
       producto_id: alcance === 'producto' ? productoId : null,
@@ -309,44 +393,40 @@ export default function DescuentoForm({
 
               {alcance === 'marca' && (
                 <div className="form-group">
-                  <label>Selecciona la marca *</label>
-                  <select 
-                    value={marcaId} 
-                    onChange={e => { setMarcaId(e.target.value); setErrores(prev => ({...prev, marca: ''})) }}
-                    className={errores.marca ? 'error' : ''}
-                  >
-                    <option value="">— Selecciona una marca —</option>
-                    {marcas.map(m => (
-                      <option key={m.id} value={m.id}>{m.nombre}</option>
-                    ))}
-                  </select>
+                  <label>Buscar marca *</label>
+                  <SelectorBuscador
+                    opciones={marcas.map(m => ({ valor: m.id, etiqueta: m.nombre }))}
+                    valorSeleccionado={marcaId}
+                    etiquetaSeleccionada={marcaLabel}
+                    onSeleccionar={(valor, etiqueta) => {
+                      setMarcaId(valor)
+                      setMarcaLabel(etiqueta)
+                      setErrores(prev => ({ ...prev, marca: '' }))
+                    }}
+                    onLimpiar={() => { setMarcaId(''); setMarcaLabel('') }}
+                    placeholder="Escribe el nombre de la marca..."
+                    error={errores.marca}
+                  />
                   {errores.marca && <span className="error-text">{errores.marca}</span>}
                 </div>
               )}
 
               {CAMPOS_TEXTO.includes(alcance) && (
                 <div className="form-group">
-                  <label>{alcanceActual?.label} *</label>
-                  {valoresTexto.length > 0 ? (
-                    <select 
-                      value={alcanceValor} 
-                      onChange={e => { setAlcanceValor(e.target.value); setErrores(prev => ({...prev, alcanceValor: ''})) }}
-                      className={errores.alcanceValor ? 'error' : ''}
-                    >
-                      <option value="">— Selecciona —</option>
-                      {valoresTexto.map(v => (
-                        <option key={v} value={v}>{v}</option>
-                      ))}
-                    </select>
-                  ) : (
-                    <input
-                      type="text"
-                      value={alcanceValor}
-                      onChange={e => { setAlcanceValor(e.target.value); setErrores(prev => ({...prev, alcanceValor: ''})) }}
-                      className={errores.alcanceValor ? 'error' : ''}
-                      placeholder={`Escribe el ${alcanceActual?.label?.toLowerCase()}`}
-                    />
-                  )}
+                  <label>Buscar {alcanceActual?.label?.toLowerCase()} *</label>
+                  <SelectorBuscador
+                    opciones={valoresTexto.map(v => ({ valor: v, etiqueta: v }))}
+                    valorSeleccionado={alcanceValor}
+                    etiquetaSeleccionada={alcanceValor}
+                    onSeleccionar={(valor) => {
+                      setAlcanceValor(valor)
+                      setErrores(prev => ({ ...prev, alcanceValor: '' }))
+                    }}
+                    onLimpiar={() => setAlcanceValor('')}
+                    placeholder={`Escribe el ${alcanceActual?.label?.toLowerCase()}...`}
+                    permitirLibre
+                    error={errores.alcanceValor}
+                  />
                   {errores.alcanceValor && <span className="error-text">{errores.alcanceValor}</span>}
                 </div>
               )}
@@ -452,7 +532,6 @@ export default function DescuentoForm({
                       type="button"
                       className="btn-hoy"
                       onClick={() => {
-                        // Por defecto, fin = inicio + 30 días
                         const inicio = fechaInicio ? new Date(fechaInicio) : new Date()
                         const fin = new Date(inicio.getTime() + 30 * 24 * 60 * 60 * 1000)
                         setFechaFin(toDatetimeLocal(fin))
@@ -510,7 +589,7 @@ export default function DescuentoForm({
                   <span>Aplica a:</span>
                   <strong>
                     {alcance === 'producto' ? productoLabel :
-                     alcance === 'marca' ? marcas.find(m => m.id == marcaId)?.nombre || '—' :
+                     alcance === 'marca' ? marcaLabel || '—' :
                      alcanceValor || '—'}
                   </strong>
                 </div>
@@ -538,7 +617,7 @@ export default function DescuentoForm({
             </div>
           )}
 
-          {/* Navegación - CORREGIDO: type="button" en Siguiente */}
+          {/* Navegación */}
           <div className="form-navegacion">
             {paso > 1 ? (
               <button type="button" onClick={handleAnterior} className="btn-secundario">
@@ -549,19 +628,19 @@ export default function DescuentoForm({
                 Cancelar
               </button>
             )}
-            
+
             {paso < 2 ? (
-              <button 
-                type="button"  // IMPORTANTE: type="button" para NO hacer submit
-                onClick={handleSiguiente} 
+              <button
+                type="button"
+                onClick={handleSiguiente}
                 className="btn-primario"
               >
                 Siguiente →
               </button>
             ) : (
-              <button 
-                type="submit"  // Solo este botón hace submit
-                disabled={guardando} 
+              <button
+                type="submit"
+                disabled={guardando}
                 className="btn-guardar"
               >
                 {guardando ? (
