@@ -77,29 +77,29 @@ function BottomNavItem({ item }) {
   )
 }
 
-// Ítem de "Alertas" — igual que BottomNavItem, pero con el badge y el
-// efecto de campana que se activan solo cuando hay notificaciones sin leer
-function BottomNavCampana({ noLeidas }) {
+// Campanita flotante — vive fuera del grid del dock (2 + FAB + 2 se
+// mantiene siempre parejo). Solo se hace visible cuando hay pendientes;
+// se anima con transform/opacity para poder animar también su salida.
+function BottomNavCampanaFlotante({ noLeidas }) {
   const hayPendientes = noLeidas > 0
 
   return (
     <NavLink
       to="/notificaciones"
       className={({ isActive }) =>
-        `bottom-nav__item ${isActive ? 'bottom-nav__item--activo' : ''} ${
-          hayPendientes ? 'bottom-nav__item--alerta' : ''
+        `bottom-nav__campana ${hayPendientes ? 'bottom-nav__campana--visible' : ''} ${
+          isActive ? 'bottom-nav__campana--activa' : ''
         }`
       }
+      aria-hidden={!hayPendientes}
+      tabIndex={hayPendientes ? 0 : -1}
+      aria-label="Notificaciones pendientes"
     >
-      <span className="bottom-nav__icon-wrap">
-        <span className="bottom-nav__icon-pill" aria-hidden="true" />
-        {hayPendientes && <span className="bottom-nav__ping" aria-hidden="true" />}
-        {ICONOS.campana}
-        {hayPendientes && (
-          <span className="bottom-nav__badge">{noLeidas > 9 ? '9+' : noLeidas}</span>
-        )}
-      </span>
-      <span className="bottom-nav__label">Alertas</span>
+      {hayPendientes && <span className="bottom-nav__campana-ping" aria-hidden="true" />}
+      {ICONOS.campana}
+      {hayPendientes && (
+        <span className="bottom-nav__campana-badge">{noLeidas > 9 ? '9+' : noLeidas}</span>
+      )}
     </NavLink>
   )
 }
@@ -158,7 +158,10 @@ function BottomNav() {
       {ITEMS_DERECHA.map((item) => (
         <BottomNavItem key={item.to} item={item} />
       ))}
-      <BottomNavCampana noLeidas={notificacionesNoLeidas} />
+
+      {/* Campanita flotante — no ocupa espacio en el grid, así el dock
+          se mantiene 2 + FAB + 2 siempre */}
+      <BottomNavCampanaFlotante noLeidas={notificacionesNoLeidas} />
     </nav>
   )
 }
