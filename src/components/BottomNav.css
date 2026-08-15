@@ -157,57 +157,86 @@
     color: #0052DC;
   }
 
-  /* --- Ítem "Alertas": badge + efecto, solo cuando hay pendientes --- */
+  /* --- Campanita flotante: fuera del grid, ancla al borde superior del dock --- */
 
-  .bottom-nav__badge {
+  .bottom-nav__campana {
     position: absolute;
-    top: -2px;
-    right: 3px;
-    z-index: 2;
-    min-width: 15px;
-    height: 15px;
+    top: -14px;
+    right: 22px;
+    z-index: 101; /* por encima del dock */
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(26, 26, 58, 0.08);
+    box-shadow: 0 8px 18px rgba(26, 26, 58, 0.2);
+    color: #0052DC;
+    text-decoration: none;
+    /* oculta por defecto: sin espacio propio, sin bloquear toques */
+    transform: scale(0) translateY(6px);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease, background 0.15s ease, color 0.15s ease;
+  }
+
+  .bottom-nav__campana svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .bottom-nav__campana--visible {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .bottom-nav__campana--visible svg {
+    animation: campana-sonar 3.2s ease-in-out infinite;
+    transform-origin: 50% 15%;
+  }
+
+  .bottom-nav__campana--activa {
+    background: #0052DC;
+    color: #FFFFFF;
+    border-color: transparent;
+  }
+
+  .bottom-nav__campana-badge {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    min-width: 16px;
+    height: 16px;
     padding: 0 3px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: #D64550;
     color: #FFFFFF;
-    font-size: 0.58rem;
+    font-size: 0.6rem;
     font-weight: 700;
     line-height: 1;
     border-radius: 999px;
-    border: 2px solid rgba(255, 255, 255, 0.9);
-    animation: campana-badge-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border: 2px solid #FBFAF7;
   }
 
-  /* Anillo tipo "radar" detrás del badge — respira mientras haya pendientes */
-  .bottom-nav__ping {
+  /* Anillo tipo "radar" alrededor de la burbuja — respira mientras haya pendientes */
+  .bottom-nav__campana-ping {
     position: absolute;
-    top: 1px;
-    right: 8px;
-    width: 8px;
-    height: 8px;
+    inset: -5px;
     border-radius: 50%;
-    background: rgba(214, 69, 80, 0.55);
+    border: 2px solid rgba(0, 82, 220, 0.35);
     animation: campana-ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
   }
 
-  /* La campana "suena": un balanceo breve y periódico, no continuo,
-     para llamar la atención sin volverse molesto */
-  .bottom-nav__item--alerta svg {
-    transform-origin: 50% 12%;
-    animation: campana-sonar 3.2s ease-in-out infinite;
-  }
-
-  @keyframes campana-badge-pop {
-    0% { transform: scale(0); opacity: 0; }
-    70% { transform: scale(1.15); opacity: 1; }
-    100% { transform: scale(1); opacity: 1; }
-  }
-
   @keyframes campana-ping {
-    0% { transform: scale(1); opacity: 0.7; }
-    75%, 100% { transform: scale(2.6); opacity: 0; }
+    0% { transform: scale(1); opacity: 0.8; }
+    75%, 100% { transform: scale(1.55); opacity: 0; }
   }
 
   @keyframes campana-sonar {
@@ -220,9 +249,8 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .bottom-nav__item--alerta svg,
-    .bottom-nav__ping,
-    .bottom-nav__badge {
+    .bottom-nav__campana--visible svg,
+    .bottom-nav__campana-ping {
       animation: none;
     }
   }
@@ -262,9 +290,21 @@
     height: 22px;
   }
 
-  .bottom-nav__badge {
-    min-width: 16px;
-    height: 16px;
-    font-size: 0.62rem;
+  .bottom-nav__campana {
+    width: 42px;
+    height: 42px;
+    top: -16px;
+    right: 28px;
+  }
+
+  .bottom-nav__campana svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .bottom-nav__campana-badge {
+    min-width: 17px;
+    height: 17px;
+    font-size: 0.64rem;
   }
 }
