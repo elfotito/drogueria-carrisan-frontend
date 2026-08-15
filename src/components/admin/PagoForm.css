@@ -12,12 +12,14 @@
   justify-content: space-between;
   align-items: center;
   padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid var(--gray-200);
+  border-bottom: 1px solid var(--slate-200);
 }
 
 .pago-form-modal .modal-header h2 {
+  font-family: var(--font-display);
   font-size: 1.2rem;
-  color: var(--dark);
+  color: var(--ink);
+  font-weight: 600;
 }
 
 /* Selector de tipo */
@@ -33,21 +35,21 @@
   align-items: center;
   gap: 0.35rem;
   padding: 0.75rem 0.5rem;
-  border: 2px solid var(--gray-200);
-  border-radius: var(--radius);
+  border: 1.5px solid var(--slate-200);
+  border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all 0.2s;
   text-align: center;
 }
 
 .tipo-option:hover {
-  border-color: var(--gray-300);
-  background: var(--gray-50);
+  border-color: var(--slate-300);
+  background: var(--paper);
 }
 
 .tipo-option.active {
-  border-color: var(--primary);
-  background: var(--primary-light);
+  border-color: var(--blue);
+  background: var(--blue-50);
 }
 
 .tipo-option input[type="radio"] {
@@ -61,13 +63,13 @@
 .tipo-label {
   font-size: 0.8rem;
   font-weight: 600;
-  color: var(--gray-700);
+  color: var(--slate-700);
 }
 
 /* Facturas checklist */
 .facturas-checklist {
-  border: 2px solid var(--gray-200);
-  border-radius: var(--radius);
+  border: 1.5px solid var(--slate-200);
+  border-radius: var(--radius-sm);
   overflow: hidden;
   max-height: 200px;
   overflow-y: auto;
@@ -78,11 +80,11 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.6rem 1rem;
-  background: var(--gray-50);
-  border-bottom: 1px solid var(--gray-200);
+  background: var(--slate-100);
+  border-bottom: 1px solid var(--slate-200);
   font-size: 0.8rem;
   font-weight: 600;
-  color: var(--gray-600);
+  color: var(--slate-700);
 }
 
 .checklist-item {
@@ -92,11 +94,11 @@
   padding: 0.7rem 1rem;
   cursor: pointer;
   transition: background 0.15s;
-  border-bottom: 1px solid var(--gray-100);
+  border-bottom: 1px solid var(--slate-100);
 }
 
 .checklist-item:hover {
-  background: var(--gray-50);
+  background: var(--paper);
 }
 
 .checklist-item input[type="checkbox"] {
@@ -104,6 +106,7 @@
   height: 16px;
   cursor: pointer;
   flex-shrink: 0;
+  accent-color: var(--blue);
 }
 
 .checklist-item-info {
@@ -114,24 +117,22 @@
 .checklist-item-info strong {
   display: block;
   font-size: 0.85rem;
-  color: var(--dark);
+  color: var(--ink);
 }
 
 .checklist-item-monto {
-  font-family: 'Courier New', monospace;
+  font-family: var(--font-display);
   font-weight: 700;
-  color: var(--primary);
+  color: var(--blue);
   font-size: 0.9rem;
   flex-shrink: 0;
 }
 
 /* ============ RESPONSIVE ============ */
-
 @media (max-width: 480px) {
   .tipo-pago-selector {
     grid-template-columns: 1fr;
   }
-  
   .tipo-option {
     flex-direction: row;
     justify-content: center;
