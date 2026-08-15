@@ -12,6 +12,13 @@ import './Navbar.css'
 
 const RUTAS_SIN_NAVBAR = ['/login', '/registro', '/recuperar']
 
+// 🆕 Rutas donde SÍ debe verse la flecha "atrás" en móvil
+const RUTAS_CON_BACK_MOVIL_PREFIXES = [
+  '/admin', '/cuenta', '/mis-items', '/orders',
+  '/estado-cuenta', '/notificaciones', '/producto', '/carrito',
+  '/servicios', '/catalogo'
+]
+
 const EMOJIS_ENVIO = {
   retiro: '🏪',
   delivery: '🛵',
@@ -191,7 +198,38 @@ function Navbar() {
       setMostrarSugerencias(false)
       return
     }
+    const mobilePanelRef = useRef(null) // 🆕
 
+useEffect(() => {
+  function handleClickOutside(event) {
+    const isOutsideDesktop = panelRef.current && !panelRef.current.contains(event.target)
+    const isOutsideMobile = mobilePanelRef.current && !mobilePanelRef.current.contains(event.target) // 🆕
+    const isOutsideDeptos = deptosRef.current && !deptosRef.current.contains(event.target)
+    const isOutsideServicios = serviciosRef.current && !serviciosRef.current.contains(event.target)
+    const isOutsideMyItems = myItemsRef.current && !myItemsRef.current.contains(event.target)
+    const isOutsideAccount = accountRef.current && !accountRef.current.contains(event.target)
+
+    // 🆕 solo cierra si el click fue afuera de AMBOS triggers (desktop y móvil)
+    if (isOutsideDesktop && isOutsideMobile) {
+      setShowEnvioPanel(false)
+    }
+    if (isOutsideDeptos) { setShowDeptosMenu(false); setDeptoActivo(null) }
+    if (isOutsideServicios) { setShowServiciosMenu(false); setServicioActivo(null) }
+    if (isOutsideMyItems) setShowMyItemsMenu(false)
+    if (isOutsideAccount) setShowAccountMenu(false)
+    if (searchRef.current && !searchRef.current.contains(event.target)) setMostrarSugerencias(false)
+  }
+  document.addEventListener('mousedown', handleClickOutside)
+  return () => document.removeEventListener('mousedown', handleClickOutside)
+}, [])
+
+// 🆕 Cargar direcciones guardadas del usuario al montar
+useEffect(() => {
+  if (user) cargarDirecciones()
+}, [user])
+
+// 🆕 helper: mostrar flecha atrás solo en móvil y en ciertas rutas
+const mostrarBackMovil = RUTAS_CON_BACK_MOVIL_PREFIXES.some(p => location.pathname.startsWith(p))
     const debounce = setTimeout(async () => {
       try {
         const { data } = await api.get(`/products?search=${encodeURIComponent(busqueda)}&limit=5`)
@@ -293,7 +331,47 @@ function Navbar() {
               />
             )}
           </div>
+{/* 🆕 Flecha atrás + Pin de envío (SOLO MÓVIL) */}
+<div className="navbar__mobile-pickup mobile-only" ref={mobilePanelRef}>
+  {mostrarBackMovil && (
+    <button
+      className="mobile-back-btn"
+      aria-label="Volver"
+      onClick={() => navigate(-1)}
+    >
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+    </button>
+  )}
 
+  <button
+    className="mobile-pin-btn"
+    aria-label="Seleccionar envío"
+    onClick={() => setShowEnvioPanel(!showEnvioPanel)}
+  >
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+      <circle cx="12" cy="10" r="3"></circle>
+    </svg>
+  </button>
+
+  {showEnvioPanel && (
+    <div className="envio-modal-backdrop" onClick={() => setShowEnvioPanel(false)}>
+      <div onClick={(e) => e.stopPropagation()}>
+        <PanelEnvio
+          tipoEnvio={tipoEnvio}
+          cambiarTipoEnvio={cambiarTipoEnvio}
+          direcciones={direcciones}
+          direccionSeleccionada={direccionSeleccionada}
+          setDireccionSeleccionada={setDireccionSeleccionada}
+          guardarDireccion={guardarDireccion}
+          onClose={() => setShowEnvioPanel(false)}
+        />
+      </div>
+    </div>
+  )}
+</div>
           {/* Buscador Interactivo */}
           <div className="navbar__search-wrapper" ref={searchRef}>
             <form className="navbar__search" onSubmit={handleBuscar}>
