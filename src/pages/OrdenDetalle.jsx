@@ -6,35 +6,41 @@ import './OrdenDetalle.css'
 
 // ---------------------------------------------------------
 // Pipeline de estados — debe coincidir con el backend
-// (ordenes.controller.js: ESTADOS_VALIDOS)
+// (ordenes.controller.js: ESTADOS_VALIDOS). Las descripciones de
+// 'pedido_creado' y 'procesando' se ajustan según forma_pago porque
+// el paso de pago solo existe para órdenes de contado.
 // ---------------------------------------------------------
-const ETAPAS = [
-  {
-    id: 'pedido_creado',
-    label: 'Pedido Creado',
-    desc: 'Recibimos tu pedido y estamos por confirmar el pago.',
-  },
-  {
-    id: 'procesando',
-    label: 'Procesando',
-    desc: 'Verificamos tu pago y la disponibilidad de los productos.',
-  },
-  {
-    id: 'preparando',
-    label: 'Preparando',
-    desc: 'Estamos empacando tu pedido. Ya no se pueden hacer cambios a la dirección de entrega.',
-  },
-  {
-    id: 'enviado',
-    label: 'Enviado',
-    desc: 'Tu pedido salió de nuestro almacén rumbo a destino.',
-  },
-  {
-    id: 'entregado',
-    label: 'Entregado',
-    desc: 'Tu pedido fue entregado con éxito.',
-  },
-]
+function getEtapas(formaPago) {
+  return [
+    {
+      id: 'pedido_creado',
+      label: 'Pedido Creado',
+      desc: 'Recibimos tu pedido y estamos verificando disponibilidad y cantidades.',
+    },
+    {
+      id: 'procesando',
+      label: 'Procesando',
+      desc: formaPago === 'credito'
+        ? 'Tu pedido pasará a preparación usando tu línea de crédito.'
+        : 'Confirmamos tu pedido. Ya puedes proceder con el pago.',
+    },
+    {
+      id: 'preparando',
+      label: 'Preparando',
+      desc: 'Estamos empacando tu pedido. Ya no se pueden hacer cambios a la dirección de entrega.',
+    },
+    {
+      id: 'enviado',
+      label: 'Enviado',
+      desc: 'Tu pedido salió de nuestro almacén rumbo a destino.',
+    },
+    {
+      id: 'entregado',
+      label: 'Entregado',
+      desc: 'Tu pedido fue entregado con éxito.',
+    },
+  ]
+}
 
 const ESTADOS_CONFIG = {
   pedido_creado: { label: 'Pedido Creado', color: '#f59e0b', bg: '#fef3c7' },
@@ -61,9 +67,10 @@ function formatFecha(fecha) {
   })
 }
 
-function Timeline({ estadoActual, historial }) {
+function Timeline({ estadoActual, historial, formaPago }) {
+  const etapas = getEtapas(formaPago)
   const cancelada = estadoActual === 'cancelado'
-  const indiceActual = ETAPAS.findIndex((e) => e.id === estadoActual)
+  const indiceActual = etapas.findIndex((e) => e.id === estadoActual)
 
   return (
     <div className="od-timeline">
@@ -79,7 +86,7 @@ function Timeline({ estadoActual, historial }) {
         </div>
       )}
 
-      {ETAPAS.map((etapa, index) => {
+      {etapas.map((etapa, index) => {
         const entrada = historial.find((h) => h.estado === etapa.id)
         const completado = !cancelada && index <= indiceActual
         const esActual = !cancelada && index === indiceActual
@@ -92,7 +99,7 @@ function Timeline({ estadoActual, historial }) {
           >
             <div className="od-timeline__marcador">
               <span className="od-timeline__punto" />
-              {index < ETAPAS.length - 1 && <span className="od-timeline__linea" />}
+              {index < etapas.length - 1 && <span className="od-timeline__linea" />}
             </div>
             <div className="od-timeline__contenido">
               <p className="od-timeline__label">{etapa.label}</p>
@@ -199,7 +206,7 @@ function OrdenDetalle() {
 
         {/* Timeline */}
         <section className="od-seccion">
-          <Timeline estadoActual={orden.estado} historial={historial} />
+          <Timeline estadoActual={orden.estado} historial={historial} formaPago={orden.forma_pago} />
         </section>
 
         {/* Productos */}
@@ -230,8 +237,32 @@ function OrdenDetalle() {
           </div>
         </section>
 
+        {/* Aviso de pago (solo contado, y solo mientras es relevante) */}
+        {orden.forma_pago === 'contado' && orden.estado_pago && orden.estado_pago !== 'verificado' && (
+          <section className={`od-aviso-pago od-aviso-pago--${orden.estado_pago}`}>
+            {orden.estado_pago === 'esperando' && (
+              <p>Tu pedido está listo. Puedes proceder con el pago cuando quieras.</p>
+            )}
+            {orden.estado_pago === 'reportado' && (
+              <p>Reportaste tu pago. Lo estamos verificando.</p>
+            )}
+            {orden.estado_pago === 'rechazado' && (
+              <p>Tu comprobante fue rechazado. Puedes volver a reportar el pago.</p>
+            )}
+          </section>
+        )}
+
         {/* Acciones */}
         <section className="od-acciones">
+          {orden.forma_pago === 'contado' && ['esperando', 'rechazado'].includes(orden.estado_pago) && (
+            <button
+              type="button"
+              className="od-boton od-boton--pagar"
+              onClick={() => navigate('/pagos', { state: { ordenIds: [orden.id] } })}
+            >
+              Pagar orden
+            </button>
+          )}
           <button
             type="button"
             className="od-boton od-boton--primario"
