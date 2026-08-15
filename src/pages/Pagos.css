@@ -1,0 +1,313 @@
+.pagos-page {
+  min-height: 100vh;
+  background: #FBFAF7;
+  padding: 20px 16px 40px;
+}
+
+.pagos-page--centrado {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.pagos-container {
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.pagos-volver {
+  display: inline-block;
+  color: #0052DC;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  margin-bottom: 12px;
+}
+
+.pagos-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #1A1A3A;
+  margin: 0 0 20px;
+}
+
+/* ---------- Pasos ---------- */
+.pagos-pasos {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.pagos-paso {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  opacity: 0.4;
+}
+
+.pagos-paso--activo {
+  opacity: 1;
+}
+
+.pagos-paso__numero {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #0052DC;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pagos-paso__label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #1A1A3A;
+  text-align: center;
+}
+
+/* ---------- Secciones ---------- */
+.pagos-seccion {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid #F0EEE7;
+}
+
+.pagos-seccion__titulo {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1A1A3A;
+  margin: 0 0 12px;
+}
+
+.pagos-seccion__desc {
+  font-size: 0.85rem;
+  color: #6B6B76;
+  margin: 0 0 16px;
+}
+
+.pagos-error {
+  background: #FEE2E2;
+  color: #B91C1C;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  margin-bottom: 16px;
+}
+
+/* ---------- Lista de órdenes seleccionables ---------- */
+.pagos-ordenes-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.pagos-orden-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border: 1.5px solid #E5E3DB;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.pagos-orden-item--activa {
+  border-color: #0052DC;
+  background: #EEF3FE;
+}
+
+.pagos-orden-item__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pagos-orden-item__numero {
+  font-weight: 600;
+  color: #1A1A3A;
+  font-size: 0.9rem;
+}
+
+.pagos-orden-item__badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #B91C1C;
+}
+
+.pagos-orden-item__monto {
+  font-weight: 700;
+  color: #1A1A3A;
+}
+
+/* ---------- Resumen de monto ---------- */
+.pagos-resumen-monto {
+  background: #FBFAF7;
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 16px;
+}
+
+.pagos-resumen-monto__row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #1A1A3A;
+  padding: 4px 0;
+}
+
+.pagos-resumen-monto__row--destacado {
+  font-weight: 800;
+  font-size: 1rem;
+  color: #0052DC;
+  border-top: 1px solid #E5E3DB;
+  margin-top: 6px;
+  padding-top: 10px;
+}
+
+.pagos-tasa-nota {
+  font-size: 0.72rem;
+  color: #6B6B76;
+  margin: 6px 0 0;
+}
+
+.pagos-monto-recordatorio {
+  font-size: 0.95rem;
+  color: #1A1A3A;
+  margin: 0 0 16px;
+}
+
+/* ---------- Datos bancarios ---------- */
+.pagos-datos-bancarios {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.pagos-cuenta-card {
+  border: 1.5px solid #E5E3DB;
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.pagos-cuenta-card__banco {
+  font-weight: 700;
+  color: #0052DC;
+  margin: 0 0 6px;
+}
+
+.pagos-cuenta-card__linea {
+  font-size: 0.85rem;
+  color: #1A1A3A;
+  margin: 2px 0;
+}
+
+/* ---------- Upload ---------- */
+.pagos-upload {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  border: 2px dashed #E5E3DB;
+  border-radius: 12px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.pagos-upload input {
+  display: none;
+}
+
+.pagos-upload__placeholder {
+  color: #6B6B76;
+  font-size: 0.85rem;
+}
+
+.pagos-upload__nombre {
+  color: #12A594;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+/* ---------- Botones ---------- */
+.pagos-boton {
+  flex: 1;
+  padding: 13px 20px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+}
+
+.pagos-boton:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.pagos-boton--primario {
+  background: #0052DC;
+  color: #fff;
+  width: 100%;
+}
+
+.pagos-boton--secundario {
+  background: #fff;
+  color: #1A1A3A;
+  border: 1.5px solid #1A1A3A;
+}
+
+.pagos-nav-botones {
+  display: flex;
+  gap: 10px;
+}
+
+/* ---------- Vacío / Éxito ---------- */
+.pagos-vacio,
+.pagos-exito {
+  max-width: 340px;
+  padding: 20px;
+}
+
+.pagos-vacio__icon,
+.pagos-exito__icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+}
+
+.pagos-vacio h1,
+.pagos-exito h1 {
+  font-size: 1.2rem;
+  color: #1A1A3A;
+  margin: 0 0 8px;
+}
+
+.pagos-vacio p,
+.pagos-exito p {
+  color: #6B6B76;
+  font-size: 0.9rem;
+  margin: 0 0 20px;
+}
+
+.pagos-vacio__cta,
+.pagos-exito__cta {
+  display: inline-block;
+  background: #0052DC;
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
