@@ -142,7 +142,6 @@ function UsuariosAdmin() {
           valorA = (a.nombre || '').toLowerCase()
           valorB = (b.nombre || '').toLowerCase()
       }
-      
       if (valorA < valorB) return ordenDireccion === 'asc' ? -1 : 1
       if (valorA > valorB) return ordenDireccion === 'asc' ? 1 : -1
       return 0
@@ -251,24 +250,22 @@ function UsuariosAdmin() {
               className="search-input"
             />
           </div>
-
-          <select 
-            value={filtroEtiqueta} 
+          <select
+            value={filtroEtiqueta}
             onChange={(e) => setFiltroEtiqueta(e.target.value)}
             className="filter-select"
           >
             <option value="todos">Todas las etiquetas</option>
             {etiquetas.map(etq => (
               <option key={etq} value={etq}>
-                {etq === 'admin' ? '🛡️ Admin' : 
-                 etq === 'distribuidor' ? '🏢 Distribuidor' : 
+                {etq === 'admin' ? '🛡️ Admin' :
+                 etq === 'distribuidor' ? '🏢 Distribuidor' :
                  `👤 ${etq}`}
               </option>
             ))}
           </select>
-
-          <select 
-            value={filtroEstado} 
+          <select
+            value={filtroEstado}
             onChange={(e) => setFiltroEstado(e.target.value)}
             className="filter-select"
           >
@@ -285,7 +282,8 @@ function UsuariosAdmin() {
         {busqueda && ` (filtrados de ${usuarios.length} totales)`}
       </div>
 
-      {/* Tabla */}
+      {/* Tabla — en móvil (≤768px) cada <tr> se colapsa a tarjeta vía CSS
+          usando los atributos data-label de cada <td> (ver UsuariosAdmin.css) */}
       <div className="table-container">
         <table className="usuarios-table">
           <thead>
@@ -321,7 +319,7 @@ function UsuariosAdmin() {
             ) : (
               usuariosPaginados.map((usuario) => (
                 <tr key={usuario.id} className={usuario.activo === false ? 'usuario-inactivo' : ''}>
-                  <td>
+                  <td className="td-usuario">
                     <div className="usuario-cell">
                       <div className="usuario-avatar">
                         {(usuario.nombre?.[0] || 'U').toUpperCase()}
@@ -337,27 +335,27 @@ function UsuariosAdmin() {
                       </div>
                     </div>
                   </td>
-                  <td className="email-cell">{usuario.email}</td>
-                  <td>{usuario.rif_cedula || '-'}</td>
-                  <td>
+                  <td className="email-cell" data-label="Email">{usuario.email}</td>
+                  <td data-label="RIF/Cédula">{usuario.rif_cedula || '-'}</td>
+                  <td data-label="Etiqueta">
                     <span className={`etiqueta-badge etiqueta-${usuario.etiqueta || 'cliente'}`}>
                       {usuario.etiqueta === 'admin' ? '🛡️ Admin' :
                        usuario.etiqueta === 'distribuidor' ? '🏢 Distribuidor' :
                        `👤 ${usuario.etiqueta || 'Cliente'}`}
                     </span>
                   </td>
-                  <td>{usuario.telefono || '-'}</td>
-                  <td className="credito-cell">
+                  <td data-label="Teléfono">{usuario.telefono || '-'}</td>
+                  <td className="credito-cell" data-label="Crédito">
                     ${Number(usuario.linea_credito || 0).toFixed(2)}
                   </td>
-                  <td>
+                  <td data-label="Delivery">
                     {usuario.delivery_gratis ? (
                       <span className="delivery-badge">🛵 Gratis</span>
                     ) : (
                       <span className="delivery-no">-</span>
                     )}
                   </td>
-                  <td>
+                  <td data-label="Estado">
                     <button
                       onClick={() => handleToggleActivo(usuario)}
                       className={`estado-toggle ${usuario.activo !== false ? 'activo' : 'inactivo'}`}
@@ -366,25 +364,25 @@ function UsuariosAdmin() {
                       {usuario.activo !== false ? '✅' : '❌'}
                     </button>
                   </td>
-                  <td>
+                  <td className="td-acciones">
                     <div className="acciones-cell">
-                      <button 
+                      <button
                         onClick={() => abrirEdicion(usuario)}
-                        className="btn-icon" 
+                        className="btn-icon"
                         title="Editar"
                       >
                         ✏️
                       </button>
-                      <button 
+                      <button
                         onClick={() => abrirDescuento(usuario)}
-                        className="btn-icon btn-descuento" 
+                        className="btn-icon btn-descuento"
                         title="Gestionar descuento"
                       >
                         💰
                       </button>
-                      <button 
+                      <button
                         onClick={() => setUsuarioAEliminar(usuario)}
-                        className="btn-icon btn-danger" 
+                        className="btn-icon btn-danger"
                         title="Eliminar"
                       >
                         🗑️
@@ -401,17 +399,16 @@ function UsuariosAdmin() {
       {/* Paginación */}
       {totalPaginas > 1 && (
         <div className="paginacion">
-          <button 
+          <button
             onClick={() => setPaginaActual(1)}
             disabled={paginaActual === 1}
             className="btn-pagina"
           >⏮️</button>
-          <button 
+          <button
             onClick={() => setPaginaActual(p => Math.max(1, p - 1))}
             disabled={paginaActual === 1}
             className="btn-pagina"
           >◀️</button>
-          
           {Array.from({ length: totalPaginas }, (_, i) => i + 1)
             .filter(p => p === 1 || p === totalPaginas || Math.abs(p - paginaActual) <= 2)
             .map((p, i, arr) => (
@@ -423,13 +420,12 @@ function UsuariosAdmin() {
                 >{p}</button>
               </span>
             ))}
-          
-          <button 
+          <button
             onClick={() => setPaginaActual(p => Math.min(totalPaginas, p + 1))}
             disabled={paginaActual === totalPaginas}
             className="btn-pagina"
           >▶️</button>
-          <button 
+          <button
             onClick={() => setPaginaActual(totalPaginas)}
             disabled={paginaActual === totalPaginas}
             className="btn-pagina"
@@ -480,7 +476,6 @@ function UsuariosAdmin() {
 // ============================================================
 // Componente DescuentoUsuarioModal
 // ============================================================
-
 function DescuentoUsuarioModal({ usuario, onClose, onGuardado }) {
   const [porcentaje, setPorcentaje] = useState(usuario.descuento_porcentaje || 0)
   const [guardando, setGuardando] = useState(false)
@@ -491,14 +486,13 @@ function DescuentoUsuarioModal({ usuario, onClose, onGuardado }) {
     setMensaje('')
     try {
       // Aquí harías la llamada a tu API para guardar el descuento
-      // await api.post('/usuario-descuento', { 
-      //   usuario_id: usuario.id, 
-      //   porcentaje: Number(porcentaje) 
+      // await api.post('/usuario-descuento', {
+      //   usuario_id: usuario.id,
+      //   porcentaje: Number(porcentaje)
       // })
-      
+
       // Simulación
       await new Promise(resolve => setTimeout(resolve, 500))
-      
       setMensaje('✅ Descuento guardado correctamente')
       setTimeout(() => {
         onGuardado()
@@ -527,7 +521,10 @@ function DescuentoUsuarioModal({ usuario, onClose, onGuardado }) {
             <div>
               <strong>{usuario.nombre || 'Sin nombre'}</strong>
               <span>{usuario.email}</span>
-              <span className="etiqueta-badge etiqueta-{usuario.etiqueta || 'cliente'}">
+              {/* Antes: className="etiqueta-badge etiqueta-{...}" (string literal, sin
+                  interpolar) — el badge nunca tomaba el color correcto. Corregido con
+                  template literal, igual que en UsuarioForm.jsx. */}
+              <span className={`etiqueta-badge etiqueta-${usuario.etiqueta || 'cliente'}`}>
                 {usuario.etiqueta || 'Cliente'}
               </span>
             </div>
@@ -549,7 +546,6 @@ function DescuentoUsuarioModal({ usuario, onClose, onGuardado }) {
               />
               <span className="descuento-simbolo">%</span>
             </div>
-
             {porcentaje > 0 && (
               <div className="descuento-ejemplo">
                 <p>📊 Ejemplo:</p>
@@ -568,8 +564,8 @@ function DescuentoUsuarioModal({ usuario, onClose, onGuardado }) {
             <button onClick={onClose} className="btn-cancelar">
               Cancelar
             </button>
-            <button 
-              onClick={handleGuardarDescuento} 
+            <button
+              onClick={handleGuardarDescuento}
               className="btn-guardar"
               disabled={guardando}
             >
