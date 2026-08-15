@@ -142,6 +142,18 @@ function Navbar() {
   const searchRef = useRef(null)
   const panelRef = useRef(null)
   const deptosRef = useRef(null) //
+const mobilePanelRef = useRef(null) // 🆕
+
+useEffect(() => {
+  function handleClickOutside(event) {
+    const isOutsideDesktop = panelRef.current && !panelRef.current.contains(event.target)
+    const isOutsideMobile = mobilePanelRef.current && !mobilePanelRef.current.contains(event.target) // 🆕
+    const isOutsideDeptos = deptosRef.current && !deptosRef.current.contains(event.target)
+    const isOutsideServicios = serviciosRef.current && !serviciosRef.current.contains(event.target)
+    const isOutsideMyItems = myItemsRef.current && !myItemsRef.current.contains(event.target)
+    const isOutsideAccount = accountRef.current && !accountRef.current.contains(event.target)
+
+    // 🆕 solo cierra si el click fue afuera de AMBOS triggers (desktop y móvil)
 
       useEffect(() => {
       function handleClickOutside(event) {
@@ -198,18 +210,7 @@ function Navbar() {
       setMostrarSugerencias(false)
       return
     }
-    const mobilePanelRef = useRef(null) // 🆕
-
-useEffect(() => {
-  function handleClickOutside(event) {
-    const isOutsideDesktop = panelRef.current && !panelRef.current.contains(event.target)
-    const isOutsideMobile = mobilePanelRef.current && !mobilePanelRef.current.contains(event.target) // 🆕
-    const isOutsideDeptos = deptosRef.current && !deptosRef.current.contains(event.target)
-    const isOutsideServicios = serviciosRef.current && !serviciosRef.current.contains(event.target)
-    const isOutsideMyItems = myItemsRef.current && !myItemsRef.current.contains(event.target)
-    const isOutsideAccount = accountRef.current && !accountRef.current.contains(event.target)
-
-    // 🆕 solo cierra si el click fue afuera de AMBOS triggers (desktop y móvil)
+    
     if (isOutsideDesktop && isOutsideMobile) {
       setShowEnvioPanel(false)
     }
