@@ -12,14 +12,14 @@
 }
 
 .btn-volver {
-  background: white;
-  border: 1px solid var(--gray-300);
+  background: var(--surface);
+  border: 1px solid var(--slate-200);
   padding: 0.5rem 1rem;
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   cursor: pointer;
   font-weight: 500;
   font-size: 0.9rem;
-  color: var(--gray-700);
+  color: var(--slate-700);
   transition: all 0.2s;
   display: inline-flex;
   align-items: center;
@@ -27,20 +27,20 @@
 }
 
 .btn-volver:hover {
-  background: var(--gray-50);
-  border-color: var(--gray-400);
+  background: var(--slate-100);
+  border-color: var(--slate-300);
 }
 
 /* Cliente Card */
 .cd-cliente-card {
-  background: white;
+  background: var(--surface);
   border-radius: var(--radius-lg);
   padding: 1.25rem 1.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   box-shadow: var(--shadow-sm);
-  border: 1px solid var(--gray-200);
+  border: 1px solid var(--slate-200);
   margin-bottom: 1rem;
 }
 
@@ -54,7 +54,7 @@
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  background: linear-gradient(135deg, var(--blue), var(--indigo));
   color: white;
   display: flex;
   align-items: center;
@@ -65,21 +65,23 @@
 }
 
 .cd-cliente-info h2 {
+  font-family: var(--font-display);
   font-size: 1.2rem;
-  color: var(--dark);
+  color: var(--ink);
   margin: 0;
+  font-weight: 600;
 }
 
 .cd-cliente-email {
   display: block;
   font-size: 0.85rem;
-  color: var(--gray-500);
+  color: var(--slate-500);
 }
 
 .cd-cliente-rif {
   display: block;
   font-size: 0.8rem;
-  color: var(--gray-400);
+  color: var(--slate-300);
   margin-top: 0.15rem;
 }
 
@@ -93,13 +95,13 @@
 }
 
 .cd-estado-badge.con-deuda {
-  background: var(--danger-light);
-  color: #991b1b;
+  background: var(--alert-tint);
+  color: #8a1130;
 }
 
 .cd-estado-badge.al-dia {
-  background: var(--success-light);
-  color: #065f46;
+  background: var(--good-tint);
+  color: #0a5c46;
 }
 
 /* Resumen */
@@ -111,22 +113,22 @@
 }
 
 .cd-resumen-item {
-  background: white;
+  background: var(--surface);
   border-radius: var(--radius);
   padding: 1rem;
   text-align: center;
   box-shadow: var(--shadow-sm);
-  border: 1px solid var(--gray-200);
+  border: 1px solid var(--slate-200);
 }
 
 .cd-saldo {
-  border: 2px solid var(--primary);
+  border: 2px solid var(--blue);
 }
 
 .cd-resumen-label {
   display: block;
   font-size: 0.72rem;
-  color: var(--gray-500);
+  color: var(--slate-500);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-weight: 600;
@@ -134,17 +136,18 @@
 }
 
 .cd-resumen-valor {
-  font-family: 'Courier New', monospace;
+  font-family: var(--font-display);
   font-weight: 700;
   font-size: 1.1rem;
-  color: var(--dark);
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
 }
 
-.cd-resumen-valor.facturado { color: var(--gray-700); }
-.cd-resumen-valor.pagado { color: var(--success); }
-.cd-resumen-valor.deuda { color: var(--danger); }
-.cd-resumen-valor.saldo.positivo { color: var(--success); font-size: 1.2rem; }
-.cd-resumen-valor.saldo.negativo { color: var(--danger); font-size: 1.2rem; }
+.cd-resumen-valor.facturado { color: var(--slate-700); }
+.cd-resumen-valor.pagado { color: var(--good); }
+.cd-resumen-valor.deuda { color: var(--alert); }
+.cd-resumen-valor.saldo.positivo { color: var(--good); font-size: 1.2rem; }
+.cd-resumen-valor.saldo.negativo { color: var(--alert); font-size: 1.2rem; }
 
 /* Acciones */
 .cd-acciones {
@@ -155,7 +158,7 @@
 
 .btn-accion {
   padding: 0.6rem 1.25rem;
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   border: none;
   cursor: pointer;
   font-weight: 600;
@@ -167,22 +170,22 @@
 }
 
 .btn-factura {
-  background: var(--primary);
+  background: var(--blue);
   color: white;
 }
 
 .btn-factura:hover {
-  background: var(--primary-dark);
+  background: var(--blue-600);
   transform: translateY(-1px);
 }
 
 .btn-pago {
-  background: var(--success);
+  background: var(--good);
   color: white;
 }
 
 .btn-pago:hover {
-  background: #059669;
+  background: #0a5c46;
   transform: translateY(-1px);
 }
 
@@ -190,7 +193,7 @@
 .cd-tabs {
   display: flex;
   gap: 0;
-  border-bottom: 2px solid var(--gray-200);
+  border-bottom: 2px solid var(--slate-200);
   margin-bottom: 1rem;
 }
 
@@ -201,28 +204,28 @@
   cursor: pointer;
   font-weight: 600;
   font-size: 0.9rem;
-  color: var(--gray-500);
+  color: var(--slate-500);
   transition: all 0.2s;
   border-bottom: 2px solid transparent;
   margin-bottom: -2px;
 }
 
 .cd-tab:hover {
-  color: var(--primary);
+  color: var(--blue);
 }
 
 .cd-tab.active {
-  color: var(--primary);
-  border-bottom-color: var(--primary);
+  color: var(--blue);
+  border-bottom-color: var(--blue);
 }
 
 /* Tablas */
 .table-container {
-  background: white;
+  background: var(--surface);
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
-  border: 1px solid var(--gray-200);
+  border: 1px solid var(--slate-200);
   overflow-x: auto;
 }
 
@@ -233,15 +236,15 @@
 }
 
 .cd-table thead {
-  background: var(--gray-50);
-  border-bottom: 2px solid var(--gray-200);
+  background: var(--slate-100);
+  border-bottom: 2px solid var(--slate-200);
 }
 
 .cd-table th {
   padding: 0.75rem 1rem;
   text-align: left;
   font-weight: 600;
-  color: var(--gray-700);
+  color: var(--slate-700);
   font-size: 0.78rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -249,34 +252,35 @@
 
 .cd-table td {
   padding: 0.7rem 1rem;
-  border-bottom: 1px solid var(--gray-100);
+  border-bottom: 1px solid var(--slate-100);
   vertical-align: middle;
 }
 
 .cd-table tbody tr:hover {
-  background: var(--gray-50);
+  background: var(--blue-50);
 }
 
-.factura-row.estado-pendiente { border-left: 3px solid var(--warning); }
-.factura-row.estado-pagado { border-left: 3px solid var(--success); }
-.factura-row.estado-parcial { border-left: 3px solid #f59e0b; }
+.factura-row.estado-pendiente { border-left: 3px solid var(--warn); }
+.factura-row.estado-pagado { border-left: 3px solid var(--good); }
+.factura-row.estado-parcial { border-left: 3px solid #d97706; }
 
-.pago-row.tipo-abono { border-left: 3px solid var(--success); }
-.pago-row.tipo-devolucion { border-left: 3px solid var(--danger); }
-.pago-row.tipo-nota_credito { border-left: 3px solid #8b5cf6; }
+.pago-row.tipo-abono { border-left: 3px solid var(--good); }
+.pago-row.tipo-devolucion { border-left: 3px solid var(--alert); }
+.pago-row.tipo-nota_credito { border-left: 3px solid #7e22ce; }
 
 .factura-numero {
   font-weight: 700;
-  font-family: 'Courier New', monospace;
-  color: var(--dark);
+  font-family: var(--font-display);
+  color: var(--ink);
 }
 
 .monto-cell {
-  font-family: 'Courier New', monospace;
+  font-family: var(--font-display);
   font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 
-.monto-cell.pagado { color: var(--success); }
+.monto-cell.pagado { color: var(--good); }
 
 .estado-badge-factura {
   display: inline-block;
@@ -287,13 +291,13 @@
 }
 
 .estado-badge-factura.pendiente {
-  background: var(--warning-light);
-  color: #92400e;
+  background: var(--warn-tint);
+  color: #7a4d08;
 }
 
 .estado-badge-factura.pagado {
-  background: var(--success-light);
-  color: #065f46;
+  background: var(--good-tint);
+  color: #0a5c46;
 }
 
 .estado-badge-factura.parcial {
@@ -309,8 +313,8 @@
   font-weight: 600;
 }
 
-.tipo-pago-badge.abono { background: var(--success-light); color: #065f46; }
-.tipo-pago-badge.devolucion { background: var(--danger-light); color: #991b1b; }
+.tipo-pago-badge.abono { background: var(--good-tint); color: #0a5c46; }
+.tipo-pago-badge.devolucion { background: var(--alert-tint); color: #8a1130; }
 .tipo-pago-badge.nota_credito { background: #ede9fe; color: #5b21b6; }
 
 .detalle-cell {
@@ -322,7 +326,7 @@
 
 .fecha-cell {
   white-space: nowrap;
-  color: var(--gray-500);
+  color: var(--slate-500);
   font-size: 0.85rem;
 }
 
@@ -331,8 +335,8 @@
   width: 32px;
   height: 32px;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--gray-300);
-  background: white;
+  border: 1px solid var(--slate-200);
+  background: var(--surface);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -342,20 +346,20 @@
 }
 
 .btn-icon-editar:hover {
-  background: var(--primary-light);
-  border-color: var(--primary);
+  background: var(--blue-50);
+  border-color: var(--blue);
 }
 
 .btn-icon-eliminar:hover {
-  background: var(--danger-light);
-  border-color: var(--danger);
+  background: var(--alert-tint);
+  border-color: var(--alert);
 }
 
 /* Empty state */
 .empty-state {
   text-align: center;
   padding: 3rem 1rem;
-  color: var(--gray-500);
+  color: var(--slate-500);
 }
 
 .empty-icon {
@@ -374,14 +378,14 @@
   flex-direction: column;
   align-items: center;
   padding: 4rem 2rem;
-  color: var(--gray-600);
+  color: var(--slate-500);
 }
 
 .spinner {
   width: 40px;
   height: 40px;
-  border: 3px solid var(--gray-200);
-  border-top: 3px solid var(--primary);
+  border: 3px solid var(--slate-200);
+  border-top: 3px solid var(--blue);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
   margin-bottom: 1rem;
@@ -397,25 +401,24 @@
 }
 
 .error-message {
-  background: var(--danger-light);
-  color: #991b1b;
+  background: var(--alert-tint);
+  color: #8a1130;
   padding: 1rem;
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   margin-bottom: 1rem;
 }
 
 .btn-reintentar {
-  background: var(--primary);
+  background: var(--blue);
   color: white;
   border: none;
   padding: 0.6rem 1.25rem;
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   cursor: pointer;
   font-weight: 600;
 }
 
 /* ============ RESPONSIVE ============ */
-
 @media (max-width: 1024px) {
   .cd-resumen-grid {
     grid-template-columns: repeat(3, 1fr);
@@ -428,19 +431,15 @@
     gap: 1rem;
     text-align: center;
   }
-  
   .cd-cliente-info {
     flex-direction: column;
   }
-  
   .cd-resumen-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  
   .cd-acciones {
     flex-direction: column;
   }
-  
   .btn-accion {
     width: 100%;
     justify-content: center;
