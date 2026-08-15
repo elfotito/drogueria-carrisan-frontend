@@ -31,6 +31,7 @@ import LineaFarmacia from './pages/LineaFarmacia'
 import LineaHospitalaria from './pages/LineaHospitalaria'
 import OrdenDetalle from './pages/OrdenDetalle'
 import Direcciones from './pages/Direcciones'
+import Pagos from './pages/Pagos'
 
 
 
@@ -51,6 +52,7 @@ function App() {
             <Route path="/carrito" element={<PrivateRoute><Carrito /></PrivateRoute>} />
             <Route path="/orders" element={<PrivateRoute><MisOrdenes /></PrivateRoute>} />
             <Route path="/orders/:id" element={<PrivateRoute><OrdenDetalle /></PrivateRoute>} />  {/* ← nuevo */}
+            <Route path="/pagos" element={<PrivateRoute><Pagos /></PrivateRoute>} />
             <Route path="/admin" element={<PrivateRoute adminOnly><Admin /></PrivateRoute>} />
             <Route path="/quienes-somos" element={<QuienesSomos />} />
             <Route path="/faq" element={<FAQ />} />
