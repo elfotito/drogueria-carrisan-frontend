@@ -1,825 +1,294 @@
-/* ============================================
-   DESCUENTOS ADMIN
-   ============================================ */
-
-.descuentos-admin {
-  max-width: 1400px;
-}
-
-.descuentos-admin .section-header {
-  margin-bottom: 1.5rem;
-}
-
-.header-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.header-top h2 {
-  font-family: var(--font-display);
-  font-size: 1.5rem;
-  color: var(--ink);
-  font-weight: 600;
-}
-
-.btn-agregar {
-  background: var(--blue);
-  color: white;
-  border: none;
-  padding: 0.625rem 1.25rem;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 0.875rem;
-  transition: all 0.2s;
-}
-
-.btn-agregar:hover {
-  background: var(--blue-600);
-  box-shadow: var(--shadow);
-}
-
-.btn-reintentar {
-  background: var(--blue);
-  color: white;
-  border: none;
-  padding: 0.625rem 1.25rem;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 0.875rem;
-}
-
-/* Estadísticas */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.stat-card {
-  background: var(--surface);
-  border-radius: var(--radius-lg);
-  padding: 1.25rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--slate-200);
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow);
-}
-
-.stat-icon {
-  font-size: 1.8rem;
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--blue-50);
-  border-radius: var(--radius);
-  flex-shrink: 0;
-}
-
-.stat-vigentes .stat-icon { background: var(--good-tint); }
-.stat-programados .stat-icon { background: var(--blue-50); }
-.stat-expirados .stat-icon { background: var(--alert-tint); }
-
-.stat-valor {
-  font-family: var(--font-display);
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: var(--ink);
-  line-height: 1.2;
-  font-variant-numeric: tabular-nums;
-}
-
-.stat-label {
-  font-size: 0.78rem;
-  color: var(--slate-500);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-weight: 500;
-}
-
-/* Toolbar */
-.toolbar {
-  background: var(--surface);
-  border-radius: var(--radius-lg);
-  padding: 1rem 1.25rem;
-  margin-bottom: 1rem;
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--slate-200);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.toolbar-filtros {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  flex: 1;
-}
-
-.toolbar-actions {
-  display: flex;
-  gap: 0.75rem;
-  align-items: center;
-}
-
-.search-box {
-  position: relative;
-  min-width: 220px;
-  flex: 1;
-}
-
-.search-icon {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 0.9rem;
-  color: var(--slate-500);
-}
-
-.search-input {
-  width: 100%;
-  padding: 0.5rem 0.75rem 0.5rem 2.5rem;
-  border: 1.5px solid var(--slate-200);
-  border-radius: var(--radius-sm);
-  font-size: 0.9rem;
-  font-family: var(--font-body);
-  transition: all 0.2s;
-  background: var(--surface);
-}
-
-.search-input:focus {
-  outline: none;
-  border-color: var(--blue);
-  box-shadow: 0 0 0 3px var(--blue-50);
-}
-
-.filter-select {
-  padding: 0.5rem 0.75rem;
-  border: 1.5px solid var(--slate-200);
-  border-radius: var(--radius-sm);
-  font-size: 0.85rem;
-  background: var(--surface);
-  cursor: pointer;
-  color: var(--slate-700);
-  min-width: 160px;
-}
-
-.filter-select:focus {
-  outline: none;
-  border-color: var(--blue);
-}
-
-/* Vista Toggle */
-.vista-toggle {
-  display: flex;
-  border: 1px solid var(--slate-200);
-  border-radius: var(--radius-sm);
-  overflow: hidden;
-}
-
-.vista-btn {
-  padding: 0.5rem 0.75rem;
-  border: none;
-  background: var(--surface);
-  cursor: pointer;
-  font-size: 1rem;
-  transition: all 0.2s;
-  color: var(--slate-500);
-}
-
-.vista-btn.active {
-  background: var(--blue);
-  color: white;
-}
-
-.vista-btn:hover:not(.active) {
-  background: var(--slate-100);
-}
-
-.resultados-info {
-  color: var(--slate-500);
-  font-size: 0.85rem;
-  margin-bottom: 0.75rem;
-  padding: 0 0.25rem;
-}
-
-/* Loading & Error */
-.loading-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 4rem 2rem;
-  color: var(--slate-500);
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid var(--slate-200);
-  border-top: 3px solid var(--blue);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  margin-bottom: 1rem;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-.error-container {
-  text-align: center;
-  padding: 3rem;
-}
-
-.error-message {
-  background: var(--alert-tint);
-  color: #8a1130;
-  padding: 1rem;
-  border-radius: var(--radius-sm);
-  margin-bottom: 1rem;
-  border: 1px solid #f6c9d3;
-  font-weight: 500;
-}
-
-/* ============ TABLA ============ */
-.table-container {
-  background: var(--surface);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--slate-200);
-  overflow-x: auto;
-}
-
-.descuentos-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.875rem;
-}
-
-.descuentos-table thead {
-  background: var(--slate-100);
-  border-bottom: 2px solid var(--slate-200);
-}
-
-.descuentos-table th {
-  padding: 0.875rem 1rem;
-  text-align: left;
-  font-weight: 600;
-  color: var(--slate-700);
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  white-space: nowrap;
-}
-
-.descuentos-table th.sortable {
-  cursor: pointer;
-  user-select: none;
-  transition: color 0.2s;
-}
-
-.descuentos-table th.sortable:hover {
-  color: var(--blue);
-}
-
-.descuentos-table td {
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--slate-100);
-  vertical-align: middle;
-}
-
-.descuentos-table tbody tr {
-  transition: background 0.15s;
-}
-
-.descuentos-table tbody tr:hover {
-  background: var(--blue-50);
-}
-
-.descuento-row.estado-expirado,
-.descuento-row.estado-inactivo {
-  opacity: 0.65;
-}
-
-/* Badges */
-.estado-badge-descuento {
-  display: inline-block;
-  padding: 0.3rem 0.7rem;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.alcance-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  padding: 0.25rem 0.6rem;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  background: var(--slate-100);
-  color: var(--slate-700);
-  white-space: nowrap;
-}
-
-.aplica-cell {
-  color: var(--ink);
-  font-weight: 500;
-  max-width: 180px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.tipo-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  font-weight: 700;
-  font-size: 0.85rem;
-}
-
-.tipo-badge.porcentaje {
-  background: var(--blue-50);
-  color: var(--blue);
-}
-
-.tipo-badge.monto {
-  background: var(--good-tint);
-  color: var(--good);
-}
-
-.valor-cell {
-  font-family: var(--font-display);
-  font-weight: 700;
-  color: var(--ink);
-  font-variant-numeric: tabular-nums;
-}
-
-.fecha-cell {
-  white-space: nowrap;
-  color: var(--slate-500);
-  font-size: 0.85rem;
-}
-
-/* Acciones */
-.acciones-cell {
-  display: flex;
-  gap: 0.35rem;
-}
-
-.btn-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--slate-200);
-  background: var(--surface);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.85rem;
-  transition: all 0.2s;
-}
-
-.btn-icon:hover {
-  background: var(--slate-100);
-  border-color: var(--slate-300);
-  transform: scale(1.05);
-}
-
-.btn-icon.btn-danger:hover {
-  background: var(--alert-tint);
-  border-color: var(--alert);
-}
-
-/* ============ EMPTY STATE ============ */
-.empty-state {
-  text-align: center;
-  padding: 3rem 1rem;
-  color: var(--slate-500);
-}
-
-.empty-icon {
-  font-size: 3rem;
-  display: block;
-  margin-bottom: 0.75rem;
-}
-
-.empty-state p {
-  font-size: 1rem;
-  margin-bottom: 0.25rem;
-}
-
-.empty-hint {
-  font-size: 0.85rem;
-  color: var(--slate-300);
-}
-
-/* ============ VISTA CARDS ============ */
-.cards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1rem;
-}
-
-.descuento-card {
-  background: var(--surface);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--slate-200);
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.descuento-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow);
-}
-
-.descuento-card.estado-expirado,
-.descuento-card.estado-inactivo {
-  opacity: 0.65;
-}
-
-.descuento-card .card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.9rem 1rem;
-  border-bottom: 1px solid var(--slate-100);
-}
-
-.tipo-badge-card {
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.2rem 0.6rem;
-  border-radius: 999px;
-  background: var(--slate-100);
-  color: var(--slate-700);
-}
-
-.card-body {
-  padding: 1rem;
-}
-
-.descuento-info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.45rem;
-  margin-bottom: 0.9rem;
-}
-
-.info-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.85rem;
-}
-
-.info-row span {
-  color: var(--slate-500);
-}
-
-.info-row strong {
-  color: var(--ink);
-  text-align: right;
-}
-
-.valor-row strong {
-  font-family: var(--font-display);
-}
-
-.valor-descuento {
-  color: var(--blue) !important;
-  font-size: 1.05rem;
-}
-
-.fechas-info {
-  display: flex;
-  gap: 0.75rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--slate-100);
-}
-
-.fecha-item {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
-.fecha-item span {
-  font-size: 0.72rem;
-  color: var(--slate-500);
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.fecha-item strong {
-  font-size: 0.82rem;
-  color: var(--ink);
-}
-
-.card-acciones {
-  display: flex;
-  gap: 0.6rem;
-  padding: 0.75rem 1rem;
-  border-top: 1px solid var(--slate-100);
-  background: var(--paper);
-}
-
-.card-acciones button {
-  flex: 1;
-  border: 1.5px solid var(--slate-200);
-  background: var(--surface);
-  padding: 0.55rem;
-  border-radius: var(--radius-sm);
-  font-size: 0.82rem;
-  font-weight: 600;
-  cursor: pointer;
-  color: var(--slate-700);
-}
-
-.card-acciones button:hover {
-  border-color: var(--blue);
-  color: var(--blue);
-}
-
-.btn-eliminar-card:hover {
-  border-color: var(--alert) !important;
-  color: var(--alert) !important;
-}
-
-/* ============ PAGINACIÓN ============ */
-.paginacion {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0.35rem;
-  margin-top: 1.5rem;
-  flex-wrap: wrap;
-}
-
-.btn-pagina {
-  min-width: 36px;
-  height: 36px;
-  padding: 0 0.5rem;
-  border: 1px solid var(--slate-200);
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-  cursor: pointer;
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--slate-700);
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.btn-pagina:hover:not(:disabled):not(.active) {
-  background: var(--slate-100);
-  border-color: var(--slate-300);
-}
-
-.btn-pagina.active {
-  background: var(--blue);
-  color: white;
-  border-color: var(--blue);
-}
-
-.btn-pagina:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.paginacion-dots {
-  padding: 0 0.25rem;
-  color: var(--slate-300);
-}
-
-/* ============ MODAL CONFIRMACIÓN ============ */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(16, 16, 38, 0.55);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 1rem;
-  animation: fadeInOverlay 0.2s ease;
-  backdrop-filter: blur(2px);
-}
-
-@keyframes fadeInOverlay {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.modal-confirmacion {
-  background: var(--surface);
-  border-radius: var(--radius-lg);
-  max-width: 420px;
-  width: 100%;
-  padding: 1.75rem;
-  text-align: center;
-  box-shadow: var(--shadow-lg);
-}
-
-.modal-confirmacion h3 {
-  font-family: var(--font-display);
-  font-size: 1.15rem;
-  margin-bottom: 0.75rem;
-  color: var(--ink);
-}
-
-.modal-confirmacion p {
-  color: var(--slate-700);
-  font-size: 0.9rem;
-  margin-bottom: 0.4rem;
-}
-
-.warning-text {
-  color: var(--alert);
-  font-size: 0.82rem;
-}
-
-.modal-acciones {
-  display: flex;
-  gap: 0.75rem;
-  margin-top: 1.25rem;
-}
-
-.btn-cancelar {
-  flex: 1;
-  padding: 0.65rem;
-  border: 1.5px solid var(--slate-200);
-  background: var(--surface);
-  border-radius: var(--radius-sm);
-  font-weight: 600;
-  cursor: pointer;
-  color: var(--slate-700);
-}
-
-.btn-eliminar {
-  flex: 1;
-  padding: 0.65rem;
-  border: none;
-  background: var(--alert);
-  color: white;
-  border-radius: var(--radius-sm);
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.btn-eliminar:hover {
-  background: #b91d3f;
-}
-
-/* ============ RESPONSIVE ============ */
-@media (max-width: 1024px) {
-  .toolbar {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .toolbar-filtros {
-    flex-direction: column;
-  }
-  .search-box {
-    min-width: 100%;
-  }
-}
-
-@media (max-width: 768px) {
-  .header-top {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .filter-select {
-    min-width: 100%;
-  }
-  .cards-grid {
-    grid-template-columns: 1fr;
-  }
-  .paginacion {
-    gap: 0.2rem;
-  }
-  .btn-pagina {
-    min-width: 32px;
-    height: 32px;
-    font-size: 0.8rem;
+import { useState, useEffect, useMemo } from 'react'
+import api from '../../api/axios'
+import OrdenDetalleModal from '../OrdenDetalleModal'
+import './DashboardAdmin.css'
+
+const ESTADOS = ['pedido_creado', 'procesando', 'preparando', 'enviado', 'entregado', 'cancelado']
+
+const ESTADO_COLORES = {
+  pedido_creado: { color: '#f59e0b', bg: '#fef3c7', label: 'Pedido Creado' },
+  procesando: { color: '#3b82f6', bg: '#dbeafe', label: 'Procesando' },
+  preparando: { color: '#8b5cf6', bg: '#ede9fe', label: 'Preparando' },
+  enviado: { color: '#06b6d4', bg: '#cffafe', label: 'Enviado' },
+  entregado: { color: '#10b981', bg: '#d1fae5', label: 'Entregado' },
+  cancelado: { color: '#ef4444', bg: '#fee2e2', label: 'Cancelado' }
+}
+
+// Estados que todavía requieren acción del admin (aún no salió ni se entregó)
+const ESTADOS_PENDIENTES_ACCION = ['pedido_creado', 'procesando', 'preparando']
+
+function formatUSD(valor) {
+  return `$${Number(valor || 0).toFixed(2)}`
+}
+
+function tiempoRelativo(fechaISO) {
+  const fecha = new Date(fechaISO)
+  const diffMs = Date.now() - fecha.getTime()
+  const diffMin = Math.floor(diffMs / 60000)
+  if (diffMin < 1) return 'hace un momento'
+  if (diffMin < 60) return `hace ${diffMin} min`
+  const diffHoras = Math.floor(diffMin / 60)
+  if (diffHoras < 24) return `hace ${diffHoras} h`
+  const diffDias = Math.floor(diffHoras / 24)
+  if (diffDias === 1) return 'ayer'
+  if (diffDias < 7) return `hace ${diffDias} días`
+  return fecha.toLocaleDateString('es-VE', { day: '2-digit', month: 'short' })
+}
+
+function DashboardAdmin({ onIrA }) {
+  const [ordenes, setOrdenes] = useState([])
+  const [usuarios, setUsuarios] = useState([])
+  const [clientes, setClientes] = useState([])
+  const [cargando, setCargando] = useState(true)
+  const [error, setError] = useState('')
+  const [ordenSeleccionada, setOrdenSeleccionada] = useState(null)
+
+  useEffect(() => {
+    cargarDatos()
+  }, [])
+
+  async function cargarDatos() {
+    try {
+      setCargando(true)
+      setError('')
+      const [ordenesRes, usuariosRes, clientesRes] = await Promise.all([
+        api.get('/orders'),
+        api.get('/users'),
+        api.get('/clientes/estado-cuenta')
+      ])
+      setOrdenes(ordenesRes.data)
+      setUsuarios(usuariosRes.data)
+      setClientes(clientesRes.data)
+    } catch (err) {
+      setError('No se pudo cargar el resumen del panel')
+      console.error(err)
+    } finally {
+      setCargando(false)
+    }
   }
 
-  /* --- Tabla → tarjetas: soluciona el desborde horizontal en móvil --- */
-  .table-container {
-    overflow-x: visible;
-    background: transparent;
-    border: none;
-    box-shadow: none;
+  async function handleCambiarEstado(ordenId, nuevoEstado) {
+    try {
+      await api.patch(`/orders/${ordenId}/estado`, { estado: nuevoEstado })
+      setOrdenes((prev) =>
+        prev.map((o) => (o.id === ordenId ? { ...o, estado: nuevoEstado } : o))
+      )
+    } catch (err) {
+      console.error('Error al cambiar estado:', err)
+    }
   }
 
-  .descuentos-table thead {
-    display: none;
+  const kpis = useMemo(() => {
+    const hoy = new Date()
+    const esDelMes = (fechaISO) => {
+      const f = new Date(fechaISO)
+      return f.getFullYear() === hoy.getFullYear() && f.getMonth() === hoy.getMonth()
+    }
+
+    const pendientesAccion = ordenes.filter(o => ESTADOS_PENDIENTES_ACCION.includes(o.estado)).length
+
+    const ventasMes = ordenes
+      .filter(o => o.estado !== 'cancelado' && esDelMes(o.created_at))
+      .reduce((sum, o) => sum + Number(o.total_usd), 0)
+
+    const cuentasPorCobrar = clientes.reduce(
+      (sum, c) => sum + (c.deuda_actual > 0 ? Number(c.deuda_actual) : 0),
+      0
+    )
+
+    const clientesActivos = usuarios.filter(u => !u.es_admin).length
+
+    return { pendientesAccion, ventasMes, cuentasPorCobrar, clientesActivos }
+  }, [ordenes, usuarios, clientes])
+
+  const distribucionEstados = useMemo(() => {
+    return ESTADOS.map(estado => ({
+      estado,
+      cantidad: ordenes.filter(o => o.estado === estado).length,
+      ...ESTADO_COLORES[estado]
+    }))
+  }, [ordenes])
+
+  const totalOrdenes = ordenes.length || 1 // evita división por cero en las barras
+
+  const ordenesRecientes = useMemo(() => {
+    return [...ordenes]
+      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+      .slice(0, 6)
+  }, [ordenes])
+
+  const clientesRecientes = useMemo(() => {
+    return [...usuarios]
+      .filter(u => !u.es_admin)
+      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+      .slice(0, 5)
+  }, [usuarios])
+
+  if (cargando) {
+    return (
+      <div className="loading-container">
+        <div className="spinner"></div>
+        <p>Cargando resumen...</p>
+      </div>
+    )
   }
 
-  .descuentos-table,
-  .descuentos-table tbody,
-  .descuentos-table tr {
-    display: block;
-    width: 100%;
+  if (error) {
+    return (
+      <div className="dash-error">
+        <p>{error}</p>
+        <button onClick={cargarDatos} className="btn-primary">Reintentar</button>
+      </div>
+    )
   }
 
-  .descuentos-table tr {
-    background: var(--surface);
-    border: 1px solid var(--slate-200);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-sm);
-    margin-bottom: 0.75rem;
-    overflow: hidden;
-  }
+  return (
+    <div className="dash-container">
+      <div className="section-header">
+        <h2>Resumen</h2>
+        <p className="section-description">Un vistazo general al estado de la tienda</p>
+      </div>
 
-  .descuentos-table td {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 0.6rem 1rem;
-    border-bottom: 1px solid var(--slate-100);
-    text-align: right;
-  }
+      {/* KPIs */}
+      <div className="dash-kpis">
+        <button className="dash-kpi" onClick={() => onIrA?.('ordenes')}>
+          <span className="dash-kpi-icon dash-kpi-icon--warn">⏳</span>
+          <div className="dash-kpi-info">
+            <span className="dash-kpi-valor">{kpis.pendientesAccion}</span>
+            <span className="dash-kpi-label">Órdenes por atender</span>
+          </div>
+        </button>
 
-  .descuentos-table tr td:last-child {
-    border-bottom: none;
-  }
+        <div className="dash-kpi dash-kpi--static">
+          <span className="dash-kpi-icon dash-kpi-icon--good">💵</span>
+          <div className="dash-kpi-info">
+            <span className="dash-kpi-valor">{formatUSD(kpis.ventasMes)}</span>
+            <span className="dash-kpi-label">Ventas del mes</span>
+          </div>
+        </div>
 
-  /* Etiqueta de campo generada desde el atributo data-label del <td> */
-  .descuentos-table td[data-label]::before {
-    content: attr(data-label);
-    font-weight: 600;
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--slate-500);
-    text-align: left;
-    flex-shrink: 0;
-  }
+        <button className="dash-kpi" onClick={() => onIrA?.('estadoCuenta')}>
+          <span className="dash-kpi-icon dash-kpi-icon--alert">🏦</span>
+          <div className="dash-kpi-info">
+            <span className="dash-kpi-valor">{formatUSD(kpis.cuentasPorCobrar)}</span>
+            <span className="dash-kpi-label">Cuentas por cobrar</span>
+          </div>
+        </button>
 
-  /* Celda de acciones: fila de botones a todo el ancho, más grandes para el dedo */
-  .td-acciones {
-    padding: 0.75rem !important;
-  }
+        <button className="dash-kpi" onClick={() => onIrA?.('usuarios')}>
+          <span className="dash-kpi-icon dash-kpi-icon--blue">👤</span>
+          <div className="dash-kpi-info">
+            <span className="dash-kpi-valor">{kpis.clientesActivos}</span>
+            <span className="dash-kpi-label">Clientes activos</span>
+          </div>
+        </button>
+      </div>
 
-  .td-acciones .acciones-cell {
-    justify-content: stretch;
-    width: 100%;
-  }
+      {/* Distribución de órdenes por estado */}
+      <div className="dash-card">
+        <div className="dash-card-header">
+          <h3>Órdenes por estado</h3>
+          <span className="dash-card-total">{ordenes.length} en total</span>
+        </div>
+        <div className="dash-distribucion">
+          {distribucionEstados.map(({ estado, cantidad, color, label }) => (
+            <div key={estado} className="dash-distribucion-fila">
+              <span className="dash-distribucion-label">
+                <span className="dash-dot" style={{ background: color }}></span>
+                {label}
+              </span>
+              <div className="dash-distribucion-barra">
+                <div
+                  className="dash-distribucion-relleno"
+                  style={{ width: `${(cantidad / totalOrdenes) * 100}%`, background: color }}
+                ></div>
+              </div>
+              <span className="dash-distribucion-cantidad">{cantidad}</span>
+            </div>
+          ))}
+        </div>
+      </div>
 
-  .td-acciones .btn-icon {
-    flex: 1;
-    width: auto;
-    height: 40px;
-    font-size: 1rem;
-  }
+      <div className="dash-columnas">
+        {/* Órdenes recientes */}
+        <div className="dash-card">
+          <div className="dash-card-header">
+            <h3>Órdenes recientes</h3>
+            <button className="dash-ver-todas" onClick={() => onIrA?.('ordenes')}>
+              Ver todas →
+            </button>
+          </div>
+          {ordenesRecientes.length === 0 ? (
+            <p className="dash-vacio">Todavía no hay órdenes registradas.</p>
+          ) : (
+            <ul className="dash-lista">
+              {ordenesRecientes.map(orden => (
+                <li key={orden.id}>
+                  <button
+                    className="dash-orden-fila"
+                    onClick={() => setOrdenSeleccionada(orden)}
+                  >
+                    <div className="dash-orden-info">
+                      <span className="dash-orden-id">#{orden.id}</span>
+                      <span className="dash-orden-cliente">{orden.users?.nombre || 'Cliente'}</span>
+                    </div>
+                    <div className="dash-orden-meta">
+                      <span
+                        className="dash-estado-badge"
+                        style={{
+                          backgroundColor: ESTADO_COLORES[orden.estado]?.bg,
+                          color: ESTADO_COLORES[orden.estado]?.color
+                        }}
+                      >
+                        {ESTADO_COLORES[orden.estado]?.label || orden.estado}
+                      </span>
+                      <span className="dash-orden-total">{formatUSD(orden.total_usd)}</span>
+                    </div>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        {/* Clientes nuevos */}
+        <div className="dash-card">
+          <div className="dash-card-header">
+            <h3>Clientes nuevos</h3>
+            <button className="dash-ver-todas" onClick={() => onIrA?.('usuarios')}>
+              Ver todos →
+            </button>
+          </div>
+          {clientesRecientes.length === 0 ? (
+            <p className="dash-vacio">Todavía no hay clientes registrados.</p>
+          ) : (
+            <ul className="dash-lista">
+              {clientesRecientes.map(cliente => (
+                <li key={cliente.id} className="dash-cliente-fila">
+                  <span className="dash-cliente-avatar">
+                    {cliente.nombre?.[0]?.toUpperCase() || 'C'}
+                  </span>
+                  <div className="dash-cliente-info">
+                    <span className="dash-cliente-nombre">{cliente.nombre}</span>
+                    <span className="dash-cliente-email">{cliente.email}</span>
+                  </div>
+                  <span className="dash-cliente-fecha">{tiempoRelativo(cliente.created_at)}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+
+      <OrdenDetalleModal
+        orden={ordenSeleccionada}
+        onClose={() => setOrdenSeleccionada(null)}
+        onCambiarEstado={handleCambiarEstado}
+        estados={ESTADOS}
+        estadoColores={ESTADO_COLORES}
+      />
+    </div>
+  )
 }
 
-@media (max-width: 480px) {
-  .stats-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-  .btn-pagina {
-    min-width: 28px;
-    height: 28px;
-  }
-}
+export default DashboardAdmin
