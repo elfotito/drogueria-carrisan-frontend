@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import api from '../api/axios'
 import { useCart } from '../context/CartContext'
 import { useEnvio } from '../context/EnvioContext'
+import { useAuth } from '../context/AuthContext'
 import './Carrito.css'
 
 function formatUSD(valor) {
@@ -283,6 +284,7 @@ function DireccionSelector({
 
 function Carrito() {
   const { items, updateCantidad, removeItem, clearCart, total } = useCart()
+  const { user } = useAuth()
   const {
     tipoEnvio,
     cambiarTipoEnvio,
@@ -300,6 +302,8 @@ function Carrito() {
   } = useEnvio()
 
   const [tasaVes, setTasaVes] = useState(null)
+  const [saldoDisponible, setSaldoDisponible] = useState(null)
+  const [formaPago, setFormaPago] = useState('contado')
   const [enviando, setEnviando] = useState(false)
   const [error, setError] = useState('')
   const [envioExpandido, setEnvioExpandido] = useState(false)
@@ -312,6 +316,17 @@ function Carrito() {
       .then((res) => setTasaVes(res.data.usd_a_ves))
       .catch(() => setTasaVes(null))
   }, [])
+
+  // Traemos el saldo de crédito disponible del cliente (linea_credito - deuda).
+  // Si el usuario no tiene línea de crédito asignada (0 o null), simplemente
+  // nunca alcanzará el total y la opción de crédito no se ofrece.
+  useEffect(() => {
+    if (!user?.id) return
+    api
+      .get(`/clientes/${user.id}/estado-cuenta`)
+      .then((res) => setSaldoDisponible(res.data.resumen.saldo))
+      .catch(() => setSaldoDisponible(null))
+  }, [user?.id])
 
   useEffect(() => {
     const opcionActual = opcionesEnvio?.find(op => op.id === tipoEnvio)
@@ -358,6 +373,7 @@ function Carrito() {
         direccion_envio_id: direccionSeleccionada?.id || null,
         costo_delivery: costoEnvio,
         agencia_envio: agenciaSeleccionada || null,
+        forma_pago: formaPago,
       }
       await api.post('/orders', payload)
       clearCart()
@@ -372,6 +388,19 @@ function Carrito() {
   const cantidadArticulos = items.reduce((acc, item) => acc + item.cantidad, 0)
   const totalConEnvio = total + costoEnvio
   const totalVes = tasaVes ? totalConEnvio * tasaVes : null
+
+  // El crédito solo se ofrece si el usuario tiene saldo suficiente para
+  // cubrir el total actual del carrito (incluyendo envío). Si el carrito
+  // cambia y deja de alcanzar, volvemos automáticamente a 'contado' para
+  // no dejar seleccionada una opción que el backend rechazaría.
+  const creditoDisponible = saldoDisponible !== null && saldoDisponible >= totalConEnvio
+
+  useEffect(() => {
+    if (formaPago === 'credito' && !creditoDisponible) {
+      setFormaPago('contado')
+    }
+  }, [creditoDisponible, formaPago])
+
 
   if (items.length === 0) {
     return (
@@ -420,6 +449,30 @@ function Carrito() {
             {totalVes && <span className="cart-summary__total-ves">Bs. {formatVES(totalVes)}</span>}
           </div>
         </div>
+
+        {creditoDisponible && (
+          <div className="cart-forma-pago">
+            <p className="cart-forma-pago__titulo">¿Cómo quieres pagar?</p>
+            <div className="cart-forma-pago__opciones">
+              <button
+                type="button"
+                className={`cart-forma-pago__opcion ${formaPago === 'contado' ? 'cart-forma-pago__opcion--activa' : ''}`}
+                onClick={() => setFormaPago('contado')}
+              >
+                <span className="cart-forma-pago__opcion-titulo">De contado</span>
+                <span className="cart-forma-pago__opcion-desc">Reportas tu pago cuando confirmemos el pedido</span>
+              </button>
+              <button
+                type="button"
+                className={`cart-forma-pago__opcion ${formaPago === 'credito' ? 'cart-forma-pago__opcion--activa' : ''}`}
+                onClick={() => setFormaPago('credito')}
+              >
+                <span className="cart-forma-pago__opcion-titulo">Con mi línea de crédito</span>
+                <span className="cart-forma-pago__opcion-desc">Saldo disponible: ${formatUSD(saldoDisponible)}</span>
+              </button>
+            </div>
+          </div>
+        )}
 
         {error && <p className="carrito-error carrito-error--sidebar">{error}</p>}
 
