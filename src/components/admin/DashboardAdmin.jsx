@@ -1,490 +1,825 @@
-import { useState, useEffect, useMemo } from 'react'
-import api from '../../api/axios'
-import DescuentoForm from './DescuentosForm'
-import './DescuentosAdmin.css'
+/* ============================================
+   DESCUENTOS ADMIN
+   ============================================ */
 
-const ITEMS_POR_PAGINA = 10
-
-const ESTADO_CONFIG = {
-  vigente: { texto: 'Vigente', color: '#10b981', bg: '#d1fae5', icono: '🟢' },
-  programado: { texto: 'Programado', color: '#3b82f6', bg: '#dbeafe', icono: '📅' },
-  expirado: { texto: 'Expirado', color: '#ef4444', bg: '#fee2e2', icono: '⏰' },
-  inactivo: { texto: 'Inactivo', color: '#94a3b8', bg: '#f1f5f9', icono: '⏸️' },
+.descuentos-admin {
+  max-width: 1400px;
 }
 
-const ALCANCE_CONFIG = {
-  producto: { texto: 'Producto', icono: '📦' },
-  marca: { texto: 'Marca', icono: '🏷️' },
-  laboratorio: { texto: 'Laboratorio', icono: '🧪' },
-  molecula: { texto: 'Molécula', icono: '⚗️' },
-  linea: { texto: 'Línea', icono: '📊' },
-  forma: { texto: 'Forma', icono: '💊' },
+.descuentos-admin .section-header {
+  margin-bottom: 1.5rem;
 }
 
-export default function DescuentosAdmin() {
-  const [descuentos, setDescuentos] = useState([])
-  const [cargando, setCargando] = useState(true)
-  const [error, setError] = useState('')
-  const [filtroEstado, setFiltroEstado] = useState('todos')
-  const [filtroAlcance, setFiltroAlcance] = useState('todos')
-  const [busqueda, setBusqueda] = useState('')
-  const [mostrarForm, setMostrarForm] = useState(false)
-  const [descuentoEditando, setDescuentoEditando] = useState(null)
-  const [descuentoAEliminar, setDescuentoAEliminar] = useState(null)
-  const [vista, setVista] = useState('tabla')
-  const [paginaActual, setPaginaActual] = useState(1)
-  const [ordenarPor, setOrdenarPor] = useState('estado')
-  const [ordenDireccion, setOrdenDireccion] = useState('asc')
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
 
-  useEffect(() => {
-    cargarDescuentos()
-  }, [])
+.header-top h2 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: var(--ink);
+  font-weight: 600;
+}
 
-  async function cargarDescuentos() {
-    setCargando(true)
-    setError('')
-    try {
-      const res = await api.get('/descuentos')
-      setDescuentos(res.data)
-    } catch (err) {
-      setError(err.response?.data?.error || 'Error al cargar descuentos')
-    } finally {
-      setCargando(false)
-    }
+.btn-agregar {
+  background: var(--blue);
+  color: white;
+  border: none;
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.btn-agregar:hover {
+  background: var(--blue-600);
+  box-shadow: var(--shadow);
+}
+
+.btn-reintentar {
+  background: var(--blue);
+  color: white;
+  border: none;
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+/* Estadísticas */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--slate-200);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.stat-icon {
+  font-size: 1.8rem;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--blue-50);
+  border-radius: var(--radius);
+  flex-shrink: 0;
+}
+
+.stat-vigentes .stat-icon { background: var(--good-tint); }
+.stat-programados .stat-icon { background: var(--blue-50); }
+.stat-expirados .stat-icon { background: var(--alert-tint); }
+
+.stat-valor {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-label {
+  font-size: 0.78rem;
+  color: var(--slate-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+
+/* Toolbar */
+.toolbar {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--slate-200);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.toolbar-filtros {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.toolbar-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.search-box {
+  position: relative;
+  min-width: 220px;
+  flex: 1;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.9rem;
+  color: var(--slate-500);
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.5rem 0.75rem 0.5rem 2.5rem;
+  border: 1.5px solid var(--slate-200);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-family: var(--font-body);
+  transition: all 0.2s;
+  background: var(--surface);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px var(--blue-50);
+}
+
+.filter-select {
+  padding: 0.5rem 0.75rem;
+  border: 1.5px solid var(--slate-200);
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  background: var(--surface);
+  cursor: pointer;
+  color: var(--slate-700);
+  min-width: 160px;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: var(--blue);
+}
+
+/* Vista Toggle */
+.vista-toggle {
+  display: flex;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.vista-btn {
+  padding: 0.5rem 0.75rem;
+  border: none;
+  background: var(--surface);
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s;
+  color: var(--slate-500);
+}
+
+.vista-btn.active {
+  background: var(--blue);
+  color: white;
+}
+
+.vista-btn:hover:not(.active) {
+  background: var(--slate-100);
+}
+
+.resultados-info {
+  color: var(--slate-500);
+  font-size: 0.85rem;
+  margin-bottom: 0.75rem;
+  padding: 0 0.25rem;
+}
+
+/* Loading & Error */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4rem 2rem;
+  color: var(--slate-500);
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--slate-200);
+  border-top: 3px solid var(--blue);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.error-container {
+  text-align: center;
+  padding: 3rem;
+}
+
+.error-message {
+  background: var(--alert-tint);
+  color: #8a1130;
+  padding: 1rem;
+  border-radius: var(--radius-sm);
+  margin-bottom: 1rem;
+  border: 1px solid #f6c9d3;
+  font-weight: 500;
+}
+
+/* ============ TABLA ============ */
+.table-container {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--slate-200);
+  overflow-x: auto;
+}
+
+.descuentos-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.descuentos-table thead {
+  background: var(--slate-100);
+  border-bottom: 2px solid var(--slate-200);
+}
+
+.descuentos-table th {
+  padding: 0.875rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--slate-700);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.descuentos-table th.sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.2s;
+}
+
+.descuentos-table th.sortable:hover {
+  color: var(--blue);
+}
+
+.descuentos-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--slate-100);
+  vertical-align: middle;
+}
+
+.descuentos-table tbody tr {
+  transition: background 0.15s;
+}
+
+.descuentos-table tbody tr:hover {
+  background: var(--blue-50);
+}
+
+.descuento-row.estado-expirado,
+.descuento-row.estado-inactivo {
+  opacity: 0.65;
+}
+
+/* Badges */
+.estado-badge-descuento {
+  display: inline-block;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.alcance-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--slate-100);
+  color: var(--slate-700);
+  white-space: nowrap;
+}
+
+.aplica-cell {
+  color: var(--ink);
+  font-weight: 500;
+  max-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tipo-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.tipo-badge.porcentaje {
+  background: var(--blue-50);
+  color: var(--blue);
+}
+
+.tipo-badge.monto {
+  background: var(--good-tint);
+  color: var(--good);
+}
+
+.valor-cell {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.fecha-cell {
+  white-space: nowrap;
+  color: var(--slate-500);
+  font-size: 0.85rem;
+}
+
+/* Acciones */
+.acciones-cell {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.btn-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--slate-200);
+  background: var(--surface);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+
+.btn-icon:hover {
+  background: var(--slate-100);
+  border-color: var(--slate-300);
+  transform: scale(1.05);
+}
+
+.btn-icon.btn-danger:hover {
+  background: var(--alert-tint);
+  border-color: var(--alert);
+}
+
+/* ============ EMPTY STATE ============ */
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--slate-500);
+}
+
+.empty-icon {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+.empty-state p {
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.empty-hint {
+  font-size: 0.85rem;
+  color: var(--slate-300);
+}
+
+/* ============ VISTA CARDS ============ */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.descuento-card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--slate-200);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.descuento-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.descuento-card.estado-expirado,
+.descuento-card.estado-inactivo {
+  opacity: 0.65;
+}
+
+.descuento-card .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid var(--slate-100);
+}
+
+.tipo-badge-card {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: var(--slate-100);
+  color: var(--slate-700);
+}
+
+.card-body {
+  padding: 1rem;
+}
+
+.descuento-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-bottom: 0.9rem;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+}
+
+.info-row span {
+  color: var(--slate-500);
+}
+
+.info-row strong {
+  color: var(--ink);
+  text-align: right;
+}
+
+.valor-row strong {
+  font-family: var(--font-display);
+}
+
+.valor-descuento {
+  color: var(--blue) !important;
+  font-size: 1.05rem;
+}
+
+.fechas-info {
+  display: flex;
+  gap: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--slate-100);
+}
+
+.fecha-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.fecha-item span {
+  font-size: 0.72rem;
+  color: var(--slate-500);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.fecha-item strong {
+  font-size: 0.82rem;
+  color: var(--ink);
+}
+
+.card-acciones {
+  display: flex;
+  gap: 0.6rem;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--slate-100);
+  background: var(--paper);
+}
+
+.card-acciones button {
+  flex: 1;
+  border: 1.5px solid var(--slate-200);
+  background: var(--surface);
+  padding: 0.55rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--slate-700);
+}
+
+.card-acciones button:hover {
+  border-color: var(--blue);
+  color: var(--blue);
+}
+
+.btn-eliminar-card:hover {
+  border-color: var(--alert) !important;
+  color: var(--alert) !important;
+}
+
+/* ============ PAGINACIÓN ============ */
+.paginacion {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.btn-pagina {
+  min-width: 36px;
+  height: 36px;
+  padding: 0 0.5rem;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--slate-700);
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-pagina:hover:not(:disabled):not(.active) {
+  background: var(--slate-100);
+  border-color: var(--slate-300);
+}
+
+.btn-pagina.active {
+  background: var(--blue);
+  color: white;
+  border-color: var(--blue);
+}
+
+.btn-pagina:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.paginacion-dots {
+  padding: 0 0.25rem;
+  color: var(--slate-300);
+}
+
+/* ============ MODAL CONFIRMACIÓN ============ */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(16, 16, 38, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+  animation: fadeInOverlay 0.2s ease;
+  backdrop-filter: blur(2px);
+}
+
+@keyframes fadeInOverlay {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-confirmacion {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  max-width: 420px;
+  width: 100%;
+  padding: 1.75rem;
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+}
+
+.modal-confirmacion h3 {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  margin-bottom: 0.75rem;
+  color: var(--ink);
+}
+
+.modal-confirmacion p {
+  color: var(--slate-700);
+  font-size: 0.9rem;
+  margin-bottom: 0.4rem;
+}
+
+.warning-text {
+  color: var(--alert);
+  font-size: 0.82rem;
+}
+
+.modal-acciones {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.btn-cancelar {
+  flex: 1;
+  padding: 0.65rem;
+  border: 1.5px solid var(--slate-200);
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--slate-700);
+}
+
+.btn-eliminar {
+  flex: 1;
+  padding: 0.65rem;
+  border: none;
+  background: var(--alert);
+  color: white;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-eliminar:hover {
+  background: #b91d3f;
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 1024px) {
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .toolbar-filtros {
+    flex-direction: column;
+  }
+  .search-box {
+    min-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .filter-select {
+    min-width: 100%;
+  }
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+  .paginacion {
+    gap: 0.2rem;
+  }
+  .btn-pagina {
+    min-width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
   }
 
-  async function handleEliminar(id) {
-    try {
-      await api.delete(`/descuentos/${id}`)
-      setDescuentos(prev => prev.filter(d => d.id !== id))
-      setDescuentoAEliminar(null)
-    } catch (err) {
-      alert(err.response?.data?.error || 'Error al eliminar el descuento')
-    }
+  /* --- Tabla → tarjetas: soluciona el desborde horizontal en móvil --- */
+  .table-container {
+    overflow-x: visible;
+    background: transparent;
+    border: none;
+    box-shadow: none;
   }
 
-  function handleGuardado() {
-    setMostrarForm(false)
-    setDescuentoEditando(null)
-    cargarDescuentos()
+  .descuentos-table thead {
+    display: none;
   }
 
-  function abrirEdicion(descuento) {
-    setDescuentoEditando(descuento)
-    setMostrarForm(true)
+  .descuentos-table,
+  .descuentos-table tbody,
+  .descuentos-table tr {
+    display: block;
+    width: 100%;
   }
 
-  function abrirNuevo() {
-    setDescuentoEditando(null)
-    setMostrarForm(true)
+  .descuentos-table tr {
+    background: var(--surface);
+    border: 1px solid var(--slate-200);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 0.75rem;
+    overflow: hidden;
   }
 
-  function toggleOrden(campo) {
-    if (ordenarPor === campo) {
-      setOrdenDireccion(prev => prev === 'asc' ? 'desc' : 'asc')
-    } else {
-      setOrdenarPor(campo)
-      setOrdenDireccion('asc')
-    }
+  .descuentos-table td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--slate-100);
+    text-align: right;
   }
 
-  function etiquetaAlcance(d) {
-    if (d.alcance === 'producto') return d.productos?.nombre_comercial || `Producto #${d.producto_id}`
-    if (d.alcance === 'marca') return d.marcas?.nombre || `Marca #${d.marca_id}`
-    return d.alcance_valor || '—'
+  .descuentos-table tr td:last-child {
+    border-bottom: none;
   }
 
-  function etiquetaValor(d) {
-    return d.tipo === 'porcentaje' ? `${d.valor}%` : `$${Number(d.valor).toFixed(2)}`
+  /* Etiqueta de campo generada desde el atributo data-label del <td> */
+  .descuentos-table td[data-label]::before {
+    content: attr(data-label);
+    font-weight: 600;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--slate-500);
+    text-align: left;
+    flex-shrink: 0;
   }
 
-  function formatearFecha(f) {
-    if (!f) return '—'
-    return new Date(f).toLocaleDateString('es-VE', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    })
+  /* Celda de acciones: fila de botones a todo el ancho, más grandes para el dedo */
+  .td-acciones {
+    padding: 0.75rem !important;
   }
 
-  const descuentosFiltrados = useMemo(() => {
-    let resultado = [...descuentos]
-
-    if (filtroEstado !== 'todos') {
-      resultado = resultado.filter(d => d.estado === filtroEstado)
-    }
-
-    if (filtroAlcance !== 'todos') {
-      resultado = resultado.filter(d => d.alcance === filtroAlcance)
-    }
-
-    if (busqueda) {
-      const texto = busqueda.toLowerCase()
-      resultado = resultado.filter(d => {
-        const alcanceTexto = etiquetaAlcance(d).toLowerCase()
-        const tipoTexto = (d.tipo || '').toLowerCase()
-        return alcanceTexto.includes(texto) || tipoTexto.includes(texto)
-      })
-    }
-
-    resultado.sort((a, b) => {
-      let valorA, valorB
-      switch(ordenarPor) {
-        case 'valor':
-          valorA = Number(a.valor) || 0
-          valorB = Number(b.valor) || 0
-          break
-        case 'inicio':
-          valorA = a.fecha_inicio ? new Date(a.fecha_inicio).getTime() : 0
-          valorB = b.fecha_inicio ? new Date(b.fecha_inicio).getTime() : 0
-          break
-        case 'fin':
-          valorA = a.fecha_fin ? new Date(a.fecha_fin).getTime() : 0
-          valorB = b.fecha_fin ? new Date(b.fecha_fin).getTime() : 0
-          break
-        case 'estado':
-        default:
-          valorA = a.estado || ''
-          valorB = b.estado || ''
-      }
-      if (valorA < valorB) return ordenDireccion === 'asc' ? -1 : 1
-      if (valorA > valorB) return ordenDireccion === 'asc' ? 1 : -1
-      return 0
-    })
-
-    return resultado
-  }, [descuentos, filtroEstado, filtroAlcance, busqueda, ordenarPor, ordenDireccion])
-
-  const totalPaginas = Math.ceil(descuentosFiltrados.length / ITEMS_POR_PAGINA)
-  const descuentosPaginados = descuentosFiltrados.slice(
-    (paginaActual - 1) * ITEMS_POR_PAGINA,
-    paginaActual * ITEMS_POR_PAGINA
-  )
-
-  useEffect(() => {
-    setPaginaActual(1)
-  }, [filtroEstado, filtroAlcance, busqueda])
-
-  const stats = useMemo(() => {
-    return {
-      total: descuentos.length,
-      vigentes: descuentos.filter(d => d.estado === 'vigente').length,
-      programados: descuentos.filter(d => d.estado === 'programado').length,
-      expirados: descuentos.filter(d => d.estado === 'expirado').length,
-    }
-  }, [descuentos])
-
-  if (cargando) {
-    return (
-      <div className="loading-container">
-        <div className="spinner"></div>
-        <p>Cargando descuentos...</p>
-      </div>
-    )
+  .td-acciones .acciones-cell {
+    justify-content: stretch;
+    width: 100%;
   }
 
-  return (
-    <div className="descuentos-admin">
-      {/* Header */}
-      <div className="section-header">
-        <div className="header-top">
-          <h2>🏷️ Descuentos</h2>
-          <button onClick={abrirNuevo} className="btn-agregar">
-            + Nuevo Descuento
-          </button>
-        </div>
-      </div>
+  .td-acciones .btn-icon {
+    flex: 1;
+    width: auto;
+    height: 40px;
+    font-size: 1rem;
+  }
+}
 
-      {/* Estadísticas */}
-      <div className="stats-grid">
-        <div className="stat-card">
-          <div className="stat-icon">🏷️</div>
-          <div className="stat-info">
-            <div className="stat-valor">{stats.total}</div>
-            <div className="stat-label">Total</div>
-          </div>
-        </div>
-        <div className="stat-card stat-vigentes">
-          <div className="stat-icon">🟢</div>
-          <div className="stat-info">
-            <div className="stat-valor">{stats.vigentes}</div>
-            <div className="stat-label">Vigentes</div>
-          </div>
-        </div>
-        <div className="stat-card stat-programados">
-          <div className="stat-icon">📅</div>
-          <div className="stat-info">
-            <div className="stat-valor">{stats.programados}</div>
-            <div className="stat-label">Programados</div>
-          </div>
-        </div>
-        <div className="stat-card stat-expirados">
-          <div className="stat-icon">⏰</div>
-          <div className="stat-info">
-            <div className="stat-valor">{stats.expirados}</div>
-            <div className="stat-label">Expirados</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Toolbar */}
-      <div className="toolbar">
-        <div className="toolbar-filtros">
-          <div className="search-box">
-            <span className="search-icon">🔍</span>
-            <input
-              type="text"
-              placeholder="Buscar descuentos..."
-              value={busqueda}
-              onChange={(e) => setBusqueda(e.target.value)}
-              className="search-input"
-            />
-          </div>
-          <select
-            value={filtroEstado}
-            onChange={(e) => setFiltroEstado(e.target.value)}
-            className="filter-select"
-          >
-            <option value="todos">Todos los estados</option>
-            {Object.entries(ESTADO_CONFIG).map(([key, val]) => (
-              <option key={key} value={key}>{val.icono} {val.texto}</option>
-            ))}
-          </select>
-          <select
-            value={filtroAlcance}
-            onChange={(e) => setFiltroAlcance(e.target.value)}
-            className="filter-select"
-          >
-            <option value="todos">Todos los alcances</option>
-            {Object.entries(ALCANCE_CONFIG).map(([key, val]) => (
-              <option key={key} value={key}>{val.icono} {val.texto}</option>
-            ))}
-          </select>
-        </div>
-        <div className="toolbar-actions">
-          <div className="vista-toggle">
-            <button
-              className={`vista-btn ${vista === 'tabla' ? 'active' : ''}`}
-              onClick={() => setVista('tabla')}
-            >📋</button>
-            <button
-              className={`vista-btn ${vista === 'cards' ? 'active' : ''}`}
-              onClick={() => setVista('cards')}
-            >🎴</button>
-          </div>
-        </div>
-      </div>
-
-      {/* Resultados */}
-      <div className="resultados-info">
-        Mostrando {descuentosPaginados.length} de {descuentosFiltrados.length} descuentos
-      </div>
-
-      {/* Error */}
-      {error && (
-        <div className="error-container">
-          <div className="error-message">{error}</div>
-          <button onClick={cargarDescuentos} className="btn-reintentar">
-            🔄 Reintentar
-          </button>
-        </div>
-      )}
-
-      {/* Vista Tabla — en móvil (≤768px) colapsa a tarjetas usando los
-          data-label de cada <td> (ver DescuentosAdmin.css) */}
-      {!error && vista === 'tabla' && (
-        <>
-          {descuentosFiltrados.length === 0 ? (
-            <div className="empty-state">
-              <span className="empty-icon">🏷️</span>
-              <p>No se encontraron descuentos</p>
-              {busqueda && <p className="empty-hint">Intenta con otros filtros</p>}
-            </div>
-          ) : (
-            <div className="table-container">
-              <table className="descuentos-table">
-                <thead>
-                  <tr>
-                    <th onClick={() => toggleOrden('estado')} className="sortable">
-                      Estado {ordenarPor === 'estado' && (ordenDireccion === 'asc' ? '↑' : '↓')}
-                    </th>
-                    <th>Alcance</th>
-                    <th>Aplica a</th>
-                    <th>Tipo</th>
-                    <th onClick={() => toggleOrden('valor')} className="sortable">
-                      Valor {ordenarPor === 'valor' && (ordenDireccion === 'asc' ? '↑' : '↓')}
-                    </th>
-                    <th onClick={() => toggleOrden('inicio')} className="sortable">
-                      Inicio {ordenarPor === 'inicio' && (ordenDireccion === 'asc' ? '↑' : '↓')}
-                    </th>
-                    <th onClick={() => toggleOrden('fin')} className="sortable">
-                      Fin {ordenarPor === 'fin' && (ordenDireccion === 'asc' ? '↑' : '↓')}
-                    </th>
-                    <th>Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {descuentosPaginados.map(d => (
-                    <tr key={d.id} className={`descuento-row estado-${d.estado}`}>
-                      <td data-label="Estado">
-                        <span
-                          className="estado-badge-descuento"
-                          style={{
-                            backgroundColor: ESTADO_CONFIG[d.estado]?.bg,
-                            color: ESTADO_CONFIG[d.estado]?.color
-                          }}
-                        >
-                          {ESTADO_CONFIG[d.estado]?.icono} {ESTADO_CONFIG[d.estado]?.texto}
-                        </span>
-                      </td>
-                      <td data-label="Alcance">
-                        <span className="alcance-badge">
-                          {ALCANCE_CONFIG[d.alcance]?.icono} {ALCANCE_CONFIG[d.alcance]?.texto}
-                        </span>
-                      </td>
-                      <td className="aplica-cell" data-label="Aplica a">{etiquetaAlcance(d)}</td>
-                      <td data-label="Tipo">
-                        <span className={`tipo-badge ${d.tipo}`}>
-                          {d.tipo === 'porcentaje' ? '%' : '$'}
-                        </span>
-                      </td>
-                      <td className="valor-cell" data-label="Valor">{etiquetaValor(d)}</td>
-                      <td className="fecha-cell" data-label="Inicio">{formatearFecha(d.fecha_inicio)}</td>
-                      <td className="fecha-cell" data-label="Fin">{formatearFecha(d.fecha_fin)}</td>
-                      <td className="td-acciones">
-                        <div className="acciones-cell">
-                          <button onClick={() => abrirEdicion(d)} className="btn-icon" title="Editar">
-                            ✏️
-                          </button>
-                          <button
-                            onClick={() => setDescuentoAEliminar(d)}
-                            className="btn-icon btn-danger"
-                            title="Eliminar"
-                          >
-                            🗑️
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </>
-      )}
-
-      {/* Vista Cards */}
-      {!error && vista === 'cards' && (
-        <div className="cards-grid">
-          {descuentosPaginados.length === 0 ? (
-            <div className="empty-state">
-              <span className="empty-icon">🏷️</span>
-              <p>No se encontraron descuentos</p>
-            </div>
-          ) : (
-            descuentosPaginados.map(d => {
-              const estadoCfg = ESTADO_CONFIG[d.estado] || {}
-              const alcanceCfg = ALCANCE_CONFIG[d.alcance] || {}
-              return (
-                <div key={d.id} className={`descuento-card estado-${d.estado}`}>
-                  <div className="card-header">
-                    <span
-                      className="estado-badge-descuento"
-                      style={{ backgroundColor: estadoCfg.bg, color: estadoCfg.color }}
-                    >
-                      {estadoCfg.icono} {estadoCfg.texto}
-                    </span>
-                    <span className={`tipo-badge-card ${d.tipo}`}>
-                      {d.tipo === 'porcentaje' ? 'Porcentaje' : 'Monto Fijo'}
-                    </span>
-                  </div>
-                  <div className="card-body">
-                    <div className="descuento-info">
-                      <div className="info-row">
-                        <span>Alcance:</span>
-                        <strong>{alcanceCfg.icono} {alcanceCfg.texto}</strong>
-                      </div>
-                      <div className="info-row">
-                        <span>Aplica a:</span>
-                        <strong>{etiquetaAlcance(d)}</strong>
-                      </div>
-                      <div className="info-row valor-row">
-                        <span>Descuento:</span>
-                        <strong className="valor-descuento">{etiquetaValor(d)}</strong>
-                      </div>
-                    </div>
-                    <div className="fechas-info">
-                      <div className="fecha-item">
-                        <span>📅 Inicio</span>
-                        <strong>{formatearFecha(d.fecha_inicio)}</strong>
-                      </div>
-                      <div className="fecha-item">
-                        <span>📅 Fin</span>
-                        <strong>{formatearFecha(d.fecha_fin)}</strong>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="card-acciones">
-                    <button onClick={() => abrirEdicion(d)}>✏️ Editar</button>
-                    <button
-                      onClick={() => setDescuentoAEliminar(d)}
-                      className="btn-eliminar-card"
-                    >
-                      🗑️ Eliminar
-                    </button>
-                  </div>
-                </div>
-              )
-            })
-          )}
-        </div>
-      )}
-
-      {/* Paginación */}
-      {totalPaginas > 1 && (
-        <div className="paginacion">
-          <button onClick={() => setPaginaActual(1)} disabled={paginaActual === 1} className="btn-pagina">⏮️</button>
-          <button onClick={() => setPaginaActual(p => Math.max(1, p - 1))} disabled={paginaActual === 1} className="btn-pagina">◀️</button>
-          {Array.from({ length: totalPaginas }, (_, i) => i + 1)
-            .filter(p => p === 1 || p === totalPaginas || Math.abs(p - paginaActual) <= 2)
-            .map((p, i, arr) => (
-              <span key={p}>
-                {i > 0 && arr[i - 1] !== p - 1 && <span className="paginacion-dots">...</span>}
-                <button onClick={() => setPaginaActual(p)} className={`btn-pagina ${paginaActual === p ? 'active' : ''}`}>{p}</button>
-              </span>
-            ))}
-          <button onClick={() => setPaginaActual(p => Math.min(totalPaginas, p + 1))} disabled={paginaActual === totalPaginas} className="btn-pagina">▶️</button>
-          <button onClick={() => setPaginaActual(totalPaginas)} disabled={paginaActual === totalPaginas} className="btn-pagina">⏭️</button>
-        </div>
-      )}
-
-      {/* Modal formulario */}
-      {mostrarForm && (
-        <DescuentoForm
-          descuentoExistente={descuentoEditando}
-          onGuardado={handleGuardado}
-          onCancelar={() => {
-            setMostrarForm(false)
-            setDescuentoEditando(null)
-          }}
-        />
-      )}
-
-      {/* Modal confirmar eliminación */}
-      {descuentoAEliminar && (
-        <div className="modal-overlay" onClick={() => setDescuentoAEliminar(null)}>
-          <div className="modal-content modal-confirmacion" onClick={(e) => e.stopPropagation()}>
-            <h3>🗑️ Confirmar Eliminación</h3>
-            <p>¿Estás seguro de eliminar este descuento?</p>
-            <p className="warning-text">Esta acción no se puede deshacer.</p>
-            <div className="modal-acciones">
-              <button onClick={() => setDescuentoAEliminar(null)} className="btn-cancelar">Cancelar</button>
-              <button onClick={() => handleEliminar(descuentoAEliminar.id)} className="btn-eliminar">Eliminar</button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  )
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .btn-pagina {
+    min-width: 28px;
+    height: 28px;
+  }
 }
