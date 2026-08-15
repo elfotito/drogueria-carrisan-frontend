@@ -12,12 +12,14 @@
   justify-content: space-between;
   align-items: center;
   padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid var(--gray-200);
+  border-bottom: 1px solid var(--slate-200);
 }
 
 .factura-form-modal .modal-header h2 {
+  font-family: var(--font-display);
   font-size: 1.2rem;
-  color: var(--dark);
+  color: var(--ink);
+  font-weight: 600;
 }
 
 .modal-close {
@@ -25,27 +27,27 @@
   height: 34px;
   border-radius: 50%;
   border: none;
-  background: var(--gray-100);
+  background: var(--slate-100);
   cursor: pointer;
   font-size: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--gray-600);
+  color: var(--slate-500);
   transition: all 0.2s;
 }
 
 .modal-close:hover {
-  background: var(--gray-200);
-  color: var(--dark);
+  background: var(--slate-200);
+  color: var(--ink);
 }
 
 .error-banner {
-  background: var(--danger-light);
-  color: #991b1b;
+  background: var(--alert-tint);
+  color: #8a1130;
   padding: 0.75rem 1.5rem;
   margin: 0;
-  border-bottom: 1px solid #fecaca;
+  border-bottom: 1px solid #f6c9d3;
   font-weight: 500;
   font-size: 0.9rem;
 }
@@ -61,7 +63,7 @@
 .form-group label {
   display: block;
   font-weight: 500;
-  color: var(--gray-700);
+  color: var(--slate-700);
   margin-bottom: 0.4rem;
   font-size: 0.9rem;
 }
@@ -71,24 +73,25 @@
 .form-group textarea {
   width: 100%;
   padding: 0.625rem 0.875rem;
-  border: 2px solid var(--gray-300);
-  border-radius: var(--radius);
+  border: 1.5px solid var(--slate-200);
+  border-radius: var(--radius-sm);
   font-size: 0.9rem;
   transition: all 0.2s;
-  background: white;
-  font-family: inherit;
+  background: var(--surface);
+  font-family: var(--font-body);
+  color: var(--ink);
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px var(--blue-50);
 }
 
 .form-group input.error,
 .form-group textarea.error {
-  border-color: var(--danger);
+  border-color: var(--alert);
 }
 
 .form-group textarea {
@@ -97,14 +100,14 @@
 }
 
 .error-text {
-  color: var(--danger);
+  color: var(--alert);
   font-size: 0.8rem;
   margin-top: 0.3rem;
   display: block;
 }
 
 .text-muted {
-  color: var(--gray-500);
+  color: var(--slate-500);
   font-size: 0.9rem;
   font-style: italic;
 }
@@ -113,23 +116,23 @@
 .input-precio {
   display: flex;
   align-items: center;
-  border: 2px solid var(--gray-300);
-  border-radius: var(--radius);
+  border: 1.5px solid var(--slate-200);
+  border-radius: var(--radius-sm);
   overflow: hidden;
   transition: all 0.2s;
 }
 
 .input-precio:focus-within {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px var(--blue-50);
 }
 
 .precio-simbolo {
   padding: 0.625rem 0.875rem;
-  background: var(--gray-50);
+  background: var(--slate-100);
   font-weight: 700;
-  color: var(--gray-600);
-  border-right: 1px solid var(--gray-300);
+  color: var(--slate-700);
+  border-right: 1px solid var(--slate-200);
 }
 
 .input-precio input {
@@ -142,8 +145,8 @@
 
 /* Checklist de órdenes */
 .ordenes-checklist {
-  border: 2px solid var(--gray-200);
-  border-radius: var(--radius);
+  border: 1.5px solid var(--slate-200);
+  border-radius: var(--radius-sm);
   overflow: hidden;
   max-height: 250px;
   overflow-y: auto;
@@ -154,15 +157,15 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.6rem 1rem;
-  background: var(--gray-50);
-  border-bottom: 1px solid var(--gray-200);
+  background: var(--slate-100);
+  border-bottom: 1px solid var(--slate-200);
   font-size: 0.8rem;
   font-weight: 600;
-  color: var(--gray-600);
+  color: var(--slate-700);
 }
 
 .checklist-total {
-  color: var(--primary);
+  color: var(--blue);
 }
 
 .checklist-item {
@@ -172,11 +175,11 @@
   padding: 0.7rem 1rem;
   cursor: pointer;
   transition: background 0.15s;
-  border-bottom: 1px solid var(--gray-100);
+  border-bottom: 1px solid var(--slate-100);
 }
 
 .checklist-item:hover {
-  background: var(--gray-50);
+  background: var(--paper);
 }
 
 .checklist-item input[type="checkbox"] {
@@ -184,6 +187,7 @@
   height: 16px;
   cursor: pointer;
   flex-shrink: 0;
+  accent-color: var(--blue);
 }
 
 .checklist-item-info {
@@ -194,18 +198,18 @@
 .checklist-item-info strong {
   display: block;
   font-size: 0.85rem;
-  color: var(--dark);
+  color: var(--ink);
 }
 
 .checklist-item-info span {
   font-size: 0.75rem;
-  color: var(--gray-500);
+  color: var(--slate-500);
 }
 
 .checklist-item-monto {
-  font-family: 'Courier New', monospace;
+  font-family: var(--font-display);
   font-weight: 700;
-  color: var(--primary);
+  color: var(--blue);
   font-size: 0.9rem;
   flex-shrink: 0;
 }
@@ -215,7 +219,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--gray-500);
+  color: var(--slate-500);
   font-size: 0.85rem;
   padding: 1rem;
 }
@@ -223,8 +227,8 @@
 .spinner-small-dark {
   width: 16px;
   height: 16px;
-  border: 2px solid var(--gray-300);
-  border-top: 2px solid var(--primary);
+  border: 2px solid var(--slate-200);
+  border-top: 2px solid var(--blue);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -248,17 +252,17 @@
   display: flex;
   justify-content: space-between;
   padding: 1.25rem 1.5rem;
-  border-top: 1px solid var(--gray-200);
-  background: var(--gray-50);
-  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+  border-top: 1px solid var(--slate-200);
+  background: var(--paper);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
 }
 
 .btn-secundario {
-  background: var(--gray-100);
-  color: var(--gray-700);
+  background: var(--slate-100);
+  color: var(--slate-700);
   border: none;
   padding: 0.625rem 1.25rem;
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   cursor: pointer;
   font-weight: 600;
   font-size: 0.875rem;
@@ -266,15 +270,15 @@
 }
 
 .btn-secundario:hover {
-  background: var(--gray-200);
+  background: var(--slate-200);
 }
 
 .btn-guardar {
-  background: var(--primary);
+  background: var(--blue);
   color: white;
   border: none;
   padding: 0.625rem 1.25rem;
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   cursor: pointer;
   font-weight: 600;
   font-size: 0.875rem;
@@ -285,7 +289,7 @@
 }
 
 .btn-guardar:hover:not(:disabled) {
-  background: var(--primary-dark);
+  background: var(--blue-600);
 }
 
 .btn-guardar:disabled {
