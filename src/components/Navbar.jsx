@@ -802,7 +802,22 @@ function PanelEnvio({
       )}
 
       {/* 2. DELIVERY EN MOTO */}
+{direcciones.length > 0 && (
+  <div className="envio-direcciones-guardadas">
+    {direcciones.map((dir) => (
+      <button
+        key={dir.id}
+        type="button"
+        className={`envio-direccion-item ${direccionSeleccionada?.id === dir.id ? 'active' : ''}`}
+        onClick={() => setDireccionSeleccionada(dir)}
+      >
+        📍 {dir.direccion}, {dir.ciudad}
+      </button>
+    ))}
+  </div>
+)}
       {tipoEnvio === 'delivery' && (
+
         <form onSubmit={handleGuardar} className="envio-form">
           <select 
             value={formData.ciudad} 
