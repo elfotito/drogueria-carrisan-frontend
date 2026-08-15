@@ -1,445 +1,605 @@
-/* ==========================================================
-   MisOrdenes — Droguería Carrisán
-   Paleta: Índigo #232B45 · Azul #1B4B8F · Teal #12A594
-           Ink #14182A · Paper #FBFAF7
-   ========================================================== */
-
-.misordenes-page {
-  min-height: 100vh;
-  background: #FBFAF7;
-  font-family: 'Inter', sans-serif;
+.mi-cuenta,
+.mi-cuenta *,
+.mi-cuenta *::before,
+.mi-cuenta *::after {
+  box-sizing: border-box;
 }
 
-.misordenes-container {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 20px 16px 100px;
-}
+.mi-cuenta {
+  --color-brand: #0052DC;
+  --color-brand-dark: #1A1A3A;
+  --color-brand-light: #eaf0ff;
+  --color-accent: #12A594;
+  --color-accent-light: #e7f8f5;
+  --color-positive: #15803d;
+  --color-negative: #dc2626;
+  --color-warning: #d97706;
+  --color-bg: #FBFAF7;
+  --color-surface: #ffffff;
+  --color-border: #e7e6e0;
+  --color-text: #1A1A3A;
+  --color-text-muted: #6b6b7a;
 
-.misordenes-title {
-  font-family: 'Manrope', sans-serif;
-  font-weight: 800;
-  font-size: 1.4rem;
-  color: #14182A;
-  margin: 0 0 16px;
-}
-
-.misordenes-banner-pago {
   width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 20px 96px;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: var(--color-text);
+  background: var(--color-bg);
+  font-variant-numeric: tabular-nums;
+  overflow-x: hidden;
+}
+
+.mi-cuenta h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.mi-cuenta h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.mi-cuenta h3 {
+  font-size: 0.92rem;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+/* --- Encabezado --- */
+.mi-cuenta__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  background: #EEF3FE;
-  border: 1.5px solid #0052DC;
-  border-radius: 12px;
-  padding: 14px 16px;
-  margin-bottom: 16px;
-  cursor: pointer;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #1A1A3A;
-  text-align: left;
+  gap: 14px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
 }
 
-.misordenes-banner-pago__cta {
-  color: #0052DC;
+.mi-cuenta__header-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.mi-cuenta__avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-brand), var(--color-brand-dark));
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
   font-weight: 700;
+  flex-shrink: 0;
+}
+
+.mi-cuenta__header-info > div {
+  min-width: 0;
+}
+
+.mi-cuenta__email {
+  margin: 2px 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.88rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.misordenes-error {
-  background: #FDECEC;
-  color: #B3261E;
-  border: 1px solid #F3C6C4;
+.mi-cuenta__logout {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 14px;
   border-radius: 10px;
-  padding: 12px 16px;
-  font-size: 0.9rem;
-  margin: 20px 16px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
 }
 
-/* ---------------------------------------------------------
-   Tabs de estado (con contador)
---------------------------------------------------------- */
-.misordenes-tabs {
+.mi-cuenta__logout:hover {
+  border-color: var(--color-negative);
+  color: var(--color-negative);
+}
+
+.mi-cuenta__alerta {
   display: flex;
+  align-items: center;
   gap: 8px;
-  overflow-x: auto;
-  padding-bottom: 4px;
-  margin-bottom: 18px;
-  scrollbar-width: none;
+  background: #fef2f2;
+  color: var(--color-negative);
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  margin-bottom: 16px;
 }
 
-.misordenes-tabs::-webkit-scrollbar {
+/* ================================================================== */
+/* Bloques grandes con preview (patrón móvil de Amazon: cada bloque    */
+/* es "su propia caja" con título + flecha + contenido de vista previa)*/
+/* ================================================================== */
+.mi-cuenta__previews {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 0;
+}
+
+.bloque-preview {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 18px 18px 16px;
+}
+
+.bloque-preview__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.bloque-preview__flecha {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  transition: color 0.15s ease;
+}
+
+.bloque-preview__flecha:hover {
+  color: var(--color-brand);
+}
+
+.bloque-preview__vacio {
+  text-align: center;
+  padding: 20px 10px 8px;
+  color: var(--color-text-muted);
+  font-size: 0.88rem;
+}
+
+.bloque-preview__vacio p {
+  margin: 0 0 12px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn--primario {
+  background: var(--color-brand);
+  color: #ffffff;
+}
+
+.btn--primario:hover {
+  background: var(--color-brand-dark);
+}
+
+/* --- Franja financiera (dentro del bloque de Estado de cuenta) --- */
+.franja-financiera {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.franja-financiera::-webkit-scrollbar {
   display: none;
 }
 
-.misordenes-tab {
-  flex: 0 0 auto;
+.franja-financiera__item {
+  flex: 1 0 auto;
+  min-width: 140px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-decoration: none;
+  color: var(--color-text);
+}
+
+.franja-financiera__item strong {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.franja-financiera__label {
+  font-size: 0.76rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.franja-financiera__monto--rojo {
+  color: var(--color-negative);
+}
+
+.franja-financiera__item--cta {
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  gap: 6px;
+  background: var(--color-brand);
+  color: #ffffff;
+  border-color: var(--color-brand);
+  font-weight: 600;
+  font-size: 0.88rem;
+  white-space: nowrap;
+}
+
+/* --- Últimas órdenes (lista dentro del bloque preview) --- */
+.ordenes-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.orden-card {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  border-radius: 999px;
-  border: 1.5px solid #E7E5DE;
-  background: #FFFFFF;
-  color: #14182A;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0eb;
+  text-decoration: none;
+  color: var(--color-text);
+}
+
+.ordenes-lista li:last-child .orden-card {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.orden-card__icono {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: var(--color-brand-light);
+  color: var(--color-brand);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.orden-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.orden-card__titulo {
   font-weight: 600;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+  font-size: 0.92rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.misordenes-tab--activo {
-  background: #14182A;
-  border-color: #14182A;
-  color: #FBFAF7;
+.orden-card__meta {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.misordenes-tab__count {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.72rem;
+.orden-card__monto {
+  font-size: 0.92rem;
   font-weight: 700;
-  background: rgba(20, 24, 42, 0.08);
-  color: inherit;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.estado-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  padding: 4px 10px;
   border-radius: 999px;
-  padding: 1px 7px;
+  background: #f1f1ea;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
-.misordenes-tab--activo .misordenes-tab__count {
-  background: rgba(251, 250, 247, 0.18);
+.estado-badge--pendiente,
+.estado-badge--procesando { background: #fff7ed; color: var(--color-warning); }
+.estado-badge--enviado { background: var(--color-accent-light); color: var(--color-accent); }
+.estado-badge--entregado,
+.estado-badge--finalizado { background: #f0fdf4; color: var(--color-positive); }
+.estado-badge--cancelado { background: #fef2f2; color: var(--color-negative); }
+
+/* --- Carrusel de favoritos (dentro del bloque preview) --- */
+.favoritos-carrusel {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 2px;
 }
 
-/* ---------------------------------------------------------
-   Grid de órdenes
---------------------------------------------------------- */
-.ordenes-grid {
+.favoritos-carrusel::-webkit-scrollbar {
+  display: none;
+}
+
+.favorito-chip {
+  flex: 0 0 auto;
+  width: 96px;
+  text-decoration: none;
+  color: var(--color-text);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.favorito-chip__media {
+  width: 96px;
+  height: 96px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+}
+
+.favorito-chip__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.favorito-chip__media-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: 4px;
+}
+
+.favorito-chip__nombre {
+  font-size: 0.75rem;
+  line-height: 1.25;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* ================================================================== */
+/* Hub de categorías (patrón desktop de Amazon: grid de tarjetas       */
+/* con icono, título y descripción — "Tu cuenta")                      */
+/* ================================================================== */
+.hub-cuenta {
+  margin: 18px 0 24px;
+}
+
+.hub-cuenta__titulo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  color: var(--color-text);
+}
+
+.hub-cuenta__titulo svg {
+  color: var(--color-brand);
+}
+
+.hub-cuenta__grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 12px;
 }
 
-@media (min-width: 640px) {
-  .ordenes-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 960px) {
-  .ordenes-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-/* ---------------------------------------------------------
-   Orden card
---------------------------------------------------------- */
-.orden-card {
-  background: #FFFFFF;
-  border: 1px solid #E7E5DE;
+.hub-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 14px;
   padding: 16px;
+  text-decoration: none;
+  color: var(--color-text);
+  transition: box-shadow 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
+  min-width: 0;
+}
+
+.hub-card:hover {
+  box-shadow: 0 8px 22px rgba(26, 26, 58, 0.08);
+  transform: translateY(-2px);
+  border-color: #c9d8ff;
+}
+
+.hub-card__icono {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--color-brand-light);
+  color: var(--color-brand);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.hub-card__texto {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 2px;
+  min-width: 0;
 }
 
-.orden-card__top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.orden-card__numero {
-  font-family: 'Manrope', sans-serif;
+.hub-card__titulo {
   font-weight: 700;
   font-size: 0.95rem;
-  color: #14182A;
-  margin: 0;
 }
 
-.orden-card__fecha {
-  font-size: 0.78rem;
-  color: #5B6270;
-  margin: 2px 0 0;
-}
-
-.orden-card__cliente {
-  font-size: 0.82rem;
-  color: #5B6270;
-  margin: 0;
-}
-
-.orden-card__cliente strong {
-  color: #14182A;
-}
-
-.orden-card__bottom {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-top: 4px;
-  padding-top: 10px;
-  border-top: 1px solid #F0EEE7;
-}
-
-.orden-card__total {
-  font-size: 0.85rem;
-  color: #5B6270;
-  margin: 0;
-}
-
-.orden-card__total span {
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 800;
-  font-size: 1rem;
-  color: #12A594;
-}
-
-.orden-card__ver-btn {
-  background: none;
-  border: 1.5px solid #1B4B8F;
-  color: #1B4B8F;
-  font-weight: 700;
+.hub-card__descripcion {
   font-size: 0.8rem;
-  padding: 7px 16px;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
+  color: var(--color-text-muted);
+  line-height: 1.3;
 }
 
-.orden-card__ver-btn:hover {
-  background: #1B4B8F;
-  color: #FBFAF7;
-}
-
-/* ---------------------------------------------------------
-   Indicador de progreso (puntos conectados)
---------------------------------------------------------- */
-.orden-progreso {
-  display: flex;
-  align-items: center;
-}
-
-.orden-progreso__paso {
-  display: flex;
-  align-items: center;
-  flex: 1;
-}
-
-.orden-progreso__punto {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #E7E5DE;
-  flex-shrink: 0;
-  transition: background 0.2s ease;
-}
-
-.orden-progreso__punto--activo {
-  background: #12A594;
-}
-
-.orden-progreso__linea {
-  flex: 1;
-  height: 2px;
-  background: #E7E5DE;
-  margin: 0 4px;
-  transition: background 0.2s ease;
-}
-
-.orden-progreso__linea--activa {
-  background: #12A594;
-}
-
-/* ---------------------------------------------------------
-   Badges de estado
---------------------------------------------------------- */
-.orden-badge {
-  flex-shrink: 0;
-  font-size: 0.72rem;
-  font-weight: 700;
-  padding: 5px 12px;
-  border-radius: 999px;
-  white-space: nowrap;
-}
-
-.badge--pendiente {
-  background: #FFF3D6;
-  color: #93650B;
-}
-
-.badge--verificado {
-  background: #E7EFFA;
-  color: #1B4B8F;
-}
-
-.badge--enviado {
-  background: #E8E8EE;
-  color: #232B45;
-}
-
-.badge--entregado,
-.badge--finalizado {
-  background: #E1F5EF;
-  color: #0E7C63;
-}
-
-.badge--pedido_creado { background: #FFF3D6; color: #93650B; }
-.badge--procesando { background: #DBEAFE; color: #1D4ED8; }
-.badge--preparando { background: #EDE9FE; color: #6D28D9; }
-.badge--enviado { background: #CFFAFE; color: #0E7490; }
-.badge--entregado { background: #E1F5EF; color: #0E7C63; }
-.badge--cancelado { background: #FEE2E2; color: #B91C1C; }
-
-/* Fallback para cualquier estado nuevo que se agregue después */
-.badge--neutro {
-  background: #EFEEE9;
-  color: #5B6270;
-}
-
-/* ---------------------------------------------------------
-   Skeleton loader
---------------------------------------------------------- */
-.orden-card--skeleton {
-  gap: 12px;
-}
-
-.skeleton-line {
-  background: #EFEEE9;
-  border-radius: 6px;
-  position: relative;
-  overflow: hidden;
-}
-
-.skeleton-line::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
-  animation: skeleton-shimmer 1.4s infinite;
-}
-
-@keyframes skeleton-shimmer {
-  from { transform: translateX(-100%); }
-  to { transform: translateX(100%); }
-}
-
-.skeleton-line--sm {
-  width: 40%;
-  height: 12px;
-}
-
-.skeleton-line--md {
-  width: 65%;
-  height: 16px;
-}
-
-.skeleton-line--btn {
-  width: 100px;
-  height: 30px;
-  border-radius: 999px;
-  align-self: flex-end;
-  margin-top: 4px;
-}
-
-/* ---------------------------------------------------------
-   Estado vacío (sin órdenes en absoluto)
---------------------------------------------------------- */
-.misordenes-vacio {
-  text-align: center;
-  padding: 60px 20px;
-  max-width: 320px;
-  margin: 0 auto;
-}
-
-.misordenes-vacio__icon {
-  font-size: 2.6rem;
-  margin-bottom: 12px;
-}
-
-.misordenes-vacio h2 {
-  font-family: 'Manrope', sans-serif;
-  font-weight: 800;
-  font-size: 1.1rem;
-  color: #14182A;
-  margin: 0 0 6px;
-}
-
-.misordenes-vacio p {
-  color: #5B6270;
-  font-size: 0.88rem;
-  margin: 0 0 18px;
-}
-
-.misordenes-vacio__cta {
-  display: inline-block;
-  background: #1B4B8F;
-  color: #FBFAF7;
-  font-weight: 700;
-  padding: 11px 24px;
-  border-radius: 999px;
-  text-decoration: none;
-  font-size: 0.9rem;
-}
-
-/* Estado vacío por filtro (sí hay órdenes, pero ninguna calza el tab) */
-.misordenes-vacio-filtro {
-  text-align: center;
-  color: #5B6270;
-  font-size: 0.9rem;
-  padding: 40px 20px;
-}
-
-.orden-card__envio {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0;
-  font-size: 0.875rem;
-  color: #666;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-/* Opcional: color diferente para delivery gratis */
-.orden-card__envio--gratis {
-  color: #22c55e;
-  font-weight: 500;
-}
-
-/* En el modal */
-.modal-section {
-  margin-bottom: 1.5rem;
-}
-
-.modal-section h3 {
-  font-size: 1rem;
-  margin-bottom: 0.75rem;
-  color: #333;
-}
-
-.modal-info-grid {
+/* ================================================================== */
+/* Columnas de links de texto (patrón desktop de Amazon: bloques de    */
+/* "Preferencias de pedidos" / "Contenido digital" / etc.)             */
+/* ================================================================== */
+.columnas-links {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
+  grid-template-columns: 1fr;
+  gap: 22px;
+  padding: 20px 0 4px;
+  border-top: 1px solid var(--color-border);
 }
 
-.modal-info-item {
+.columna-links ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 9px;
 }
 
-.modal-info-item--full {
-  grid-column: 1 / -1;
+.columna-links a {
+  color: var(--color-brand);
+  text-decoration: none;
+  font-size: 0.87rem;
 }
 
-.modal-label {
-  font-size: 0.75rem;
-  color: #999;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+.columna-links a:hover {
+  text-decoration: underline;
+}
+
+.mi-cuenta__footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 26px;
+  color: var(--color-text-muted);
+  font-size: 0.76rem;
+}
+
+/* --- Carga --- */
+.mi-cuenta__cargando {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 100px 20px;
+  color: var(--color-text-muted);
+}
+
+.mi-cuenta__spinner {
+  animation: girar 0.8s linear infinite;
+  color: var(--color-brand);
+}
+
+@keyframes girar {
+  to { transform: rotate(360deg); }
+}
+
+/* --- Responsive: móvil --- */
+@media (max-width: 560px) {
+  .mi-cuenta {
+    padding: 20px 16px 96px;
+  }
+
+  .orden-card {
+    flex-wrap: wrap;
+  }
+
+  .orden-card__info {
+    order: 1;
+    flex-basis: 60%;
+  }
+
+  .estado-badge {
+    order: 2;
+  }
+
+  .orden-card__monto {
+    order: 3;
+    margin-left: auto;
+  }
+}
+
+/* ================================================================== */
+/* Responsive: escritorio (≥1024px, mismo breakpoint arquitectónico    */
+/* del proyecto donde desaparece el BottomNav)                         */
+/* ================================================================== */
+@media (min-width: 1024px) {
+  .mi-cuenta {
+    padding: 36px 40px 60px;
+  }
+
+  .mi-cuenta__logout {
+    padding: 10px 16px;
+  }
+
+  /* El hub de categorías pasa a grid de 3 columnas, como el desktop de Amazon */
+  .hub-cuenta__grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .hub-card {
+    align-items: flex-start;
+    padding: 20px;
+  }
+
+  /* Las columnas de links pasan de apiladas a 4 columnas lado a lado */
+  .columnas-links {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 28px;
+  }
+
+  /* Los tres bloques de preview pasan de apilados a lado a lado */
+  .mi-cuenta__previews {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .hub-cuenta__grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
