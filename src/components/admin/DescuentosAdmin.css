@@ -741,6 +741,77 @@
     height: 32px;
     font-size: 0.8rem;
   }
+
+  /* --- Tabla → tarjetas: soluciona el desborde horizontal en móvil --- */
+  .table-container {
+    overflow-x: visible;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+
+  .descuentos-table thead {
+    display: none;
+  }
+
+  .descuentos-table,
+  .descuentos-table tbody,
+  .descuentos-table tr {
+    display: block;
+    width: 100%;
+  }
+
+  .descuentos-table tr {
+    background: var(--surface);
+    border: 1px solid var(--slate-200);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 0.75rem;
+    overflow: hidden;
+  }
+
+  .descuentos-table td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--slate-100);
+    text-align: right;
+  }
+
+  .descuentos-table tr td:last-child {
+    border-bottom: none;
+  }
+
+  /* Etiqueta de campo generada desde el atributo data-label del <td> */
+  .descuentos-table td[data-label]::before {
+    content: attr(data-label);
+    font-weight: 600;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--slate-500);
+    text-align: left;
+    flex-shrink: 0;
+  }
+
+  /* Celda de acciones: fila de botones a todo el ancho, más grandes para el dedo */
+  .td-acciones {
+    padding: 0.75rem !important;
+  }
+
+  .td-acciones .acciones-cell {
+    justify-content: stretch;
+    width: 100%;
+  }
+
+  .td-acciones .btn-icon {
+    flex: 1;
+    width: auto;
+    height: 40px;
+    font-size: 1rem;
+  }
 }
 
 @media (max-width: 480px) {
