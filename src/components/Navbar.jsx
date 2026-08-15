@@ -333,9 +333,6 @@ const mostrarBackMovil = RUTAS_CON_BACK_MOVIL_PREFIXES.some(p => location.pathna
     onClose={() => setShowEnvioPanel(false)}
   />
 )}
-                onClose={() => setShowEnvioPanel(false)}
-              />
-            )}
           </div>
 {/* 🆕 Flecha atrás + Pin de envío (SOLO MÓVIL) */}
 <div className="navbar__mobile-pickup mobile-only" ref={mobilePanelRef}>
@@ -740,25 +737,27 @@ const mostrarBackMovil = RUTAS_CON_BACK_MOVIL_PREFIXES.some(p => location.pathna
 // -------------------------------------------------------------
 // COMPONENTE PANEL ENVÍO INTEGRADO
 // -------------------------------------------------------------
-function PanelEnvio({ tipoEnvio, cambiarTipoEnvio, onClose }) {
+function PanelEnvio({
+  tipoEnvio, cambiarTipoEnvio, onClose,
+  direcciones = [], direccionSeleccionada, setDireccionSeleccionada, guardarDireccion, // 🆕
+}) {
   const [formData, setFormData] = useState({
     nombre: '', direccion: '', ciudad: 'Valencia', estado: 'Carabobo',
     telefono_contacto: '', agencia_preferida: '', coordenadas: null
   });
 
-  // Tarifas de delivery exactas
-  const TARIFAS_DELIVERY = {
-    'Valencia': 3,
-    'Naguanagua': 4,
-    'San Diego': 5,
-    'Guacara': 5,
-    'Los Guayos': 5
-  };
+  const TARIFAS_DELIVERY = { Valencia: 3, Naguanagua: 4, 'San Diego': 5, Guacara: 5, 'Los Guayos': 5 };
 
-  const handleGuardar = (e) => {
+  const handleGuardar = async (e) => {
     e.preventDefault();
-    // Aquí conectas con tu función guardarDireccion del contexto
-    console.log("Guardando datos:", formData, "Costo delivery:", TARIFAS_DELIVERY[formData.ciudad]);
+    try {
+      const nuevaDireccion = { ...formData, costo_delivery: TARIFAS_DELIVERY[formData.ciudad] };
+      const guardada = await guardarDireccion(nuevaDireccion); // 🆕 llamada real
+      if (setDireccionSeleccionada) setDireccionSeleccionada(guardada || nuevaDireccion);
+      onClose();
+    } catch (err) {
+      console.error('Error guardando dirección:', err);
+    }
   };
 
   return (
