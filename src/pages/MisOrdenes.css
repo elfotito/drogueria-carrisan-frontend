@@ -24,6 +24,31 @@
   margin: 0 0 16px;
 }
 
+.misordenes-banner-pago {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #EEF3FE;
+  border: 1.5px solid #0052DC;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1A1A3A;
+  text-align: left;
+}
+
+.misordenes-banner-pago__cta {
+  color: #0052DC;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
 .misordenes-error {
   background: #FDECEC;
   color: #B3261E;
