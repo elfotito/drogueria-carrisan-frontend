@@ -323,10 +323,16 @@ const mostrarBackMovil = RUTAS_CON_BACK_MOVIL_PREFIXES.some(p => location.pathna
             </button>
 
             {showEnvioPanel && (
-              <PanelEnvio
-                tipoEnvio={tipoEnvio}
-                cambiarTipoEnvio={cambiarTipoEnvio}
-                // ... pasa el resto de las props necesarias
+  <PanelEnvio
+    tipoEnvio={tipoEnvio}
+    cambiarTipoEnvio={cambiarTipoEnvio}
+    direcciones={direcciones}
+    direccionSeleccionada={direccionSeleccionada}
+    setDireccionSeleccionada={setDireccionSeleccionada}
+    guardarDireccion={guardarDireccion}
+    onClose={() => setShowEnvioPanel(false)}
+  />
+)}
                 onClose={() => setShowEnvioPanel(false)}
               />
             )}
