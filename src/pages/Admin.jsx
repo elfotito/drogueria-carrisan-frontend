@@ -9,6 +9,7 @@ import ProductosAdmin from '../components/admin/ProductosAdmin'
 import UsuariosAdmin from '../components/admin/UsuariosAdmin'
 import EstadoCuentaAdmin from '../components/admin/EstadoCuentaAdmin'
 import DescuentosPanel from '../components/admin/DescuentosAdmin'
+import PagosAdmin from '../components/admin/PagosAdmin'
 
 import './Admin.css'
 
@@ -23,6 +24,7 @@ function Admin() {
     { id: 'productos', nombre: 'Productos', icono: '🛍️' },
     { id: 'ordenes', nombre: 'Órdenes', icono: '📊' },
     { id: 'usuarios', nombre: 'Usuarios', icono: '👤' },
+    { id: 'pagos', nombre: '💵 Pagos', icono: '💰' },
     { id: 'estadoCuenta', nombre: 'Estado de cuenta', icono: '🏦' },
     { id: 'descuentos', nombre: 'Descuentos', icono: '💎' }
   ]
@@ -49,6 +51,7 @@ function Admin() {
       case 'ordenes': return <OrdenesAdmin />
       case 'usuarios': return <UsuariosAdmin />
       case 'estadoCuenta': return <EstadoCuentaAdmin />
+      case 'pagos': return <PagosAdmin />
       case 'descuentos': return <DescuentosPanel />
       default: return <TasaCambio />
     }
