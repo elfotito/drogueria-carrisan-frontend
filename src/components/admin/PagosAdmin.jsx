@@ -119,7 +119,8 @@ function PagosAdmin() {
   }
 
   return (
-    <div className="estado-cuenta-admin">
+    
+<div className="pagos-admin">
       <div className="section-header">
         <div className="header-top">
           <h2>💵 Pagos Reportados</h2>
@@ -138,7 +139,7 @@ function PagosAdmin() {
           <div className="stat-icon">💰</div>
           <div className="stat-info">
             <div className="stat-valor">${formatUSD(stats.totalUsdPendiente)}</div>
-            <div className="stat-label">Monto Pendiente</div>
+            <div className="stat-label stat-pendiente">Monto Pendiente</div>
           </div>
         </div>
       </div>
@@ -230,6 +231,14 @@ function PagosAdmin() {
                       </span>
                     )}
                   </td>
+// columna de órdenes en la tabla:
+<td>
+  <div className="pagos-orden-tags">
+    {reporte.reporte_pago_ordenes?.map(v => (
+      <span key={v.orden_id} className="pagos-orden-tag">#{v.orden_id}</span>
+    ))}
+  </div>
+</td>
                 </tr>
               ))
             )}
@@ -237,6 +246,22 @@ function PagosAdmin() {
         </table>
       </div>
 
+ // comprobante:
+<a href={reporte.url_comprobante} target="_blank" rel="noreferrer" className="pagos-comprobante-link">
+  Ver comprobante
+</a>
+
+// acciones:
+{reporte.estado === 'pendiente_verificacion' ? (
+  <div className="pagos-acciones">
+    <button onClick={() => abrirVerificar(reporte)} className="btn-verificar">✅ Verificar</button>
+    <button onClick={() => abrirRechazar(reporte)} className="btn-rechazar">❌ Rechazar</button>
+  </div>
+) : (
+  <span className={`reporte-badge ${reporte.estado === 'verificado' ? 'verificado' : 'rechazado'}`}>
+    {reporte.estado === 'verificado' ? 'Verificado' : 'Rechazado'}
+  </span>
+)}
       {reporteAbierto && accionEnCurso === 'verificar' && (
         <div className="modal-overlay" onClick={cerrarModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '420px', padding: '1.5rem' }}>
@@ -267,31 +292,29 @@ function PagosAdmin() {
       )}
 
       {reporteAbierto && accionEnCurso === 'rechazar' && (
-        <div className="modal-overlay" onClick={cerrarModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '420px', padding: '1.5rem' }}>
-            <h3 style={{ marginBottom: '1rem' }}>Rechazar pago #{reporteAbierto.id}</h3>
-            <p style={{ marginBottom: '1rem', color: '#475569' }}>
-              La(s) orden(es) volverán a estar disponibles para que el cliente reintente el pago.
-            </p>
-            <div className="input-group">
-              <label>Motivo (opcional)</label>
-              <textarea
-                value={notaRechazo}
-                onChange={(e) => setNotaRechazo(e.target.value)}
-                placeholder="Ej: comprobante ilegible"
-                rows={3}
-                style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '2px solid #cbd5e1' }}
-              />
-            </div>
-            {error && <p style={{ color: '#ef4444', fontSize: '0.875rem', marginTop: '0.5rem' }}>{error}</p>}
-            <div className="form-actions" style={{ marginTop: '1.5rem' }}>
-              <button className="btn-refrescar" onClick={cerrarModal} disabled={procesando}>Cancelar</button>
-              <button className="btn-primary" onClick={confirmarRechazar} disabled={procesando} style={{ background: '#ef4444' }}>
-                {procesando ? 'Rechazando...' : 'Confirmar rechazo'}
-              </button>
-            </div>
-          </div>
-        </div>
+        // modales — reemplaza el contenido interno por .pagos-modal-body:
+<div className="modal-overlay" onClick={cerrarModal}>
+  <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+    <div className="pagos-modal-body">
+      <h3>Verificar pago #{reporteAbierto.id}</h3>
+      <p className="pagos-modal-info">
+        Esto creará la factura y el pago automáticamente, y avanzará la(s) orden(es){' '}
+        {reporteAbierto.reporte_pago_ordenes?.map(v => `#${v.orden_id}`).join(', ')} a "Preparando".
+      </p>
+      <div className="input-group">
+        <label>Número de factura *</label>
+        <input type="text" value={numeroFactura} onChange={(e) => setNumeroFactura(e.target.value)} placeholder="Ej: 00123" autoFocus />
+      </div>
+      {error && <p className="pagos-modal-error">{error}</p>}
+      <div className="form-actions" style={{ marginTop: '1.5rem' }}>
+        <button className="btn-refrescar" onClick={cerrarModal} disabled={procesando}>Cancelar</button>
+        <button className="btn-primary" onClick={confirmarVerificar} disabled={procesando}>
+          {procesando ? 'Verificando...' : 'Confirmar y generar factura'}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
       )}
     </div>
   )
