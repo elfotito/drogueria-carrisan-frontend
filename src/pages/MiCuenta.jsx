@@ -1,712 +1,369 @@
-.mi-cuenta,
-.mi-cuenta *,
-.mi-cuenta *::before,
-.mi-cuenta *::after {
-  box-sizing: border-box;
-}
-
-.mi-cuenta {
-  --color-brand: #0052DC;
-  --color-brand-dark: #1A1A3A;
-  --color-brand-light: #eaf0ff;
-  --color-accent: #12A594;
-  --color-accent-light: #e7f8f5;
-  --color-positive: #15803d;
-  --color-negative: #dc2626;
-  --color-warning: #d97706;
-  --color-bg: #FBFAF7;
-  --color-surface: #ffffff;
-  --color-border: #e7e6e0;
-  --color-text: #1A1A3A;
-  --color-text-muted: #6b6b7a;
-
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 24px 20px 96px;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  color: var(--color-text);
-  background: var(--color-bg);
-  font-variant-numeric: tabular-nums;
-  overflow-x: hidden;
-}
-
-.mi-cuenta h1 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin: 0;
-  letter-spacing: -0.01em;
-}
-
-.mi-cuenta h2 {
-  font-size: 1.1rem;
-  font-weight: 700;
-  margin: 0;
-}
-
-.mi-cuenta h3 {
-  font-size: 0.92rem;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-/* --- Encabezado --- */
-.mi-cuenta__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-}
-
-.mi-cuenta__header-info {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  min-width: 0;
-}
-
-.mi-cuenta__avatar {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--color-brand), var(--color-brand-dark));
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.3rem;
-  font-weight: 700;
-  flex-shrink: 0;
-}
-
-.mi-cuenta__header-info > div {
-  min-width: 0;
-}
-
-.mi-cuenta__email {
-  margin: 2px 0 0;
-  color: var(--color-text-muted);
-  font-size: 0.88rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.mi-cuenta__header-acciones {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
-.mi-cuenta__icono-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  color: var(--color-text);
-  cursor: pointer;
-  text-decoration: none;
-  transition: border-color 0.15s ease, color 0.15s ease;
-}
-
-.mi-cuenta__icono-btn:hover {
-  border-color: var(--color-brand);
-  color: var(--color-brand);
-}
-
-.mi-cuenta__alerta {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: #fef2f2;
-  color: var(--color-negative);
-  border: 1px solid #fecaca;
-  border-radius: 10px;
-  padding: 10px 14px;
-  font-size: 0.85rem;
-  margin-bottom: 16px;
-}
-
-/* ================================================================== */
-/* Modal de confirmación (cerrar sesión)                                */
-/* ================================================================== */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(26, 26, 58, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 20px;
-}
-
-.modal-confirmar {
-  position: relative;
-  background: var(--color-surface);
-  border-radius: 18px;
-  padding: 24px 22px 20px;
-  width: 100%;
-  max-width: 340px;
-  text-align: center;
-}
-
-.modal-confirmar__cerrar {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: none;
-  background: var(--color-bg);
-  color: var(--color-text-muted);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-
-.modal-confirmar h3 {
-  margin: 6px 0 8px;
-  font-size: 1.05rem;
-  font-weight: 700;
-}
-
-.modal-confirmar p {
-  margin: 0 0 20px;
-  font-size: 0.87rem;
-  color: var(--color-text-muted);
-  line-height: 1.4;
-}
-
-.modal-confirmar__acciones {
-  display: flex;
-  gap: 10px;
-}
-
-.modal-confirmar__acciones .btn {
-  flex: 1;
-  justify-content: center;
-}
-
-.btn--secundario {
-  background: var(--color-bg);
-  color: var(--color-text);
-  border: 1px solid var(--color-border);
-}
-
-.btn--peligro {
-  background: var(--color-negative);
-  color: #ffffff;
-}
-
-.btn--peligro:hover {
-  background: #b91c1c;
-}
-
-/* ================================================================== */
-/* Pills de acceso rápido — carrusel horizontal                        */
-/* ================================================================== */
-.accesos-rapidos {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
-  margin-bottom: 22px;
-  padding-bottom: 2px;
-}
-
-.accesos-rapidos::-webkit-scrollbar {
-  display: none;
-}
-
-.accesos-rapidos__item {
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 9px 16px;
-  border-radius: 999px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  color: var(--color-text);
-  text-decoration: none;
-  font-size: 0.83rem;
-  font-weight: 600;
-  white-space: nowrap;
-  transition: border-color 0.15s ease, color 0.15s ease;
-}
-
-.accesos-rapidos__item:hover {
-  border-color: var(--color-brand);
-  color: var(--color-brand);
-}
-
-/* ================================================================== */
-/* Resumen financiero — carrusel de mini estadísticas                  */
-/* ================================================================== */
-.resumen-financiero {
-  margin-bottom: 22px;
-}
-
-.resumen-financiero__titulo {
-  font-size: 1.1rem;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-
-.resumen-financiero__carrusel {
-  display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
-  padding-bottom: 2px;
-}
-
-.resumen-financiero__carrusel::-webkit-scrollbar {
-  display: none;
-}
-
-.stat-card {
-  flex: 0 0 auto;
-  min-width: 148px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 14px;
-  padding: 14px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  text-decoration: none;
-  color: var(--color-text);
-}
-
-.stat-card__label {
-  font-size: 0.76rem;
-  color: var(--color-text-muted);
-  font-weight: 500;
-}
-
-.stat-card__valor {
-  font-size: 1.2rem;
-  font-weight: 700;
-}
-
-.stat-card__valor--rojo {
-  color: var(--color-negative);
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 9px 18px;
-  border-radius: 10px;
-  font-size: 0.88rem;
-  font-weight: 600;
-  border: 1px solid transparent;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.btn--primario {
-  background: var(--color-brand);
-  color: #ffffff;
-}
-
-.btn--primario:hover {
-  background: var(--color-brand-dark);
-}
-
-/* ================================================================== */
-/* Sección "Tus pedidos" — título + flecha (estilo Amazon)              */
-/* ================================================================== */
-.seccion-pedidos {
-  margin-bottom: 22px;
-}
-
-.seccion-pedidos__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.seccion-pedidos__flecha {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-text-muted);
-  flex-shrink: 0;
-  transition: color 0.15s ease;
-}
-
-.seccion-pedidos__flecha:hover {
-  color: var(--color-brand);
-}
-
-.bloque-preview__vacio {
-  text-align: center;
-  padding: 20px 10px 8px;
-  color: var(--color-text-muted);
-  font-size: 0.88rem;
-}
-
-.bloque-preview__vacio p {
-  margin: 0 0 12px;
-}
-
-/* --- Carrusel de MiniOrdenCard: sin bordes ni fondo propio, mismo      */
-/* espaciado que el título de arriba --- */
-.mini-ordenes-carrusel {
-  display: flex;
-  gap: 12px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
-  padding-bottom: 2px;
-}
-
-.mini-ordenes-carrusel::-webkit-scrollbar {
-  display: none;
-}
-
-.mini-orden-card {
-  flex: 0 0 auto;
-  width: 240px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 16px;
-  padding: 14px 16px;
-  text-decoration: none;
-  color: var(--color-text);
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  transition: box-shadow 0.15s ease, transform 0.15s ease;
-}
-
-.mini-orden-card:hover {
-  box-shadow: 0 8px 20px rgba(26, 26, 58, 0.08);
-  transform: translateY(-2px);
-}
-
-.mini-orden-card__top {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.mini-orden-card__icono {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  background: var(--color-brand-light);
-  color: var(--color-brand);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.mini-orden-card__info {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  flex: 1;
-  min-width: 0;
-}
-
-.mini-orden-card__titulo {
-  font-weight: 700;
-  font-size: 0.88rem;
-}
-
-.mini-orden-card__meta {
-  font-size: 0.74rem;
-  color: var(--color-text-muted);
-}
-
-.mini-orden-card__badge {
-  font-size: 0.66rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-  padding: 4px 9px;
-  border-radius: 999px;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.mini-orden-card__bottom {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding-top: 10px;
-  border-top: 1px solid #f0f0eb;
-}
-
-.mini-orden-card__texto {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  min-width: 0;
-}
-
-.mini-orden-card__resena {
-  font-size: 0.74rem;
-  color: var(--color-text-muted);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.mini-orden-card__monto {
-  font-size: 0.92rem;
-  font-weight: 700;
-}
-
-.mini-orden-card__flecha {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background: var(--color-brand-dark);
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-/* ================================================================== */
-/* Hub de categorías (patrón desktop de Amazon: grid de tarjetas       */
-/* con icono, título y descripción — "Tu cuenta"). Oculto en móvil:     */
-/* en móvil se usan las pills de acceso rápido en su lugar.             */
-/* ================================================================== */
-.hub-cuenta--desktop {
-  display: none;
-}
-
-.hub-cuenta {
-  margin: 18px 0 24px;
-}
-
-.hub-cuenta__titulo {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 14px;
-  color: var(--color-text);
-}
-
-.hub-cuenta__titulo svg {
-  color: var(--color-brand);
-}
-
-.hub-cuenta__grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
-}
-
-.hub-card {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 14px;
-  padding: 16px;
-  text-decoration: none;
-  color: var(--color-text);
-  transition: box-shadow 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
-  min-width: 0;
-}
-
-.hub-card:hover {
-  box-shadow: 0 8px 22px rgba(26, 26, 58, 0.08);
-  transform: translateY(-2px);
-  border-color: #c9d8ff;
-}
-
-.hub-card__icono {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: var(--color-brand-light);
-  color: var(--color-brand);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.hub-card__texto {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-}
-
-.hub-card__titulo {
-  font-weight: 700;
-  font-size: 0.95rem;
-}
-
-.hub-card__descripcion {
-  font-size: 0.8rem;
-  color: var(--color-text-muted);
-  line-height: 1.3;
-}
-
-/* ================================================================== */
-/* Columnas de links de texto (patrón desktop de Amazon: bloques de    */
-/* "Preferencias de pedidos" / "Contenido digital" / etc.). Oculto en   */
-/* móvil por ahora.                                                     */
-/* ================================================================== */
-.columnas-links--desktop {
-  display: none;
-}
-
-.columnas-links {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 22px;
-  padding: 20px 0 4px;
-  border-top: 1px solid var(--color-border);
-}
-
-.columna-links ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
-}
-
-.columna-links a {
-  color: var(--color-brand);
-  text-decoration: none;
-  font-size: 0.87rem;
-}
-
-.columna-links a:hover {
-  text-decoration: underline;
-}
-
-/* ================================================================== */
-/* ¿Necesitas ayuda? — cierre de la página                              */
-/* ================================================================== */
-.ayuda-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 14px;
-  padding: 16px 18px;
-  margin-top: 22px;
-  text-decoration: none;
-  color: var(--color-text);
-  font-size: 0.9rem;
-  font-weight: 600;
-  transition: border-color 0.15s ease;
-}
-
-.ayuda-footer:hover {
-  border-color: var(--color-brand);
-  color: var(--color-brand);
-}
-
-.mi-cuenta__footer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  margin-top: 26px;
-  color: var(--color-text-muted);
-  font-size: 0.76rem;
-}
-
-/* --- Carga --- */
-.mi-cuenta__cargando {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 100px 20px;
-  color: var(--color-text-muted);
-}
-
-.mi-cuenta__spinner {
-  animation: girar 0.8s linear infinite;
-  color: var(--color-brand);
-}
-
-@keyframes girar {
-  to { transform: rotate(360deg); }
-}
-
-/* --- Responsive: móvil --- */
-@media (max-width: 560px) {
-  .mi-cuenta {
-    padding: 20px 16px 96px;
-  }
-}
-
-/* ================================================================== */
-/* Responsive: escritorio (≥1024px, mismo breakpoint arquitectónico    */
-/* del proyecto donde desaparece el BottomNav)                         */
-/* ================================================================== */
-@media (min-width: 1024px) {
-  .mi-cuenta {
-    padding: 36px 40px 60px;
+import { useState, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import api from '../api/axios'
+import { useAuth } from '../context/AuthContext'
+import { useFavoritos } from '../context/FavoritosContext'
+import {
+  Package, Wallet, MapPin, Star, Bell, CreditCard, HelpCircle,
+  ChevronRight, Loader2, AlertCircle, LogOut, Settings, ShieldCheck, X,
+} from 'lucide-react'
+import BottomNav from '../components/BottomNav'
+import './MiCuenta.css'
+
+// Dependencia: npm install lucide-react (la misma que usa EstadoCuenta.jsx)
+
+function formatearMonto(valor) {
+  return new Intl.NumberFormat('es-VE', { style: 'currency', currency: 'USD' }).format(valor || 0)
+}
+
+function formatearFecha(fecha) {
+  return new Date(fecha).toLocaleDateString('es-VE', { day: '2-digit', month: 'short', year: 'numeric' })
+}
+
+const ETIQUETAS_ENVIO = {
+  delivery: 'Delivery',
+  envio_nacional: 'Envío nacional',
+  retiro: 'Retiro en tienda',
+}
+
+// Config visual + reseña de cada estado de orden (mismos ids que MisOrdenes.jsx:
+// pedido_creado, procesando, preparando, enviado, entregado, cancelado)
+const ESTADOS_ORDEN = {
+  pedido_creado: { label: 'Pedido creado', color: '#6b6b7a', bg: '#f1f1ea', resena: 'Esperando confirmación de pago' },
+  procesando: { label: 'Procesando', color: '#d97706', bg: '#fff7ed', resena: 'Verificando tu pago' },
+  preparando: { label: 'Preparando', color: '#0052DC', bg: '#eaf0ff', resena: 'Preparando la orden para despacho' },
+  enviado: { label: 'Enviado', color: '#12A594', bg: '#e7f8f5', resena: 'En camino a tu dirección' },
+  entregado: { label: 'Entregado', color: '#15803d', bg: '#f0fdf4', resena: 'Orden lista para retiro' },
+  cancelado: { label: 'Cancelado', color: '#dc2626', bg: '#fef2f2', resena: 'Esta orden fue cancelada' },
+}
+
+function getEstadoOrden(estado) {
+  return ESTADOS_ORDEN[estado] || { label: estado, color: '#6b6b7a', bg: '#f1f1ea', resena: '' }
+}
+
+// Pills de acceso rápido — carrusel horizontal, enlaces más usados
+const ACCESOS_RAPIDOS = [
+  { to: '/mis-items', icono: Star, texto: 'Mis items' },
+  { to: '/orders', icono: Package, texto: 'Mis órdenes' },
+  { to: '/estado-cuenta', icono: Wallet, texto: 'Estado de cuenta' },
+  { to: '/pagos', icono: CreditCard, texto: 'Pagar orden' },
+  { to: '/direcciones', icono: MapPin, texto: 'Direcciones' },
+  { to: '/ayuda', icono: HelpCircle, texto: 'Ayuda' },
+]
+
+// Grid de categorías tipo "hub" (equivalente a la vista de escritorio de Amazon:
+// Tus pedidos / Inicio de sesión / Amazon Prime / etc.) — se usa en desktop
+const HUB_CUENTA = [
+  { to: '/orders', icono: Package, titulo: 'Tus órdenes', descripcion: 'Rastrea, revisa el historial y descarga tus facturas' },
+  { to: '/estado-cuenta', icono: Wallet, titulo: 'Estado de cuenta', descripcion: 'Consulta tu línea de crédito y tu deuda actual' },
+  { to: '/direcciones', icono: MapPin, titulo: 'Direcciones', descripcion: 'Edita o agrega direcciones de entrega' },
+  { to: '/mis-items', icono: Star, titulo: 'Mis items', descripcion: 'Productos y listas que has guardado' },
+  { to: '/notificaciones', icono: Bell, titulo: 'Notificaciones', descripcion: 'Alertas y avisos de tu cuenta' },
+  { to: '/pagos', icono: CreditCard, titulo: 'Pagos', descripcion: 'Métodos de pago y reportes de pago' },
+]
+
+// Columnas de links de texto (equivalente a la parte inferior de la vista de
+// escritorio de Amazon: "Preferencias de pedidos", "Contenido digital", etc.)
+const COLUMNAS_LINKS = [
+  {
+    titulo: 'Cuenta y seguridad',
+    links: [
+      { to: '/cuenta', texto: 'Editar perfil' },
+      { to: '/direcciones', texto: 'Direcciones del usuario' },
+    ],
+  },
+  {
+    titulo: 'Compras',
+    links: [
+      { to: '/orders', texto: 'Mis órdenes' },
+      { to: '/estado-cuenta', texto: 'Estado de cuenta' },
+      { to: '/mis-items', texto: 'Mis items y favoritos' },
+      { to: '/pagos', texto: 'Pagos' },
+    ],
+  },
+  {
+    titulo: 'Soporte',
+    links: [
+      { to: '/ayuda', texto: 'Centro de ayuda' },
+      { to: '/faq', texto: 'Preguntas frecuentes' },
+      { to: '/contacto', texto: 'Contáctanos' },
+      { to: '/notificaciones', texto: 'Notificaciones' },
+    ],
+  },
+  {
+    titulo: 'Legal',
+    links: [
+      { to: '/terminos', texto: 'Términos y condiciones' },
+      { to: '/privacidad', texto: 'Aviso de privacidad' },
+    ],
+  },
+]
+
+// ---------------------------------------------------------
+// MiniOrdenCard — tarjeta compacta para el carrusel de "Tus pedidos",
+// estilo la referencia de envíos (imagen 3): icono, destino/id, badge de
+// estado a la derecha, reseña breve, y flecha "›" sobre círculo oscuro
+// que indica que toda la tarjeta es clickeable hacia el detalle.
+// ---------------------------------------------------------
+function MiniOrdenCard({ orden }) {
+  const estado = getEstadoOrden(orden.estado)
+  return (
+    <Link to={`/orders/${orden.id}`} className="mini-orden-card">
+      <div className="mini-orden-card__top">
+        <div className="mini-orden-card__icono">
+          <Package size={18} />
+        </div>
+        <div className="mini-orden-card__info">
+          <span className="mini-orden-card__titulo">Orden #{orden.id}</span>
+          <span className="mini-orden-card__meta">
+            {ETIQUETAS_ENVIO[orden.tipo_envio] || ETIQUETAS_ENVIO.retiro}
+          </span>
+        </div>
+        <span
+          className="mini-orden-card__badge"
+          style={{ color: estado.color, background: estado.bg }}
+        >
+          {estado.label}
+        </span>
+      </div>
+
+      <div className="mini-orden-card__bottom">
+        <div className="mini-orden-card__texto">
+          <span className="mini-orden-card__resena">{estado.resena}</span>
+          <span className="mini-orden-card__monto">{formatearMonto(orden.total_usd)}</span>
+        </div>
+        <span className="mini-orden-card__flecha">
+          <ChevronRight size={16} />
+        </span>
+      </div>
+    </Link>
+  )
+}
+
+function MiCuenta() {
+  const { user, logout } = useAuth()
+  const navigate = useNavigate()
+  const { favoritos, loading: cargandoFav } = useFavoritos()
+  const [estadoCuenta, setEstadoCuenta] = useState(null)
+  const [ultimasOrdenes, setUltimasOrdenes] = useState([])
+  const [cargando, setCargando] = useState(true)
+  const [error, setError] = useState('')
+  const [confirmandoLogout, setConfirmandoLogout] = useState(false)
+
+  async function cargarDatos() {
+    try {
+      const { data: dataCuenta } = await api.get(`/clientes/${user.id}/estado-cuenta`)
+      setEstadoCuenta(dataCuenta)
+
+      const { data: dataOrdenes } = await api.get('/orders')
+      setUltimasOrdenes(dataOrdenes.slice(0, 5))
+    } catch (err) {
+      setError('No se pudieron cargar los datos de tu cuenta')
+      console.error(err)
+    } finally {
+      setCargando(false)
+    }
   }
 
-  /* El hub de categorías y las columnas de links solo se muestran en    */
-  /* escritorio; en móvil su función la cumplen las pills de arriba.     */
-  .hub-cuenta--desktop {
-    display: block;
+  useEffect(() => {
+    cargarDatos()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  if (cargando) {
+    return (
+      <div className="mi-cuenta__cargando">
+        <Loader2 className="mi-cuenta__spinner" size={28} />
+        <p>Cargando tu cuenta…</p>
+      </div>
+    )
   }
 
-  .columnas-links--desktop {
-    display: grid;
-  }
+  const resumen = estadoCuenta?.resumen
+  const inicial = (user.nombre || user.email || '?').charAt(0).toUpperCase()
+  const previewFavoritos = (favoritos || []).slice(0, 4)
+  const pedidosPendientes = ultimasOrdenes.filter(
+    (o) => o.estado && !['entregado', 'cancelado'].includes(o.estado)
+  ).length
 
-  /* El hub de categorías pasa a grid de 3 columnas, como el desktop de Amazon */
-  .hub-cuenta__grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-  }
+  return (
+    <div className="mi-cuenta">
+      <header className="mi-cuenta__header">
+        <div className="mi-cuenta__header-info">
+          <div className="mi-cuenta__avatar">{inicial}</div>
+          <div>
+            <h1>Hola, {user.nombre || 'Usuario'}</h1>
+            <p className="mi-cuenta__email">{user.email}</p>
+          </div>
+        </div>
+        <div className="mi-cuenta__header-acciones">
+          <Link to="/notificaciones" className="mi-cuenta__icono-btn" aria-label="Notificaciones">
+            <Bell size={20} />
+          </Link>
+          <button
+            type="button"
+            className="mi-cuenta__icono-btn"
+            aria-label="Cerrar sesión"
+            onClick={() => setConfirmandoLogout(true)}
+          >
+            <LogOut size={20} />
+          </button>
+        </div>
+      </header>
 
-  .hub-card {
-    align-items: flex-start;
-    padding: 20px;
-  }
+      {confirmandoLogout && (
+        <div className="modal-overlay" onClick={() => setConfirmandoLogout(false)}>
+          <div className="modal-confirmar" onClick={(e) => e.stopPropagation()}>
+            <button
+              type="button"
+              className="modal-confirmar__cerrar"
+              aria-label="Cerrar"
+              onClick={() => setConfirmandoLogout(false)}
+            >
+              <X size={16} />
+            </button>
+            <h3>¿Cerrar sesión?</h3>
+            <p>Tendrás que iniciar sesión de nuevo para acceder a tu cuenta.</p>
+            <div className="modal-confirmar__acciones">
+              <button
+                type="button"
+                className="btn btn--secundario"
+                onClick={() => setConfirmandoLogout(false)}
+              >
+                Cancelar
+              </button>
+              <button type="button" className="btn btn--peligro" onClick={logout}>
+                Cerrar sesión
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
-  /* Las columnas de links pasan de apiladas a 4 columnas lado a lado */
-  .columnas-links {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 28px;
-  }
+      {error && (
+        <div className="mi-cuenta__alerta">
+          <AlertCircle size={16} /> {error}
+        </div>
+      )}
+
+      {/* ---------------------------------------------------------------- */}
+      {/* Pills de acceso rápido — carrusel horizontal con los enlaces      */}
+      {/* más usados de la cuenta                                          */}
+      {/* ---------------------------------------------------------------- */}
+      <div className="accesos-rapidos">
+        {ACCESOS_RAPIDOS.map(({ to, icono: Icono, texto }) => (
+          <Link key={to} to={to} className="accesos-rapidos__item">
+            <Icono size={16} /> {texto}
+          </Link>
+        ))}
+      </div>
+
+      {/* ---------------------------------------------------------------- */}
+      {/* Resumen financiero — carrusel de mini estadísticas                */}
+      {/* ---------------------------------------------------------------- */}
+      <section className="resumen-financiero">
+        <h2 className="resumen-financiero__titulo">Resumen Financiero</h2>
+        <div className="resumen-financiero__carrusel">
+          <Link to="/estado-cuenta" className="stat-card">
+            <span className="stat-card__label">Línea de crédito</span>
+            <strong className="stat-card__valor">{formatearMonto(resumen?.linea_credito)}</strong>
+          </Link>
+          <Link to="/estado-cuenta" className="stat-card">
+            <span className="stat-card__label">Deuda actual</span>
+            <strong className={`stat-card__valor ${resumen?.deuda_actual > 0 ? 'stat-card__valor--rojo' : ''}`}>
+              {formatearMonto(resumen?.deuda_actual)}
+            </strong>
+          </Link>
+          <Link to="/orders" className="stat-card">
+            <span className="stat-card__label">Pedidos pendientes</span>
+            <strong className="stat-card__valor">{pedidosPendientes}</strong>
+          </Link>
+          <Link to="/mis-items" className="stat-card">
+            <span className="stat-card__label">Favoritos guardados</span>
+            <strong className="stat-card__valor">{(favoritos || []).length}</strong>
+          </Link>
+        </div>
+      </section>
+
+      {/* ---------------------------------------------------------------- */}
+      {/* Tus pedidos — título + flecha (estilo Amazon), carrusel de        */}
+      {/* MiniOrdenCard sin bordes ni fondo propio                          */}
+      {/* ---------------------------------------------------------------- */}
+      <section className="seccion-pedidos">
+        <div className="seccion-pedidos__header">
+          <h2>Tus pedidos</h2>
+          <Link to="/orders" className="seccion-pedidos__flecha" aria-label="Ver todos los pedidos">
+            <ChevronRight size={20} />
+          </Link>
+        </div>
+
+        {ultimasOrdenes.length === 0 ? (
+          <div className="bloque-preview__vacio">
+            <p>Parece que no tienes pedidos recientes</p>
+            <Link to="/catalogo" className="btn btn--primario">Ir al catálogo</Link>
+          </div>
+        ) : (
+          <div className="mini-ordenes-carrusel">
+            {ultimasOrdenes.map((orden) => (
+              <MiniOrdenCard key={orden.id} orden={orden} />
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* ---------------------------------------------------------------- */}
+      {/* Grid de categorías tipo "hub" — solo visible en escritorio,       */}
+      {/* equivalente a la vista de Amazon (Tus pedidos / Prime / etc.)     */}
+      {/* ---------------------------------------------------------------- */}
+      <section className="hub-cuenta hub-cuenta--desktop">
+        <h2 className="hub-cuenta__titulo"><Settings size={18} /> Tu cuenta</h2>
+        <div className="hub-cuenta__grid">
+          {HUB_CUENTA.map(({ to, icono: Icono, titulo, descripcion }) => (
+            <Link key={to} to={to} className="hub-card">
+              <div className="hub-card__icono"><Icono size={22} /></div>
+              <div className="hub-card__texto">
+                <span className="hub-card__titulo">{titulo}</span>
+                <span className="hub-card__descripcion">{descripcion}</span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* ---------------------------------------------------------------- */}
+      {/* Columnas de links de texto — solo visible en escritorio           */}
+      {/* ---------------------------------------------------------------- */}
+      <section className="columnas-links columnas-links--desktop">
+        {COLUMNAS_LINKS.map((columna) => (
+          <div key={columna.titulo} className="columna-links">
+            <h3>{columna.titulo}</h3>
+            <ul>
+              {columna.links.map((link) => (
+                <li key={link.to}>
+                  <Link to={link.to}>{link.texto}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </section>
+
+      {/* ---------------------------------------------------------------- */}
+      {/* ¿Necesitas ayuda? — cierre de la página, enlaza a contacto        */}
+      {/* ---------------------------------------------------------------- */}
+      <Link to="/contacto" className="ayuda-footer">
+        <span>¿Necesitas ayuda? Contacta con nosotros</span>
+        <ChevronRight size={18} />
+      </Link>
+
+      <div className="mi-cuenta__footer">
+        <ShieldCheck size={14} />
+        <span>Droguería Carrisán · Tu información está protegida</span>
+      </div>
+
+      <BottomNav />
+    </div>
+  )
 }
 
-@media (min-width: 1280px) {
-  .hub-cuenta__grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
+export default MiCuenta
