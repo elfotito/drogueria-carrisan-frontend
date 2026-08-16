@@ -43,12 +43,15 @@ function AgregarDireccionModal({ isOpen, onClose, tipo, guardarDireccion, onGuar
       onOpenChange={(e) => { if (!e.open) onClose() }}
       size={{ base: 'full', md: 'lg' }}
       placement="center"
-      scrollBehavior="inside"
+closeOnInteractOutside={false}
     >
       <Portal>
         <Dialog.Backdrop />
         <Dialog.Positioner>
-          <Dialog.Content maxH={{ base: '100dvh', md: '85vh' }} borderRadius={{ base: 0, md: '16px' }}>
+          <Dialog.Content maxH={{ base: '100dvh', md: '85vh' }} borderRadius={{ base: 0, md: '16px' }}
+display="flex"
+        flexDirection="column"
+        overflow="hidden">
             <Dialog.Header>
               <Dialog.Title>
                 {tipo === 'delivery' ? 'Agregar dirección de delivery' : 'Agregar destino de envío nacional'}
