@@ -770,3 +770,46 @@ body {
     justify-content: center;
   }
 }
+
+/* Modales genéricos (verificar/rechazar pagos, y reutilizable a futuro) */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 1rem;
+}
+
+.modal-content {
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.input-group textarea {
+  border: 2px solid var(--gray-300);
+  border-radius: var(--radius);
+  padding: 0.75rem;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  transition: border-color 0.2s;
+}
+
+.input-group textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    max-width: 100%;
+  }
+}
