@@ -1,8 +1,19 @@
 import axios from 'axios';
 
+let loadingBarHooks = { start: () => {}, finish: () => {} }
+export function registerLoadingBar(hooks) { loadingBarHooks = hooks }
+
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
 });
+
+api.interceptors.request.use((config) => {
+  loadingBarHooks.start()
+  return config
+})
+api.interceptors.response.use(
+  (res) => { loadingBarHooks.finish(); return res },
+  (err) => { loadingBarHooks.finish(); return Promise.reject(err) }
 
 // Interceptor: agrega el token JWT automáticamente a cada request si existe
 api.interceptors.request.use((config) => {
