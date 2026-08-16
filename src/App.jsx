@@ -5,6 +5,7 @@ import { EnvioProvider } from './context/EnvioContext'
 import { FavoritosProvider } from './context/FavoritosContext'
 import { LoadingBarProvider, useLoadingBar } from './context/LoadingBarContext'
 import { registerLoadingBar } from './api/axios'
+import { useEffect } from 'react'
 import TopLoadingBar from './components/TopLoadingBar'
 import Navbar from './components/Navbar'
 import ScrollToTop from './components/ScrollToTop'
@@ -52,8 +53,8 @@ function App() {
           <EnvioProvider>
             <ScrollToTop />
              <LoadingBarProvider>
-              <LoadingBarBridge />
           <Navbar />
+              <LoadingBarBridge />
           <Routes>
 <Route path="/" element={<Landing />} />
             <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
