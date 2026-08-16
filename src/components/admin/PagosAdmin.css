@@ -1,0 +1,150 @@
+/* ============================================
+   PAGOS ADMIN — reutiliza .stat-card, .table-container,
+   .estado-cuenta-table, .cliente-cell, .monto-cell,
+   .btn-detalle, .sin-resultados, .empty-state de
+   EstadoCuentaAdmin.css (mismo lenguaje visual)
+   ============================================ */
+
+.pagos-admin {
+  max-width: 1400px;
+}
+
+.pagos-admin .section-header {
+  margin-bottom: 1.5rem;
+}
+
+/* Reusa .stats-grid / .stat-card / .stat-icon / .stat-valor / .stat-label
+   de EstadoCuentaAdmin.css tal cual — solo agregamos el color de icono
+   para la nueva tarjeta "pendientes" si hace falta distinguirla */
+.stat-pendiente .stat-icon {
+  background: var(--warning-light);
+}
+
+/* Acciones dentro de la tabla */
+.pagos-acciones {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-verificar {
+  background: var(--success-light);
+  color: #065f46;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-verificar:hover {
+  background: var(--success);
+  color: white;
+}
+
+.btn-rechazar {
+  background: var(--danger-light);
+  color: #991b1b;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-rechazar:hover {
+  background: var(--danger);
+  color: white;
+}
+
+/* Badge de estado del reporte (reusa forma de .deuda-badge) */
+.reporte-badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.reporte-badge.verificado {
+  background: var(--success-light);
+  color: #065f46;
+}
+
+.reporte-badge.rechazado {
+  background: var(--danger-light);
+  color: #991b1b;
+}
+
+.reporte-badge.pendiente {
+  background: var(--warning-light);
+  color: #92400e;
+}
+
+.pagos-orden-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.pagos-orden-tag {
+  background: var(--gray-100);
+  color: var(--gray-700);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-family: 'Courier New', monospace;
+}
+
+.pagos-comprobante-link {
+  color: var(--primary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.pagos-comprobante-link:hover {
+  text-decoration: underline;
+}
+
+/* ============ MODAL VERIFICAR/RECHAZAR ============ */
+.pagos-modal-body {
+  padding: 1.5rem;
+}
+
+.pagos-modal-body h3 {
+  font-size: 1.15rem;
+  color: var(--dark);
+  margin-bottom: 0.75rem;
+}
+
+.pagos-modal-info {
+  color: var(--gray-600);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 1.25rem;
+}
+
+.pagos-modal-error {
+  color: var(--danger);
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 768px) {
+  .pagos-acciones {
+    flex-direction: column;
+  }
+
+  .pagos-modal-body {
+    padding: 1.25rem;
+  }
+}
