@@ -370,12 +370,12 @@ body {
 /* ============================================ */
 /* BUSCADOR (Lupa centrada y Sugerencias)       */
 /* ============================================ */
+
+
 .navbar__search-wrapper {
   flex: 1;
   min-width: 0;
-  position: relative;
-  padding-left: 15px;
-  padding-right: 15px;
+  transition: max-width 0.25s ease, padding-left 0.25s ease;
 }
 
 .navbar__search {
@@ -1164,7 +1164,7 @@ body {
 
 .mobile-back-btn,
 .mobile-pin-btn {
-  background: rgba(0, 0, 0, 0.2);
+  background: transparent;
   border: none;
   color: white;
   width: 36px;
@@ -1217,4 +1217,16 @@ body {
 .envio-direccion-item.active {
   border-color: var(--wm-blue);
   background: #f0f4ff;
+}
+
+@media (max-width: 1023px) {
+  .navbar__search-wrapper {
+    padding-left: 0;
+    padding-right: 6px;
+  }
+
+  .navbar__cart {
+    padding: 6px;
+    padding-right: 6px;
+  }
 }
