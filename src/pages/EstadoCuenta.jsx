@@ -110,12 +110,13 @@ export default function EstadoCuenta() {
   }
 
   const historial = useMemo(() => {
-    if (!datos) return []
-    return [
-      ...datos.facturas.map(f => ({ ...f, tipo: 'factura' })),
-      ...datos.pagos.map(p => ({ ...p, tipo: 'pago' }))
-    ].sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-  }, [datos])
+  if (!datos) return []
+  return [
+    ...datos.ordenes_pendientes.map(o => ({ ...o, tipo: 'orden_pendiente' })),
+    ...datos.facturas.map(f => ({ ...f, tipo: 'factura' })),
+    ...datos.pagos.map(p => ({ ...p, tipo: 'pago' }))
+  ].sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+}, [datos])
 
   const historialFiltrado = useMemo(() => {
     return historial.filter((mov) => {
@@ -295,13 +296,20 @@ export default function EstadoCuenta() {
               <ul className="ec-movimientos__lista">
                 {movimientos.map((mov) => (
                   <li key={`${mov.tipo}-${mov.id}`} className="ec-movimiento">
-                    <div className={`ec-movimiento__icono ${mov.tipo === 'factura' ? 'ec-movimiento__icono--factura' : 'ec-movimiento__icono--pago'}`}>
-                      {mov.tipo === 'factura' ? <FileText size={18} /> : <DollarSign size={18} />}
-                    </div>
-                    <div className="ec-movimiento__info">
-                      <span className="ec-movimiento__titulo">
-                        {mov.tipo === 'factura' ? `Factura #${mov.numero_factura}` : `Pago #${mov.id}`}
-                      </span>
+                    <div className={`ec-movimiento__icono ec-movimiento__icono--${mov.tipo === 'factura' ? 'factura' : mov.tipo === 'pago' ? 'pago' : 'orden'}`}>
+  {mov.tipo === 'factura' ? <FileText size={18} /> : mov.tipo === 'pago' ? <DollarSign size={18} /> : <Package size={18} />}
+</div>
+<div className="ec-movimiento__info">
+  <span className="ec-movimiento__titulo">
+    {mov.tipo === 'factura' ? `Factura #${mov.numero_factura}` : mov.tipo === 'pago' ? `Pago #${mov.id}` : `Orden #${mov.id}`}
+  </span>
+  <span className={`ec-badge ec-badge--${mov.tipo === 'orden_pendiente' ? 'pendiente' : (mov.estado || 'registrado')}`}>
+    {mov.tipo === 'orden_pendiente' ? 'por pagar' : (mov.estado || 'registrado')}
+  </span>
+</div>
+<strong className={`ec-movimiento__monto ${mov.tipo === 'pago' ? 'ec-movimiento__monto--verde' : 'ec-movimiento__monto--rojo'}`}>
+  {mov.tipo === 'pago' ? '+' : '-'}{formatearMonto(mov.monto_facturado || mov.monto || mov.total_usd)}
+</strong>
                       <span className={`ec-badge ec-badge--${mov.tipo === 'factura' ? (mov.estado || 'pendiente') : 'registrado'}`}>
                         {mov.tipo === 'factura' ? (mov.estado || 'pendiente') : 'registrado'}
                       </span>
