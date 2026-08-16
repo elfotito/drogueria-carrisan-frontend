@@ -24,7 +24,7 @@ function EstadoCuentaAdmin() {
   async function cargarClientes() {
     try {
       setCargando(true)
-      const { data } = await api.get('/clientes/estado-cuenta')
+      const { data } = await api.get('/estado-cuenta')
       setClientes(data)
     } catch (err) {
       setError('No se pudo cargar el estado de cuenta')
