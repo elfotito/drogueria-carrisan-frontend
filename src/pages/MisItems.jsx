@@ -76,7 +76,7 @@ function CarruselSkeleton() {
 function ItemsCard({ producto, cantidadEnCarrito, onAgregar, onQuitar, mostrarQuitar, badge }) {
   return (
     <div className="itemcard">
-      <div className="itemcard__media">
+      <Link to={`/producto/${producto?.id}`} className="itemcard__media">
         {producto?.foto_url ? (
           <img src={producto.foto_url} alt={producto.nombre_comercial} loading="lazy" />
         ) : (
@@ -89,24 +89,27 @@ function ItemsCard({ producto, cantidadEnCarrito, onAgregar, onQuitar, mostrarQu
           <button
             type="button"
             className="itemcard__quitar"
-            onClick={onQuitar}
+            onClick={(e) => { e.preventDefault(); onQuitar() }}
             aria-label="Quitar de la lista"
           >
             ✕
           </button>
         )}
+      </Link>
+
+      <div className="itemcard__body">
+        <p className="itemcard__nombre">{producto?.nombre_comercial}</p>
+        <div className="itemcard__footer">
+          <p className="itemcard__precio">${formatUSD(producto?.precio_usd)}</p>
+          <button
+            type="button"
+            className={`itemcard__cta ${cantidadEnCarrito ? 'itemcard__cta--cantidad' : ''}`}
+            onClick={onAgregar}
+          >
+            {cantidadEnCarrito ? cantidadEnCarrito : '+ Agregar'}
+          </button>
+        </div>
       </div>
-
-      <button
-        type="button"
-        className={`itemcard__cta ${cantidadEnCarrito ? 'itemcard__cta--cantidad' : ''}`}
-        onClick={onAgregar}
-      >
-        {cantidadEnCarrito ? cantidadEnCarrito : '+ Agregar'}
-      </button>
-
-      <p className="itemcard__precio">${formatUSD(producto?.precio_usd)}</p>
-      <p className="itemcard__nombre">{producto?.nombre_comercial}</p>
     </div>
   )
 }
@@ -134,7 +137,7 @@ function Modal({ titulo, onCerrar, children }) {
 // ---------------------------------------------------------
 // Carrusel de listas ("Listas y listas de regalos")
 // ---------------------------------------------------------
-function CarruselListas({ listas, cargando, onCrearNueva }) {
+function CarruselListas({ listas, cargando, onCrearNueva, onEliminar }) {
   return (
     <section className="carrusel-listas">
       <div className="carrusel-listas__header">
@@ -158,12 +161,24 @@ function CarruselListas({ listas, cargando, onCrearNueva }) {
       ) : (
         <div className="carrusel-listas__scroll">
           {listas.map((lista) => (
-            <Link key={lista.id} to={`/listas/${lista.id}`} className="lista-chip">
-              <span className="lista-chip__icon">
-                {lista.es_predeterminada ? '📌' : '📋'}
-              </span>
-              <span className="lista-chip__nombre">{lista.nombre}</span>
-            </Link>
+            <div key={lista.id} className="lista-chip-wrap">
+              {!lista.es_predeterminada && (
+                <button
+                  type="button"
+                  className="lista-chip__eliminar"
+                  onClick={(e) => { e.preventDefault(); onEliminar(lista) }}
+                  aria-label={`Eliminar lista ${lista.nombre}`}
+                >
+                  ✕
+                </button>
+              )}
+              <Link to={`/listas/${lista.id}`} className="lista-chip">
+                <span className="lista-chip__icon">
+                  {lista.es_predeterminada ? '📌' : '📋'}
+                </span>
+                <span className="lista-chip__nombre">{lista.nombre}</span>
+              </Link>
+            </div>
           ))}
           <button type="button" className="lista-chip lista-chip--nueva" onClick={onCrearNueva}>
             <span className="lista-chip__icon">+</span>
@@ -172,6 +187,83 @@ function CarruselListas({ listas, cargando, onCrearNueva }) {
         </div>
       )}
     </section>
+  )
+}
+
+// ---------------------------------------------------------
+// Buscador simple para el modal "Agregar producto": sin botón de
+// buscar, muestra resultados en vivo con debounce (mismo patrón que
+// BuscadorMovil.jsx) y al tocar un resultado ejecuta onSeleccionar.
+// ---------------------------------------------------------
+function BuscadorProducto({ onSeleccionar }) {
+  const [query, setQuery] = useState('')
+  const [resultados, setResultados] = useState([])
+  const [buscando, setBuscando] = useState(false)
+
+  useEffect(() => {
+    if (query.trim().length < 1) {
+      setResultados([])
+      return
+    }
+    setBuscando(true)
+    const debounce = setTimeout(async () => {
+      try {
+        const { data } = await api.get(`/products?search=${encodeURIComponent(query.trim())}&limit=8`)
+        setResultados(data.slice(0, 8))
+      } catch {
+        setResultados([])
+      } finally {
+        setBuscando(false)
+      }
+    }, 250)
+    return () => clearTimeout(debounce)
+  }, [query])
+
+  return (
+    <div className="buscador-producto">
+      <div className="misitems-buscador buscador-producto__input">
+        <IconoBuscar />
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Buscar producto por nombre…"
+          autoFocus
+        />
+      </div>
+
+      {buscando && <p className="buscador-producto__estado">Buscando…</p>}
+
+      {!buscando && query.trim().length > 0 && resultados.length === 0 && (
+        <p className="buscador-producto__estado">No se encontraron productos para "{query}".</p>
+      )}
+
+      {resultados.length > 0 && (
+        <ul className="buscador-producto__resultados">
+          {resultados.map((producto) => (
+            <li key={producto.id}>
+              <button
+                type="button"
+                className="buscador-producto__resultado"
+                onClick={() => onSeleccionar(producto)}
+              >
+                <span className="buscador-producto__resultado-media">
+                  {producto.foto_url ? (
+                    <img src={producto.foto_url} alt={producto.nombre_comercial} loading="lazy" />
+                  ) : (
+                    <span className="itemcard__media-placeholder">Sin imagen</span>
+                  )}
+                </span>
+                <span className="buscador-producto__resultado-info">
+                  <span className="buscador-producto__resultado-nombre">{producto.nombre_comercial}</span>
+                  <span className="buscador-producto__resultado-precio">${formatUSD(producto.precio_usd)}</span>
+                </span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   )
 }
 
@@ -187,6 +279,8 @@ function TabMisItems() {
   const [nuevoNombre, setNuevoNombre] = useState('')
   const [mostrarCrear, setMostrarCrear] = useState(false)
   const [creando, setCreando] = useState(false)
+
+  const [mostrarAgregarProducto, setMostrarAgregarProducto] = useState(false)
 
   const [busqueda, setBusqueda] = useState('')
   const [lineaActiva, setLineaActiva] = useState('todo')
@@ -223,6 +317,16 @@ function TabMisItems() {
     }
   }
 
+  async function eliminarLista(lista) {
+    if (!confirm(`¿Eliminar la lista "${lista.nombre}"?`)) return
+    try {
+      await api.delete(`/lists/${lista.id}`)
+      setListas((prev) => prev.filter((l) => l.id !== lista.id))
+    } catch {
+      alert('No se pudo eliminar la lista')
+    }
+  }
+
   const nombresExistentes = listas.map((l) => l.nombre.toLowerCase())
   const sugerenciasDisponibles = LISTAS_SUGERIDAS.filter(
     (s) => !nombresExistentes.includes(s.nombre.toLowerCase())
@@ -256,10 +360,6 @@ function TabMisItems() {
     return resultado
   }, [favoritos, lineaActiva, busqueda])
 
-  function agregarTodos() {
-    itemsFiltrados.forEach((producto) => addItem(producto, 1))
-  }
-
   const cargando = cargandoFav
 
   return (
@@ -268,23 +368,8 @@ function TabMisItems() {
         listas={listas}
         cargando={cargandoListas}
         onCrearNueva={() => setMostrarCrear(true)}
+        onEliminar={eliminarLista}
       />
-
-      {!cargandoListas && sugerenciasDisponibles.length > 0 && (
-        <div className="sugerencias-carousel">
-          {sugerenciasDisponibles.map((s) => (
-            <button
-              key={s.nombre}
-              type="button"
-              className="sugerencia-chip"
-              onClick={() => crearLista(s.nombre)}
-            >
-              <span className="sugerencia-chip__icon">{s.icon}</span>
-              <span>{s.nombre}</span>
-            </button>
-          ))}
-        </div>
-      )}
 
       <section className="misitems-section misitems-section--favoritos">
         <div className="misitems-section__header">
@@ -296,12 +381,15 @@ function TabMisItems() {
               </p>
             )}
           </div>
-          {!cargando && favoritos.length > 0 && (
-            <button type="button" className="misitems-agregar-todos" onClick={agregarTodos}>
-              + Agregar producto
-            </button>
-          )}
+          <button
+            type="button"
+            className="misitems-agregar-todos"
+            onClick={() => setMostrarAgregarProducto(true)}
+          >
+            + Agregar producto
+          </button>
         </div>
+
 
         {!cargando && favoritos.length > 0 && (
           <div className="favoritos-layout">
@@ -445,6 +533,23 @@ function TabMisItems() {
             autoFocus
             onKeyDown={(e) => e.key === 'Enter' && crearLista(nuevoNombre)}
           />
+
+          {sugerenciasDisponibles.length > 0 && (
+            <div className="misitems-modal__sugerencias">
+              {sugerenciasDisponibles.map((s) => (
+                <button
+                  key={s.nombre}
+                  type="button"
+                  className="sugerencia-chip"
+                  onClick={() => setNuevoNombre(s.nombre)}
+                >
+                  <span className="sugerencia-chip__icon">{s.icon}</span>
+                  <span>{s.nombre}</span>
+                </button>
+              ))}
+            </div>
+          )}
+
           <p className="misitems-modal__nota">
             Utiliza listas para guardar artículos para más adelante. Todas las listas son privadas a menos que las compartas con otras personas.
           </p>
@@ -502,6 +607,19 @@ function TabMisItems() {
           </div>
         </Modal>
       )}
+
+      {/* Modal: Agregar producto (buscador en vivo → agrega a favoritos) */}
+      {mostrarAgregarProducto && (
+        <Modal titulo="Agregar producto" onCerrar={() => setMostrarAgregarProducto(false)}>
+          <BuscadorProducto
+            onSeleccionar={async (producto) => {
+              const yaEsFavorito = favoritos.some((f) => f.id === producto.id)
+              if (!yaEsFavorito) await toggleFavorito(producto)
+              setMostrarAgregarProducto(false)
+            }}
+          />
+        </Modal>
+      )}
     </>
   )
 }
@@ -511,7 +629,7 @@ function TabMisItems() {
 // Se arma a partir del historial real de órdenes del usuario
 // (GET /orders, que ya incluye ordenes_items con producto_id).
 // Por cada producto único comprado se consulta su ficha actual
-// (GET /productos/:id) para tener precio y foto vigentes.
+// (GET /products/:id) para tener precio y foto vigentes.
 // ---------------------------------------------------------
 function TabComprarDeNuevo() {
   const { items: cartItems, addItem } = useCart()
@@ -550,7 +668,7 @@ function TabComprarDeNuevo() {
       }
 
       const resultados = await Promise.allSettled(
-        idsUnicos.map((id) => api.get(`/productos/${id}`))
+        idsUnicos.map((id) => api.get(`/products/${id}`))
       )
 
       const productosConDatos = resultados
