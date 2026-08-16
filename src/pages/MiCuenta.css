@@ -6,26 +6,29 @@
 }
 
 .mi-cuenta {
-  --color-brand: #0f766e;
-  --color-brand-light: #f0fdfa;
+  --color-brand: #0052DC;
+  --color-brand-dark: #1A1A3A;
+  --color-brand-light: #eaf0ff;
+  --color-accent: #12A594;
+  --color-accent-light: #e7f8f5;
   --color-positive: #15803d;
   --color-negative: #dc2626;
   --color-warning: #d97706;
-  --color-bg: #f7f9f9;
+  --color-bg: #FBFAF7;
   --color-surface: #ffffff;
-  --color-border: #e4e9e7;
-  --color-text: #1f2a2e;
-  --color-text-muted: #6b7a7d;
+  --color-border: #e7e6e0;
+  --color-text: #1A1A3A;
+  --color-text-muted: #6b6b7a;
 
   width: 100%;
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 24px 20px 60px;
+  padding: 24px 20px 96px;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   color: var(--color-text);
   background: var(--color-bg);
   font-variant-numeric: tabular-nums;
-  overflow-x: hidden; /* red de seguridad: nada dentro debería poder empujar la página */
+  overflow-x: hidden;
 }
 
 .mi-cuenta h1 {
@@ -38,22 +41,37 @@
 .mi-cuenta h2 {
   font-size: 1.1rem;
   font-weight: 700;
-  margin: 0 0 12px;
+  margin: 0;
+}
+
+.mi-cuenta h3 {
+  font-size: 0.92rem;
+  font-weight: 700;
+  margin: 0 0 10px;
 }
 
 /* --- Encabezado --- */
 .mi-cuenta__header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 14px;
   margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.mi-cuenta__header-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
 }
 
 .mi-cuenta__avatar {
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #0f766e, #14b8a6);
+  background: linear-gradient(135deg, var(--color-brand), var(--color-brand-dark));
   color: #ffffff;
   display: flex;
   align-items: center;
@@ -63,8 +81,8 @@
   flex-shrink: 0;
 }
 
-.mi-cuenta__header > div {
-  min-width: 0; /* permite que el email largo se trunque en vez de empujar */
+.mi-cuenta__header-info > div {
+  min-width: 0;
 }
 
 .mi-cuenta__email {
@@ -74,6 +92,33 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.mi-cuenta__header-acciones {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.mi-cuenta__icono-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  cursor: pointer;
+  text-decoration: none;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.mi-cuenta__icono-btn:hover {
+  border-color: var(--color-brand);
+  color: var(--color-brand);
 }
 
 .mi-cuenta__alerta {
@@ -89,78 +134,103 @@
   margin-bottom: 16px;
 }
 
-/* --- Franja financiera --- */
-.franja-financiera {
+/* ================================================================== */
+/* Modal de confirmación (cerrar sesión)                                */
+/* ================================================================== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 26, 58, 0.45);
   display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  margin-bottom: 16px;
-  padding-bottom: 2px;
-  scrollbar-width: none; /* Firefox */
-  -webkit-overflow-scrolling: touch;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
 }
 
-.franja-financiera::-webkit-scrollbar {
-  display: none; /* Chrome/Safari */
-}
-
-.franja-financiera__item {
-  flex: 1 0 auto;
-  min-width: 140px;
+.modal-confirmar {
+  position: relative;
   background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  padding: 12px 16px;
+  border-radius: 18px;
+  padding: 24px 22px 20px;
+  width: 100%;
+  max-width: 340px;
+  text-align: center;
+}
+
+.modal-confirmar__cerrar {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: var(--color-bg);
+  color: var(--color-text-muted);
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-  text-decoration: none;
-  color: var(--color-text);
-  transition: box-shadow 0.15s ease, transform 0.15s ease;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
-.franja-financiera__item:hover {
-  box-shadow: 0 4px 14px rgba(15, 23, 25, 0.06);
-  transform: translateY(-1px);
-}
-
-.franja-financiera__item strong {
-  font-size: 1.15rem;
+.modal-confirmar h3 {
+  margin: 6px 0 8px;
+  font-size: 1.05rem;
   font-weight: 700;
 }
 
-.franja-financiera__label {
-  font-size: 0.76rem;
+.modal-confirmar p {
+  margin: 0 0 20px;
+  font-size: 0.87rem;
   color: var(--color-text-muted);
-  font-weight: 500;
+  line-height: 1.4;
 }
 
-.franja-financiera__monto--rojo {
-  color: var(--color-negative);
+.modal-confirmar__acciones {
+  display: flex;
+  gap: 10px;
 }
 
-.franja-financiera__item--cta {
+.modal-confirmar__acciones .btn {
+  flex: 1;
   justify-content: center;
-  align-items: center;
-  flex-direction: row;
-  gap: 6px;
-  background: var(--color-brand);
-  color: #ffffff;
-  border-color: var(--color-brand);
-  font-weight: 600;
-  font-size: 0.88rem;
-  white-space: nowrap;
 }
 
-/* --- Accesos rápidos --- */
+.btn--secundario {
+  background: var(--color-bg);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+.btn--peligro {
+  background: var(--color-negative);
+  color: #ffffff;
+}
+
+.btn--peligro:hover {
+  background: #b91c1c;
+}
+
+/* ================================================================== */
+/* Pills de acceso rápido — carrusel horizontal                        */
+/* ================================================================== */
 .accesos-rapidos {
   display: flex;
   gap: 8px;
-  margin-bottom: 28px;
-  flex-wrap: wrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 22px;
+  padding-bottom: 2px;
+}
+
+.accesos-rapidos::-webkit-scrollbar {
+  display: none;
 }
 
 .accesos-rapidos__item {
+  flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -170,10 +240,10 @@
   border: 1px solid var(--color-border);
   color: var(--color-text);
   text-decoration: none;
-  font-size: 0.85rem;
+  font-size: 0.83rem;
   font-weight: 600;
-  transition: border-color 0.15s ease, color 0.15s ease;
   white-space: nowrap;
+  transition: border-color 0.15s ease, color 0.15s ease;
 }
 
 .accesos-rapidos__item:hover {
@@ -181,201 +251,59 @@
   color: var(--color-brand);
 }
 
-/* --- Secciones de la cuenta (dashboard) --- */
-.secciones-cuenta {
-  margin-bottom: 28px;
+/* ================================================================== */
+/* Resumen financiero — carrusel de mini estadísticas                  */
+/* ================================================================== */
+.resumen-financiero {
+  margin-bottom: 22px;
 }
 
-.secciones-cuenta__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
-  gap: 12px;
+.resumen-financiero__titulo {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 12px;
 }
 
-.seccion-card {
+.resumen-financiero__carrusel {
   display: flex;
-  align-items: center;
-  gap: 14px;
+  gap: 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 2px;
+}
+
+.resumen-financiero__carrusel::-webkit-scrollbar {
+  display: none;
+}
+
+.stat-card {
+  flex: 0 0 auto;
+  min-width: 148px;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: 14px;
-  padding: 16px;
-  text-decoration: none;
-  color: var(--color-text);
-  transition: box-shadow 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
-  min-width: 0;
-}
-
-.seccion-card:hover {
-  box-shadow: 0 8px 22px rgba(15, 23, 25, 0.07);
-  transform: translateY(-2px);
-  border-color: #cfe4e1;
-}
-
-.seccion-card__icono {
-  width: 42px;
-  height: 42px;
-  border-radius: 11px;
-  background: var(--color-brand-light);
-  color: var(--color-brand);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.seccion-card__texto {
+  padding: 14px 16px;
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  flex: 1;
-  min-width: 0;
-}
-
-.seccion-card__titulo {
-  font-weight: 700;
-  font-size: 0.95rem;
-}
-
-.seccion-card__descripcion {
-  font-size: 0.8rem;
-  color: var(--color-text-muted);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.seccion-card__flecha {
-  color: var(--color-text-muted);
-  flex-shrink: 0;
-}
-
-/* --- Últimas órdenes --- */
-.ultimas-ordenes {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 14px;
-  padding: 18px 20px 8px;
-}
-
-.ultimas-ordenes__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
-  gap: 8px;
-}
-
-.ver-todas {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  color: var(--color-brand);
-  text-decoration: none;
-  font-size: 0.85rem;
-  font-weight: 600;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.ordenes-lista {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.orden-card {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 0;
-  border-bottom: 1px solid #f0f3f2;
+  gap: 6px;
   text-decoration: none;
   color: var(--color-text);
 }
 
-.ordenes-lista li:last-child .orden-card {
-  border-bottom: none;
-}
-
-.orden-card__icono {
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
-  background: var(--color-brand-light);
-  color: var(--color-brand);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.orden-card__info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  flex: 1;
-  min-width: 0;
-}
-
-.orden-card__titulo {
-  font-weight: 600;
-  font-size: 0.92rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.orden-card__meta {
-  font-size: 0.78rem;
+.stat-card__label {
+  font-size: 0.76rem;
   color: var(--color-text-muted);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-weight: 500;
 }
 
-.orden-card__monto {
-  font-size: 0.92rem;
+.stat-card__valor {
+  font-size: 1.2rem;
   font-weight: 700;
-  white-space: nowrap;
-  flex-shrink: 0;
 }
 
-/* --- Badges de estado de orden --- */
-.estado-badge {
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: #f1f5f4;
-  color: var(--color-text-muted);
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.estado-badge--pendiente,
-.estado-badge--procesando { background: #fff7ed; color: var(--color-warning); }
-.estado-badge--enviado { background: var(--color-brand-light); color: var(--color-brand); }
-.estado-badge--entregado,
-.estado-badge--finalizado { background: #f0fdf4; color: var(--color-positive); }
-.estado-badge--cancelado { background: #fef2f2; color: var(--color-negative); }
-
-/* --- Estado vacío --- */
-.estado-vacio {
-  text-align: center;
-  padding: 48px 20px;
-  color: var(--color-text-muted);
-}
-
-.estado-vacio svg {
-  margin-bottom: 10px;
-  color: var(--color-text-muted);
-}
-
-.estado-vacio p {
-  margin: 0 0 16px;
+.stat-card__valor--rojo {
+  color: var(--color-negative);
 }
 
 .btn {
@@ -397,7 +325,320 @@
 }
 
 .btn--primario:hover {
-  background: #0c5f58;
+  background: var(--color-brand-dark);
+}
+
+/* ================================================================== */
+/* Sección "Tus pedidos" — título + flecha (estilo Amazon)              */
+/* ================================================================== */
+.seccion-pedidos {
+  margin-bottom: 22px;
+}
+
+.seccion-pedidos__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.seccion-pedidos__flecha {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  transition: color 0.15s ease;
+}
+
+.seccion-pedidos__flecha:hover {
+  color: var(--color-brand);
+}
+
+.bloque-preview__vacio {
+  text-align: center;
+  padding: 20px 10px 8px;
+  color: var(--color-text-muted);
+  font-size: 0.88rem;
+}
+
+.bloque-preview__vacio p {
+  margin: 0 0 12px;
+}
+
+/* --- Carrusel de MiniOrdenCard: sin bordes ni fondo propio, mismo      */
+/* espaciado que el título de arriba --- */
+.mini-ordenes-carrusel {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 2px;
+}
+
+.mini-ordenes-carrusel::-webkit-scrollbar {
+  display: none;
+}
+
+.mini-orden-card {
+  flex: 0 0 auto;
+  width: 240px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 14px 16px;
+  text-decoration: none;
+  color: var(--color-text);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.mini-orden-card:hover {
+  box-shadow: 0 8px 20px rgba(26, 26, 58, 0.08);
+  transform: translateY(-2px);
+}
+
+.mini-orden-card__top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mini-orden-card__icono {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--color-brand-light);
+  color: var(--color-brand);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mini-orden-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+}
+
+.mini-orden-card__titulo {
+  font-weight: 700;
+  font-size: 0.88rem;
+}
+
+.mini-orden-card__meta {
+  font-size: 0.74rem;
+  color: var(--color-text-muted);
+}
+
+.mini-orden-card__badge {
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  padding: 4px 9px;
+  border-radius: 999px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.mini-orden-card__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #f0f0eb;
+}
+
+.mini-orden-card__texto {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.mini-orden-card__resena {
+  font-size: 0.74rem;
+  color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mini-orden-card__monto {
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.mini-orden-card__flecha {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--color-brand-dark);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ================================================================== */
+/* Hub de categorías (patrón desktop de Amazon: grid de tarjetas       */
+/* con icono, título y descripción — "Tu cuenta"). Oculto en móvil:     */
+/* en móvil se usan las pills de acceso rápido en su lugar.             */
+/* ================================================================== */
+.hub-cuenta--desktop {
+  display: none;
+}
+
+.hub-cuenta {
+  margin: 18px 0 24px;
+}
+
+.hub-cuenta__titulo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  color: var(--color-text);
+}
+
+.hub-cuenta__titulo svg {
+  color: var(--color-brand);
+}
+
+.hub-cuenta__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.hub-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 16px;
+  text-decoration: none;
+  color: var(--color-text);
+  transition: box-shadow 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
+  min-width: 0;
+}
+
+.hub-card:hover {
+  box-shadow: 0 8px 22px rgba(26, 26, 58, 0.08);
+  transform: translateY(-2px);
+  border-color: #c9d8ff;
+}
+
+.hub-card__icono {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--color-brand-light);
+  color: var(--color-brand);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.hub-card__texto {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.hub-card__titulo {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.hub-card__descripcion {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  line-height: 1.3;
+}
+
+/* ================================================================== */
+/* Columnas de links de texto (patrón desktop de Amazon: bloques de    */
+/* "Preferencias de pedidos" / "Contenido digital" / etc.). Oculto en   */
+/* móvil por ahora.                                                     */
+/* ================================================================== */
+.columnas-links--desktop {
+  display: none;
+}
+
+.columnas-links {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 22px;
+  padding: 20px 0 4px;
+  border-top: 1px solid var(--color-border);
+}
+
+.columna-links ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.columna-links a {
+  color: var(--color-brand);
+  text-decoration: none;
+  font-size: 0.87rem;
+}
+
+.columna-links a:hover {
+  text-decoration: underline;
+}
+
+/* ================================================================== */
+/* ¿Necesitas ayuda? — cierre de la página                              */
+/* ================================================================== */
+.ayuda-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin-top: 22px;
+  text-decoration: none;
+  color: var(--color-text);
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: border-color 0.15s ease;
+}
+
+.ayuda-footer:hover {
+  border-color: var(--color-brand);
+  color: var(--color-brand);
+}
+
+.mi-cuenta__footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 26px;
+  color: var(--color-text-muted);
+  font-size: 0.76rem;
 }
 
 /* --- Carga --- */
@@ -420,31 +661,52 @@
   to { transform: rotate(360deg); }
 }
 
-/* --- Responsive --- */
+/* --- Responsive: móvil --- */
 @media (max-width: 560px) {
   .mi-cuenta {
-    padding: 20px 16px 48px;
+    padding: 20px 16px 96px;
+  }
+}
+
+/* ================================================================== */
+/* Responsive: escritorio (≥1024px, mismo breakpoint arquitectónico    */
+/* del proyecto donde desaparece el BottomNav)                         */
+/* ================================================================== */
+@media (min-width: 1024px) {
+  .mi-cuenta {
+    padding: 36px 40px 60px;
   }
 
-  .secciones-cuenta__grid {
-    grid-template-columns: 1fr;
+  /* El hub de categorías y las columnas de links solo se muestran en    */
+  /* escritorio; en móvil su función la cumplen las pills de arriba.     */
+  .hub-cuenta--desktop {
+    display: block;
   }
 
-  .orden-card {
-    flex-wrap: wrap;
+  .columnas-links--desktop {
+    display: grid;
   }
 
-  .orden-card__info {
-    order: 1;
-    flex-basis: 60%;
+  /* El hub de categorías pasa a grid de 3 columnas, como el desktop de Amazon */
+  .hub-cuenta__grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
   }
 
-  .estado-badge {
-    order: 2;
+  .hub-card {
+    align-items: flex-start;
+    padding: 20px;
   }
 
-  .orden-card__monto {
-    order: 3;
-    margin-left: auto;
+  /* Las columnas de links pasan de apiladas a 4 columnas lado a lado */
+  .columnas-links {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 28px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .hub-cuenta__grid {
+    grid-template-columns: repeat(4, 1fr);
   }
 }
