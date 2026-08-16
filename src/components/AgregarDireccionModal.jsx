@@ -21,6 +21,7 @@ function AgregarDireccionModal({ isOpen, onClose, tipo, guardarDireccion, onGuar
     telefono_contacto: '',
     cedula: '',
     agencia_preferida: '',
+referencia: '',
     coordenadas: null,
   })
 
