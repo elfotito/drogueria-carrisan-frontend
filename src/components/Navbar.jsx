@@ -146,6 +146,7 @@ function Navbar() {
   // useEffect para manejar clicks fuera de los paneles
   useEffect(() => {
     function handleClickOutside(event) {
+ if (event.target.closest('[data-scope="dialog"]')) return
       const isOutsideDesktop = panelRef.current && !panelRef.current.contains(event.target)
       const isOutsideMobile = mobilePanelRef.current && !mobilePanelRef.current.contains(event.target)
       const isOutsideDeptos = deptosRef.current && !deptosRef.current.contains(event.target)
