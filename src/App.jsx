@@ -46,7 +46,7 @@ function App() {
             <ScrollToTop />
           <Navbar />
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/home" element={<Home />} />
             <Route path="/catalogo" element={<Catalogo />} />
             <Route path="/login" element={<Login />} />
             <Route path="/registro" element={<Registro />} />
@@ -72,7 +72,7 @@ function App() {
             <Route path="/farmacia" element={<PrivateRoute><LineaFarmacia /></PrivateRoute>} />
             <Route path="/hospitalaria" element={<PrivateRoute><LineaHospitalaria /></PrivateRoute>} />
             <Route path="/direcciones" element={<PrivateRoute><Direcciones /></PrivateRoute>} />
-<Route path="/landing" element={<PrivateRoute><Landing /></PrivateRoute>} />
+<Route path="/" element={<PrivateRoute><Landing /></PrivateRoute>} />
           </Routes>
           </EnvioProvider>
         </FavoritosProvider>
