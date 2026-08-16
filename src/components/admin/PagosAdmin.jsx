@@ -1,6 +1,9 @@
 import { useState, useEffect, useMemo } from 'react'
 import api from '../../api/axios'
-import './EstadoCuentaAdmin.css' // reutilizamos las mismas clases, mismo look
+
+
+import '../admin/EstadoCuentaAdmin.css'
+import './PagosAdmin.css'
 
 function formatUSD(valor) {
   return Number(valor || 0).toFixed(2)
