@@ -1,12 +1,11 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import api from '../api/axios'
 import {
-  Wallet, FileText, DollarSign, Eye, Download, Upload, X, Loader2,
+  FileText, DollarSign, Eye, Download, Upload, X, Loader2,
   AlertCircle, CreditCard, Menu, Search, FileBarChart, TrendingUp,
-  MessageCircle, Send, Plus,
+  MessageCircle, Send, Plus, Package
 } from 'lucide-react'
-import { useEffect } from 'react'
 import BottomNav from '../components/BottomNav'
 import './EstadoCuenta.css'
 
@@ -91,7 +90,7 @@ export default function EstadoCuenta() {
     y += 8
     doc.setFontSize(10)
     historial.forEach((mov) => {
-      const linea = `${mov.tipo === 'factura' ? 'Factura' : 'Pago'} #${mov.tipo === 'factura' ? mov.numero_factura : mov.id} — ${formatearMonto(mov.monto_facturado || mov.monto)} — ${formatearFecha(mov.created_at)}`
+      const linea = `${mov.tipo === 'factura' ? 'Factura' : mov.tipo === 'pago' ? 'Pago' : 'Orden'} #${mov.tipo === 'factura' ? mov.numero_factura : mov.id} — ${formatearMonto(mov.monto_facturado || mov.monto)} — ${formatearFecha(mov.created_at)}`
       doc.text(linea, 14, y)
       y += 7
       if (y > 280) { doc.addPage(); y = 20 }
@@ -110,13 +109,13 @@ export default function EstadoCuenta() {
   }
 
   const historial = useMemo(() => {
-  if (!datos) return []
-  return [
-    ...datos.ordenes_pendientes.map(o => ({ ...o, tipo: 'orden_pendiente' })),
-    ...datos.facturas.map(f => ({ ...f, tipo: 'factura' })),
-    ...datos.pagos.map(p => ({ ...p, tipo: 'pago' }))
-  ].sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-}, [datos])
+    if (!datos) return []
+    return [
+      ...datos.ordenes_pendientes.map(o => ({ ...o, tipo: 'orden_pendiente' })),
+      ...datos.facturas.map(f => ({ ...f, tipo: 'factura' })),
+      ...datos.pagos.map(p => ({ ...p, tipo: 'pago' }))
+    ].sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+  }, [datos])
 
   const historialFiltrado = useMemo(() => {
     return historial.filter((mov) => {
@@ -297,30 +296,30 @@ export default function EstadoCuenta() {
                 {movimientos.map((mov) => (
                   <li key={`${mov.tipo}-${mov.id}`} className="ec-movimiento">
                     <div className={`ec-movimiento__icono ec-movimiento__icono--${mov.tipo === 'factura' ? 'factura' : mov.tipo === 'pago' ? 'pago' : 'orden'}`}>
-  {mov.tipo === 'factura' ? <FileText size={18} /> : mov.tipo === 'pago' ? <DollarSign size={18} /> : <Package size={18} />}
-</div>
-<div className="ec-movimiento__info">
-  <span className="ec-movimiento__titulo">
-    {mov.tipo === 'factura' ? `Factura #${mov.numero_factura}` : mov.tipo === 'pago' ? `Pago #${mov.id}` : `Orden #${mov.id}`}
-  </span>
-  <span className={`ec-badge ec-badge--${mov.tipo === 'orden_pendiente' ? 'pendiente' : (mov.estado || 'registrado')}`}>
-    {mov.tipo === 'orden_pendiente' ? 'por pagar' : (mov.estado || 'registrado')}
-  </span>
-</div>
-<strong className={`ec-movimiento__monto ${mov.tipo === 'pago' ? 'ec-movimiento__monto--verde' : 'ec-movimiento__monto--rojo'}`}>
-  {mov.tipo === 'pago' ? '+' : '-'}{formatearMonto(mov.monto_facturado || mov.monto || mov.total_usd)}
-</strong>
-                      <span className={`ec-badge ec-badge--${mov.tipo === 'factura' ? (mov.estado || 'pendiente') : 'registrado'}`}>
-                        {mov.tipo === 'factura' ? (mov.estado || 'pendiente') : 'registrado'}
+                      {mov.tipo === 'factura' ? <FileText size={18} /> : mov.tipo === 'pago' ? <DollarSign size={18} /> : <Package size={18} />}
+                    </div>
+                    
+                    <div className="ec-movimiento__info">
+                      <span className="ec-movimiento__titulo">
+                        {mov.tipo === 'factura' ? `Factura #${mov.numero_factura}` : mov.tipo === 'pago' ? `Pago #${mov.id}` : `Orden #${mov.id}`}
+                      </span>
+                      <span className={`ec-badge ec-badge--${mov.tipo === 'orden_pendiente' ? 'pendiente' : (mov.estado || 'registrado')}`}>
+                        {mov.tipo === 'orden_pendiente' ? 'por pagar' : (mov.estado || 'registrado')}
                       </span>
                     </div>
-                    <strong className={`ec-movimiento__monto ${mov.tipo === 'factura' ? 'ec-movimiento__monto--rojo' : 'ec-movimiento__monto--verde'}`}>
-                      {mov.tipo === 'factura' ? '-' : '+'}{formatearMonto(mov.monto_facturado || mov.monto)}
+                    
+                    <strong className={`ec-movimiento__monto ${mov.tipo === 'pago' ? 'ec-movimiento__monto--verde' : 'ec-movimiento__monto--rojo'}`}>
+                      {mov.tipo === 'pago' ? '+' : '-'}{formatearMonto(mov.monto_facturado || mov.monto || mov.total_usd)}
                     </strong>
+                    
                     {mov.tipo === 'factura' && (
                       <div className="ec-movimiento__acciones">
-                        <button title="Ver orden" onClick={() => setOrdenSeleccionada(mov)}><Eye size={16} /></button>
-                        <button title="Exportar PDF" onClick={() => exportarFacturaPDF(mov)}><Download size={16} /></button>
+                        <button title="Ver orden" onClick={() => setOrdenSeleccionada(mov)}>
+                          <Eye size={16} />
+                        </button>
+                        <button title="Exportar PDF" onClick={() => exportarFacturaPDF(mov)}>
+                          <Download size={16} />
+                        </button>
                       </div>
                     )}
                   </li>
@@ -419,7 +418,14 @@ function ModalReportarPago({ onCerrar, onEnviar }) {
         <div className="ec-modal__cuerpo ec-modal__cuerpo--form">
           <label>
             Monto pagado
-            <input type="number" step="0.01" min="0" value={monto} onChange={(e) => setMonto(e.target.value)} required />
+            <input 
+              type="number" 
+              step="0.01" 
+              min="0" 
+              value={monto} 
+              onChange={(e) => setMonto(e.target.value)} 
+              required 
+            />
           </label>
           <label>
             Método de pago
@@ -433,24 +439,44 @@ function ModalReportarPago({ onCerrar, onEnviar }) {
           </label>
           <label>
             Número de referencia
-            <input type="text" value={referencia} onChange={(e) => setReferencia(e.target.value)} required />
+            <input 
+              type="text" 
+              value={referencia} 
+              onChange={(e) => setReferencia(e.target.value)} 
+              required 
+            />
           </label>
           <label>
             Fecha del pago
-            <input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} required />
+            <input 
+              type="date" 
+              value={fecha} 
+              onChange={(e) => setFecha(e.target.value)} 
+              required 
+            />
           </label>
           <label>
             Comprobante (opcional)
             <div className="ec-modal__upload">
               <Upload size={16} />
               <span>{comprobante ? comprobante.name : 'Subir imagen o PDF'}</span>
-              <input type="file" accept="image/*,.pdf" onChange={(e) => setComprobante(e.target.files?.[0] || null)} />
+              <input 
+                type="file" 
+                accept="image/*,.pdf" 
+                onChange={(e) => setComprobante(e.target.files?.[0] || null)} 
+              />
             </div>
           </label>
-          {error && <p className="ec-modal__error"><AlertCircle size={14} /> {error}</p>}
+          {error && (
+            <p className="ec-modal__error">
+              <AlertCircle size={14} /> {error}
+            </p>
+          )}
         </div>
         <div className="ec-modal__pie">
-          <button type="button" className="ec-btn ec-btn--secundario" onClick={onCerrar}>Cancelar</button>
+          <button type="button" className="ec-btn ec-btn--secundario" onClick={onCerrar}>
+            Cancelar
+          </button>
           <button type="submit" className="ec-btn ec-btn--primario" disabled={enviando}>
             {enviando ? 'Enviando…' : 'Enviar reporte'}
           </button>
