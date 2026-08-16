@@ -162,7 +162,7 @@ export default function EstadoCuenta() {
   if (!datos) return null
 
   const { resumen, facturas, pagos } = datos
-  const disponible = resumen.linea_credito - resumen.deuda_actual
+  const disponible = resumen.saldo
   const porcentajeUsado = resumen.linea_credito > 0
     ? Math.min((resumen.deuda_actual / resumen.linea_credito) * 100, 100)
     : 0
