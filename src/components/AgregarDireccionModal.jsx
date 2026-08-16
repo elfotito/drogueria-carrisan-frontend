@@ -75,46 +75,59 @@ function AgregarDireccionModal({ isOpen, onClose, tipo, guardarDireccion, onGuar
             <Dialog.Body overflowY="auto" flex="1">
               <VStack gap={4} align="stretch">
                 {tipo === 'delivery' && (
-                  <>
-                    <NativeSelect.Root>
-                      <NativeSelect.Field value={form.ciudad} onChange={set('ciudad')}>
-                        {Object.keys(TARIFAS_DELIVERY).map((c) => (
-                          <option key={c} value={c}>{c} - ${TARIFAS_DELIVERY[c]}</option>
-                        ))}
-                      </NativeSelect.Field>
-                      <NativeSelect.Indicator />
-                    </NativeSelect.Root>
+  <>
+    <Input
+      placeholder="Nombre (Ej: Casa, Oficina)"   // 🆕 campo que faltaba
+      value={form.nombre}
+      onChange={set('nombre')}
+      required
+    />
 
-                    <Input
-                      placeholder="Teléfono de contacto"
-                      value={form.telefono_contacto}
-                      onChange={set('telefono_contacto')}
-                    />
+    <NativeSelect.Root>
+      <NativeSelect.Field value={form.ciudad} onChange={set('ciudad')}>
+        {Object.keys(TARIFAS_DELIVERY).map((c) => (
+          <option key={c} value={c}>{c} - ${TARIFAS_DELIVERY[c]}</option>
+        ))}
+      </NativeSelect.Field>
+      <NativeSelect.Indicator />
+    </NativeSelect.Root>
 
-                    <Textarea
-                      placeholder="Dirección exacta de entrega"
-                      value={form.direccion}
-                      onChange={set('direccion')}
-                      rows={2}
-                    />
+    <Input
+      placeholder="Teléfono de contacto"
+      value={form.telefono_contacto}
+      onChange={set('telefono_contacto')}
+    />
 
-                    <Box borderRadius="8px" overflow="hidden" h="220px">
-                      <MapaPicker
-                        onSelect={(coords) =>
-                          setForm((f) => ({
-                            ...f,
-                            coordenadas: coords,
-                            direccion: f.direccion || coords.direccion,
-                          }))
-                        }
-                      />
-                    </Box>
+    <Textarea
+      placeholder="Dirección exacta de entrega"
+      value={form.direccion}
+      onChange={set('direccion')}
+      rows={2}
+    />
 
-                    <Text fontSize="sm" color="gray.500">
-                      Costo estimado: ${TARIFAS_DELIVERY[form.ciudad]}
-                    </Text>
-                  </>
-                )}
+    <Input
+      placeholder="Referencia (opcional)"   // 🆕
+      value={form.referencia}
+      onChange={set('referencia')}
+    />
+
+    <Box borderRadius="8px" overflow="hidden" h="220px">
+      <MapaPicker
+        onSelect={(coords) =>
+          setForm((f) => ({
+            ...f,
+            coordenadas: coords,
+            direccion: f.direccion || coords.direccion,
+          }))
+        }
+      />
+    </Box>
+
+    <Text fontSize="sm" color="gray.500">
+      Costo estimado: ${TARIFAS_DELIVERY[form.ciudad]}
+    </Text>
+  </>
+)}
 
                 {tipo === 'envio_nacional' && (
                   <>
