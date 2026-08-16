@@ -37,6 +37,7 @@ import OrdenDetalle from './pages/OrdenDetalle'
 import Direcciones from './pages/Direcciones'
 import Pagos from './pages/Pagos'
 import Landing from './pages/Landing'
+import { Toaster } from './components/ui/toaster'
 
 function LoadingBarBridge() {
   const bar = useLoadingBar()
@@ -55,6 +56,7 @@ function App() {
              <LoadingBarProvider>
           <Navbar />
               <LoadingBarBridge />
+<Toaster />
           <Routes>
 <Route path="/" element={<Landing />} />
             <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
