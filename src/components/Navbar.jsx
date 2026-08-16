@@ -8,11 +8,9 @@ import api from '../api/axios'
 import BuscadorMovil from './BuscadorMovil'
 import './Navbar.css'
 
-
-
 const RUTAS_SIN_NAVBAR = ['/login', '/registro', '/recuperar']
 
-// 🆕 Rutas donde SÍ debe verse la flecha "atrás" en móvil
+// Rutas donde SÍ debe verse la flecha "atrás" en móvil
 const RUTAS_CON_BACK_MOVIL_PREFIXES = [
   '/admin', '/cuenta', '/mis-items', '/orders',
   '/estado-cuenta', '/notificaciones', '/producto', '/carrito',
@@ -26,7 +24,7 @@ const EMOJIS_ENVIO = {
   default: '📲'
 };
 
-// 🆕 Datos de departamentos y sus subcategorías
+// Datos de departamentos y sus subcategorías
 const DEPARTAMENTOS = [
   {
     id: 'hospitalaria',
@@ -69,7 +67,7 @@ const DEPARTAMENTOS = [
   },
 ]
 
-// 🆕 Datos de servicios y sus subcategorías
+// Datos de servicios y sus subcategorías
 const SERVICIOS = [
   {
     id: 'consulta-medica',
@@ -118,17 +116,17 @@ function Navbar() {
     guardarDireccion,
     cargarDirecciones,
   } = useEnvio()
-  
+
   const navigate = useNavigate()
   const location = useLocation()
-  
+
   const [showEnvioPanel, setShowEnvioPanel] = useState(false)
   const [showDeptosMenu, setShowDeptosMenu] = useState(false)
   const [deptoActivo, setDeptoActivo] = useState(null)
   const [showServiciosMenu, setShowServiciosMenu] = useState(false)
   const [servicioActivo, setServicioActivo] = useState(null) 
-  const serviciosBtnRef = useRef(null) // 
-  const serviciosRef = useRef(null) // 
+  const serviciosBtnRef = useRef(null)
+  const serviciosRef = useRef(null)
   const [showMyItemsMenu, setShowMyItemsMenu] = useState(false)
   const [showAccountMenu, setShowAccountMenu] = useState(false)
   const myItemsRef = useRef(null)
@@ -138,52 +136,56 @@ function Navbar() {
   const [mostrarSugerencias, setMostrarSugerencias] = useState(false)
   const [buscadorMovilAbierto, setBuscadorMovilAbierto] = useState(false)
   const [notificacionesNoLeidas, setNotificacionesNoLeidas] = useState(0)
-  
+
   const searchRef = useRef(null)
   const panelRef = useRef(null)
-  const deptosRef = useRef(null) //
+  const deptosRef = useRef(null)
+  const mobilePanelRef = useRef(null)
 
-      useEffect(() => {
-      function handleClickOutside(event) {
-        const isOutsideDesktop = panelRef.current && !panelRef.current.contains(event.target)
-        const isOutsideDeptos = deptosRef.current && !deptosRef.current.contains(event.target)
-        const isOutsideServicios = serviciosRef.current && !serviciosRef.current.contains(event.target)
-        const isOutsideMyItems = myItemsRef.current && !myItemsRef.current.contains(event.target)
-        const isOutsideAccount = accountRef.current && !accountRef.current.contains(event.target)
+  // useEffect para manejar clicks fuera de los paneles
+  useEffect(() => {
+    function handleClickOutside(event) {
+      const isOutsideDesktop = panelRef.current && !panelRef.current.contains(event.target)
+      const isOutsideMobile = mobilePanelRef.current && !mobilePanelRef.current.contains(event.target)
+      const isOutsideDeptos = deptosRef.current && !deptosRef.current.contains(event.target)
+      const isOutsideServicios = serviciosRef.current && !serviciosRef.current.contains(event.target)
+      const isOutsideMyItems = myItemsRef.current && !myItemsRef.current.contains(event.target)
+      const isOutsideAccount = accountRef.current && !accountRef.current.contains(event.target)
 
-        if (isOutsideDesktop) {
-          setShowEnvioPanel(false)
-        }
-        
-        if (isOutsideDeptos) {
-          setShowDeptosMenu(false)
-          setDeptoActivo(null)
-        }
-
-        if (isOutsideServicios) {
-          setShowServiciosMenu(false)
-          setServicioActivo(null)
-        }
-        
-        // 🆕
-        if (isOutsideMyItems) {
-          setShowMyItemsMenu(false)
-        }
-        
-        // 🆕
-        if (isOutsideAccount) {
-          setShowAccountMenu(false)
-        }
-        
-        if (searchRef.current && !searchRef.current.contains(event.target)) {
-          setMostrarSugerencias(false)
-        }
+      // Cierra el panel de envío si el click fue afuera de AMBOS paneles (desktop y móvil)
+      if (isOutsideDesktop && isOutsideMobile) {
+        setShowEnvioPanel(false)
       }
-      document.addEventListener('mousedown', handleClickOutside)
-      return () => document.removeEventListener('mousedown', handleClickOutside)
-    }, [])
+      
+      if (isOutsideDeptos) {
+        setShowDeptosMenu(false)
+        setDeptoActivo(null)
+      }
+      
+      if (isOutsideServicios) {
+        setShowServiciosMenu(false)
+        setServicioActivo(null)
+      }
+      
+      if (isOutsideMyItems) {
+        setShowMyItemsMenu(false)
+      }
+      
+      if (isOutsideAccount) {
+        setShowAccountMenu(false)
+      }
+      
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setMostrarSugerencias(false)
+      }
+    }
+    
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
-    useEffect(() => {
+  // useEffect para resetear estados cuando se cierran los menús
+  useEffect(() => {
     if (!showDeptosMenu) {
       setDeptoActivo(null)
     }
@@ -192,33 +194,14 @@ function Navbar() {
     }
   }, [showDeptosMenu, showServiciosMenu])
 
+  // useEffect para buscar sugerencias con debounce
   useEffect(() => {
     if (busqueda.length < 1) {
       setSugerencias([])
       setMostrarSugerencias(false)
       return
     }
-    
-    if (isOutsideDesktop && isOutsideMobile) {
-      setShowEnvioPanel(false)
-    }
-    if (isOutsideDeptos) { setShowDeptosMenu(false); setDeptoActivo(null) }
-    if (isOutsideServicios) { setShowServiciosMenu(false); setServicioActivo(null) }
-    if (isOutsideMyItems) setShowMyItemsMenu(false)
-    if (isOutsideAccount) setShowAccountMenu(false)
-    if (searchRef.current && !searchRef.current.contains(event.target)) setMostrarSugerencias(false)
-  }
-  document.addEventListener('mousedown', handleClickOutside)
-  return () => document.removeEventListener('mousedown', handleClickOutside)
-}, [])
 
-// 🆕 Cargar direcciones guardadas del usuario al montar
-useEffect(() => {
-  if (user) cargarDirecciones()
-}, [user])
-
-// 🆕 helper: mostrar flecha atrás solo en móvil y en ciertas rutas
-const mostrarBackMovil = RUTAS_CON_BACK_MOVIL_PREFIXES.some(p => location.pathname.startsWith(p))
     const debounce = setTimeout(async () => {
       try {
         const { data } = await api.get(`/products?search=${encodeURIComponent(busqueda)}&limit=5`)
@@ -232,6 +215,12 @@ const mostrarBackMovil = RUTAS_CON_BACK_MOVIL_PREFIXES.some(p => location.pathna
     return () => clearTimeout(debounce)
   }, [busqueda])
 
+  // Cargar direcciones guardadas del usuario al montar
+  useEffect(() => {
+    if (user) cargarDirecciones()
+  }, [user])
+
+  // Cargar notificaciones no leídas
   useEffect(() => {
     if (!user) {
       setNotificacionesNoLeidas(0)
@@ -242,6 +231,9 @@ const mostrarBackMovil = RUTAS_CON_BACK_MOVIL_PREFIXES.some(p => location.pathna
       .then(({ data }) => setNotificacionesNoLeidas(data.count || 0))
       .catch((err) => console.error('Error al contar notificaciones:', err))
   }, [user])
+
+  // Helper: mostrar flecha atrás solo en móvil y en ciertas rutas
+  const mostrarBackMovil = RUTAS_CON_BACK_MOVIL_PREFIXES.some(p => location.pathname.startsWith(p))
 
   if (RUTAS_SIN_NAVBAR.includes(location.pathname)) return null
 
@@ -270,7 +262,7 @@ const mostrarBackMovil = RUTAS_CON_BACK_MOVIL_PREFIXES.some(p => location.pathna
     }
   }
 
-  // 🆕 Manejar clic en subcategoría
+  // Manejar clic en subcategoría
   function handleSubcategoriaClick(ruta) {
     setShowDeptosMenu(false)
     setDeptoActivo(null)
@@ -287,7 +279,6 @@ const mostrarBackMovil = RUTAS_CON_BACK_MOVIL_PREFIXES.some(p => location.pathna
     <>
       <header className="navbar-container">
         <div className="navbar__main">
-
           <Link to="/" className="navbar__logo" aria-label="Ir a inicio">
             <img src={logoBlanco} alt="Droguería Carrisán" className="desktop-only" />
           </Link>
@@ -308,62 +299,66 @@ const mostrarBackMovil = RUTAS_CON_BACK_MOVIL_PREFIXES.some(p => location.pathna
                   {tipoEnvio === 'retiro' ? 'Sede Valencia' : ciudadEstado}
                 </span>
               </div>
-              <svg className={`pickup-btn__arrow ${showEnvioPanel ? 'rotated' : ''}`} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              <svg className={`pickup-btn__arrow ${showEnvioPanel ? 'rotated' : ''}`} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
             </button>
 
             {showEnvioPanel && (
-  <PanelEnvio
-    tipoEnvio={tipoEnvio}
-    cambiarTipoEnvio={cambiarTipoEnvio}
-    direcciones={direcciones}
-    direccionSeleccionada={direccionSeleccionada}
-    setDireccionSeleccionada={setDireccionSeleccionada}
-    guardarDireccion={guardarDireccion}
-    onClose={() => setShowEnvioPanel(false)}
-  />
-)}
+              <PanelEnvio
+                tipoEnvio={tipoEnvio}
+                cambiarTipoEnvio={cambiarTipoEnvio}
+                direcciones={direcciones}
+                direccionSeleccionada={direccionSeleccionada}
+                setDireccionSeleccionada={setDireccionSeleccionada}
+                guardarDireccion={guardarDireccion}
+                onClose={() => setShowEnvioPanel(false)}
+              />
+            )}
           </div>
-{/* 🆕 Flecha atrás + Pin de envío (SOLO MÓVIL) */}
-<div className="navbar__mobile-pickup mobile-only" ref={mobilePanelRef}>
-  {mostrarBackMovil && (
-    <button
-      className="mobile-back-btn"
-      aria-label="Volver"
-      onClick={() => navigate(-1)}
-    >
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <polyline points="15 18 9 12 15 6"></polyline>
-      </svg>
-    </button>
-  )}
 
-  <button
-    className="mobile-pin-btn"
-    aria-label="Seleccionar envío"
-    onClick={() => setShowEnvioPanel(!showEnvioPanel)}
-  >
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-      <circle cx="12" cy="10" r="3"></circle>
-    </svg>
-  </button>
+          {/* Flecha atrás + Pin de envío (SOLO MÓVIL) */}
+          <div className="navbar__mobile-pickup mobile-only" ref={mobilePanelRef}>
+            {mostrarBackMovil && (
+              <button
+                className="mobile-back-btn"
+                aria-label="Volver"
+                onClick={() => navigate(-1)}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+              </button>
+            )}
 
-  {showEnvioPanel && (
-    <div className="envio-modal-backdrop" onClick={() => setShowEnvioPanel(false)}>
-      <div onClick={(e) => e.stopPropagation()}>
-        <PanelEnvio
-          tipoEnvio={tipoEnvio}
-          cambiarTipoEnvio={cambiarTipoEnvio}
-          direcciones={direcciones}
-          direccionSeleccionada={direccionSeleccionada}
-          setDireccionSeleccionada={setDireccionSeleccionada}
-          guardarDireccion={guardarDireccion}
-          onClose={() => setShowEnvioPanel(false)}
-        />
-      </div>
-    </div>
-  )}
-</div>
+            <button
+              className="mobile-pin-btn"
+              aria-label="Seleccionar envío"
+              onClick={() => setShowEnvioPanel(!showEnvioPanel)}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+            </button>
+
+            {showEnvioPanel && (
+              <div className="envio-modal-backdrop" onClick={() => setShowEnvioPanel(false)}>
+                <div onClick={(e) => e.stopPropagation()}>
+                  <PanelEnvio
+                    tipoEnvio={tipoEnvio}
+                    cambiarTipoEnvio={cambiarTipoEnvio}
+                    direcciones={direcciones}
+                    direccionSeleccionada={direccionSeleccionada}
+                    setDireccionSeleccionada={setDireccionSeleccionada}
+                    guardarDireccion={guardarDireccion}
+                    onClose={() => setShowEnvioPanel(false)}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Buscador Interactivo */}
           <div className="navbar__search-wrapper" ref={searchRef}>
             <form className="navbar__search" onSubmit={handleBuscar}>
@@ -375,10 +370,13 @@ const mostrarBackMovil = RUTAS_CON_BACK_MOVIL_PREFIXES.some(p => location.pathna
                 onFocus={handleSearchFocus}
               />
               <button type="submit" className="search-btn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
               </button>
             </form>
-            
+
             {mostrarSugerencias && sugerencias.length > 0 && (
               <div className="search-suggestions">
                 {sugerencias.map((producto) => (
@@ -403,177 +401,176 @@ const mostrarBackMovil = RUTAS_CON_BACK_MOVIL_PREFIXES.some(p => location.pathna
           {buscadorMovilAbierto && (
             <BuscadorMovil onClose={() => setBuscadorMovilAbierto(false)} />
           )}
+
           {/* Acciones Derecha (Escritorio) */}
-<div className="navbar__actions desktop-only">
+          <div className="navbar__actions desktop-only">
+            {/* Mi Botiquín (antes My Items) */}
+            <div className="navbar__action-dropdown" ref={myItemsRef}>
+              <button 
+                className="action-btn"
+                onClick={() => {
+                  setShowMyItemsMenu(!showMyItemsMenu)
+                  setShowAccountMenu(false)
+                }}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+                <div className="action-text">
+                  <span>Favoritos</span>
+                  <strong>Mis Items</strong>
+                </div>
+                <svg className={`action-btn__arrow ${showMyItemsMenu ? 'rotated' : ''}`} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
 
-  {/* 🆕 Mi Botiquín (antes My Items) */}
-  <div className="navbar__action-dropdown" ref={myItemsRef}>
-    <button 
-      className="action-btn"
-      onClick={() => {
-        setShowMyItemsMenu(!showMyItemsMenu)
-        setShowAccountMenu(false)
-      }}
-    >
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-      </svg>
-      <div className="action-text">
-        <span>Favoritos</span>
-        <strong>Mis Items</strong>
-      </div>
-      <svg className={`action-btn__arrow ${showMyItemsMenu ? 'rotated' : ''}`} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <polyline points="6 9 12 15 18 9"></polyline>
-      </svg>
-    </button>
+              {showMyItemsMenu && (
+                <div className="action-dropdown-menu">
+                  <Link to="/mis-items" className="action-dropdown-item" onClick={() => setShowMyItemsMenu(false)}>
+                    <span className="action-dropdown-item__icono">❤️</span>
+                    <div>
+                      <span className="action-dropdown-item__label">Favoritos</span>
+                      <span className="action-dropdown-item__desc">Productos que te gustan</span>
+                    </div>
+                  </Link>
+                  <Link to="/mis-items?tab=favoritos" className="action-dropdown-item" onClick={() => setShowMyItemsMenu(false)}>
+                    <span className="action-dropdown-item__icono">📋</span>
+                    <div>
+                      <span className="action-dropdown-item__label">Mis Listas</span>
+                      <span className="action-dropdown-item__desc">Listas de compras</span>
+                    </div>
+                  </Link>
+                  <Link to="/mis-items?tab=recomprar" className="action-dropdown-item" onClick={() => setShowMyItemsMenu(false)}>
+                    <span className="action-dropdown-item__icono">🔄</span>
+                    <div>
+                      <span className="action-dropdown-item__label">Frecuentes</span>
+                      <span className="action-dropdown-item__desc">Compras recurrentes</span>
+                    </div>
+                  </Link>
+                </div>
+              )}
+            </div>
 
-    {showMyItemsMenu && (
-      <div className="action-dropdown-menu">
-        <Link to="/mis-items" className="action-dropdown-item" onClick={() => setShowMyItemsMenu(false)}>
-          <span className="action-dropdown-item__icono">❤️</span>
-          <div>
-            <span className="action-dropdown-item__label">Favoritos</span>
-            <span className="action-dropdown-item__desc">Productos que te gustan</span>
+            {/* Cuenta */}
+            <div className="navbar__action-dropdown" ref={accountRef}>
+              <button 
+                className="action-btn"
+                onClick={() => {
+                  setShowAccountMenu(!showAccountMenu)
+                  setShowMyItemsMenu(false)
+                }}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <div className="action-text">
+                  <span>{user ? 'Sesión Iniciada' : 'Iniciar Sesión'}</span>
+                  <strong>{user ? 'Mi Cuenta' : 'Cuenta'}</strong>
+                </div>
+                <svg className={`action-btn__arrow ${showAccountMenu ? 'rotated' : ''}`} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+
+              {showAccountMenu && (
+                <div className="action-dropdown-menu">
+                  {user ? (
+                    <>
+                      <Link to="/cuenta" className="action-dropdown-item" onClick={() => setShowAccountMenu(false)}>
+                        <span className="action-dropdown-item__icono">👤</span>
+                        <div>
+                          <span className="action-dropdown-item__label">Mi Cuenta</span>
+                          <span className="action-dropdown-item__desc">Información personal</span>
+                        </div>
+                      </Link>
+                      <Link to="/orders" className="action-dropdown-item" onClick={() => setShowAccountMenu(false)}>
+                        <span className="action-dropdown-item__icono">📦</span>
+                        <div>
+                          <span className="action-dropdown-item__label">Mis Órdenes</span>
+                          <span className="action-dropdown-item__desc">Historial de pedidos</span>
+                        </div>
+                      </Link>
+                      <Link to="/estado-cuenta" className="action-dropdown-item" onClick={() => setShowAccountMenu(false)}>
+                        <span className="action-dropdown-item__icono">💳</span>
+                        <div>
+                          <span className="action-dropdown-item__label">Estado de Cuenta</span>
+                          <span className="action-dropdown-item__desc">Historial de facturación</span>
+                        </div>
+                      </Link>
+                      <Link to="/notificaciones" className="action-dropdown-item" onClick={() => setShowAccountMenu(false)}>
+                        <span className="action-dropdown-item__icono">🔔</span>
+                        <div>
+                          <span className="action-dropdown-item__label">Notificaciones</span>
+                          <span className="action-dropdown-item__desc">Alertas y avisos</span>
+                        </div>
+                      </Link>
+                      <Link to="/admin" className="action-dropdown-item" onClick={() => setShowAccountMenu(false)}>
+                        <span className="action-dropdown-item__icono">⚙️</span>
+                        <div>
+                          <span className="action-dropdown-item__label">Administracion</span>
+                          <span className="action-dropdown-item__desc">Acceso solo para trabajadores</span>
+                        </div>
+                      </Link>
+                      <div className="action-dropdown-divider"></div>
+                      <button className="action-dropdown-item action-dropdown-item--danger" onClick={() => { logout(); setShowAccountMenu(false); }}>
+                        <span className="action-dropdown-item__icono">🚪</span>
+                        <div>
+                          <span className="action-dropdown-item__label">Cerrar Sesión</span>
+                        </div>
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <Link to="/login" className="action-dropdown-item" onClick={() => setShowAccountMenu(false)}>
+                        <span className="action-dropdown-item__icono">🔑</span>
+                        <div>
+                          <span className="action-dropdown-item__label">Iniciar Sesión</span>
+                          <span className="action-dropdown-item__desc">Accede a tu cuenta</span>
+                        </div>
+                      </Link>
+                      <Link to="/registro" className="action-dropdown-item" onClick={() => setShowAccountMenu(false)}>
+                        <span className="action-dropdown-item__icono">📝</span>
+                        <div>
+                          <span className="action-dropdown-item__label">Crear Cuenta</span>
+                          <span className="action-dropdown-item__desc">Regístrate gratis</span>
+                        </div>
+                      </Link>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
-        </Link>
-        <Link to="/mis-items?tab=favoritos" className="action-dropdown-item" onClick={() => setShowMyItemsMenu(false)}>
-          <span className="action-dropdown-item__icono">📋</span>
-          <div>
-            <span className="action-dropdown-item__label">Mis Listas</span>
-            <span className="action-dropdown-item__desc">Listas de compras</span>
-          </div>
-        </Link>
-        <Link to="/mis-items?tab=recomprar" className="action-dropdown-item" onClick={() => setShowMyItemsMenu(false)}>
-          <span className="action-dropdown-item__icono">🔄</span>
-          <div>
-            <span className="action-dropdown-item__label">Frecuentes</span>
-            <span className="action-dropdown-item__desc">Compras recurrentes</span>
-          </div>
-        </Link>
-      </div>
-    )}
-  </div>
-
-  {/* 🆕 Cuenta */}
-  <div className="navbar__action-dropdown" ref={accountRef}>
-    <button 
-      className="action-btn"
-      onClick={() => {
-        setShowAccountMenu(!showAccountMenu)
-        setShowMyItemsMenu(false)
-      }}
-    >
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-        <circle cx="12" cy="7" r="4"></circle>
-      </svg>
-      <div className="action-text">
-        <span>{user ? 'Sesión Iniciada' : 'Iniciar Sesión'}</span>
-        <strong>{user ? 'Mi Cuenta' : 'Cuenta'}</strong>
-      </div>
-      <svg className={`action-btn__arrow ${showAccountMenu ? 'rotated' : ''}`} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <polyline points="6 9 12 15 18 9"></polyline>
-      </svg>
-    </button>
-
-    {showAccountMenu && (
-      <div className="action-dropdown-menu">
-        {user ? (
-          <>
-            <Link to="/cuenta" className="action-dropdown-item" onClick={() => setShowAccountMenu(false)}>
-              <span className="action-dropdown-item__icono">👤</span>
-              <div>
-                <span className="action-dropdown-item__label">Mi Cuenta</span>
-                <span className="action-dropdown-item__desc">Información personal</span>
-              </div>
-            </Link>
-            <Link to="/orders" className="action-dropdown-item" onClick={() => setShowAccountMenu(false)}>
-              <span className="action-dropdown-item__icono">📦</span>
-              <div>
-                <span className="action-dropdown-item__label">Mis Órdenes</span>
-                <span className="action-dropdown-item__desc">Historial de pedidos</span>
-              </div>
-            </Link>
-            <Link to="/estado-cuenta" className="action-dropdown-item" onClick={() => setShowAccountMenu(false)}>
-              <span className="action-dropdown-item__icono">💳</span>
-              <div>
-                <span className="action-dropdown-item__label">Estado de Cuenta</span>
-                <span className="action-dropdown-item__desc">Historial de facturación</span>
-              </div>
-            </Link>
-            <Link to="/notificaciones" className="action-dropdown-item" onClick={() => setShowAccountMenu(false)}>
-              <span className="action-dropdown-item__icono">🔔</span>
-              <div>
-                <span className="action-dropdown-item__label">Notificaciones</span>
-                <span className="action-dropdown-item__desc">Alertas y avisos</span>
-              </div>
-            </Link>
-            <Link to="/admin" className="action-dropdown-item" onClick={() => setShowAccountMenu(false)}>
-              <span className="action-dropdown-item__icono">⚙️</span>
-              <div>
-                <span className="action-dropdown-item__label">Administracion</span>
-                <span className="action-dropdown-item__desc">Acceso solo para trabajadores</span>
-              </div>
-            </Link>
-            <div className="action-dropdown-divider"></div>
-            <button className="action-dropdown-item action-dropdown-item--danger" onClick={() => { logout(); setShowAccountMenu(false); }}>
-              <span className="action-dropdown-item__icono">🚪</span>
-              <div>
-                <span className="action-dropdown-item__label">Cerrar Sesión</span>
-              </div>
-            </button>
-          </>
-        ) : (
-          <>
-            <Link to="/login" className="action-dropdown-item" onClick={() => setShowAccountMenu(false)}>
-              <span className="action-dropdown-item__icono">🔑</span>
-              <div>
-                <span className="action-dropdown-item__label">Iniciar Sesión</span>
-                <span className="action-dropdown-item__desc">Accede a tu cuenta</span>
-              </div>
-            </Link>
-            <Link to="/registro" className="action-dropdown-item" onClick={() => setShowAccountMenu(false)}>
-              <span className="action-dropdown-item__icono">📝</span>
-              <div>
-                <span className="action-dropdown-item__label">Crear Cuenta</span>
-                <span className="action-dropdown-item__desc">Regístrate gratis</span>
-              </div>
-            </Link>
-          </>
-        )}
-      </div>
-    )}
-  </div>
-</div>
-
 
           {/* Carrito */}
           <Link to="/carrito" className="navbar__cart">
             <div className="cart-icon-wrapper">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="9" cy="21" r="1"></circle>
-                  <circle cx="20" cy="21" r="1"></circle>
-                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                </svg>
-                <span className="cart-badge" style={{ 
-                    top: "-6px", 
-                    right: "-10px", 
-                    backgroundColor: "#ffc107", 
-                    color: "#000", 
-                    borderRadius: "50%", 
-                    padding: "0px 5px", 
-                    fontSize: "0.75rem", 
-                    fontWeight: "bold" 
-                  }}>{cantidadItems}</span>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="9" cy="21" r="1"></circle>
+                <circle cx="20" cy="21" r="1"></circle>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+              </svg>
+              <span className="cart-badge" style={{ 
+                top: "-6px", 
+                right: "-10px", 
+                backgroundColor: "#ffc107", 
+                color: "#000", 
+                borderRadius: "50%", 
+                padding: "0px 5px", 
+                fontSize: "0.75rem", 
+                fontWeight: "bold" 
+              }}>{cantidadItems}</span>
             </div>
             <span className="cart-price" style={{ fontSize: "12px" }}>$0.00</span>
           </Link>
         </div>
 
-        {/* 🆕 Barra Secundaria (Categorías) con menú desplegable */}
+        {/* Barra Secundaria (Categorías) con menú desplegable */}
         <nav className="navbar__secondary desktop-only">
           <div className="navbar__secondary-inner">
-            {/* 🆕 Botón Departamentos con menú desplegable */}
+            {/* Botón Departamentos con menú desplegable */}
             <div className="navbar__deptos-wrapper" ref={deptosRef}>
               <button 
                 className="pill-btn pill-btn--deptos"
@@ -590,7 +587,7 @@ const mostrarBackMovil = RUTAS_CON_BACK_MOVIL_PREFIXES.some(p => location.pathna
                 </svg>
               </button>
 
-              {/* 🆕 Menú desplegable de departamentos */}
+              {/* Menú desplegable de departamentos */}
               {showDeptosMenu && (
                 <div className="deptos-dropdown">
                   <div className="deptos-dropdown__sidebar">
@@ -599,9 +596,8 @@ const mostrarBackMovil = RUTAS_CON_BACK_MOVIL_PREFIXES.some(p => location.pathna
                       <button
                         key={depto.id}
                         className={`deptos-dropdown__depto-btn ${deptoActivo === depto.id ? 'active' : ''}`}
-                        onMouseEnter={() => setDeptoActivo(depto.id)} // Solo hover
+                        onMouseEnter={() => setDeptoActivo(depto.id)}
                         onClick={() => {
-                          // Opcional: también activar con click
                           setDeptoActivo(deptoActivo === depto.id ? null : depto.id)
                         }}
                       >
@@ -630,8 +626,8 @@ const mostrarBackMovil = RUTAS_CON_BACK_MOVIL_PREFIXES.some(p => location.pathna
                           {sub.nombre}
                         </button>
                       ))}
-                      
-                      {/* 🆕 Botón "Ver todo" opcional */}
+
+                      {/* Botón "Ver todo" opcional */}
                       <button
                         className="deptos-dropdown__sub-link deptos-dropdown__sub-link--ver-todo"
                         onClick={() => handleSubcategoriaClick(
@@ -646,70 +642,71 @@ const mostrarBackMovil = RUTAS_CON_BACK_MOVIL_PREFIXES.some(p => location.pathna
               )}
             </div>
 
-            {/* 🆕 Botón Servicios con menú desplegable */}
-              <div className="navbar__deptos-wrapper" ref={serviciosRef}>
-                <button 
-                  className="pill-btn pill-btn--deptos"
-                  ref={serviciosBtnRef}
-                  onClick={() => {
-                    setShowServiciosMenu(!showServiciosMenu)
-                    setShowDeptosMenu(false)
-                    setDeptoActivo(null)
-                    setServicioActivo(null)
-                  }}
-                >
-                  <strong>Servicios</strong>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <polyline points="6 9 12 15 18 9"></polyline>
-                    </svg>
-                  </button>
+            {/* Botón Servicios con menú desplegable */}
+            <div className="navbar__deptos-wrapper" ref={serviciosRef}>
+              <button 
+                className="pill-btn pill-btn--deptos"
+                ref={serviciosBtnRef}
+                onClick={() => {
+                  setShowServiciosMenu(!showServiciosMenu)
+                  setShowDeptosMenu(false)
+                  setDeptoActivo(null)
+                  setServicioActivo(null)
+                }}
+              >
+                <strong>Servicios</strong>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
 
-                  {showServiciosMenu && (
-                    <div className="deptos-dropdown">
-                      <div className="deptos-dropdown__sidebar">
-                        <p className="deptos-dropdown__titulo">Todos los servicios</p>
-                        {SERVICIOS.map((servicio) => (
-                          <button
-                            key={servicio.id}
-                            className={`deptos-dropdown__depto-btn ${servicioActivo === servicio.id ? 'active' : ''}`}
-                            onMouseEnter={() => setServicioActivo(servicio.id)}
-                            onClick={() => {
-                              setServicioActivo(servicioActivo === servicio.id ? null : servicio.id)
-                            }}
-                          >
-                            <span className="deptos-dropdown__depto-icono">{servicio.icono}</span>
-                            <span className="deptos-dropdown__depto-nombre">{servicio.nombre}</span>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                              <polyline points="9 18 15 12 9 6"></polyline>
-                            </svg>
-                          </button>
-                        ))}
-                      </div>
+              {showServiciosMenu && (
+                <div className="deptos-dropdown">
+                  <div className="deptos-dropdown__sidebar">
+                    <p className="deptos-dropdown__titulo">Todos los servicios</p>
+                    {SERVICIOS.map((servicio) => (
+                      <button
+                        key={servicio.id}
+                        className={`deptos-dropdown__depto-btn ${servicioActivo === servicio.id ? 'active' : ''}`}
+                        onMouseEnter={() => setServicioActivo(servicio.id)}
+                        onClick={() => {
+                          setServicioActivo(servicioActivo === servicio.id ? null : servicio.id)
+                        }}
+                      >
+                        <span className="deptos-dropdown__depto-icono">{servicio.icono}</span>
+                        <span className="deptos-dropdown__depto-nombre">{servicio.nombre}</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                      </button>
+                    ))}
+                  </div>
 
-                      {servicioActivo && (
-                        <div className="deptos-dropdown__subcategorias">
-                          <p className="deptos-dropdown__subtitulo">
-                            {SERVICIOS.find(s => s.id === servicioActivo)?.nombre}
-                          </p>
-                          {SERVICIOS.find(s => s.id === servicioActivo)?.subcategorias.map((sub) => (
-                            <button
-                              key={sub.nombre}
-                              className="deptos-dropdown__sub-link"
-                              onClick={() => {
-                                setShowServiciosMenu(false)
-                                setServicioActivo(null)
-                                navigate(sub.ruta)
-                              }}
-                            >
-                              <span className="deptos-dropdown__sub-icon">•</span>
-                              {sub.nombre}
-                            </button>
-                          ))}
-                        </div>
-                      )}
+                  {servicioActivo && (
+                    <div className="deptos-dropdown__subcategorias">
+                      <p className="deptos-dropdown__subtitulo">
+                        {SERVICIOS.find(s => s.id === servicioActivo)?.nombre}
+                      </p>
+                      {SERVICIOS.find(s => s.id === servicioActivo)?.subcategorias.map((sub) => (
+                        <button
+                          key={sub.nombre}
+                          className="deptos-dropdown__sub-link"
+                          onClick={() => {
+                            setShowServiciosMenu(false)
+                            setServicioActivo(null)
+                            navigate(sub.ruta)
+                          }}
+                        >
+                          <span className="deptos-dropdown__sub-icon">•</span>
+                          {sub.nombre}
+                        </button>
+                      ))}
                     </div>
                   )}
                 </div>
+              )}
+            </div>
+
             <span className="divider"></span>
             <Link to="/catalogo" className="pill-link">Nuevos Ingresos</Link>
             <Link to="/ofertas" className="pill-link">Ofertas</Link>
@@ -719,7 +716,7 @@ const mostrarBackMovil = RUTAS_CON_BACK_MOVIL_PREFIXES.some(p => location.pathna
           </div>
         </nav>
       </header>
-     </>
+    </>
   )
 }
 
@@ -728,7 +725,7 @@ const mostrarBackMovil = RUTAS_CON_BACK_MOVIL_PREFIXES.some(p => location.pathna
 // -------------------------------------------------------------
 function PanelEnvio({
   tipoEnvio, cambiarTipoEnvio, onClose,
-  direcciones = [], direccionSeleccionada, setDireccionSeleccionada, guardarDireccion, // 🆕
+  direcciones = [], direccionSeleccionada, setDireccionSeleccionada, guardarDireccion,
 }) {
   const [formData, setFormData] = useState({
     nombre: '', direccion: '', ciudad: 'Valencia', estado: 'Carabobo',
@@ -741,7 +738,7 @@ function PanelEnvio({
     e.preventDefault();
     try {
       const nuevaDireccion = { ...formData, costo_delivery: TARIFAS_DELIVERY[formData.ciudad] };
-      const guardada = await guardarDireccion(nuevaDireccion); // 🆕 llamada real
+      const guardada = await guardarDireccion(nuevaDireccion);
       if (setDireccionSeleccionada) setDireccionSeleccionada(guardada || nuevaDireccion);
       onClose();
     } catch (err) {
@@ -775,7 +772,7 @@ function PanelEnvio({
       </div>
 
       {/* CONTENIDO DINÁMICO SEGÚN SELECCIÓN */}
-      
+
       {/* 1. RETIRO EN TIENDA */}
       {tipoEnvio === 'retiro' && (
         <div className="envio-card selected">
@@ -791,22 +788,22 @@ function PanelEnvio({
       )}
 
       {/* 2. DELIVERY EN MOTO */}
-{direcciones.length > 0 && (
-  <div className="envio-direcciones-guardadas">
-    {direcciones.map((dir) => (
-      <button
-        key={dir.id}
-        type="button"
-        className={`envio-direccion-item ${direccionSeleccionada?.id === dir.id ? 'active' : ''}`}
-        onClick={() => setDireccionSeleccionada(dir)}
-      >
-        📍 {dir.direccion}, {dir.ciudad}
-      </button>
-    ))}
-  </div>
-)}
-      {tipoEnvio === 'delivery' && (
+      {direcciones.length > 0 && (
+        <div className="envio-direcciones-guardadas">
+          {direcciones.map((dir) => (
+            <button
+              key={dir.id}
+              type="button"
+              className={`envio-direccion-item ${direccionSeleccionada?.id === dir.id ? 'active' : ''}`}
+              onClick={() => setDireccionSeleccionada(dir)}
+            >
+              📍 {dir.direccion}, {dir.ciudad}
+            </button>
+          ))}
+        </div>
+      )}
 
+      {tipoEnvio === 'delivery' && (
         <form onSubmit={handleGuardar} className="envio-form">
           <select 
             value={formData.ciudad} 
@@ -817,10 +814,10 @@ function PanelEnvio({
               <option key={ciudad} value={ciudad}>{ciudad} - ${TARIFAS_DELIVERY[ciudad]}</option>
             ))}
           </select>
-          
+
           <input type="text" placeholder="Teléfono de contacto" required />
           <textarea placeholder="Dirección exacta de entrega" rows="2" required />
-          
+
           {/* Aquí inyectamos el Mapa Picker (creado abajo) */}
           <div style={{ height: '200px', width: '100%', borderRadius: '8px', overflow: 'hidden', marginBottom: '8px' }}>
             <MapaPicker onLocationSelect={(coords) => setFormData({...formData, coordenadas: coords})} />
@@ -836,7 +833,7 @@ function PanelEnvio({
       {tipoEnvio === 'envio_nacional' && (
         <form onSubmit={handleGuardar} className="envio-form">
           <p style={{ fontSize: '13px', color: 'white', textAlign: 'center', margin: '0 0 10px 0' }}>Modalidad: Pago en Destino</p>
-          
+
           <select required onChange={(e) => setFormData({ ...formData, agencia_preferida: e.target.value })}>
             <option value="">Selecciona la Agencia</option>
             <option value="MRW">MRW</option>
