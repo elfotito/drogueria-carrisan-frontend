@@ -1,7 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
 import api from '../../api/axios'
-
-
 import '../admin/EstadoCuentaAdmin.css'
 import './PagosAdmin.css'
 
@@ -119,8 +117,7 @@ function PagosAdmin() {
   }
 
   return (
-    
-<div className="pagos-admin">
+    <div className="pagos-admin">
       <div className="section-header">
         <div className="header-top">
           <h2>💵 Pagos Reportados</h2>
@@ -128,7 +125,7 @@ function PagosAdmin() {
       </div>
 
       <div className="stats-grid">
-        <div className="stat-card stat-deuda">
+        <div className="stat-card stat-pendiente">
           <div className="stat-icon">⏳</div>
           <div className="stat-info">
             <div className="stat-valor">{stats.pendientes}</div>
@@ -139,7 +136,7 @@ function PagosAdmin() {
           <div className="stat-icon">💰</div>
           <div className="stat-info">
             <div className="stat-valor">${formatUSD(stats.totalUsdPendiente)}</div>
-            <div className="stat-label stat-pendiente">Monto Pendiente</div>
+            <div className="stat-label">Monto Pendiente</div>
           </div>
         </div>
       </div>
@@ -203,42 +200,38 @@ function PagosAdmin() {
                       </div>
                     </div>
                   </td>
+
                   <td>
-                    {reporte.reporte_pago_ordenes?.map(v => `#${v.orden_id}`).join(', ')}
+                    <div className="pagos-orden-tags">
+                      {reporte.reporte_pago_ordenes?.map(v => (
+                        <span key={v.orden_id} className="pagos-orden-tag">#{v.orden_id}</span>
+                      ))}
+                    </div>
                   </td>
+
                   <td className="monto-cell">${formatUSD(reporte.monto_usd)}</td>
                   <td className="monto-cell">Bs. {formatVES(reporte.monto_bs)}</td>
                   <td className="monto-cell">{formatVES(reporte.tasa_usada)}</td>
                   <td>{formatFecha(reporte.created_at)}</td>
+
                   <td>
-                    <a href={reporte.url_comprobante} target="_blank" rel="noreferrer" className="btn-detalle">
-                      📎 Ver
+                    <a href={reporte.url_comprobante} target="_blank" rel="noreferrer" className="pagos-comprobante-link">
+                      Ver comprobante
                     </a>
                   </td>
+
                   <td>
                     {reporte.estado === 'pendiente_verificacion' ? (
-                      <div style={{ display: 'flex', gap: '0.5rem' }}>
-                        <button onClick={() => abrirVerificar(reporte)} className="btn-usar-tasa">
-                          ✅ Verificar
-                        </button>
-                        <button onClick={() => abrirRechazar(reporte)} className="btn-detalle" style={{ color: '#ef4444' }}>
-                          ❌ Rechazar
-                        </button>
+                      <div className="pagos-acciones">
+                        <button onClick={() => abrirVerificar(reporte)} className="btn-verificar">✅ Verificar</button>
+                        <button onClick={() => abrirRechazar(reporte)} className="btn-rechazar">❌ Rechazar</button>
                       </div>
                     ) : (
-                      <span className={`deuda-badge ${reporte.estado === 'verificado' ? 'sin-deuda' : 'con-deuda'}`}>
-                        {reporte.estado === 'verificado' ? '✅ Verificado' : '❌ Rechazado'}
+                      <span className={`reporte-badge ${reporte.estado === 'verificado' ? 'verificado' : 'rechazado'}`}>
+                        {reporte.estado === 'verificado' ? 'Verificado' : 'Rechazado'}
                       </span>
                     )}
                   </td>
-// columna de órdenes en la tabla:
-<td>
-  <div className="pagos-orden-tags">
-    {reporte.reporte_pago_ordenes?.map(v => (
-      <span key={v.orden_id} className="pagos-orden-tag">#{v.orden_id}</span>
-    ))}
-  </div>
-</td>
                 </tr>
               ))
             )}
@@ -246,75 +239,64 @@ function PagosAdmin() {
         </table>
       </div>
 
- // comprobante:
-<a href={reporte.url_comprobante} target="_blank" rel="noreferrer" className="pagos-comprobante-link">
-  Ver comprobante
-</a>
-
-// acciones:
-{reporte.estado === 'pendiente_verificacion' ? (
-  <div className="pagos-acciones">
-    <button onClick={() => abrirVerificar(reporte)} className="btn-verificar">✅ Verificar</button>
-    <button onClick={() => abrirRechazar(reporte)} className="btn-rechazar">❌ Rechazar</button>
-  </div>
-) : (
-  <span className={`reporte-badge ${reporte.estado === 'verificado' ? 'verificado' : 'rechazado'}`}>
-    {reporte.estado === 'verificado' ? 'Verificado' : 'Rechazado'}
-  </span>
-)}
       {reporteAbierto && accionEnCurso === 'verificar' && (
         <div className="modal-overlay" onClick={cerrarModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '420px', padding: '1.5rem' }}>
-            <h3 style={{ marginBottom: '1rem' }}>Verificar pago #{reporteAbierto.id}</h3>
-            <p style={{ marginBottom: '1rem', color: '#475569' }}>
-              Esto creará la factura y el pago automáticamente, y avanzará la(s) orden(es){' '}
-              {reporteAbierto.reporte_pago_ordenes?.map(v => `#${v.orden_id}`).join(', ')} a "Preparando".
-            </p>
-            <div className="input-group">
-              <label>Número de factura *</label>
-              <input
-                type="text"
-                value={numeroFactura}
-                onChange={(e) => setNumeroFactura(e.target.value)}
-                placeholder="Ej: 00123"
-                autoFocus
-              />
-            </div>
-            {error && <p style={{ color: '#ef4444', fontSize: '0.875rem', marginTop: '0.5rem' }}>{error}</p>}
-            <div className="form-actions" style={{ marginTop: '1.5rem' }}>
-              <button className="btn-refrescar" onClick={cerrarModal} disabled={procesando}>Cancelar</button>
-              <button className="btn-primary" onClick={confirmarVerificar} disabled={procesando}>
-                {procesando ? 'Verificando...' : 'Confirmar y generar factura'}
-              </button>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="pagos-modal-body">
+              <h3>Verificar pago #{reporteAbierto.id}</h3>
+              <p className="pagos-modal-info">
+                Esto creará la factura y el pago automáticamente, y avanzará la(s) orden(es){' '}
+                {reporteAbierto.reporte_pago_ordenes?.map(v => `#${v.orden_id}`).join(', ')} a "Preparando".
+              </p>
+              <div className="input-group">
+                <label>Número de factura *</label>
+                <input
+                  type="text"
+                  value={numeroFactura}
+                  onChange={(e) => setNumeroFactura(e.target.value)}
+                  placeholder="Ej: 00123"
+                  autoFocus
+                />
+              </div>
+              {error && <p className="pagos-modal-error">{error}</p>}
+              <div className="form-actions" style={{ marginTop: '1.5rem' }}>
+                <button className="btn-refrescar" onClick={cerrarModal} disabled={procesando}>Cancelar</button>
+                <button className="btn-primary" onClick={confirmarVerificar} disabled={procesando}>
+                  {procesando ? 'Verificando...' : 'Confirmar y generar factura'}
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
 
       {reporteAbierto && accionEnCurso === 'rechazar' && (
-        // modales — reemplaza el contenido interno por .pagos-modal-body:
-<div className="modal-overlay" onClick={cerrarModal}>
-  <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-    <div className="pagos-modal-body">
-      <h3>Verificar pago #{reporteAbierto.id}</h3>
-      <p className="pagos-modal-info">
-        Esto creará la factura y el pago automáticamente, y avanzará la(s) orden(es){' '}
-        {reporteAbierto.reporte_pago_ordenes?.map(v => `#${v.orden_id}`).join(', ')} a "Preparando".
-      </p>
-      <div className="input-group">
-        <label>Número de factura *</label>
-        <input type="text" value={numeroFactura} onChange={(e) => setNumeroFactura(e.target.value)} placeholder="Ej: 00123" autoFocus />
-      </div>
-      {error && <p className="pagos-modal-error">{error}</p>}
-      <div className="form-actions" style={{ marginTop: '1.5rem' }}>
-        <button className="btn-refrescar" onClick={cerrarModal} disabled={procesando}>Cancelar</button>
-        <button className="btn-primary" onClick={confirmarVerificar} disabled={procesando}>
-          {procesando ? 'Verificando...' : 'Confirmar y generar factura'}
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
+        <div className="modal-overlay" onClick={cerrarModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="pagos-modal-body">
+              <h3>Rechazar pago #{reporteAbierto.id}</h3>
+              <p className="pagos-modal-info">
+                La(s) orden(es) volverán a estar disponibles para que el cliente reintente el pago.
+              </p>
+              <div className="input-group">
+                <label>Motivo (opcional)</label>
+                <textarea
+                  value={notaRechazo}
+                  onChange={(e) => setNotaRechazo(e.target.value)}
+                  placeholder="Ej: comprobante ilegible"
+                  rows={3}
+                />
+              </div>
+              {error && <p className="pagos-modal-error">{error}</p>}
+              <div className="form-actions" style={{ marginTop: '1.5rem' }}>
+                <button className="btn-refrescar" onClick={cerrarModal} disabled={procesando}>Cancelar</button>
+                <button className="btn-primary" onClick={confirmarRechazar} disabled={procesando} style={{ background: '#ef4444' }}>
+                  {procesando ? 'Rechazando...' : 'Confirmar rechazo'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )
