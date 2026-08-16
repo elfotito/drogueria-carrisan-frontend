@@ -14,7 +14,7 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (res) => { loadingBarHooks.finish(); return res },
   (err) => { loadingBarHooks.finish(); return Promise.reject(err) }
-
+)
 // Interceptor: agrega el token JWT automáticamente a cada request si existe
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
