@@ -280,7 +280,7 @@ function Navbar() {
       <header className="navbar-container">
         <div className="navbar__main">
           <Link to="/" className="navbar__logo" aria-label="Ir a inicio">
-            <img src={logoBlanco} alt="Droguería Carrisán" className="desktop-only" />
+            <img src={logoBlanco} alt="Droguería Carrisan" className="desktop-only" />
           </Link>
 
           {/* Botón Pickup/Delivery (ESCRITORIO) */}
@@ -320,15 +320,12 @@ function Navbar() {
           {/* Flecha atrás + Pin de envío (SOLO MÓVIL) */}
           <div className="navbar__mobile-pickup mobile-only" ref={mobilePanelRef}>
             {mostrarBackMovil && (
-              <button
-                className="mobile-back-btn"
-                aria-label="Volver"
-                onClick={() => navigate(-1)}
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <polyline points="15 18 9 12 15 6"></polyline>
-                </svg>
-              </button>
+              <button className="mobile-back-btn" aria-label="Volver" onClick={() => navigate(-1)}>
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="19" y1="12" x2="5" y2="12"></line>
+    <polyline points="12 19 5 12 12 5"></polyline>
+  </svg>
+</button>
             )}
 
             <button
