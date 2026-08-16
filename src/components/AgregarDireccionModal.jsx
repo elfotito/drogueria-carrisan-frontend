@@ -39,20 +39,26 @@ function AgregarDireccionModal({ isOpen, onClose, tipo, guardarDireccion, onGuar
 
   return (
     <Dialog.Root
-      open={isOpen}
-      onOpenChange={(e) => { if (!e.open) onClose() }}
-      size={{ base: 'full', md: 'lg' }}
-      placement="center"
-closeOnInteractOutside={false}
-    >
-      <Portal>
-        <Dialog.Backdrop />
-        <Dialog.Positioner>
-          <Dialog.Content maxH={{ base: '100dvh', md: '85vh' }} borderRadius={{ base: 0, md: '16px' }}
-display="flex"
-        flexDirection="column"
-        overflow="hidden">
-            <Dialog.Header>
+  open={isOpen}
+  onOpenChange={(e) => { if (!e.open) onClose() }}
+  size={{ base: 'full', md: 'lg' }}
+  placement="center"
+  closeOnInteractOutside={false}   // 🆕 ¿está esta línea?
+>
+  <Portal>
+    <Dialog.Backdrop />
+    <Dialog.Positioner>
+      <Dialog.Content
+        maxH={{ base: '100dvh', md: '85vh' }}
+        borderRadius={{ base: 0, md: '16px' }}
+        display="flex"            // 🆕 ¿está esta línea?
+        flexDirection="column"    // 🆕
+        overflow="hidden"         // 🆕
+      >
+        <Dialog.Header flexShrink={0}>...</Dialog.Header>
+        <Dialog.Body overflowY="auto" flex="1">
+        
+    
               <Dialog.Title>
                 {tipo === 'delivery' ? 'Agregar dirección de delivery' : 'Agregar destino de envío nacional'}
               </Dialog.Title>
@@ -117,9 +123,9 @@ display="flex"
               </Button>
             </Dialog.Footer>
           </Dialog.Content>
-        </Dialog.Positioner>
-      </Portal>
-    </Dialog.Root>
+    </Dialog.Positioner>
+  </Portal>
+</Dialog.Root>
   )
 }
 
