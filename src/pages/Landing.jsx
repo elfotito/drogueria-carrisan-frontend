@@ -1,8 +1,7 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import {
-  Check, ChevronDown, ChevronRight, Play, Lock, Package, Star,
-  ShieldCheck, HeartHandshake, User, Plus,
+  Check, ChevronDown, Play, Star, HeartHandshake,
 } from 'lucide-react'
 import './Landing.css'
 
@@ -20,6 +19,58 @@ function ImagePlaceholder({ label, className = '' }) {
     <div className={`landing-img-placeholder ${className}`}>
       <span>{label}</span>
     </div>
+  )
+}
+
+// Carrusel con paginado de circulitos — en móvil es scroll horizontal con
+// snap (cada tarjeta ocupa el ancho visible); en desktop, .landing.css
+// convierte el mismo contenedor en un grid y oculta los dots.
+function Carrusel({ items, renderItem, claseContenedor, claseTarjeta }) {
+  const [activo, setActivo] = useState(0)
+  const scrollRef = useRef(null)
+
+  function manejarScroll() {
+    const el = scrollRef.current
+    if (!el) return
+    const ancho = el.clientWidth
+    const indice = Math.round(el.scrollLeft / ancho)
+    setActivo(indice)
+  }
+
+  function irA(indice) {
+    const el = scrollRef.current
+    if (!el) return
+    el.scrollTo({ left: indice * el.clientWidth, behavior: 'smooth' })
+    setActivo(indice)
+  }
+
+  return (
+    <>
+      <div
+        ref={scrollRef}
+        className={`landing-carrusel ${claseContenedor}`}
+        onScroll={manejarScroll}
+      >
+        {items.map((item, i) => (
+          <div key={i} className={`landing-carrusel__item ${claseTarjeta}`}>
+            {renderItem(item, i)}
+          </div>
+        ))}
+      </div>
+      <div className="landing-carrusel__dots" role="tablist" aria-label="Paginación">
+        {items.map((_, i) => (
+          <button
+            key={i}
+            type="button"
+            role="tab"
+            aria-selected={i === activo}
+            aria-label={`Ir a la tarjeta ${i + 1}`}
+            className={i === activo ? 'landing-carrusel__dot landing-carrusel__dot--activo' : 'landing-carrusel__dot'}
+            onClick={() => irA(i)}
+          />
+        ))}
+      </div>
+    </>
   )
 }
 
@@ -253,15 +304,18 @@ function Landing() {
           <span className="landing-video-link__icono"><Play size={16} /></span>
           Discover Amazon Pharmacy (0:47)
         </a>
-        <div className="landing-como-funciona__grid">
-          {PASOS.map((paso) => (
-            <div key={paso.numero} className="landing-como-funciona__card">
+        <Carrusel
+          items={PASOS}
+          claseContenedor="landing-como-funciona__grid"
+          claseTarjeta="landing-como-funciona__card"
+          renderItem={(paso) => (
+            <>
               <ImagePlaceholder label={`Paso ${paso.numero}`} className="landing-como-funciona__card-imagen" />
               <h3>{paso.numero}. {paso.titulo}</h3>
               <p>{paso.texto}</p>
-            </div>
-          ))}
-        </div>
+            </>
+          )}
+        />
         <a href="#" className="btn-landing btn-landing--solido">Learn more about how it works</a>
       </section>
 
@@ -270,9 +324,12 @@ function Landing() {
       {/* ================================================================ */}
       <section className="landing-testimonios">
         <h2>Las opiniones de los clientes</h2>
-        <div className="landing-testimonios__grid">
-          {TESTIMONIOS.map((t) => (
-            <div key={t.autor} className="landing-testimonios__card">
+        <Carrusel
+          items={TESTIMONIOS}
+          claseContenedor="landing-testimonios__grid"
+          claseTarjeta="landing-testimonios__card"
+          renderItem={(t) => (
+            <>
               <div className="landing-testimonios__estrellas">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <Star key={i} size={16} fill="#12A594" color="#12A594" />
@@ -280,9 +337,9 @@ function Landing() {
               </div>
               <p>“{t.texto}”</p>
               <span>– {t.autor}, cliente de Droguería Carrisán</span>
-            </div>
-          ))}
-        </div>
+            </>
+          )}
+        />
       </section>
 
       {/* ================================================================ */}
