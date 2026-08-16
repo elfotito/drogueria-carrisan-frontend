@@ -43,6 +43,7 @@
   font-weight: 800;
   line-height: 1.15;
   margin: 0 0 12px;
+  color: #1A1A3A;
 }
 
 .landing h3 {
@@ -455,9 +456,6 @@
 }
 
 .landing-como-funciona__grid {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
   margin-bottom: 24px;
 }
 
@@ -479,6 +477,55 @@
 }
 
 /* ================================================================== */
+/* Carrusel genérico (How it works / Opiniones) — scroll horizontal    */
+/* con snap y dots en móvil; en desktop se convierte en grid, ver      */
+/* la sección @media (min-width: 1024px) más abajo.                    */
+/* ================================================================== */
+.landing-carrusel {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  gap: 0;
+  margin: 0 -20px 16px;
+  padding: 0 20px;
+}
+
+.landing-carrusel::-webkit-scrollbar {
+  display: none;
+}
+
+.landing-carrusel__item {
+  flex: 0 0 100%;
+  scroll-snap-align: center;
+  padding-right: 12px;
+}
+
+.landing-carrusel__dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.landing-carrusel__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: #d7d9e2;
+  padding: 0;
+  cursor: pointer;
+}
+
+.landing-carrusel__dot--activo {
+  background: var(--color-accent);
+  width: 20px;
+  border-radius: 4px;
+}
+
+/* ================================================================== */
 /* 9. OPINIONES DE CLIENTES                                            */
 /* ================================================================== */
 .landing-testimonios {
@@ -487,9 +534,6 @@
 }
 
 .landing-testimonios__grid {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
 }
 
 .landing-testimonios__card {
@@ -847,7 +891,6 @@
 
   /* --- How it works: 3 columnas --- */
   .landing-como-funciona__grid {
-    flex-direction: row;
     max-width: 1160px;
     margin-left: auto;
     margin-right: auto;
@@ -859,7 +902,6 @@
 
   /* --- Testimonios: 4 columnas --- */
   .landing-testimonios__grid {
-    flex-direction: row;
     max-width: 1160px;
     margin-left: auto;
     margin-right: auto;
@@ -867,6 +909,26 @@
 
   .landing-testimonios__card {
     flex: 1;
+  }
+
+  /* --- Carrusel genérico: en desktop se vuelve grid normal, sin scroll  */
+  /* horizontal ni snap, y los dots de paginado se ocultan. --- */
+  .landing-carrusel {
+    overflow-x: visible;
+    scroll-snap-type: none;
+    margin: 0;
+    padding: 0;
+    gap: 16px;
+  }
+
+  .landing-carrusel__item {
+    flex: 1;
+    scroll-snap-align: none;
+    padding-right: 0;
+  }
+
+  .landing-carrusel__dots {
+    display: none;
   }
 
   /* --- More to explore: 2 columnas --- */
