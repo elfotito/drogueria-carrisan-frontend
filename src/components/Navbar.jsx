@@ -722,10 +722,15 @@ function Navbar() {
 // COMPONENTE PANEL ENVÍO INTEGRADO
 // -------------------------------------------------------------
 function PanelEnvio({
-  tipoEnvio, cambiarTipoEnvio, onClose,
-  direcciones = [], direccionSeleccionada, setDireccionSeleccionada, guardarDireccion,
+  tipoEnvio,
+  cambiarTipoEnvio,
+  onClose,
+  direcciones = [],
+  direccionSeleccionada,
+  setDireccionSeleccionada,
+  guardarDireccion,
 }) {
-  const [modalAbierto, setModalAbierto] = useState(false) // 🆕
+  const [modalAbierto, setModalAbierto] = useState(false)
 
   return (
     <div className="envio-panel-content">
@@ -733,10 +738,37 @@ function PanelEnvio({
         <button onClick={onClose} className="close-panel-btn">✕</button>
       </div>
 
+      {/* Selectores Superiores */}
       <div className="envio-types">
-        {/* ...botones de retiro/delivery/nacional, igual que antes... */}
+        <button
+          className={`envio-type-btn ${tipoEnvio === 'retiro' ? 'active' : ''}`}
+          onClick={() => cambiarTipoEnvio('retiro')}
+        >
+          <div className="envio-circle">🏪</div>
+          <span className="envio-label">Retiro</span>
+          <span className="envio-costo">Gratis</span>
+        </button>
+        <button
+          className={`envio-type-btn ${tipoEnvio === 'delivery' ? 'active' : ''}`}
+          onClick={() => cambiarTipoEnvio('delivery')}
+        >
+          <div className="envio-circle">🛵</div>
+          <span className="envio-label">Delivery</span>
+          <span className="envio-costo">Calculado</span>
+        </button>
+        <button
+          className={`envio-type-btn ${tipoEnvio === 'envio_nacional' ? 'active' : ''}`}
+          onClick={() => cambiarTipoEnvio('envio_nacional')}
+        >
+          <div className="envio-circle">📦</div>
+          <span className="envio-label">Nacional</span>
+          <span className="envio-costo">Cobro Destino</span>
+        </button>
       </div>
 
+      {/* CONTENIDO DINÁMICO SEGÚN SELECCIÓN */}
+
+      {/* 1. RETIRO EN TIENDA */}
       {tipoEnvio === 'retiro' && (
         <div className="envio-card selected">
           <div className="envio-card-info" style={{ width: '100%', textAlign: 'center', padding: '10px' }}>
@@ -750,6 +782,7 @@ function PanelEnvio({
         </div>
       )}
 
+      {/* 2. DELIVERY EN MOTO y 3. ENVÍO NACIONAL comparten la misma lógica de direcciones */}
       {(tipoEnvio === 'delivery' || tipoEnvio === 'envio_nacional') && (
         <div className="envio-direcciones-lista">
           {direcciones.length > 0 && (
@@ -765,6 +798,13 @@ function PanelEnvio({
                 </button>
               ))}
             </div>
+          )}
+
+          {direcciones.length === 0 && (
+            <p style={{ fontSize: '13px', color: '#6b7280', textAlign: 'center', margin: '8px 0 16px' }}>
+              Aún no tienes direcciones guardadas para{' '}
+              {tipoEnvio === 'delivery' ? 'delivery' : 'envío nacional'}.
+            </p>
           )}
 
           <button type="button" className="btn-agregar-direccion" onClick={() => setModalAbierto(true)}>
@@ -784,7 +824,7 @@ function PanelEnvio({
         onClose={() => setModalAbierto(false)}
         tipo={tipoEnvio}
         guardarDireccion={guardarDireccion}
-        onGuardada={(dir) => setDireccionSeleccionada(dir)} // 🆕 auto-selección
+        onGuardada={(dir) => setDireccionSeleccionada(dir)}
       />
     </div>
   )
