@@ -32,6 +32,7 @@ import LineaHospitalaria from './pages/LineaHospitalaria'
 import OrdenDetalle from './pages/OrdenDetalle'
 import Direcciones from './pages/Direcciones'
 import Pagos from './pages/Pagos'
+import Landing from './pages/Landing'
 
 
 
@@ -71,6 +72,7 @@ function App() {
             <Route path="/farmacia" element={<PrivateRoute><LineaFarmacia /></PrivateRoute>} />
             <Route path="/hospitalaria" element={<PrivateRoute><LineaHospitalaria /></PrivateRoute>} />
             <Route path="/direcciones" element={<PrivateRoute><Direcciones /></PrivateRoute>} />
+<Route path="/landing" element={<PrivateRoute><Landing /></PrivateRoute>} />
           </Routes>
           </EnvioProvider>
         </FavoritosProvider>
