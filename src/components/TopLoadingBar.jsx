@@ -1,21 +1,44 @@
+import { useEffect, useRef, useState } from 'react'
 import { Box } from '@chakra-ui/react'
 import { useLoadingBar } from '../context/LoadingBarContext'
 
 function TopLoadingBar() {
   const { isLoading } = useLoadingBar()
+  const [navHeight, setNavHeight] = useState(0)
+
+  useEffect(() => {
+    function medirNavbar() {
+      const nav = document.querySelector('.navbar-container')
+      if (nav) setNavHeight(nav.offsetHeight)
+    }
+
+    medirNavbar()
+    window.addEventListener('resize', medirNavbar)
+
+    // 🆕 por si el navbar cambia de alto (ej: aparece/desaparece la flecha, o cambia de ruta)
+    const observer = new ResizeObserver(medirNavbar)
+    const nav = document.querySelector('.navbar-container')
+    if (nav) observer.observe(nav)
+
+    return () => {
+      window.removeEventListener('resize', medirNavbar)
+      observer.disconnect()
+    }
+  }, [])
 
   if (!isLoading) return null
 
   return (
     <Box
-      position="sticky"
-      top="0"
+      position="fixed"          // 🆕 antes: sticky
+      top={`${navHeight}px`}    // 🆕 pegado justo debajo del navbar medido
       left="0"
       width="100%"
       height="3px"
       zIndex={1001}
       overflow="hidden"
       bg="rgba(0,0,0,0.1)"
+      pointerEvents="none"      // 🆕 no bloquea clics del contenido debajo
     >
       <Box
         height="100%"
