@@ -233,6 +233,19 @@
   color: #B3261E;
 }
 
+.itemcard__badge {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  background: #12A594;
+  color: #FBFAF7;
+  font-size: 0.64rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
 .itemcard__cta {
   align-self: flex-start;
   background: #1B4B8F;
@@ -522,417 +535,153 @@
 
 .sugerencia-chip__icon {
   font-size: 1rem;
-  }
-.mi-cuenta h2 {
-  font-size: 1.1rem;
-  font-weight: 700;
-  margin: 0 0 12px;
 }
 
-/* --- Encabezado --- */
-.mi-cuenta__header {
+/* ---------------------------------------------------------
+   Modal (Crear una nueva lista, etc.) — estilo Amazon: hoja que
+   sube desde abajo en móvil, tarjeta centrada en escritorio.
+--------------------------------------------------------- */
+.misitems-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 24, 42, 0.5);
+  z-index: 1000;
   display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 20px;
-}
-
-.mi-cuenta__avatar {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #0f766e, #14b8a6);
-  color: #ffffff;
-  display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
-  font-size: 1.3rem;
-  font-weight: 700;
-  flex-shrink: 0;
 }
 
-.mi-cuenta__header > div {
-  min-width: 0; /* permite que el email largo se trunque en vez de empujar */
+.misitems-modal {
+  background: #FFFFFF;
+  border-radius: 20px 20px 0 0;
+  width: 100%;
+  max-width: 480px;
+  padding: 22px 20px 28px;
+  animation: misitems-modal-subir 0.22s ease-out;
 }
 
-.mi-cuenta__email {
-  margin: 2px 0 0;
-  color: var(--color-text-muted);
-  font-size: 0.88rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+@keyframes misitems-modal-subir {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
 }
 
-.mi-cuenta__alerta {
+.misitems-modal__header {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  background: #fef2f2;
-  color: var(--color-negative);
-  border: 1px solid #fecaca;
-  border-radius: 10px;
-  padding: 10px 14px;
-  font-size: 0.85rem;
-  margin-bottom: 16px;
-}
-
-/* --- Franja financiera --- */
-.franja-financiera {
-  display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  margin-bottom: 16px;
-  padding-bottom: 2px;
-  scrollbar-width: none; /* Firefox */
-  -webkit-overflow-scrolling: touch;
-}
-
-.franja-financiera::-webkit-scrollbar {
-  display: none; /* Chrome/Safari */
-}
-
-.franja-financiera__item {
-  flex: 1 0 auto;
-  min-width: 140px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  padding: 12px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  text-decoration: none;
-  color: var(--color-text);
-  transition: box-shadow 0.15s ease, transform 0.15s ease;
-}
-
-.franja-financiera__item:hover {
-  box-shadow: 0 4px 14px rgba(15, 23, 25, 0.06);
-  transform: translateY(-1px);
-}
-
-.franja-financiera__item strong {
-  font-size: 1.15rem;
-  font-weight: 700;
-}
-
-.franja-financiera__label {
-  font-size: 0.76rem;
-  color: var(--color-text-muted);
-  font-weight: 500;
-}
-
-.franja-financiera__monto--rojo {
-  color: var(--color-negative);
-}
-
-.franja-financiera__item--cta {
-  justify-content: center;
-  align-items: center;
-  flex-direction: row;
-  gap: 6px;
-  background: var(--color-brand);
-  color: #ffffff;
-  border-color: var(--color-brand);
-  font-weight: 600;
-  font-size: 0.88rem;
-  white-space: nowrap;
-}
-
-/* --- Accesos rápidos --- */
-.accesos-rapidos {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 28px;
-  flex-wrap: wrap;
-}
-
-.accesos-rapidos__item {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 9px 16px;
-  border-radius: 999px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  color: var(--color-text);
-  text-decoration: none;
-  font-size: 0.85rem;
-  font-weight: 600;
-  transition: border-color 0.15s ease, color 0.15s ease;
-  white-space: nowrap;
-}
-
-.accesos-rapidos__item:hover {
-  border-color: var(--color-brand);
-  color: var(--color-brand);
-}
-
-/* --- Secciones de la cuenta (dashboard) --- */
-.secciones-cuenta {
-  margin-bottom: 28px;
-}
-
-.secciones-cuenta__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
-  gap: 12px;
-}
-
-.seccion-card {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 14px;
-  padding: 16px;
-  text-decoration: none;
-  color: var(--color-text);
-  transition: box-shadow 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
-  min-width: 0;
-}
-
-.seccion-card:hover {
-  box-shadow: 0 8px 22px rgba(15, 23, 25, 0.07);
-  transform: translateY(-2px);
-  border-color: #cfe4e1;
-}
-
-.seccion-card__icono {
-  width: 42px;
-  height: 42px;
-  border-radius: 11px;
-  background: var(--color-brand-light);
-  color: var(--color-brand);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.seccion-card__texto {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  flex: 1;
-  min-width: 0;
-}
-
-.seccion-card__titulo {
-  font-weight: 700;
-  font-size: 0.95rem;
-}
-
-.seccion-card__descripcion {
-  font-size: 0.8rem;
-  color: var(--color-text-muted);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.seccion-card__flecha {
-  color: var(--color-text-muted);
-  flex-shrink: 0;
-}
-
-/* --- Últimas órdenes --- */
-.ultimas-ordenes {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 14px;
-  padding: 18px 20px 8px;
-}
-
-.ultimas-ordenes__header {
-  display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 10px;
-  gap: 8px;
-}
-
-.ver-todas {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  color: var(--color-brand);
-  text-decoration: none;
-  font-size: 0.85rem;
-  font-weight: 600;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.ordenes-lista {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.orden-card {
-  display: flex;
-  align-items: center;
   gap: 12px;
-  padding: 14px 0;
-  border-bottom: 1px solid #f0f3f2;
-  text-decoration: none;
-  color: var(--color-text);
+  margin-bottom: 18px;
 }
 
-.ordenes-lista li:last-child .orden-card {
-  border-bottom: none;
+.misitems-modal__header h3 {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: #14182A;
+  margin: 0;
 }
 
-.orden-card__icono {
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
-  background: var(--color-brand-light);
-  color: var(--color-brand);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.misitems-modal__cerrar {
   flex-shrink: 0;
-}
-
-.orden-card__info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  flex: 1;
-  min-width: 0;
-}
-
-.orden-card__titulo {
-  font-weight: 600;
-  font-size: 0.92rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.orden-card__meta {
-  font-size: 0.78rem;
-  color: var(--color-text-muted);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.orden-card__monto {
-  font-size: 0.92rem;
-  font-weight: 700;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-/* --- Badges de estado de orden --- */
-.estado-badge {
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: #f1f5f4;
-  color: var(--color-text-muted);
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.estado-badge--pendiente,
-.estado-badge--procesando { background: #fff7ed; color: var(--color-warning); }
-.estado-badge--enviado { background: var(--color-brand-light); color: var(--color-brand); }
-.estado-badge--entregado,
-.estado-badge--finalizado { background: #f0fdf4; color: var(--color-positive); }
-.estado-badge--cancelado { background: #fef2f2; color: var(--color-negative); }
-
-/* --- Estado vacío --- */
-.estado-vacio {
-  text-align: center;
-  padding: 48px 20px;
-  color: var(--color-text-muted);
-}
-
-.estado-vacio svg {
-  margin-bottom: 10px;
-  color: var(--color-text-muted);
-}
-
-.estado-vacio p {
-  margin: 0 0 16px;
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 9px 18px;
-  border-radius: 10px;
-  font-size: 0.88rem;
-  font-weight: 600;
-  border: 1px solid transparent;
-  text-decoration: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: #F7F6F1;
+  color: #5B6270;
+  font-size: 0.8rem;
   cursor: pointer;
-}
-
-.btn--primario {
-  background: var(--color-brand);
-  color: #ffffff;
-}
-
-.btn--primario:hover {
-  background: #0c5f58;
-}
-
-/* --- Carga --- */
-.mi-cuenta__cargando {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+
+.misitems-modal__cerrar:hover {
+  background: #EFEEE9;
+  color: #14182A;
+}
+
+.misitems-modal__label {
+  display: block;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #14182A;
+  margin-bottom: 8px;
+}
+
+.misitems-modal__input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid #1B4B8F;
+  border-radius: 10px;
+  font-size: 0.92rem;
+  font-family: inherit;
+  color: #14182A;
+  margin-bottom: 14px;
+}
+
+.misitems-modal__input:focus {
+  outline: none;
+  border-color: #12A594;
+}
+
+.misitems-modal__nota {
+  font-size: 0.82rem;
+  color: #5B6270;
+  line-height: 1.45;
+  margin: 0 0 22px;
+}
+
+.misitems-modal__acciones {
+  display: flex;
   gap: 10px;
-  padding: 100px 20px;
-  color: var(--color-text-muted);
 }
 
-.mi-cuenta__spinner {
-  animation: girar 0.8s linear infinite;
-  color: var(--color-brand);
+.misitems-modal__btn {
+  flex: 1;
+  padding: 12px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border: none;
 }
 
-@keyframes girar {
-  to { transform: rotate(360deg); }
+.misitems-modal__btn--cancelar {
+  background: #F7F6F1;
+  color: #5B6270;
 }
 
-/* --- Responsive --- */
-@media (max-width: 560px) {
-  .mi-cuenta {
-    padding: 20px 16px 48px;
+.misitems-modal__btn--cancelar:hover {
+  background: #EFEEE9;
+}
+
+.misitems-modal__btn--crear {
+  background: #F5A623;
+  color: #14182A;
+}
+
+.misitems-modal__btn--crear:hover {
+  filter: brightness(0.96);
+}
+
+.misitems-modal__btn--crear:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (min-width: 640px) {
+  .misitems-modal-overlay {
+    align-items: center;
   }
 
-  .secciones-cuenta__grid {
-    grid-template-columns: 1fr;
+  .misitems-modal {
+    border-radius: 18px;
+    animation: misitems-modal-aparecer 0.18s ease-out;
   }
 
-  .orden-card {
-    flex-wrap: wrap;
-  }
-
-  .orden-card__info {
-    order: 1;
-    flex-basis: 60%;
-  }
-
-  .estado-badge {
-    order: 2;
-  }
-
-  .orden-card__monto {
-    order: 3;
-    margin-left: auto;
+  @keyframes misitems-modal-aparecer {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
   }
 }
