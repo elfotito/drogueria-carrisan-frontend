@@ -3,6 +3,9 @@ import { AuthProvider } from './context/AuthContext'
 import { CartProvider } from './context/CartContext'
 import { EnvioProvider } from './context/EnvioContext'
 import { FavoritosProvider } from './context/FavoritosContext'
+import { LoadingBarProvider, useLoadingBar } from './context/LoadingBarContext'
+import { registerLoadingBar } from './api/axios'
+import TopLoadingBar from './components/TopLoadingBar'
 import Navbar from './components/Navbar'
 import ScrollToTop from './components/ScrollToTop'
 import PrivateRoute from './components/PrivateRoute'
@@ -34,7 +37,11 @@ import Direcciones from './pages/Direcciones'
 import Pagos from './pages/Pagos'
 import Landing from './pages/Landing'
 
-
+function LoadingBarBridge() {
+  const bar = useLoadingBar()
+  useEffect(() => { registerLoadingBar(bar) }, [bar])
+  return <TopLoadingBar />
+}
 
 
 function App() {
@@ -44,6 +51,8 @@ function App() {
         <FavoritosProvider>
           <EnvioProvider>
             <ScrollToTop />
+             <LoadingBarProvider>
+              <LoadingBarBridge />
           <Navbar />
           <Routes>
 <Route path="/" element={<Landing />} />
@@ -74,6 +83,7 @@ function App() {
             <Route path="/hospitalaria" element={<PrivateRoute><LineaHospitalaria /></PrivateRoute>} />
             <Route path="/direcciones" element={<PrivateRoute><Direcciones /></PrivateRoute>} />
           </Routes>
+            </LoadingBarProvider>
           </EnvioProvider>
         </FavoritosProvider>
       </CartProvider>
