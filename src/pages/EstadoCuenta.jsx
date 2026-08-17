@@ -207,16 +207,15 @@ useEffect(() => {
     </button>
   </li>
   <li>
-    <button className="ec-drawer__item" onClick={() => setMenuAbierto(false)}>
-      <FileBarChart size={20} />
-      <span>Reportes</span>
-    </button>
-  </li>
-  <li>
-    <button className="ec-drawer__item" onClick={() => setMenuAbierto(false)}>
-      <TrendingUp size={20} />
-      <span>Solicitar ampliación de línea</span>
-    </button>
+ 
+<button className="ec-drawer__item" onClick={() => { setMenuAbierto(false); navigate('/estado-cuenta/reportes') }}>
+  <FileBarChart size={20} />
+  <span>Reportes</span>
+</button>
+<button className="ec-drawer__item" onClick={() => { setMenuAbierto(false); navigate('/estado-cuenta/ampliacion') }}>
+  <TrendingUp size={20} />
+  <span>Solicitar ampliación de línea</span>
+</button>
   </li>
   <li>
     <button className="ec-drawer__item" onClick={() => setMenuAbierto(false)}>
