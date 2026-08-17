@@ -1,23 +1,19 @@
 import { useState, useMemo, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom' // ← AGREGADO
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import api from '../api/axios'
 import {
-  FileText, DollarSign, Eye, Download, Upload, X, Loader2,
+  Wallet, FileText, DollarSign, Eye, Download, Upload, X, Loader2,
   AlertCircle, CreditCard, Menu, Search, FileBarChart, TrendingUp,
-  MessageCircle, Send, Plus, Package
+  MessageCircle, Send, Plus, Package,
 } from 'lucide-react'
-import BottomNav from '../components/BottomNav'
-import './EstadoCuenta.css'
 import OrdenClienteModal from '../components/OrdenClienteModal'
 import PagoClienteModal from '../components/PagoClienteModal'
+import BottomNav from '../components/BottomNav'
+import './EstadoCuenta.css'
 
 function formatearMonto(valor) {
-  return new Intl.NumberFormat('es-VE', { style: 'currency', currency: 'USD' }).format(valor || 0)
-}
-
-function formatearFecha(fecha) {
-  return new Date(fecha).toLocaleDateString('es-VE', { day: '2-digit', month: 'short', year: 'numeric' })
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(valor || 0)
 }
 
 function claveGrupoFecha(fecha) {
@@ -32,30 +28,46 @@ function claveGrupoFecha(fecha) {
   return d.toLocaleDateString('es-VE', { day: '2-digit', month: 'long', year: 'numeric' })
 }
 
+// Contenido del menú lateral — mismo array alimenta el drawer móvil Y el sidebar fijo de desktop
+function useMenuItems(navigate, cerrar) {
+  return [
+    { icono: DollarSign, label: 'Historial de pagos', ruta: '/estado-cuenta/pagos' },
+    { icono: FileText, label: 'Historial de facturas', ruta: '/estado-cuenta/facturas' },
+    { icono: FileBarChart, label: 'Reportes', ruta: '/estado-cuenta/reportes' },
+    { icono: TrendingUp, label: 'Solicitar ampliación', ruta: '/estado-cuenta/ampliacion' },
+    { icono: MessageCircle, label: 'Contacto directo', ruta: null },
+  ].map((item) => ({
+    ...item,
+    onClick: () => {
+      cerrar()
+      if (item.ruta) navigate(item.ruta)
+    },
+  }))
+}
+
 export default function EstadoCuenta() {
-  const navigate = useNavigate()
   const { user } = useAuth()
+  const navigate = useNavigate()
   const [datos, setDatos] = useState(null)
+  const [comparativa, setComparativa] = useState(null)
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
   const [filtro, setFiltro] = useState('todos')
   const [busqueda, setBusqueda] = useState('')
   const [ordenSeleccionada, setOrdenSeleccionada] = useState(null)
+  const [pagoSeleccionado, setPagoSeleccionado] = useState(null)
   const [modalPagoAbierto, setModalPagoAbierto] = useState(false)
   const [menuAbierto, setMenuAbierto] = useState(false)
-  const [pagoSeleccionado, setPagoSeleccionado] = useState(null)
-  const [comparativa, setComparativa] = useState(null)
+
+  const menuItems = useMenuItems(navigate, () => setMenuAbierto(false))
 
   useEffect(() => {
     cargarEstadoCuenta()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  useEffect(() => {
     api.get(`/clientes/${user.id}/estado-cuenta/comparativa`)
       .then(({ data }) => setComparativa(data))
-      .catch(() => {}) // no bloquea el resto de la página si falla
-  }, [user.id])
+      .catch(() => {})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   async function cargarEstadoCuenta() {
     setCargando(true)
@@ -71,42 +83,16 @@ export default function EstadoCuenta() {
     }
   }
 
-  async function exportarFacturaPDF(factura) {
+  async function exportarEstadoCompletoPDF() {
     const { jsPDF } = await import('jspdf')
     const doc = new jsPDF()
     doc.setFontSize(16)
     doc.text('Droguería Carrisan', 14, 20)
     doc.setFontSize(11)
-    doc.text(`Factura #${factura.numero_factura}`, 14, 32)
-    doc.text(`Fecha: ${formatearFecha(factura.created_at)}`, 14, 40)
-    doc.text(`Estado: ${factura.estado || 'pendiente'}`, 14, 48)
-    doc.text(`Monto: ${formatearMonto(factura.monto_facturado)}`, 14, 56)
-    if (datos?.cliente?.nombre) doc.text(`Cliente: ${datos.cliente.nombre}`, 14, 64)
-    doc.save(`factura-${factura.numero_factura}.pdf`)
-  }
-
-  async function exportarEstadoCompletoPDF() {
-    const { jsPDF } = await import('jspdf')
-    const doc = new jsPDF()
-    doc.setFontSize(16)
-    doc.text('Estado de Cuenta', 14, 20)
-    doc.setFontSize(11)
     doc.text(`Cliente: ${datos.cliente?.nombre || ''}`, 14, 30)
     doc.text(`Línea de crédito: ${formatearMonto(datos.resumen.linea_credito)}`, 14, 40)
     doc.text(`Deuda actual: ${formatearMonto(datos.resumen.deuda_actual)}`, 14, 48)
     doc.text(`Disponible: ${formatearMonto(datos.resumen.saldo)}`, 14, 56)
-
-    let y = 70
-    doc.setFontSize(12)
-    doc.text('Historial:', 14, y)
-    y += 8
-    doc.setFontSize(10)
-    historial.forEach((mov) => {
-      const linea = `${mov.tipo === 'factura' ? 'Factura' : mov.tipo === 'pago' ? 'Pago' : 'Orden'} #${mov.tipo === 'factura' ? mov.numero_factura : mov.id} — ${formatearMonto(mov.monto_facturado || mov.monto)} — ${formatearFecha(mov.created_at)}`
-      doc.text(linea, 14, y)
-      y += 7
-      if (y > 280) { doc.addPage(); y = 20 }
-    })
     doc.save('estado-de-cuenta.pdf')
   }
 
@@ -130,10 +116,11 @@ export default function EstadoCuenta() {
     return historial.filter((mov) => {
       if (filtro === 'facturas' && mov.tipo !== 'factura') return false
       if (filtro === 'pagos' && mov.tipo !== 'pago') return false
+      if (filtro === 'ordenes' && mov.tipo !== 'orden_pendiente') return false
       if (busqueda.trim()) {
         const termino = busqueda.trim().toLowerCase()
-        const idTexto = mov.tipo === 'factura' ? `${mov.numero_factura}` : `${mov.id}`
-        const montoTexto = `${mov.monto_facturado || mov.monto}`
+        const idTexto = `${mov.numero_factura || mov.id}`
+        const montoTexto = `${mov.monto_facturado || mov.monto || mov.total_usd}`
         return idTexto.toLowerCase().includes(termino) || montoTexto.includes(termino)
       }
       return true
@@ -152,8 +139,8 @@ export default function EstadoCuenta() {
 
   if (cargando) {
     return (
-      <div className="estado-cuenta__cargando">
-        <Loader2 className="estado-cuenta__spinner" size={28} />
+      <div className="ec-estado-cargando">
+        <Loader2 className="ec-spinner" size={28} />
         <p>Cargando estado de cuenta…</p>
       </div>
     )
@@ -161,7 +148,7 @@ export default function EstadoCuenta() {
 
   if (error) {
     return (
-      <div className="estado-cuenta__error">
+      <div className="ec-estado-error">
         <AlertCircle size={20} />
         <p>{error}</p>
       </div>
@@ -170,229 +157,186 @@ export default function EstadoCuenta() {
 
   if (!datos) return null
 
-  const { resumen, facturas, pagos } = datos
-  const disponible = resumen.saldo
+  const { resumen } = datos
   const porcentajeUsado = resumen.linea_credito > 0
     ? Math.min((resumen.deuda_actual / resumen.linea_credito) * 100, 100)
     : 0
 
   return (
-    <div className="ec-container">
-      {/* Header */}
-      <header className="ec-header">
-        <button className="ec-menu-btn" onClick={() => setMenuAbierto(true)} aria-label="Abrir menú">
-          <Menu size={22} />
-        </button>
-        <h1 className="ec-header__titulo">Estado de cuenta</h1>
-        <button className="ec-header__exportar" onClick={exportarEstadoCompletoPDF} aria-label="Exportar todo">
-          <Download size={20} />
-        </button>
-      </header>
-
-      {/* Drawer lateral - ESTRUCTURA CORREGIDA */}
-      <nav className={`ec-drawer ${menuAbierto ? 'ec-drawer--abierto' : ''}`}>
-        <div className="ec-drawer__header">
-          <h3>Estado de cuenta</h3>
-          <button className="ec-drawer__cerrar" onClick={() => setMenuAbierto(false)} aria-label="Cerrar menú">
-            <X size={20} />
-          </button>
-        </div>
-        <ul className="ec-drawer__lista">
-          <li>
-            <button className="ec-drawer__item" onClick={() => { setMenuAbierto(false); navigate('/estado-cuenta/pagos') }}>
-              <DollarSign size={20} />
-              <span>Historial de pagos</span>
-            </button>
-          </li>
-          <li>
-            <button className="ec-drawer__item" onClick={() => { setMenuAbierto(false); navigate('/estado-cuenta/facturas') }}>
-              <FileText size={20} />
-              <span>Historial de facturas</span>
-            </button>
-          </li>
-          <li>
-            <button className="ec-drawer__item" onClick={() => { setMenuAbierto(false); navigate('/estado-cuenta/reportes') }}>
-              <FileBarChart size={20} />
-              <span>Reportes</span>
-            </button>
-          </li>
-          <li>
-            <button className="ec-drawer__item" onClick={() => { setMenuAbierto(false); navigate('/estado-cuenta/ampliacion') }}>
-              <TrendingUp size={20} />
-              <span>Solicitar ampliación de línea</span>
-            </button>
-          </li>
-          <li>
-            <button className="ec-drawer__item" onClick={() => setMenuAbierto(false)}>
-              <MessageCircle size={20} />
-              <span>Contacto directo</span>
-            </button>
-          </li>
-        </ul>
-      </nav>
-      {menuAbierto && <div className="ec-drawer-overlay" onClick={() => setMenuAbierto(false)} />}
-
-      {/* Tarjeta de saldo grande */}
-      <section className="ec-balance">
-        {comparativa && (
-          <section className="ec-comparativa">
-            <div className="ec-comparativa-item">
-              <span className="ec-comparativa-label">Este mes</span>
-              <strong className="ec-comparativa-monto">{formatearMonto(comparativa.mes_actual)}</strong>
-            </div>
-            <div className="ec-comparativa-divider" />
-            <div className="ec-comparativa-item">
-              <span className="ec-comparativa-label">Mes pasado</span>
-              <strong className="ec-comparativa-monto">{formatearMonto(comparativa.mes_pasado)}</strong>
-            </div>
-            {comparativa.variacion_porcentaje !== null && (
-              <span className={`ec-comparativa-badge ${comparativa.variacion_porcentaje >= 0 ? 'ec-comparativa-badge--sube' : 'ec-comparativa-badge--baja'}`}>
-                {comparativa.variacion_porcentaje >= 0 ? '↑' : '↓'} {Math.abs(comparativa.variacion_porcentaje).toFixed(0)}%
-              </span>
-            )}
-          </section>
-        )}
-        
-        <span className="ec-balance__label">Disponible</span>
-        <strong className={`ec-balance__monto ${disponible < 0 ? 'ec-balance__monto--negativo' : ''}`}>
-          {formatearMonto(disponible)}
-        </strong>
-
-        {resumen.linea_credito > 0 && (
-          <>
-            <div className="ec-balance__barra">
-              <div
-                className="ec-balance__progreso"
-                style={{
-                  width: `${porcentajeUsado}%`,
-                  background: porcentajeUsado > 90
-                    ? 'var(--ec-negativo)'
-                    : porcentajeUsado > 60
-                      ? 'var(--ec-warning)'
-                      : 'var(--ec-brand)'
-                }}
-              />
-            </div>
-            <div className="ec-balance__leyenda">
-              <span>Deuda: {formatearMonto(resumen.deuda_actual)}</span>
-              <span>Línea: {formatearMonto(resumen.linea_credito)}</span>
-            </div>
-          </>
-        )}
-      </section>
-
-      {/* Accesos rápidos */}
-      <section className="ec-accesos">
-        <button className="ec-acceso" onClick={() => setModalPagoAbierto(true)}>
-          <div className="ec-acceso__icono"><Send size={20} /></div>
-          <span>Reportar pago</span>
-        </button>
-        <button className="ec-acceso">
-          <div className="ec-acceso__icono"><Plus size={20} /></div>
-          <span>Acción</span>
-        </button>
-        <button className="ec-acceso">
-          <div className="ec-acceso__icono"><CreditCard size={20} /></div>
-          <span>Acción</span>
-        </button>
-      </section>
-
-      {/* Buscador + filtros */}
-      <section className="ec-movimientos">
-        <div className="ec-buscador">
-          <Search size={18} />
-          <input
-            type="text"
-            placeholder="Buscar transacción (# o monto)"
-            value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)}
-          />
+    <div className="ec-shell">
+      {/* Sidebar — drawer en móvil, fijo desde md */}
+      <aside className={`ec-sidebar ${menuAbierto ? 'ec-sidebar--abierto' : ''}`}>
+        <div className="ec-sidebar__brand">
+          <Wallet size={22} />
+          <span>Estado de Cuenta</span>
         </div>
 
-        <div className="ec-filtros">
-          {[
-            { key: 'todos', label: 'Todos', total: historial.length },
-            { key: 'facturas', label: 'Facturas', total: facturas.length },
-            { key: 'pagos', label: 'Pagos', total: pagos.length },
-          ].map((f) => (
-            <button
-              key={f.key}
-              className={`ec-filtros__pill ${filtro === f.key ? 'ec-filtros__pill--activo' : ''}`}
-              onClick={() => setFiltro(f.key)}
-            >
-              {f.label} <span>{f.total}</span>
+        <button className="ec-sidebar__close" onClick={() => setMenuAbierto(false)} aria-label="Cerrar menú">
+          <X size={20} />
+        </button>
+
+        <nav className="ec-sidebar__nav">
+          {menuItems.map((item) => (
+            <button key={item.label} className="ec-sidebar__item" onClick={item.onClick}>
+              <item.icono size={19} />
+              <span>{item.label}</span>
             </button>
           ))}
-        </div>
+        </nav>
+      </aside>
+      {menuAbierto && <div className="ec-sidebar-overlay" onClick={() => setMenuAbierto(false)} />}
 
-        {/* Lista agrupada por fecha */}
-        {Object.keys(gruposPorFecha).length === 0 ? (
-          <p className="ec-movimientos__vacio">No hay movimientos que coincidan</p>
-        ) : (
-          Object.entries(gruposPorFecha).map(([fechaLabel, movimientos]) => (
-            <div key={fechaLabel} className="ec-grupo-fecha">
-              <p className="ec-grupo-fecha__titulo">{fechaLabel}</p>
-              <ul className="ec-movimientos__lista">
-                {movimientos.map((mov) => (
-                  <li
-                    key={`${mov.tipo}-${mov.id}`}
-                    className="ec-movimiento"
-                    onClick={() => {
-                      if (mov.tipo === 'pago') setPagoSeleccionado(mov)
-                      else if (mov.tipo === 'orden_pendiente') setOrdenSeleccionada(mov)
-                    }}
-                    style={{ cursor: mov.tipo !== 'factura' ? 'pointer' : 'default' }}
-                  >
-                    <div className={`ec-movimiento__icono ec-movimiento__icono--${mov.tipo === 'factura' ? 'factura' : mov.tipo === 'pago' ? 'pago' : 'orden'}`}>
-                      {mov.tipo === 'factura' ? <FileText size={18} /> : mov.tipo === 'pago' ? <DollarSign size={18} /> : <Package size={18} />}
-                    </div>
-                    
-                    <div className="ec-movimiento__info">
-                      <span className="ec-movimiento__titulo">
-                        {mov.tipo === 'factura' ? `Factura #${mov.numero_factura}` : mov.tipo === 'pago' ? `Pago #${mov.id}` : `Orden #${mov.id}`}
-                      </span>
-                      <span className={`ec-badge ec-badge--${mov.tipo === 'orden_pendiente' ? 'pendiente' : (mov.estado || 'registrado')}`}>
-                        {mov.tipo === 'orden_pendiente' ? 'por pagar' : (mov.estado || 'registrado')}
-                      </span>
-                    </div>
-                    
-                    <strong className={`ec-movimiento__monto ${mov.tipo === 'pago' ? 'ec-movimiento__monto--verde' : 'ec-movimiento__monto--rojo'}`}>
-                      {mov.tipo === 'pago' ? '+' : '-'}{formatearMonto(mov.monto_facturado || mov.monto || mov.total_usd)}
-                    </strong>
-                    
-                    {mov.tipo === 'factura' && (
-                      <div className="ec-movimiento__acciones">
-                        <button title="Ver orden" onClick={(e) => { e.stopPropagation(); setOrdenSeleccionada(mov); }}>
-                          <Eye size={16} />
-                        </button>
-                        <button title="Exportar PDF" onClick={(e) => { e.stopPropagation(); exportarFacturaPDF(mov); }}>
-                          <Download size={16} />
-                        </button>
-                      </div>
-                    )}
-                  </li>
-                ))}
-              </ul>
+      <div className="ec-main">
+        {/* Header */}
+        <header className="ec-topbar">
+          <button className="ec-menu-btn" onClick={() => setMenuAbierto(true)} aria-label="Abrir menú">
+            <Menu size={20} />
+          </button>
+          <h1 className="ec-topbar__titulo">Estado de cuenta</h1>
+          <button className="ec-topbar__exportar" onClick={exportarEstadoCompletoPDF} aria-label="Exportar todo">
+            <Download size={18} />
+            <span className="ec-topbar__exportar-label">Exportar</span>
+          </button>
+        </header>
+
+        <div className="ec-content">
+          {/* Panel de saldo — hero en desktop, card compacta en móvil */}
+          <section className="ec-hero">
+            <div className="ec-hero__principal">
+              <span className="ec-hero__label">Disponible</span>
+              <strong className={`ec-hero__monto ${resumen.saldo < 0 ? 'ec-hero__monto--negativo' : ''}`}>
+                {formatearMonto(resumen.saldo)}
+              </strong>
+
+              {resumen.linea_credito > 0 && (
+                <>
+                  <div className="ec-hero__barra">
+                    <div
+                      className="ec-hero__progreso"
+                      style={{
+                        width: `${porcentajeUsado}%`,
+                        background: porcentajeUsado > 90 ? 'var(--ec-negativo)' : porcentajeUsado > 60 ? 'var(--ec-warning)' : 'var(--ec-accent)'
+                      }}
+                    />
+                  </div>
+                  <div className="ec-hero__leyenda">
+                    <span>Deuda: {formatearMonto(resumen.deuda_actual)}</span>
+                    <span>Línea: {formatearMonto(resumen.linea_credito)}</span>
+                  </div>
+                </>
+              )}
             </div>
-          ))
-        )}
-      </section>
 
-      {/* Modales */}
-      {ordenSeleccionada && (
-        <OrdenClienteModal orden={ordenSeleccionada} onClose={() => setOrdenSeleccionada(null)} />
-      )}
+            {comparativa && (
+              <div className="ec-hero__comparativa">
+                <div className="ec-comp-item">
+                  <span>Este mes</span>
+                  <strong>{formatearMonto(comparativa.mes_actual)}</strong>
+                </div>
+                <div className="ec-comp-divider" />
+                <div className="ec-comp-item">
+                  <span>Mes pasado</span>
+                  <strong>{formatearMonto(comparativa.mes_pasado)}</strong>
+                </div>
+                {comparativa.variacion_porcentaje !== null && (
+                  <span className={`ec-comp-badge ${comparativa.variacion_porcentaje >= 0 ? 'ec-comp-badge--sube' : 'ec-comp-badge--baja'}`}>
+                    {comparativa.variacion_porcentaje >= 0 ? '↑' : '↓'} {Math.abs(comparativa.variacion_porcentaje).toFixed(0)}%
+                  </span>
+                )}
+              </div>
+            )}
+          </section>
 
-      {pagoSeleccionado && (
-        <PagoClienteModal pago={pagoSeleccionado} onClose={() => setPagoSeleccionado(null)} />
-      )}
+          {/* Accesos rápidos */}
+          <section className="ec-accesos">
+            <button className="ec-acceso" onClick={() => setModalPagoAbierto(true)}>
+              <div className="ec-acceso__icono"><Send size={20} /></div>
+              <span>Reportar pago</span>
+            </button>
+            <button className="ec-acceso">
+              <div className="ec-acceso__icono"><Plus size={20} /></div>
+              <span>Acción</span>
+            </button>
+            <button className="ec-acceso">
+              <div className="ec-acceso__icono"><CreditCard size={20} /></div>
+              <span>Acción</span>
+            </button>
+          </section>
 
-      {modalPagoAbierto && (
-        <ModalReportarPago 
-          onCerrar={() => setModalPagoAbierto(false)} 
-          onEnviar={reportarPago} 
-        />
-      )}
+          {/* Movimientos */}
+          <section className="ec-movimientos">
+            <div className="ec-movimientos__toolbar">
+              <div className="ec-buscador">
+                <Search size={18} />
+                <input
+                  type="text"
+                  placeholder="Buscar transacción (# o monto)"
+                  value={busqueda}
+                  onChange={(e) => setBusqueda(e.target.value)}
+                />
+              </div>
+
+              <div className="ec-filtros">
+                {[
+                  { key: 'todos', label: 'Todos' },
+                  { key: 'ordenes', label: 'Por pagar' },
+                  { key: 'facturas', label: 'Facturas' },
+                  { key: 'pagos', label: 'Pagos' },
+                ].map((f) => (
+                  <button
+                    key={f.key}
+                    className={`ec-filtros__pill ${filtro === f.key ? 'ec-filtros__pill--activo' : ''}`}
+                    onClick={() => setFiltro(f.key)}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {Object.keys(gruposPorFecha).length === 0 ? (
+              <p className="ec-movimientos__vacio">No hay movimientos que coincidan</p>
+            ) : (
+              Object.entries(gruposPorFecha).map(([fechaLabel, movimientos]) => (
+                <div key={fechaLabel} className="ec-grupo-fecha">
+                  <p className="ec-grupo-fecha__titulo">{fechaLabel}</p>
+                  <ul className="ec-movimientos__lista">
+                    {movimientos.map((mov) => (
+                      <li
+                        key={`${mov.tipo}-${mov.id}`}
+                        className="ec-movimiento"
+                        onClick={() => {
+                          if (mov.tipo === 'pago') setPagoSeleccionado(mov)
+                          else if (mov.tipo === 'orden_pendiente') setOrdenSeleccionada(mov)
+                        }}
+                      >
+                        <div className={`ec-movimiento__icono ec-movimiento__icono--${mov.tipo === 'factura' ? 'factura' : mov.tipo === 'pago' ? 'pago' : 'orden'}`}>
+                          {mov.tipo === 'factura' ? <FileText size={18} /> : mov.tipo === 'pago' ? <DollarSign size={18} /> : <Package size={18} />}
+                        </div>
+                        <div className="ec-movimiento__info">
+                          <span className="ec-movimiento__titulo">
+                            {mov.tipo === 'factura' ? `Factura #${mov.numero_factura}` : mov.tipo === 'pago' ? `Pago #${mov.id}` : `Orden #${mov.id}`}
+                          </span>
+                          <span className={`ec-badge ec-badge--${mov.tipo === 'orden_pendiente' ? 'pendiente' : (mov.estado || 'registrado')}`}>
+                            {mov.tipo === 'orden_pendiente' ? 'por pagar' : (mov.estado || 'registrado')}
+                          </span>
+                        </div>
+                        <strong className={`ec-movimiento__monto ${mov.tipo === 'pago' ? 'ec-movimiento__monto--verde' : 'ec-movimiento__monto--rojo'}`}>
+                          {mov.tipo === 'pago' ? '+' : '-'}{formatearMonto(mov.monto_facturado || mov.monto || mov.total_usd)}
+                        </strong>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))
+            )}
+          </section>
+        </div>
+      </div>
+
+      {ordenSeleccionada && <OrdenClienteModal orden={ordenSeleccionada} onClose={() => setOrdenSeleccionada(null)} />}
+      {pagoSeleccionado && <PagoClienteModal pago={pagoSeleccionado} onClose={() => setPagoSeleccionado(null)} />}
+      {modalPagoAbierto && <ModalReportarPago onCerrar={() => setModalPagoAbierto(false)} onEnviar={reportarPago} />}
 
       <BottomNav />
     </div>
@@ -442,14 +386,7 @@ function ModalReportarPago({ onCerrar, onEnviar }) {
         <div className="ec-modal__cuerpo ec-modal__cuerpo--form">
           <label>
             Monto pagado
-            <input 
-              type="number" 
-              step="0.01" 
-              min="0" 
-              value={monto} 
-              onChange={(e) => setMonto(e.target.value)} 
-              required 
-            />
+            <input type="number" step="0.01" min="0" value={monto} onChange={(e) => setMonto(e.target.value)} required />
           </label>
           <label>
             Método de pago
@@ -463,44 +400,24 @@ function ModalReportarPago({ onCerrar, onEnviar }) {
           </label>
           <label>
             Número de referencia
-            <input 
-              type="text" 
-              value={referencia} 
-              onChange={(e) => setReferencia(e.target.value)} 
-              required 
-            />
+            <input type="text" value={referencia} onChange={(e) => setReferencia(e.target.value)} required />
           </label>
           <label>
             Fecha del pago
-            <input 
-              type="date" 
-              value={fecha} 
-              onChange={(e) => setFecha(e.target.value)} 
-              required 
-            />
+            <input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} required />
           </label>
           <label>
             Comprobante (opcional)
             <div className="ec-modal__upload">
               <Upload size={16} />
               <span>{comprobante ? comprobante.name : 'Subir imagen o PDF'}</span>
-              <input 
-                type="file" 
-                accept="image/*,.pdf" 
-                onChange={(e) => setComprobante(e.target.files?.[0] || null)} 
-              />
+              <input type="file" accept="image/*,.pdf" onChange={(e) => setComprobante(e.target.files?.[0] || null)} />
             </div>
           </label>
-          {error && (
-            <p className="ec-modal__error">
-              <AlertCircle size={14} /> {error}
-            </p>
-          )}
+          {error && <p className="ec-modal__error"><AlertCircle size={14} /> {error}</p>}
         </div>
         <div className="ec-modal__pie">
-          <button type="button" className="ec-btn ec-btn--secundario" onClick={onCerrar}>
-            Cancelar
-          </button>
+          <button type="button" className="ec-btn ec-btn--secundario" onClick={onCerrar}>Cancelar</button>
           <button type="submit" className="ec-btn ec-btn--primario" disabled={enviando}>
             {enviando ? 'Enviando…' : 'Enviar reporte'}
           </button>
