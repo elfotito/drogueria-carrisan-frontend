@@ -306,3 +306,4 @@ function EstadoCuentaDetalle({ clienteId, isOpen, onClose }) {
 }
 
 export default EstadoCuentaDetalle
+
