@@ -177,11 +177,17 @@ function Landing() {
       <section className="landing-hero">
         <div className="landing-hero__contenido">
           <ImagePlaceholder label="Imagen hero" className="landing-hero__imagen" />
-          <h1>La farmacia que cumple de verdad.</h1>
-          <p className="landing-hero__subtitulo">PillPack ya está disponible en Droguería Carrisán.</p>
-          <a href="#" className="landing-link">Más información ›</a>
-          <a href="#" className="btn-landing btn-landing--primario">Sign up | Sign in</a>
-          <a href="#" className="landing-link landing-link--secundario">¿Ya nos enviaste una receta?</a>
+          
+          <div className="landing-hero__texto">
+            <h1>La farmacia que cumple de verdad.</h1>
+            <p className="landing-hero__subtitulo">PillPack ya está disponible en Droguería Carrisán.</p>
+            
+            <div className="landing-hero__acciones">
+              <a href="#" className="landing-link">Más información ›</a>
+              <a href="#" className="btn-landing btn-landing--primario">Sign up | Sign in</a>
+              <a href="#" className="landing-link landing-link--secundario">¿Ya nos enviaste una receta?</a>
+            </div>
+          </div>
         </div>
       </section>
 
