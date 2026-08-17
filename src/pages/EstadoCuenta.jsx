@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom' // ← AGREGADO
 import { useAuth } from '../context/AuthContext'
 import api from '../api/axios'
 import {
@@ -10,7 +11,6 @@ import BottomNav from '../components/BottomNav'
 import './EstadoCuenta.css'
 import OrdenClienteModal from '../components/OrdenClienteModal'
 import PagoClienteModal from '../components/PagoClienteModal'
-
 
 function formatearMonto(valor) {
   return new Intl.NumberFormat('es-VE', { style: 'currency', currency: 'USD' }).format(valor || 0)
@@ -33,22 +33,29 @@ function claveGrupoFecha(fecha) {
 }
 
 export default function EstadoCuenta() {
-const navigate = useNavigate()
+  const navigate = useNavigate()
   const { user } = useAuth()
   const [datos, setDatos] = useState(null)
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
-  const [filtro, setFiltro] = useState('todos') // 'todos' | 'facturas' | 'pagos'
+  const [filtro, setFiltro] = useState('todos')
   const [busqueda, setBusqueda] = useState('')
   const [ordenSeleccionada, setOrdenSeleccionada] = useState(null)
   const [modalPagoAbierto, setModalPagoAbierto] = useState(false)
   const [menuAbierto, setMenuAbierto] = useState(false)
-const [pagoSeleccionado, setPagoSeleccionado] = useState(null)
+  const [pagoSeleccionado, setPagoSeleccionado] = useState(null)
+  const [comparativa, setComparativa] = useState(null)
 
   useEffect(() => {
     cargarEstadoCuenta()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    api.get(`/clientes/${user.id}/estado-cuenta/comparativa`)
+      .then(({ data }) => setComparativa(data))
+      .catch(() => {}) // no bloquea el resto de la página si falla
+  }, [user.id])
 
   async function cargarEstadoCuenta() {
     setCargando(true)
@@ -104,21 +111,11 @@ const [pagoSeleccionado, setPagoSeleccionado] = useState(null)
   }
 
   async function reportarPago(formData) {
-    // TODO backend: crear endpoint POST /clientes/:id/pagos/reportar que reciba
-    // monto, referencia, metodo, fecha y comprobante (multipart/form-data), y marque
-    // el pago como "pendiente de verificación" hasta que un administrador lo confirme.
     await api.post(`/clientes/${user.id}/pagos/reportar`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     })
     await cargarEstadoCuenta()
   }
-const [comparativa, setComparativa] = useState(null)
-
-useEffect(() => {
-  api.get(`/clientes/${user.id}/estado-cuenta/comparativa`)
-    .then(({ data }) => setComparativa(data))
-    .catch(() => {}) // no bloquea el resto de la página si falla
-}, [user.id])
 
   const historial = useMemo(() => {
     if (!datos) return []
@@ -192,63 +189,71 @@ useEffect(() => {
         </button>
       </header>
 
-      {/* Drawer lateral */}
-     <ul className="ec-drawer__lista">
-  <li>
-    <button className="ec-drawer__item" onClick={() => { setMenuAbierto(false); navigate('/estado-cuenta/pagos') }}>
-      <DollarSign size={20} />
-      <span>Historial de pagos</span>
-    </button>
-  </li>
-  <li>
-    <button className="ec-drawer__item" onClick={() => { setMenuAbierto(false); navigate('/estado-cuenta/facturas') }}>
-      <FileText size={20} />
-      <span>Historial de facturas</span>
-    </button>
-  </li>
-  <li>
- 
-<button className="ec-drawer__item" onClick={() => { setMenuAbierto(false); navigate('/estado-cuenta/reportes') }}>
-  <FileBarChart size={20} />
-  <span>Reportes</span>
-</button>
-<button className="ec-drawer__item" onClick={() => { setMenuAbierto(false); navigate('/estado-cuenta/ampliacion') }}>
-  <TrendingUp size={20} />
-  <span>Solicitar ampliación de línea</span>
-</button>
-  </li>
-  <li>
-    <button className="ec-drawer__item" onClick={() => setMenuAbierto(false)}>
-      <MessageCircle size={20} />
-      <span>Contacto directo</span>
-    </button>
-  </li>
-</ul>
+      {/* Drawer lateral - ESTRUCTURA CORREGIDA */}
+      <nav className={`ec-drawer ${menuAbierto ? 'ec-drawer--abierto' : ''}`}>
+        <div className="ec-drawer__header">
+          <h3>Estado de cuenta</h3>
+          <button className="ec-drawer__cerrar" onClick={() => setMenuAbierto(false)} aria-label="Cerrar menú">
+            <X size={20} />
+          </button>
+        </div>
+        <ul className="ec-drawer__lista">
+          <li>
+            <button className="ec-drawer__item" onClick={() => { setMenuAbierto(false); navigate('/estado-cuenta/pagos') }}>
+              <DollarSign size={20} />
+              <span>Historial de pagos</span>
+            </button>
+          </li>
+          <li>
+            <button className="ec-drawer__item" onClick={() => { setMenuAbierto(false); navigate('/estado-cuenta/facturas') }}>
+              <FileText size={20} />
+              <span>Historial de facturas</span>
+            </button>
+          </li>
+          <li>
+            <button className="ec-drawer__item" onClick={() => { setMenuAbierto(false); navigate('/estado-cuenta/reportes') }}>
+              <FileBarChart size={20} />
+              <span>Reportes</span>
+            </button>
+          </li>
+          <li>
+            <button className="ec-drawer__item" onClick={() => { setMenuAbierto(false); navigate('/estado-cuenta/ampliacion') }}>
+              <TrendingUp size={20} />
+              <span>Solicitar ampliación de línea</span>
+            </button>
+          </li>
+          <li>
+            <button className="ec-drawer__item" onClick={() => setMenuAbierto(false)}>
+              <MessageCircle size={20} />
+              <span>Contacto directo</span>
+            </button>
+          </li>
+        </ul>
       </nav>
       {menuAbierto && <div className="ec-drawer-overlay" onClick={() => setMenuAbierto(false)} />}
 
       {/* Tarjeta de saldo grande */}
       <section className="ec-balance">
-
-     {comparativa && (
-  <section className="ec-comparativa">
-    <div className="ec-comparativa-item">
-      <span className="ec-comparativa-label">Este mes</span>
-      <strong className="ec-comparativa-monto">{formatearMonto(comparativa.mes_actual)}</strong>
-    </div>
-    <div className="ec-comparativa-divider" />
-    <div className="ec-comparativa-item">
-      <span className="ec-comparativa-label">Mes pasado</span>
-      <strong className="ec-comparativa-monto">{formatearMonto(comparativa.mes_pasado)}</strong>
-    </div>
-    {comparativa.variacion_porcentaje !== null && (
-      <span className={`ec-comparativa-badge ${comparativa.variacion_porcentaje >= 0 ? 'ec-comparativa-badge--sube' : 'ec-comparativa-badge--baja'}`}>
-        {comparativa.variacion_porcentaje >= 0 ? '↑' : '↓'} {Math.abs(comparativa.variacion_porcentaje).toFixed(0)}%
-      </span>
-    )}
-  </section>
-)}
-   <span className="ec-balance__label">Disponible</span>
+        {comparativa && (
+          <section className="ec-comparativa">
+            <div className="ec-comparativa-item">
+              <span className="ec-comparativa-label">Este mes</span>
+              <strong className="ec-comparativa-monto">{formatearMonto(comparativa.mes_actual)}</strong>
+            </div>
+            <div className="ec-comparativa-divider" />
+            <div className="ec-comparativa-item">
+              <span className="ec-comparativa-label">Mes pasado</span>
+              <strong className="ec-comparativa-monto">{formatearMonto(comparativa.mes_pasado)}</strong>
+            </div>
+            {comparativa.variacion_porcentaje !== null && (
+              <span className={`ec-comparativa-badge ${comparativa.variacion_porcentaje >= 0 ? 'ec-comparativa-badge--sube' : 'ec-comparativa-badge--baja'}`}>
+                {comparativa.variacion_porcentaje >= 0 ? '↑' : '↓'} {Math.abs(comparativa.variacion_porcentaje).toFixed(0)}%
+              </span>
+            )}
+          </section>
+        )}
+        
+        <span className="ec-balance__label">Disponible</span>
         <strong className={`ec-balance__monto ${disponible < 0 ? 'ec-balance__monto--negativo' : ''}`}>
           {formatearMonto(disponible)}
         </strong>
@@ -276,7 +281,7 @@ useEffect(() => {
         )}
       </section>
 
-      {/* Accesos rápidos (placeholders) */}
+      {/* Accesos rápidos */}
       <section className="ec-accesos">
         <button className="ec-acceso" onClick={() => setModalPagoAbierto(true)}>
           <div className="ec-acceso__icono"><Send size={20} /></div>
@@ -330,15 +335,14 @@ useEffect(() => {
               <ul className="ec-movimientos__lista">
                 {movimientos.map((mov) => (
                   <li
-  key={`${mov.tipo}-${mov.id}`}
-  className="ec-movimiento"
-  onClick={() => {
-    if (mov.tipo === 'pago') setPagoSeleccionado(mov)
-    else if (mov.tipo === 'orden_pendiente') setOrdenSeleccionada(mov)
-    // facturas: si quieres que también abran algo, dime qué — por ahora sin acción
-  }}
-  style={{ cursor: mov.tipo !== 'factura' ? 'pointer' : 'default' }}
->
+                    key={`${mov.tipo}-${mov.id}`}
+                    className="ec-movimiento"
+                    onClick={() => {
+                      if (mov.tipo === 'pago') setPagoSeleccionado(mov)
+                      else if (mov.tipo === 'orden_pendiente') setOrdenSeleccionada(mov)
+                    }}
+                    style={{ cursor: mov.tipo !== 'factura' ? 'pointer' : 'default' }}
+                  >
                     <div className={`ec-movimiento__icono ec-movimiento__icono--${mov.tipo === 'factura' ? 'factura' : mov.tipo === 'pago' ? 'pago' : 'orden'}`}>
                       {mov.tipo === 'factura' ? <FileText size={18} /> : mov.tipo === 'pago' ? <DollarSign size={18} /> : <Package size={18} />}
                     </div>
@@ -358,10 +362,10 @@ useEffect(() => {
                     
                     {mov.tipo === 'factura' && (
                       <div className="ec-movimiento__acciones">
-                        <button title="Ver orden" onClick={() => setOrdenSeleccionada(mov)}>
+                        <button title="Ver orden" onClick={(e) => { e.stopPropagation(); setOrdenSeleccionada(mov); }}>
                           <Eye size={16} />
                         </button>
-                        <button title="Exportar PDF" onClick={() => exportarFacturaPDF(mov)}>
+                        <button title="Exportar PDF" onClick={(e) => { e.stopPropagation(); exportarFacturaPDF(mov); }}>
                           <Download size={16} />
                         </button>
                       </div>
@@ -374,47 +378,23 @@ useEffect(() => {
         )}
       </section>
 
+      {/* Modales */}
       {ordenSeleccionada && (
-  <OrdenClienteModal orden={ordenSeleccionada} onClose={() => setOrdenSeleccionada(null)} />
-)}
+        <OrdenClienteModal orden={ordenSeleccionada} onClose={() => setOrdenSeleccionada(null)} />
+      )}
 
-{pagoSeleccionado && (
-  <PagoClienteModal pago={pagoSeleccionado} onClose={() => setPagoSeleccionado(null)} />
-)}
+      {pagoSeleccionado && (
+        <PagoClienteModal pago={pagoSeleccionado} onClose={() => setPagoSeleccionado(null)} />
+      )}
+
+      {modalPagoAbierto && (
+        <ModalReportarPago 
+          onCerrar={() => setModalPagoAbierto(false)} 
+          onEnviar={reportarPago} 
+        />
+      )}
 
       <BottomNav />
-    </div>
-  )
-}
-
-function ModalOrden({ orden, onCerrar }) {
-  return (
-    <div className="ec-modal-fondo" onClick={onCerrar}>
-      <div className="ec-modal" onClick={(e) => e.stopPropagation()}>
-        <div className="ec-modal__encabezado">
-          <h3>Factura #{orden.numero_factura}</h3>
-          <button onClick={onCerrar}><X size={20} /></button>
-        </div>
-        <div className="ec-modal__cuerpo">
-          <p><strong>Fecha:</strong> {formatearFecha(orden.created_at)}</p>
-          <p><strong>Estado:</strong> {orden.estado || 'pendiente'}</p>
-          <p><strong>Monto:</strong> {formatearMonto(orden.monto_facturado)}</p>
-
-          {orden.items?.length > 0 && (
-            <>
-              <h4>Productos</h4>
-              <ul className="ec-modal__items">
-                {orden.items.map((item, i) => (
-                  <li key={i}>
-                    <span>{item.nombre} × {item.cantidad}</span>
-                    <span>{formatearMonto(item.subtotal)}</span>
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
-        </div>
-      </div>
     </div>
   )
 }
