@@ -85,34 +85,33 @@ function Pagos() {
   }
 
   async function handleSubirComprobante() {
-    if (!comprobante) {
-      setError('Debes adjuntar el comprobante de pago')
-      return
-    }
-    setError('')
-    setSubiendo(true)
-
-    try {
-      const formData = new FormData()
-      formData.append('archivo', comprobante)
-
-      const { data: subida } = await api.post('/uploads/comprobante', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      })
-
-      const { data } = await api.post('/reportes-pago', {
-        orden_ids: seleccionadas,
-        url_comprobante: subida.url,
-      })
-
-      setReporteCreado(data)
-      setPaso(4)
-    } catch (err) {
-      setError(err.response?.data?.error || 'No pudimos registrar tu reporte de pago')
-    } finally {
-      setSubiendo(false)
-    }
+  if (!comprobante) {
+    setError('Debes adjuntar el comprobante de pago')
+    return
   }
+  setError('')
+  setSubiendo(true)
+
+  try {
+    const formData = new FormData()
+    formData.append('archivo', comprobante)
+
+    // ✅ Remove the manual headers - let axios handle it
+    const { data: subida } = await api.post('/uploads/comprobante', formData)
+
+    const { data } = await api.post('/reportes-pago', {
+      orden_ids: seleccionadas,
+      url_comprobante: subida.url,
+    })
+
+    setReporteCreado(data)
+    setPaso(4)
+  } catch (err) {
+    setError(err.response?.data?.error || 'No pudimos registrar tu reporte de pago')
+  } finally {
+    setSubiendo(false)
+  }
+}
 
   if (cargando) {
     return <div className="pagos-page pagos-page--centrado">Cargando...</div>
