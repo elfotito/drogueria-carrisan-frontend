@@ -149,8 +149,6 @@ function LayoutPaginaPrincipal({ activo, titulo, subtitulo, acciones, children }
             </main>
           </div>
         </div>
-
-        <BottomNav />
       </div>
     </div>
   )
