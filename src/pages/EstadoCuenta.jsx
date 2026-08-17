@@ -230,7 +230,26 @@ useEffect(() => {
 
       {/* Tarjeta de saldo grande */}
       <section className="ec-balance">
-        <span className="ec-balance__label">Disponible</span>
+
+     {comparativa && (
+  <section className="ec-comparativa">
+    <div className="ec-comparativa-item">
+      <span className="ec-comparativa-label">Este mes</span>
+      <strong className="ec-comparativa-monto">{formatearMonto(comparativa.mes_actual)}</strong>
+    </div>
+    <div className="ec-comparativa-divider" />
+    <div className="ec-comparativa-item">
+      <span className="ec-comparativa-label">Mes pasado</span>
+      <strong className="ec-comparativa-monto">{formatearMonto(comparativa.mes_pasado)}</strong>
+    </div>
+    {comparativa.variacion_porcentaje !== null && (
+      <span className={`ec-comparativa-badge ${comparativa.variacion_porcentaje >= 0 ? 'ec-comparativa-badge--sube' : 'ec-comparativa-badge--baja'}`}>
+        {comparativa.variacion_porcentaje >= 0 ? '↑' : '↓'} {Math.abs(comparativa.variacion_porcentaje).toFixed(0)}%
+      </span>
+    )}
+  </section>
+)}
+   <span className="ec-balance__label">Disponible</span>
         <strong className={`ec-balance__monto ${disponible < 0 ? 'ec-balance__monto--negativo' : ''}`}>
           {formatearMonto(disponible)}
         </strong>
