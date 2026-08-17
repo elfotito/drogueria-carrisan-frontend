@@ -33,6 +33,7 @@ function claveGrupoFecha(fecha) {
 }
 
 export default function EstadoCuenta() {
+const navigate = useNavigate()
   const { user } = useAuth()
   const [datos, setDatos] = useState(null)
   const [cargando, setCargando] = useState(true)
@@ -185,33 +186,38 @@ const [pagoSeleccionado, setPagoSeleccionado] = useState(null)
       </header>
 
       {/* Drawer lateral */}
-      <nav className={`ec-drawer ${menuAbierto ? 'ec-drawer--abierto' : ''}`}>
-        <div className="ec-drawer__header">
-          <h3>Estado de cuenta</h3>
-          <button className="ec-drawer__cerrar" onClick={() => setMenuAbierto(false)} aria-label="Cerrar menú">
-            <X size={20} />
-          </button>
-        </div>
-        <ul className="ec-drawer__lista">
-          <li>
-            <button className="ec-drawer__item" onClick={() => setMenuAbierto(false)}>
-              <FileBarChart size={20} />
-              <span>Reportes</span>
-            </button>
-          </li>
-          <li>
-            <button className="ec-drawer__item" onClick={() => setMenuAbierto(false)}>
-              <TrendingUp size={20} />
-              <span>Solicitar ampliación de línea</span>
-            </button>
-          </li>
-          <li>
-            <button className="ec-drawer__item" onClick={() => setMenuAbierto(false)}>
-              <MessageCircle size={20} />
-              <span>Contacto directo</span>
-            </button>
-          </li>
-        </ul>
+     <ul className="ec-drawer__lista">
+  <li>
+    <button className="ec-drawer__item" onClick={() => { setMenuAbierto(false); navigate('/estado-cuenta/pagos') }}>
+      <DollarSign size={20} />
+      <span>Historial de pagos</span>
+    </button>
+  </li>
+  <li>
+    <button className="ec-drawer__item" onClick={() => { setMenuAbierto(false); navigate('/estado-cuenta/facturas') }}>
+      <FileText size={20} />
+      <span>Historial de facturas</span>
+    </button>
+  </li>
+  <li>
+    <button className="ec-drawer__item" onClick={() => setMenuAbierto(false)}>
+      <FileBarChart size={20} />
+      <span>Reportes</span>
+    </button>
+  </li>
+  <li>
+    <button className="ec-drawer__item" onClick={() => setMenuAbierto(false)}>
+      <TrendingUp size={20} />
+      <span>Solicitar ampliación de línea</span>
+    </button>
+  </li>
+  <li>
+    <button className="ec-drawer__item" onClick={() => setMenuAbierto(false)}>
+      <MessageCircle size={20} />
+      <span>Contacto directo</span>
+    </button>
+  </li>
+</ul>
       </nav>
       {menuAbierto && <div className="ec-drawer-overlay" onClick={() => setMenuAbierto(false)} />}
 
