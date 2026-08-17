@@ -8,20 +8,16 @@ import {
   Text,
   Input,
   InputGroup,
-  InputLeftElement,
-  Select,
   Badge,
-  Avatar,
   SimpleGrid,
   Stack,
   HStack,
   VStack,
   Spinner,
   Button,
-  Divider,
+  Separator,
   Icon,
-  Tooltip,
-  useDisclosure,
+  createListCollection,
 } from '@chakra-ui/react'
 import {
   Users,
@@ -31,7 +27,6 @@ import {
   Search,
   RefreshCcw,
   Eye,
-  TrendingUp,
   Inbox,
 } from 'lucide-react'
 import api from '../../api/axios'
@@ -40,7 +35,6 @@ import EstadoCuentaDetalle from './EstadoCuentaDetalle'
 const AZUL = '#0052DC'
 const INDIGO = '#1A1A3A'
 
-// Definición de las columnas del Kanban. El orden acá define el orden visual.
 const COLUMNAS = [
   {
     id: 'excedido',
@@ -69,6 +63,29 @@ function money(n) {
   return Number(n || 0).toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
+function iniciales(nombre) {
+  return (nombre?.trim()?.[0] || 'C').toUpperCase()
+}
+
+function AvatarCirculo({ nombre, size = '32px', bg = INDIGO }) {
+  return (
+    <Flex
+      align="center"
+      justify="center"
+      w={size}
+      h={size}
+      minW={size}
+      borderRadius="full"
+      bg={bg}
+      color="white"
+      fontWeight="600"
+      fontSize={size === '32px' ? 'sm' : 'md'}
+    >
+      {iniciales(nombre)}
+    </Flex>
+  )
+}
+
 function ClienteCard({ cliente, onVerDetalle }) {
   const usoLinea = cliente.linea_credito > 0
     ? Math.min(100, (Number(cliente.deuda_actual) / Number(cliente.linea_credito)) * 100)
@@ -87,23 +104,23 @@ function ClienteCard({ cliente, onVerDetalle }) {
       transition="all 0.15s ease"
       _hover={{ boxShadow: '0 6px 20px rgba(26,26,58,0.12)', transform: 'translateY(-2px)', borderColor: 'gray.200' }}
     >
-      <HStack spacing={3} align="start">
-        <Avatar name={cliente.nombre || 'Cliente'} size="sm" bg={INDIGO} color="white" />
+      <HStack gap={3} align="start">
+        <AvatarCirculo nombre={cliente.nombre} />
         <Box flex={1} minW={0}>
-          <Text fontWeight="600" color={INDIGO} noOfLines={1}>
+          <Text fontWeight="600" color={INDIGO} lineClamp={1}>
             {cliente.nombre || 'Sin nombre'}
           </Text>
           {cliente.email && (
-            <Text fontSize="xs" color="gray.500" noOfLines={1}>
+            <Text fontSize="xs" color="gray.500" lineClamp={1}>
               {cliente.email}
             </Text>
           )}
         </Box>
       </HStack>
 
-      <Divider my={3} />
+      <Separator my={3} />
 
-      <VStack align="stretch" spacing={1.5} fontSize="sm">
+      <VStack align="stretch" gap={1.5} fontSize="sm">
         <Flex justify="space-between">
           <Text color="gray.500">Línea de crédito</Text>
           <Text fontWeight="600" color={INDIGO}>${money(cliente.linea_credito)}</Text>
@@ -138,10 +155,10 @@ function ClienteCard({ cliente, onVerDetalle }) {
         variant="outline"
         borderColor={AZUL}
         color={AZUL}
-        leftIcon={<Eye size={15} />}
         _hover={{ bg: AZUL, color: 'white' }}
         onClick={() => onVerDetalle(cliente.id)}
       >
+        <Eye size={15} />
         Ver detalle
       </Button>
     </Box>
@@ -151,7 +168,7 @@ function ClienteCard({ cliente, onVerDetalle }) {
 function StatCard({ icon, label, value, color = INDIGO, prefix = '' }) {
   return (
     <Box bg="white" borderRadius="xl" p={4} boxShadow="0 1px 3px rgba(26,26,58,0.08)" border="1px solid" borderColor="gray.100">
-      <HStack spacing={3}>
+      <HStack gap={3}>
         <Flex align="center" justify="center" w="40px" h="40px" borderRadius="lg" bg={`${color}15`}>
           <Icon as={icon} boxSize={5} color={color} />
         </Flex>
@@ -171,9 +188,9 @@ function EstadoCuentaAdmin() {
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
   const [clienteSeleccionadoId, setClienteSeleccionadoId] = useState(null)
+  const [detalleAbierto, setDetalleAbierto] = useState(false)
   const [busqueda, setBusqueda] = useState('')
   const [ordenarPor, setOrdenarPor] = useState('deuda')
-  const { isOpen, onOpen, onClose } = useDisclosure()
 
   useEffect(() => {
     cargarClientes()
@@ -195,11 +212,11 @@ function EstadoCuentaAdmin() {
 
   function abrirDetalle(id) {
     setClienteSeleccionadoId(id)
-    onOpen()
+    setDetalleAbierto(true)
   }
 
   function cerrarDetalle() {
-    onClose()
+    setDetalleAbierto(false)
     setClienteSeleccionadoId(null)
     cargarClientes()
   }
@@ -238,7 +255,7 @@ function EstadoCuentaAdmin() {
   if (cargando) {
     return (
       <Flex direction="column" align="center" justify="center" minH="60vh" gap={3}>
-        <Spinner size="xl" color={AZUL} thickness="3px" />
+        <Spinner size="xl" color={AZUL} borderWidth="3px" />
         <Text color="gray.500">Cargando estado de cuenta...</Text>
       </Flex>
     )
@@ -248,7 +265,8 @@ function EstadoCuentaAdmin() {
     return (
       <Flex direction="column" align="center" justify="center" minH="60vh" gap={3}>
         <Text color="red.500">{error}</Text>
-        <Button leftIcon={<RefreshCcw size={16} />} onClick={cargarClientes} colorScheme="blue">
+        <Button onClick={cargarClientes} colorPalette="blue">
+          <RefreshCcw size={16} />
           Reintentar
         </Button>
       </Flex>
@@ -263,13 +281,14 @@ function EstadoCuentaAdmin() {
           <Heading size="lg" color={INDIGO}>Estado de Cuenta</Heading>
           <Text color="gray.500" fontSize="sm">Panel administrativo de crédito y cobranza</Text>
         </Box>
-        <Button leftIcon={<RefreshCcw size={16} />} variant="ghost" onClick={cargarClientes} color={AZUL}>
+        <Button variant="ghost" onClick={cargarClientes} color={AZUL}>
+          <RefreshCcw size={16} />
           Actualizar
         </Button>
       </Flex>
 
       {/* Estadísticas */}
-      <SimpleGrid columns={{ base: 2, md: 4 }} spacing={4} mb={6}>
+      <SimpleGrid columns={{ base: 2, md: 4 }} gap={4} mb={6}>
         <StatCard icon={Users} label="Total clientes" value={stats.total} />
         <StatCard icon={AlertTriangle} label="Con deuda" value={stats.conDeuda} color="orange.500" />
         <StatCard icon={CheckCircle2} label="Al día" value={stats.alDia} color="green.500" />
@@ -289,10 +308,7 @@ function EstadoCuentaAdmin() {
         wrap="wrap"
         align="center"
       >
-        <InputGroup maxW="320px">
-          <InputLeftElement pointerEvents="none">
-            <Search size={16} color="#9CA3AF" />
-          </InputLeftElement>
+        <InputGroup maxW="320px" startElement={<Search size={16} color="#9CA3AF" />}>
           <Input
             placeholder="Buscar cliente por nombre o email..."
             value={busqueda}
@@ -300,18 +316,26 @@ function EstadoCuentaAdmin() {
             borderRadius="lg"
           />
         </InputGroup>
-        <Select
-          maxW="220px"
+
+        {/* Select nativo — evita depender de la API compuesta de Select en Chakra v3 */}
+        <Box
+          as="select"
           value={ordenarPor}
           onChange={(e) => setOrdenarPor(e.target.value)}
+          maxW="220px"
           borderRadius="lg"
-          icon={<TrendingUp size={14} />}
+          border="1px solid"
+          borderColor="gray.200"
+          px={3}
+          py={2}
+          fontSize="sm"
+          bg="white"
         >
           <option value="deuda">Ordenar por deuda</option>
           <option value="credito">Ordenar por línea de crédito</option>
           <option value="saldo">Ordenar por saldo</option>
           <option value="nombre">Ordenar por nombre</option>
-        </Select>
+        </Box>
       </Flex>
 
       {/* Kanban */}
@@ -322,7 +346,7 @@ function EstadoCuentaAdmin() {
               <HStack>
                 <Box w="8px" h="8px" borderRadius="full" bg={`${col.color}.400`} />
                 <Text fontWeight="700" color={INDIGO}>{col.titulo}</Text>
-                <Badge colorScheme={col.color} borderRadius="full">{col.clientes.length}</Badge>
+                <Badge colorPalette={col.color} borderRadius="full">{col.clientes.length}</Badge>
               </HStack>
             </Flex>
             <Text fontSize="xs" color="gray.500" mb={3} px={1}>{col.descripcion}</Text>
@@ -335,7 +359,7 @@ function EstadoCuentaAdmin() {
               maxH="calc(100vh - 340px)"
               overflowY="auto"
             >
-              <Stack spacing={3}>
+              <Stack gap={3}>
                 {col.clientes.length === 0 ? (
                   <Flex direction="column" align="center" justify="center" py={10} color="gray.400">
                     <Inbox size={28} />
@@ -355,7 +379,7 @@ function EstadoCuentaAdmin() {
       {/* Modal de detalle */}
       <EstadoCuentaDetalle
         clienteId={clienteSeleccionadoId}
-        isOpen={isOpen}
+        isOpen={detalleAbierto}
         onClose={cerrarDetalle}
       />
     </Box>

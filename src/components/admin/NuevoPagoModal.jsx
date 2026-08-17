@@ -1,30 +1,18 @@
 import { useState, useEffect } from 'react'
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
-  FormControl,
-  FormLabel,
-  FormHelperText,
+  Dialog,
+  Portal,
+  Field,
+  Input,
   Textarea,
-  NumberInput,
-  NumberInputField,
-  Select,
-  Checkbox,
-  CheckboxGroup,
-  Stack,
   Box,
   Text,
   Flex,
+  Stack,
   Button,
-  Spinner,
-  useToast,
 } from '@chakra-ui/react'
 import api from '../../api/axios'
+import { toaster } from '../ui/toaster'
 
 const AZUL = '#0052DC'
 const INDIGO = '#1A1A3A'
@@ -39,7 +27,6 @@ function NuevoPagoModal({ clienteId, facturas, isOpen, onClose, onCreado }) {
   const [detalle, setDetalle] = useState('')
   const [seleccionadas, setSeleccionadas] = useState([])
   const [guardando, setGuardando] = useState(false)
-  const toast = useToast()
 
   const facturasPendientes = (facturas || []).filter((f) => f.estado !== 'pagada')
 
@@ -52,9 +39,16 @@ function NuevoPagoModal({ clienteId, facturas, isOpen, onClose, onCreado }) {
     }
   }, [isOpen])
 
+  function toggleFactura(id) {
+    const idStr = String(id)
+    setSeleccionadas((prev) =>
+      prev.includes(idStr) ? prev.filter((v) => v !== idStr) : [...prev, idStr]
+    )
+  }
+
   async function guardar() {
     if (!monto || Number(monto) <= 0) {
-      toast({ title: 'Ingresa un monto válido', status: 'warning' })
+      toaster.create({ title: 'Ingresa un monto válido', type: 'warning' })
       return
     }
     try {
@@ -66,78 +60,103 @@ function NuevoPagoModal({ clienteId, facturas, isOpen, onClose, onCreado }) {
         detalle: detalle.trim() || undefined,
         factura_ids: seleccionadas.map(Number),
       })
-      toast({ title: 'Pago registrado', status: 'success' })
+      toaster.create({ title: 'Pago registrado', type: 'success' })
       onCreado?.()
       onClose()
     } catch (err) {
       console.error(err)
       const msg = err?.response?.data?.error || 'No se pudo registrar el pago'
-      toast({ title: msg, status: 'error' })
+      toaster.create({ title: msg, type: 'error' })
     } finally {
       setGuardando(false)
     }
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="lg" scrollBehavior="inside">
-      <ModalOverlay />
-      <ModalContent borderRadius="xl">
-        <ModalHeader bg={INDIGO} color="white" borderTopRadius="xl">Registrar pago</ModalHeader>
-        <ModalCloseButton color="white" />
-        <ModalBody py={5}>
-          <Stack spacing={4}>
-            <FormControl isRequired>
-              <FormLabel fontSize="sm">Monto (USD)</FormLabel>
-              <NumberInput value={monto} onChange={setMonto} min={0} precision={2}>
-                <NumberInputField placeholder="0.00" />
-              </NumberInput>
-            </FormControl>
+    <Dialog.Root open={isOpen} onOpenChange={(e) => !e.open && onClose()} placement="center" scrollBehavior="inside">
+      <Portal>
+        <Dialog.Backdrop />
+        <Dialog.Positioner>
+          <Dialog.Content maxW="lg" borderRadius="xl">
+            <Dialog.Header bg={INDIGO} color="white" borderTopRadius="xl">
+              <Dialog.Title>Registrar pago</Dialog.Title>
+            </Dialog.Header>
+            <Dialog.CloseTrigger color="white" />
+            <Dialog.Body py={5}>
+              <Stack gap={4}>
+                <Field.Root required>
+                  <Field.Label fontSize="sm">Monto (USD)</Field.Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    placeholder="0.00"
+                    value={monto}
+                    onChange={(e) => setMonto(e.target.value)}
+                  />
+                </Field.Root>
 
-            <FormControl>
-              <FormLabel fontSize="sm">Tipo</FormLabel>
-              <Select value={tipo} onChange={(e) => setTipo(e.target.value)}>
-                <option value="abono">Abono</option>
-                <option value="pago_factura">Pago de factura</option>
-              </Select>
-            </FormControl>
+                <Field.Root>
+                  <Field.Label fontSize="sm">Tipo</Field.Label>
+                  <Box
+                    as="select"
+                    value={tipo}
+                    onChange={(e) => setTipo(e.target.value)}
+                    border="1px solid"
+                    borderColor="gray.200"
+                    borderRadius="md"
+                    px={3}
+                    py={2}
+                    fontSize="sm"
+                    w="100%"
+                  >
+                    <option value="abono">Abono</option>
+                    <option value="pago_factura">Pago de factura</option>
+                  </Box>
+                </Field.Root>
 
-            <FormControl>
-              <FormLabel fontSize="sm">Facturas a saldar (opcional)</FormLabel>
-              {facturasPendientes.length === 0 ? (
-                <Text fontSize="sm" color="gray.400">Este cliente no tiene facturas pendientes</Text>
-              ) : (
-                <Box maxH="200px" overflowY="auto" border="1px solid" borderColor="gray.100" borderRadius="lg" p={3}>
-                  <CheckboxGroup value={seleccionadas} onChange={setSeleccionadas}>
-                    <Stack spacing={2}>
-                      {facturasPendientes.map((f) => (
-                        <Checkbox key={f.id} value={String(f.id)}>
-                          <Flex justify="space-between" w="100%" minW="280px">
-                            <Text fontSize="sm">Factura #{f.numero_factura || f.id}</Text>
-                            <Text fontSize="sm" fontWeight="600">${money(f.monto_facturado)}</Text>
+                <Field.Root>
+                  <Field.Label fontSize="sm">Facturas a saldar (opcional)</Field.Label>
+                  {facturasPendientes.length === 0 ? (
+                    <Text fontSize="sm" color="gray.400">Este cliente no tiene facturas pendientes</Text>
+                  ) : (
+                    <Box maxH="200px" overflowY="auto" border="1px solid" borderColor="gray.100" borderRadius="lg" p={3}>
+                      <Stack gap={2}>
+                        {facturasPendientes.map((f) => (
+                          <Flex as="label" key={f.id} justify="space-between" align="center" cursor="pointer" fontSize="sm">
+                            <Flex align="center" gap={2}>
+                              <input
+                                type="checkbox"
+                                checked={seleccionadas.includes(String(f.id))}
+                                onChange={() => toggleFactura(f.id)}
+                              />
+                              <Text>Factura #{f.numero_factura || f.id}</Text>
+                            </Flex>
+                            <Text fontWeight="600">${money(f.monto_facturado)}</Text>
                           </Flex>
-                        </Checkbox>
-                      ))}
-                    </Stack>
-                  </CheckboxGroup>
-                </Box>
-              )}
-              <FormHelperText>Si marcas facturas, quedarán como pagadas al guardar.</FormHelperText>
-            </FormControl>
+                        ))}
+                      </Stack>
+                    </Box>
+                  )}
+                  <Field.HelperText>Si marcas facturas, quedarán como pagadas al guardar.</Field.HelperText>
+                </Field.Root>
 
-            <FormControl>
-              <FormLabel fontSize="sm">Detalle (opcional)</FormLabel>
-              <Textarea placeholder="Referencia, método de pago, etc." value={detalle} onChange={(e) => setDetalle(e.target.value)} rows={2} />
-            </FormControl>
-          </Stack>
-        </ModalBody>
-        <ModalFooter borderTop="1px solid" borderColor="gray.100">
-          <Button variant="ghost" mr={3} onClick={onClose}>Cancelar</Button>
-          <Button bg={AZUL} color="white" _hover={{ bg: '#0041B0' }} isLoading={guardando} onClick={guardar}>
-            Registrar pago
-          </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+                <Field.Root>
+                  <Field.Label fontSize="sm">Detalle (opcional)</Field.Label>
+                  <Textarea placeholder="Referencia, método de pago, etc." value={detalle} onChange={(e) => setDetalle(e.target.value)} rows={2} />
+                </Field.Root>
+              </Stack>
+            </Dialog.Body>
+            <Dialog.Footer borderTop="1px solid" borderColor="gray.100">
+              <Button variant="ghost" mr={3} onClick={onClose}>Cancelar</Button>
+              <Button bg={AZUL} color="white" _hover={{ bg: '#0041B0' }} loading={guardando} onClick={guardar}>
+                Registrar pago
+              </Button>
+            </Dialog.Footer>
+          </Dialog.Content>
+        </Dialog.Positioner>
+      </Portal>
+    </Dialog.Root>
   )
 }
 
