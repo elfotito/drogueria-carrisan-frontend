@@ -165,3 +165,72 @@
 .rep-generar-btn:disabled {
   opacity: 0.6;
 }
+
+.amp-card,
+.amp-resultado {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  background: white;
+  margin: 20px 16px;
+  border-radius: 16px;
+  padding: 28px 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.amp-card h2,
+.amp-resultado h2 {
+  font-size: 18px;
+  color: #1a1a3a;
+  margin: 4px 0 0;
+}
+
+.amp-texto {
+  font-size: 14px;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.amp-comparacion {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 12px 0;
+}
+
+.amp-comparacion div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.amp-comparacion strong {
+  font-size: 16px;
+  color: #1a1a3a;
+}
+
+.amp-verde { color: #059669 !important; }
+
+.amp-flecha {
+  color: #cbd5e1;
+  font-size: 20px;
+}
+
+.amp-monto-grande {
+  font-size: 32px;
+  font-weight: 800;
+  color: #059669;
+}
+
+.amp-detalle {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.amp-card--no-califica {
+  opacity: 0.85;
+}
