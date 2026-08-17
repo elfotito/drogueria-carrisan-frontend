@@ -117,3 +117,51 @@
   cursor: pointer;
   flex-shrink: 0;
 }
+
+.rep-form {
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.rep-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ec-gray-600, #64748b);
+}
+
+.rep-label input {
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+
+.rep-error {
+  color: #dc2626;
+  font-size: 13px;
+}
+
+.rep-generar-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #0052dc;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 14px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.rep-generar-btn:disabled {
+  opacity: 0.6;
+}
