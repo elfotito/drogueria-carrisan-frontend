@@ -5,7 +5,7 @@ import { Menu, X, ChevronRight, LogOut } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import BottomNav from '../BottomNav'
 import { NAV_PAGINAS_PRINCIPALES } from './Navpaginasprincipales'
-import './LayoutPaginaPrincipal.css'
+import './Layoutpaginaprincipal.css'
 
 // ---------------------------------------------------------------
 // <LayoutPaginaPrincipal activo="ordenes" titulo="Mis Órdenes">

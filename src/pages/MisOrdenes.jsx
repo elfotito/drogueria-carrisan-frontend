@@ -3,7 +3,7 @@ import api from '../api/axios'
 import { useAuth } from '../context/AuthContext'
 import { Link, useNavigate } from 'react-router-dom'
 import { Package, Truck, Store, Boxes, ArrowRight } from 'lucide-react'
-import LayoutPaginaPrincipal from '../components/paginas-principales/LayoutPaginaPrincipal'
+import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
 import './MisOrdenes.css'
 
 // Etapas del ciclo de vida de una orden, en orden cronológico.
