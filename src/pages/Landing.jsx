@@ -76,9 +76,9 @@ function Carrusel({ items, renderItem, claseContenedor, claseTarjeta }) {
 
 const BENEFICIOS = [
   'Linea de Credito personalizada',
-  'Gestion de Abastecimiento',
+  'Abastecimiento a tu Medida',
   'Entregas gratis y rápidas',
-  'Ahorra tiempo',
+  'Soluciones de Suministro Médico',
   'Farmacéuticos con licencia',
 ]
 
