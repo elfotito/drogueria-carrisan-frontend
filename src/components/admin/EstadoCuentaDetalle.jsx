@@ -1,40 +1,25 @@
 import { useState, useEffect } from 'react'
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
+  Dialog,
+  Portal,
   Box,
   Flex,
   Text,
-  Avatar,
   Badge,
   SimpleGrid,
   Tabs,
-  TabList,
-  Tab,
-  TabPanels,
-  TabPanel,
   Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
   Spinner,
   Button,
   HStack,
   VStack,
-  Tooltip,
-  useToast,
   useDisclosure,
 } from '@chakra-ui/react'
 import { FileText, Wallet, ShoppingCart, Plus, Receipt, CreditCard } from 'lucide-react'
 import api from '../../api/axios'
 import NuevaFacturaModal from './NuevaFacturaModal'
 import NuevoPagoModal from './NuevoPagoModal'
+import { toaster } from '../ui/toaster'
 
 const AZUL = '#0052DC'
 const INDIGO = '#1A1A3A'
@@ -60,12 +45,24 @@ const ESTADO_PAGO_COLOR = {
   verificado: 'green',
 }
 
-function ResumenCard({ icon, label, value, color = INDIGO }) {
+function iniciales(nombre) {
+  return (nombre?.trim()?.[0] || 'C').toUpperCase()
+}
+
+function AvatarCirculo({ nombre, size = '32px', bg = AZUL }) {
+  return (
+    <Flex align="center" justify="center" w={size} h={size} minW={size} borderRadius="full" bg={bg} color="white" fontWeight="600">
+      {iniciales(nombre)}
+    </Flex>
+  )
+}
+
+function ResumenCard({ icon: IconCmp, label, value, color = INDIGO }) {
   return (
     <Box bg="gray.50" borderRadius="lg" p={4} border="1px solid" borderColor="gray.100">
-      <HStack spacing={3}>
+      <HStack gap={3}>
         <Flex align="center" justify="center" w="36px" h="36px" borderRadius="lg" bg={`${color}15`}>
-          <Box as={icon} size={18} color={color} />
+          <IconCmp size={18} color={color} />
         </Flex>
         <Box>
           <Text fontSize="lg" fontWeight="700" color={INDIGO}>{value}</Text>
@@ -80,7 +77,6 @@ function EstadoCuentaDetalle({ clienteId, isOpen, onClose }) {
   const [datos, setDatos] = useState(null)
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
-  const toast = useToast()
   const facturaModal = useDisclosure()
   const pagoModal = useDisclosure()
 
@@ -106,204 +102,216 @@ function EstadoCuentaDetalle({ clienteId, isOpen, onClose }) {
     }
   }
 
-  // Placeholders — se conectan a medida que se agreguen los endpoints de escritura
   function proximamente(funcion) {
-    toast({
+    toaster.create({
       title: `${funcion} — próximamente`,
       description: 'Esta función se agregará en la siguiente iteración del panel.',
-      status: 'info',
+      type: 'info',
       duration: 2500,
-      isClosable: true,
     })
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="4xl" scrollBehavior="inside">
-      <ModalOverlay />
-      <ModalContent borderRadius="xl">
-        <ModalHeader bg={INDIGO} color="white" borderTopRadius="xl">
-          {cargando || !datos ? (
-            'Cargando cliente...'
-          ) : (
-            <HStack spacing={3}>
-              <Avatar name={datos.cliente?.nombre} size="sm" bg={AZUL} color="white" />
-              <Box>
-                <Text fontSize="md">{datos.cliente?.nombre || 'Sin nombre'}</Text>
-                <Text fontSize="xs" fontWeight="400" opacity={0.8}>{datos.cliente?.email}</Text>
-              </Box>
-            </HStack>
-          )}
-        </ModalHeader>
-        <ModalCloseButton color="white" />
+    <Dialog.Root open={isOpen} onOpenChange={(e) => !e.open && onClose()} size="cover" placement="center" scrollBehavior="inside">
+      <Portal>
+        <Dialog.Backdrop />
+        <Dialog.Positioner>
+          <Dialog.Content maxW="4xl" borderRadius="xl">
+            <Dialog.Header bg={INDIGO} color="white" borderTopRadius="xl">
+              {cargando || !datos ? (
+                <Dialog.Title>Cargando cliente...</Dialog.Title>
+              ) : (
+                <HStack gap={3}>
+                  <AvatarCirculo nombre={datos.cliente?.nombre} />
+                  <Box>
+                    <Dialog.Title fontSize="md">{datos.cliente?.nombre || 'Sin nombre'}</Dialog.Title>
+                    <Text fontSize="xs" opacity={0.8}>{datos.cliente?.email}</Text>
+                  </Box>
+                </HStack>
+              )}
+            </Dialog.Header>
+            <Dialog.CloseTrigger color="white" />
 
-        <ModalBody bg="gray.50" pb={6}>
-          {cargando ? (
-            <Flex align="center" justify="center" minH="300px">
-              <Spinner size="lg" color={AZUL} thickness="3px" />
-            </Flex>
-          ) : error ? (
-            <Flex align="center" justify="center" minH="300px" direction="column" gap={3}>
-              <Text color="red.500">{error}</Text>
-              <Button onClick={cargarDetalle} colorScheme="blue" size="sm">Reintentar</Button>
-            </Flex>
-          ) : datos ? (
-            <VStack align="stretch" spacing={5} pt={4}>
-              {/* Resumen bancario */}
-              <SimpleGrid columns={{ base: 2, md: 4 }} spacing={3}>
-                <ResumenCard icon={Wallet} label="Línea de crédito" value={`$${money(datos.resumen?.linea_credito)}`} />
-                <ResumenCard icon={FileText} label="Deuda actual" value={`$${money(datos.resumen?.deuda_actual)}`} color="orange.500" />
-                <ResumenCard
-                  icon={CreditCard}
-                  label="Saldo disponible"
-                  value={`${datos.resumen?.saldo >= 0 ? '+' : ''}$${money(datos.resumen?.saldo)}`}
-                  color={datos.resumen?.saldo >= 0 ? 'green.500' : 'red.500'}
-                />
-                <ResumenCard icon={ShoppingCart} label="Órdenes pendientes" value={datos.ordenes_pendientes?.length || 0} />
-              </SimpleGrid>
+            <Dialog.Body bg="gray.50" pb={6}>
+              {cargando ? (
+                <Flex align="center" justify="center" minH="300px">
+                  <Spinner size="lg" color={AZUL} borderWidth="3px" />
+                </Flex>
+              ) : error ? (
+                <Flex align="center" justify="center" minH="300px" direction="column" gap={3}>
+                  <Text color="red.500">{error}</Text>
+                  <Button onClick={cargarDetalle} colorPalette="blue" size="sm">Reintentar</Button>
+                </Flex>
+              ) : datos ? (
+                <VStack align="stretch" gap={5} pt={4}>
+                  {/* Resumen bancario */}
+                  <SimpleGrid columns={{ base: 2, md: 4 }} gap={3}>
+                    <ResumenCard icon={Wallet} label="Línea de crédito" value={`$${money(datos.resumen?.linea_credito)}`} />
+                    <ResumenCard icon={FileText} label="Deuda actual" value={`$${money(datos.resumen?.deuda_actual)}`} color="orange.500" />
+                    <ResumenCard
+                      icon={CreditCard}
+                      label="Saldo disponible"
+                      value={`${datos.resumen?.saldo >= 0 ? '+' : ''}$${money(datos.resumen?.saldo)}`}
+                      color={datos.resumen?.saldo >= 0 ? 'green.500' : 'red.500'}
+                    />
+                    <ResumenCard icon={ShoppingCart} label="Órdenes pendientes" value={datos.ordenes_pendientes?.length || 0} />
+                  </SimpleGrid>
 
-              {/* Acciones rápidas — se activan a medida que se conecten los endpoints */}
-              <HStack spacing={3} wrap="wrap">
-                <Button size="sm" leftIcon={<Plus size={15} />} colorScheme="blue" onClick={() => proximamente('Agregar orden')}>
-                  Agregar orden
-                </Button>
-                <Button size="sm" leftIcon={<Receipt size={15} />} variant="outline" borderColor={AZUL} color={AZUL} onClick={facturaModal.onOpen}>
-                  Agregar factura
-                </Button>
-                <Button size="sm" leftIcon={<CreditCard size={15} />} variant="outline" borderColor={AZUL} color={AZUL} onClick={pagoModal.onOpen}>
-                  Agregar pago
-                </Button>
-              </HStack>
+                  {/* Acciones rápidas */}
+                  <HStack gap={3} wrap="wrap">
+                    <Button size="sm" colorPalette="blue" onClick={() => proximamente('Agregar orden')}>
+                      <Plus size={15} />
+                      Agregar orden
+                    </Button>
+                    <Button size="sm" variant="outline" borderColor={AZUL} color={AZUL} onClick={facturaModal.onOpen}>
+                      <Receipt size={15} />
+                      Agregar factura
+                    </Button>
+                    <Button size="sm" variant="outline" borderColor={AZUL} color={AZUL} onClick={pagoModal.onOpen}>
+                      <CreditCard size={15} />
+                      Agregar pago
+                    </Button>
+                  </HStack>
 
-              {/* Tabs con el detalle */}
-              <Tabs colorScheme="blue" variant="soft-rounded" size="sm">
-                <TabList>
-                  <Tab>Órdenes pendientes</Tab>
-                  <Tab>Facturas</Tab>
-                  <Tab>Pagos</Tab>
-                </TabList>
-                <TabPanels>
-                  {/* Órdenes pendientes */}
-                  <TabPanel px={0}>
-                    <Box bg="white" borderRadius="lg" overflow="hidden" border="1px solid" borderColor="gray.100">
-                      <Table size="sm">
-                        <Thead bg="gray.50">
-                          <Tr>
-                            <Th>Orden</Th>
-                            <Th>Fecha</Th>
-                            <Th>Forma de pago</Th>
-                            <Th>Estado</Th>
-                            <Th isNumeric>Monto</Th>
-                          </Tr>
-                        </Thead>
-                        <Tbody>
-                          {(datos.ordenes_pendientes || []).length === 0 ? (
-                            <Tr><Td colSpan={5}><Text py={4} textAlign="center" color="gray.400">Sin órdenes pendientes</Text></Td></Tr>
-                          ) : (
-                            datos.ordenes_pendientes.map((o) => (
-                              <Tr key={o.id}>
-                                <Td>#{o.id}</Td>
-                                <Td>{fecha(o.created_at)}</Td>
-                                <Td textTransform="capitalize">{o.forma_pago}</Td>
-                                <Td>
-                                  <Badge colorScheme={ESTADO_ORDEN_COLOR[o.estado] || 'gray'} borderRadius="full">
-                                    {o.estado}
-                                  </Badge>
-                                </Td>
-                                <Td isNumeric fontWeight="600">${money(o.total_usd)}</Td>
-                              </Tr>
-                            ))
-                          )}
-                        </Tbody>
-                      </Table>
-                    </Box>
-                  </TabPanel>
+                  {/* Tabs */}
+                  <Tabs.Root defaultValue="ordenes" colorPalette="blue" variant="enclosed" size="sm">
+                    <Tabs.List>
+                      <Tabs.Trigger value="ordenes">Órdenes pendientes</Tabs.Trigger>
+                      <Tabs.Trigger value="facturas">Facturas</Tabs.Trigger>
+                      <Tabs.Trigger value="pagos">Pagos</Tabs.Trigger>
+                    </Tabs.List>
 
-                  {/* Facturas */}
-                  <TabPanel px={0}>
-                    <Box bg="white" borderRadius="lg" overflow="hidden" border="1px solid" borderColor="gray.100">
-                      <Table size="sm">
-                        <Thead bg="gray.50">
-                          <Tr>
-                            <Th>Factura</Th>
-                            <Th>Fecha</Th>
-                            <Th isNumeric>Tasa usada</Th>
-                            <Th isNumeric>Monto</Th>
-                          </Tr>
-                        </Thead>
-                        <Tbody>
-                          {(datos.facturas || []).length === 0 ? (
-                            <Tr><Td colSpan={4}><Text py={4} textAlign="center" color="gray.400">Sin facturas registradas</Text></Td></Tr>
-                          ) : (
-                            datos.facturas.map((f) => (
-                              <Tr key={f.id}>
-                                <Td>#{f.numero_factura || f.id}</Td>
-                                <Td>{fecha(f.created_at)}</Td>
-                                <Td isNumeric>{f.tasa_cambio ? money(f.tasa_cambio) : '—'}</Td>
-                                <Td isNumeric fontWeight="600">${money(f.monto_facturado)}</Td>
-                              </Tr>
-                            ))
-                          )}
-                        </Tbody>
-                      </Table>
-                    </Box>
-                  </TabPanel>
+                    <Tabs.Content value="ordenes" px={0} pt={3}>
+                      <Box bg="white" borderRadius="lg" overflow="hidden" border="1px solid" borderColor="gray.100">
+                        <Table.Root size="sm">
+                          <Table.Header bg="gray.50">
+                            <Table.Row>
+                              <Table.ColumnHeader>Orden</Table.ColumnHeader>
+                              <Table.ColumnHeader>Fecha</Table.ColumnHeader>
+                              <Table.ColumnHeader>Forma de pago</Table.ColumnHeader>
+                              <Table.ColumnHeader>Estado</Table.ColumnHeader>
+                              <Table.ColumnHeader textAlign="end">Monto</Table.ColumnHeader>
+                            </Table.Row>
+                          </Table.Header>
+                          <Table.Body>
+                            {(datos.ordenes_pendientes || []).length === 0 ? (
+                              <Table.Row>
+                                <Table.Cell colSpan={5}>
+                                  <Text py={4} textAlign="center" color="gray.400">Sin órdenes pendientes</Text>
+                                </Table.Cell>
+                              </Table.Row>
+                            ) : (
+                              datos.ordenes_pendientes.map((o) => (
+                                <Table.Row key={o.id}>
+                                  <Table.Cell>#{o.id}</Table.Cell>
+                                  <Table.Cell>{fecha(o.created_at)}</Table.Cell>
+                                  <Table.Cell textTransform="capitalize">{o.forma_pago}</Table.Cell>
+                                  <Table.Cell>
+                                    <Badge colorPalette={ESTADO_ORDEN_COLOR[o.estado] || 'gray'} borderRadius="full">
+                                      {o.estado}
+                                    </Badge>
+                                  </Table.Cell>
+                                  <Table.Cell textAlign="end" fontWeight="600">${money(o.total_usd)}</Table.Cell>
+                                </Table.Row>
+                              ))
+                            )}
+                          </Table.Body>
+                        </Table.Root>
+                      </Box>
+                    </Tabs.Content>
 
-                  {/* Pagos */}
-                  <TabPanel px={0}>
-                    <Box bg="white" borderRadius="lg" overflow="hidden" border="1px solid" borderColor="gray.100">
-                      <Table size="sm">
-                        <Thead bg="gray.50">
-                          <Tr>
-                            <Th>Pago</Th>
-                            <Th>Fecha</Th>
-                            <Th>Estado</Th>
-                            <Th isNumeric>Monto</Th>
-                          </Tr>
-                        </Thead>
-                        <Tbody>
-                          {(datos.pagos || []).length === 0 ? (
-                            <Tr><Td colSpan={4}><Text py={4} textAlign="center" color="gray.400">Sin pagos registrados</Text></Td></Tr>
-                          ) : (
-                            datos.pagos.map((p) => (
-                              <Tr key={p.id}>
-                                <Td>#{p.id}</Td>
-                                <Td>{fecha(p.created_at)}</Td>
-                                <Td>
-                                  <Badge colorScheme={ESTADO_PAGO_COLOR[p.estado] || 'gray'} borderRadius="full">
-                                    {p.estado?.replace('_', ' ') || '—'}
-                                  </Badge>
-                                </Td>
-                                <Td isNumeric fontWeight="600">${money(p.monto)}</Td>
-                              </Tr>
-                            ))
-                          )}
-                        </Tbody>
-                      </Table>
-                    </Box>
-                  </TabPanel>
-                </TabPanels>
-              </Tabs>
-            </VStack>
-          ) : null}
-        </ModalBody>
-      </ModalContent>
+                    <Tabs.Content value="facturas" px={0} pt={3}>
+                      <Box bg="white" borderRadius="lg" overflow="hidden" border="1px solid" borderColor="gray.100">
+                        <Table.Root size="sm">
+                          <Table.Header bg="gray.50">
+                            <Table.Row>
+                              <Table.ColumnHeader>Factura</Table.ColumnHeader>
+                              <Table.ColumnHeader>Fecha</Table.ColumnHeader>
+                              <Table.ColumnHeader textAlign="end">Tasa usada</Table.ColumnHeader>
+                              <Table.ColumnHeader textAlign="end">Monto</Table.ColumnHeader>
+                            </Table.Row>
+                          </Table.Header>
+                          <Table.Body>
+                            {(datos.facturas || []).length === 0 ? (
+                              <Table.Row>
+                                <Table.Cell colSpan={4}>
+                                  <Text py={4} textAlign="center" color="gray.400">Sin facturas registradas</Text>
+                                </Table.Cell>
+                              </Table.Row>
+                            ) : (
+                              datos.facturas.map((f) => (
+                                <Table.Row key={f.id}>
+                                  <Table.Cell>#{f.numero_factura || f.id}</Table.Cell>
+                                  <Table.Cell>{fecha(f.created_at)}</Table.Cell>
+                                  <Table.Cell textAlign="end">{f.tasa_cambio ? money(f.tasa_cambio) : '—'}</Table.Cell>
+                                  <Table.Cell textAlign="end" fontWeight="600">${money(f.monto_facturado)}</Table.Cell>
+                                </Table.Row>
+                              ))
+                            )}
+                          </Table.Body>
+                        </Table.Root>
+                      </Box>
+                    </Tabs.Content>
+
+                    <Tabs.Content value="pagos" px={0} pt={3}>
+                      <Box bg="white" borderRadius="lg" overflow="hidden" border="1px solid" borderColor="gray.100">
+                        <Table.Root size="sm">
+                          <Table.Header bg="gray.50">
+                            <Table.Row>
+                              <Table.ColumnHeader>Pago</Table.ColumnHeader>
+                              <Table.ColumnHeader>Fecha</Table.ColumnHeader>
+                              <Table.ColumnHeader>Estado</Table.ColumnHeader>
+                              <Table.ColumnHeader textAlign="end">Monto</Table.ColumnHeader>
+                            </Table.Row>
+                          </Table.Header>
+                          <Table.Body>
+                            {(datos.pagos || []).length === 0 ? (
+                              <Table.Row>
+                                <Table.Cell colSpan={4}>
+                                  <Text py={4} textAlign="center" color="gray.400">Sin pagos registrados</Text>
+                                </Table.Cell>
+                              </Table.Row>
+                            ) : (
+                              datos.pagos.map((p) => (
+                                <Table.Row key={p.id}>
+                                  <Table.Cell>#{p.id}</Table.Cell>
+                                  <Table.Cell>{fecha(p.created_at)}</Table.Cell>
+                                  <Table.Cell>
+                                    <Badge colorPalette={ESTADO_PAGO_COLOR[p.estado] || 'gray'} borderRadius="full">
+                                      {p.estado?.replace('_', ' ') || '—'}
+                                    </Badge>
+                                  </Table.Cell>
+                                  <Table.Cell textAlign="end" fontWeight="600">${money(p.monto)}</Table.Cell>
+                                </Table.Row>
+                              ))
+                            )}
+                          </Table.Body>
+                        </Table.Root>
+                      </Box>
+                    </Tabs.Content>
+                  </Tabs.Root>
+                </VStack>
+              ) : null}
+            </Dialog.Body>
+          </Dialog.Content>
+        </Dialog.Positioner>
+      </Portal>
 
       <NuevaFacturaModal
         clienteId={clienteId}
-        isOpen={facturaModal.isOpen}
+        isOpen={facturaModal.open}
         onClose={facturaModal.onClose}
         onCreada={cargarDetalle}
       />
       <NuevoPagoModal
         clienteId={clienteId}
         facturas={datos?.facturas}
-        isOpen={pagoModal.isOpen}
+        isOpen={pagoModal.open}
         onClose={pagoModal.onClose}
         onCreado={cargarDetalle}
       />
-    </Modal>
+    </Dialog.Root>
   )
 }
 
 export default EstadoCuentaDetalle
-
