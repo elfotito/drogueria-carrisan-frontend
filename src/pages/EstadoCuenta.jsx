@@ -8,6 +8,8 @@ import {
 } from 'lucide-react'
 import BottomNav from '../components/BottomNav'
 import './EstadoCuenta.css'
+import OrdenClienteModal from '../components/OrdenClienteModal'
+import PagoClienteModal from '../components/PagoClienteModal'
 
 function formatearMonto(valor) {
   return new Intl.NumberFormat('es-VE', { style: 'currency', currency: 'USD' }).format(valor || 0)
@@ -39,6 +41,7 @@ export default function EstadoCuenta() {
   const [ordenSeleccionada, setOrdenSeleccionada] = useState(null)
   const [modalPagoAbierto, setModalPagoAbierto] = useState(false)
   const [menuAbierto, setMenuAbierto] = useState(false)
+const [pagoSeleccionado, setPagoSeleccionado] = useState(null)
 
   useEffect(() => {
     cargarEstadoCuenta()
@@ -294,7 +297,16 @@ export default function EstadoCuenta() {
               <p className="ec-grupo-fecha__titulo">{fechaLabel}</p>
               <ul className="ec-movimientos__lista">
                 {movimientos.map((mov) => (
-                  <li key={`${mov.tipo}-${mov.id}`} className="ec-movimiento">
+                  <li
+  key={`${mov.tipo}-${mov.id}`}
+  className="ec-movimiento"
+  onClick={() => {
+    if (mov.tipo === 'pago') setPagoSeleccionado(mov)
+    else if (mov.tipo === 'orden_pendiente') setOrdenSeleccionada(mov)
+    // facturas: si quieres que también abran algo, dime qué — por ahora sin acción
+  }}
+  style={{ cursor: mov.tipo !== 'factura' ? 'pointer' : 'default' }}
+>
                     <div className={`ec-movimiento__icono ec-movimiento__icono--${mov.tipo === 'factura' ? 'factura' : mov.tipo === 'pago' ? 'pago' : 'orden'}`}>
                       {mov.tipo === 'factura' ? <FileText size={18} /> : mov.tipo === 'pago' ? <DollarSign size={18} /> : <Package size={18} />}
                     </div>
@@ -331,12 +343,12 @@ export default function EstadoCuenta() {
       </section>
 
       {ordenSeleccionada && (
-        <ModalOrden orden={ordenSeleccionada} onCerrar={() => setOrdenSeleccionada(null)} />
-      )}
+  <OrdenClienteModal orden={ordenSeleccionada} onClose={() => setOrdenSeleccionada(null)} />
+)}
 
-      {modalPagoAbierto && (
-        <ModalReportarPago onCerrar={() => setModalPagoAbierto(false)} onEnviar={reportarPago} />
-      )}
+{pagoSeleccionado && (
+  <PagoClienteModal pago={pagoSeleccionado} onClose={() => setPagoSeleccionado(null)} />
+)}
 
       <BottomNav />
     </div>
