@@ -188,3 +188,21 @@
   color: #475569;
   text-align: center;
 }
+
+.pcm-monto-hero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #0052dc;
+  padding: 8px 0 4px;
+}
+
+.pcm-tasa {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #64748b;
+  margin: 0 0 8px;
+}
