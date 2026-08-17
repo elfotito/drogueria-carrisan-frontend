@@ -112,6 +112,13 @@ const [pagoSeleccionado, setPagoSeleccionado] = useState(null)
     })
     await cargarEstadoCuenta()
   }
+const [comparativa, setComparativa] = useState(null)
+
+useEffect(() => {
+  api.get(`/clientes/${user.id}/estado-cuenta/comparativa`)
+    .then(({ data }) => setComparativa(data))
+    .catch(() => {}) // no bloquea el resto de la página si falla
+}, [user.id])
 
   const historial = useMemo(() => {
     if (!datos) return []
