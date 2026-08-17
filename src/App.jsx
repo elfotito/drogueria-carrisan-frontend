@@ -41,14 +41,13 @@ import { Toaster } from './components/ui/toaster'
 import PagosEstadoCuenta from './pages/PagosEstadoCuenta'
 import FacturasEstadoCuenta from './pages/FacturasEstadoCuenta'
 import AmpliacionEstadoCuenta from './pages/AmpliacionEstadoCuenta'
-import
+import ReportesEstadoCuenta from './pages/ReportesEstadoCuenta' // ← AGREGADO
 
 function LoadingBarBridge() {
   const bar = useLoadingBar()
   useEffect(() => { registerLoadingBar(bar) }, [bar])
   return <TopLoadingBar />
 }
-
 
 function App() {
   return (
@@ -57,44 +56,45 @@ function App() {
         <FavoritosProvider>
           <EnvioProvider>
             <ScrollToTop />
-             <LoadingBarProvider>
-          <Navbar />
+            <LoadingBarProvider>
+              <Navbar />
               <LoadingBarBridge />
-<Toaster />
-          <Routes>
-<Route path="/" element={<Landing />} />
-            <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
-            <Route path="/catalogo" element={<Catalogo />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/registro" element={<Registro />} />
-            <Route path="/carrito" element={<PrivateRoute><Carrito /></PrivateRoute>} />
-            <Route path="/orders" element={<PrivateRoute><MisOrdenes /></PrivateRoute>} />
-            <Route path="/orders/:id" element={<PrivateRoute><OrdenDetalle /></PrivateRoute>} />  {/* ← nuevo */}
-            <Route path="/pagos" element={<PrivateRoute><Pagos /></PrivateRoute>} />
-            <Route path="/admin" element={<PrivateRoute adminOnly><Admin /></PrivateRoute>} />
-            <Route path="/quienes-somos" element={<QuienesSomos />} />
-            <Route path="/faq" element={<FAQ />} />
-            <Route path="/ayuda" element={<Ayuda />} />
-            <Route path="/contacto" element={<Contacto />} />
-            <Route path="/cuenta" element={<PrivateRoute><MiCuenta /></PrivateRoute>} />
-            <Route path="/mis-items" element={<PrivateRoute><MisItems /></PrivateRoute>} />
-            <Route path="/notificaciones" element={<PrivateRoute><Notificaciones /></PrivateRoute>} />
-            <Route path="/terminos" element={<Terminos />} />
-            <Route path="/privacidad" element={<Privacidad />} />
-            <Route path="/estado-cuenta" element={<PrivateRoute><EstadoCuenta /></PrivateRoute>} />
-            <Route path="/producto/:id" element={<ProductoDetalle />} />
-            <Route path="/listas/:id" element={<PrivateRoute><ListaDetalle /></PrivateRoute>} />
-            <Route path="/menu" element={<PrivateRoute><Menu /></PrivateRoute>} />
-            <Route path="/ofertas" element={<PrivateRoute><Ofertas /></PrivateRoute>} />
-            <Route path="/farmacia" element={<PrivateRoute><LineaFarmacia /></PrivateRoute>} />
-            <Route path="/hospitalaria" element={<PrivateRoute><LineaHospitalaria /></PrivateRoute>} />
-            <Route path="/direcciones" element={<PrivateRoute><Direcciones /></PrivateRoute>} />
+              <Toaster />
+              <Routes>
+                <Route path="/" element={<Landing />} />
+                <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
+                <Route path="/catalogo" element={<Catalogo />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/registro" element={<Registro />} />
+                <Route path="/carrito" element={<PrivateRoute><Carrito /></PrivateRoute>} />
+                <Route path="/orders" element={<PrivateRoute><MisOrdenes /></PrivateRoute>} />
+                <Route path="/orders/:id" element={<PrivateRoute><OrdenDetalle /></PrivateRoute>} />
+                <Route path="/pagos" element={<PrivateRoute><Pagos /></PrivateRoute>} />
+                <Route path="/admin" element={<PrivateRoute adminOnly><Admin /></PrivateRoute>} />
+                <Route path="/quienes-somos" element={<QuienesSomos />} />
+                <Route path="/faq" element={<FAQ />} />
+                <Route path="/ayuda" element={<Ayuda />} />
+                <Route path="/contacto" element={<Contacto />} />
+                <Route path="/cuenta" element={<PrivateRoute><MiCuenta /></PrivateRoute>} />
+                <Route path="/mis-items" element={<PrivateRoute><MisItems /></PrivateRoute>} />
+                <Route path="/notificaciones" element={<PrivateRoute><Notificaciones /></PrivateRoute>} />
+                <Route path="/terminos" element={<Terminos />} />
+                <Route path="/privacidad" element={<Privacidad />} />
+                <Route path="/estado-cuenta" element={<PrivateRoute><EstadoCuenta /></PrivateRoute>} />
+                <Route path="/producto/:id" element={<ProductoDetalle />} />
+                <Route path="/listas/:id" element={<PrivateRoute><ListaDetalle /></PrivateRoute>} />
+                <Route path="/menu" element={<PrivateRoute><Menu /></PrivateRoute>} />
+                <Route path="/ofertas" element={<PrivateRoute><Ofertas /></PrivateRoute>} />
+                <Route path="/farmacia" element={<PrivateRoute><LineaFarmacia /></PrivateRoute>} />
+                <Route path="/hospitalaria" element={<PrivateRoute><LineaHospitalaria /></PrivateRoute>} />
+                <Route path="/direcciones" element={<PrivateRoute><Direcciones /></PrivateRoute>} />
 
-<Route path="/estado-cuenta/pagos" element={<PrivateRoute><PagosEstadoCuenta /></PrivateRoute>} />} />
-<Route path="/estado-cuenta/facturas" element={<PrivateRoute><FacturasEstadoCuenta /></PrivateRoute>} />} />
-<Route path="/estado-cuenta/reportes" element={<PrivateRoute><ReportesEstadoCuenta /></PrivateRoute>} />} />
-<Route path="/estado-cuenta/ampliacion" element={<PrivateRoute><AmpliacionEstadoCuenta /></PrivateRoute>} />} />
-          </Routes>
+                {/* Rutas de estado de cuenta - CORREGIDAS */}
+                <Route path="/estado-cuenta/pagos" element={<PrivateRoute><PagosEstadoCuenta /></PrivateRoute>} />
+                <Route path="/estado-cuenta/facturas" element={<PrivateRoute><FacturasEstadoCuenta /></PrivateRoute>} />
+                <Route path="/estado-cuenta/reportes" element={<PrivateRoute><ReportesEstadoCuenta /></PrivateRoute>} />
+                <Route path="/estado-cuenta/ampliacion" element={<PrivateRoute><AmpliacionEstadoCuenta /></PrivateRoute>} />
+              </Routes>
             </LoadingBarProvider>
           </EnvioProvider>
         </FavoritosProvider>
