@@ -179,8 +179,8 @@ function Landing() {
           <ImagePlaceholder label="Imagen hero" className="landing-hero__imagen" />
           
           <div className="landing-hero__texto">
-            <h1>Abastecimiento a tu Medida</h1>
-            <p className="landing-hero__subtitulo">Plataforma B2B para Clinicas, Farmacias y Medicos</p>
+            <h1>Respaldamos al Medico Venezolano</h1>
+            <p className="landing-hero__subtitulo">La plataforma digital de abastecimiento farmacéutico y hospitalario para clínicas, farmacias, centros quirúrgicos y especialistas.</p>
             
             <div className="landing-hero__acciones">
               <a href="#" className="landing-link">Más información ›</a>
