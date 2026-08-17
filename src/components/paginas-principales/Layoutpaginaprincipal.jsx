@@ -1,24 +1,12 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
-import { Box, Flex, IconButton, Text } from '@chakra-ui/react'
 import { Menu, X, ChevronRight, LogOut } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import BottomNav from '../BottomNav'
-import { NAV_PAGINAS_PRINCIPALES } from '../Navpaginasprincipales'
-import './Layoutpaginaprincipal.css'
+import { NAV_PAGINAS_PRINCIPALES } from './navPaginasPrincipales'
+import './LayoutPaginaPrincipal.css'
 
-// ---------------------------------------------------------------
-// <LayoutPaginaPrincipal activo="ordenes" titulo="Mis Órdenes">
-//   {contenido de la página}
-// </LayoutPaginaPrincipal>
-//
-// Este es el layout base de "Páginas Principales": en desktop/tablet
-// (≥1024px) muestra una columna izquierda flotante y sticky con la
-// navegación de cuenta (igual patrón que el resumen sticky de
-// Carrito.jsx, pero a la izquierda). En móvil (<1024px) esa columna
-// se convierte en un drawer que se abre con un botón de menú y
-// "arrastra" el contenido de la página hacia la derecha con una
-// transición corta (efecto push, no overlay).
+
 // ---------------------------------------------------------------
 function ContenidoNav({ activo, esAdmin, onNavigate }) {
   return (
@@ -56,7 +44,6 @@ function ContenidoNav({ activo, esAdmin, onNavigate }) {
 function LayoutPaginaPrincipal({ activo, titulo, subtitulo, acciones, children }) {
   const { user, logout } = useAuth()
   const [drawerAbierto, setDrawerAbierto] = useState(false)
-  const catcherRef = useRef(null)
 
   const cerrarDrawer = () => setDrawerAbierto(false)
 
@@ -79,35 +66,30 @@ function LayoutPaginaPrincipal({ activo, titulo, subtitulo, acciones, children }
   const iniciales = (user?.nombre || user?.email || '?').trim().charAt(0).toUpperCase()
 
   return (
-    <Box className="ppal-root">
+    <div className="ppal-root">
       {/* Panel del drawer (solo se ve en móvil, ver CSS) */}
-      <Box as="aside" className={`ppal-drawer-panel ${drawerAbierto ? 'ppal-drawer-panel--abierto' : ''}`}>
-        <Flex className="ppal-drawer-panel__header" align="center" justify="space-between">
-          <Flex align="center" gap="10px">
-            <Box className="ppal-drawer-panel__avatar">{iniciales}</Box>
-            <Box minW="0">
-              <Text className="ppal-drawer-panel__nombre" truncate>
-                {user?.nombre || 'Mi cuenta'}
-              </Text>
-              <Text className="ppal-drawer-panel__email" truncate>
-                {user?.email}
-              </Text>
-            </Box>
-          </Flex>
-          <IconButton
-            aria-label="Cerrar menú"
-            variant="ghost"
-            size="sm"
-            onClick={cerrarDrawer}
+      <aside className={`ppal-drawer-panel ${drawerAbierto ? 'ppal-drawer-panel--abierto' : ''}`}>
+        <div className="ppal-drawer-panel__header">
+          <div className="ppal-drawer-panel__quien">
+            <span className="ppal-drawer-panel__avatar">{iniciales}</span>
+            <div className="ppal-drawer-panel__textos">
+              <p className="ppal-drawer-panel__nombre">{user?.nombre || 'Mi cuenta'}</p>
+              <p className="ppal-drawer-panel__email">{user?.email}</p>
+            </div>
+          </div>
+          <button
+            type="button"
             className="ppal-drawer-panel__cerrar"
+            onClick={cerrarDrawer}
+            aria-label="Cerrar menú"
           >
             <X size={18} />
-          </IconButton>
-        </Flex>
+          </button>
+        </div>
 
-        <Box className="ppal-drawer-panel__scroll">
+        <div className="ppal-drawer-panel__scroll">
           <ContenidoNav activo={activo} esAdmin={user?.es_admin} onNavigate={cerrarDrawer} />
-        </Box>
+        </div>
 
         {!user?.es_admin && (
           <button type="button" className="ppal-drawer-panel__logout" onClick={logout}>
@@ -115,33 +97,33 @@ function LayoutPaginaPrincipal({ activo, titulo, subtitulo, acciones, children }
             Cerrar sesión
           </button>
         )}
-      </Box>
+      </aside>
 
       {/* Todo lo demás (topbar móvil + layout de 2 columnas) se "empuja"
           hacia la derecha cuando el drawer está abierto */}
-      <Box className={`ppal-shift ${drawerAbierto ? 'ppal-shift--empujado' : ''}`}>
+      <div className={`ppal-shift ${drawerAbierto ? 'ppal-shift--empujado' : ''}`}>
         {drawerAbierto && (
-          <div ref={catcherRef} className="ppal-shift__catcher" onClick={cerrarDrawer} aria-hidden="true" />
+          <div className="ppal-shift__catcher" onClick={cerrarDrawer} aria-hidden="true" />
         )}
 
         {/* Barra superior — solo visible en móvil/tablet */}
-        <Flex as="header" className="ppal-topbar" align="center" gap="10px">
-          <IconButton
-            aria-label="Abrir menú de cuenta"
-            variant="ghost"
-            onClick={() => setDrawerAbierto(true)}
+        <header className="ppal-topbar">
+          <button
+            type="button"
             className="ppal-topbar__menu-btn"
+            onClick={() => setDrawerAbierto(true)}
+            aria-label="Abrir menú de cuenta"
           >
             <Menu size={22} />
-          </IconButton>
-          <Text className="ppal-topbar__titulo" truncate>{titulo}</Text>
-        </Flex>
+          </button>
+          <p className="ppal-topbar__titulo">{titulo}</p>
+        </header>
 
         <div className="ppal-container">
-          <Flex className="ppal-body" align="flex-start" gap="32px">
+          <div className="ppal-body">
             {/* Columna izquierda — solo visible en desktop/tablet */}
-            <Box as="aside" className="ppal-sidebar">
-              <Box className="ppal-sidebar__sticky">
+            <aside className="ppal-sidebar">
+              <div className="ppal-sidebar__sticky">
                 <div className="ppal-sidebar__header">
                   <div className="ppal-sidebar__avatar">{iniciales}</div>
                   <div className="ppal-sidebar__header-texto">
@@ -150,27 +132,27 @@ function LayoutPaginaPrincipal({ activo, titulo, subtitulo, acciones, children }
                   </div>
                 </div>
                 <ContenidoNav activo={activo} esAdmin={user?.es_admin} />
-              </Box>
-            </Box>
+              </div>
+            </aside>
 
             {/* Columna derecha — contenido de la página */}
-            <Box as="main" className="ppal-main" minW="0">
-              <Flex className="ppal-main__header" align="center" justify="space-between" gap="12px">
+            <main className="ppal-main">
+              <div className="ppal-main__header">
                 <div>
                   <h1 className="ppal-main__titulo">{titulo}</h1>
                   {subtitulo && <p className="ppal-main__subtitulo">{subtitulo}</p>}
                 </div>
                 {acciones && <div className="ppal-main__acciones">{acciones}</div>}
-              </Flex>
+              </div>
 
               {children}
-            </Box>
-          </Flex>
+            </main>
+          </div>
         </div>
 
         <BottomNav />
-      </Box>
-    </Box>
+      </div>
+    </div>
   )
 }
 

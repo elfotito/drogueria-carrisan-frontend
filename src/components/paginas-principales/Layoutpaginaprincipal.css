@@ -1,8 +1,3 @@
-/* =================================================================
-   PÁGINAS PRINCIPALES — layout compartido
-   Sidebar flotante/sticky en desktop-tablet (≥1024px).
-   Drawer que "empuja" la página en móvil (<1024px).
-   ================================================================= */
 
 .ppal-root,
 .ppal-root *,
@@ -26,6 +21,7 @@
   position: relative;
   background: var(--ppal-bg);
   min-height: 100vh;
+  max-width: 100vw;
   overflow-x: clip;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   color: var(--ppal-text);
@@ -38,6 +34,7 @@
    ----------------------------------------------------------------- */
 .ppal-shift {
   position: relative;
+  width: 100%;
   min-height: 100vh;
   background: var(--ppal-bg);
   transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1), border-radius 0.28s ease;
@@ -50,6 +47,8 @@
   z-index: 40;
   background: rgba(26, 26, 58, 0.28);
   cursor: pointer;
+  border: 0;
+  padding: 0;
 }
 
 /* -----------------------------------------------------------------
@@ -57,6 +56,7 @@
    ----------------------------------------------------------------- */
 .ppal-topbar {
   display: none;
+  margin: 0;
 }
 
 .ppal-container {
@@ -64,6 +64,14 @@
   max-width: 1240px;
   margin: 0 auto;
   padding: 32px 24px 96px;
+}
+
+.ppal-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+  width: 100%;
+  min-width: 0;
 }
 
 /* -----------------------------------------------------------------
@@ -112,23 +120,24 @@
   min-width: 0;
 }
 
+.ppal-sidebar__nombre,
+.ppal-sidebar__email {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .ppal-sidebar__nombre {
   margin: 0;
   font-size: 0.88rem;
   font-weight: 700;
   color: var(--ppal-text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .ppal-sidebar__email {
   margin: 0;
   font-size: 0.76rem;
   color: var(--ppal-text-muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 /* -----------------------------------------------------------------
@@ -194,11 +203,17 @@
    ----------------------------------------------------------------- */
 .ppal-main {
   flex: 1;
+  min-width: 0;
+  width: 100%;
 }
 
 .ppal-main__header {
-  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   flex-wrap: wrap;
+  margin: 0 0 18px;
 }
 
 .ppal-main__titulo {
@@ -229,10 +244,12 @@
 @media (max-width: 1024px) {
   .ppal-container {
     padding: 16px 16px 96px;
+    max-width: 100%;
   }
 
   .ppal-body {
     flex-direction: column;
+    gap: 16px;
   }
 
   .ppal-sidebar {
@@ -241,6 +258,8 @@
 
   .ppal-topbar {
     display: flex;
+    align-items: center;
+    gap: 10px;
     position: sticky;
     top: 0;
     z-index: 20;
@@ -251,10 +270,28 @@
 
   .ppal-topbar__menu-btn {
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
     color: var(--ppal-text);
+    cursor: pointer;
+  }
+
+  .ppal-topbar__menu-btn:active {
+    background: var(--ppal-brand-light);
   }
 
   .ppal-topbar__titulo {
+    margin: 0;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     font-size: 1.02rem;
     font-weight: 700;
     color: var(--ppal-text);
@@ -287,9 +324,20 @@
   }
 
   .ppal-drawer-panel__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
     padding: 18px 16px 14px;
     border-bottom: 1px solid var(--ppal-border);
     flex-shrink: 0;
+  }
+
+  .ppal-drawer-panel__quien {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
   }
 
   .ppal-drawer-panel__avatar {
@@ -305,6 +353,18 @@
     background: linear-gradient(135deg, var(--ppal-brand), var(--ppal-brand-dark));
   }
 
+  .ppal-drawer-panel__textos {
+    min-width: 0;
+  }
+
+  .ppal-drawer-panel__nombre,
+  .ppal-drawer-panel__email {
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   .ppal-drawer-panel__nombre {
     font-size: 0.9rem;
     font-weight: 700;
@@ -314,6 +374,20 @@
   .ppal-drawer-panel__email {
     font-size: 0.76rem;
     color: var(--ppal-text-muted);
+  }
+
+  .ppal-drawer-panel__cerrar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--ppal-text-muted);
+    cursor: pointer;
   }
 
   .ppal-drawer-panel__scroll {
