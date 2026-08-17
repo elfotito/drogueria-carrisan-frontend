@@ -11,6 +11,7 @@ import './EstadoCuenta.css'
 import OrdenClienteModal from '../components/OrdenClienteModal'
 import PagoClienteModal from '../components/PagoClienteModal'
 
+
 function formatearMonto(valor) {
   return new Intl.NumberFormat('es-VE', { style: 'currency', currency: 'USD' }).format(valor || 0)
 }
