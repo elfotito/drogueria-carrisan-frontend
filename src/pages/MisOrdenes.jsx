@@ -2,7 +2,8 @@ import { useState, useEffect, useMemo } from 'react'
 import api from '../api/axios'
 import { useAuth } from '../context/AuthContext'
 import { Link, useNavigate } from 'react-router-dom'
-import BottomNav from '../components/BottomNav'
+import { Package, Truck, Store, Boxes, ArrowRight } from 'lucide-react'
+import LayoutPaginaPrincipal from '../components/paginas-principales/LayoutPaginaPrincipal'
 import './MisOrdenes.css'
 
 // Etapas del ciclo de vida de una orden, en orden cronológico.
@@ -17,28 +18,27 @@ const ETAPAS_ORDEN = [
 ]
 
 const ESTADOS_CONFIG = {
-  pedido_creado: { label: 'Pedido Creado', clase: 'badge--pedido_creado' },
-  procesando: { label: 'Procesando', clase: 'badge--procesando' },
-  preparando: { label: 'Preparando', clase: 'badge--preparando' },
-  enviado: { label: 'Enviado', clase: 'badge--enviado' },
-  entregado: { label: 'Entregado', clase: 'badge--entregado' },
-  cancelado: { label: 'Cancelado', clase: 'badge--cancelado' },
+  pedido_creado: { label: 'Pedido Creado', clase: 'mo-badge--pedido_creado' },
+  procesando: { label: 'Procesando', clase: 'mo-badge--procesando' },
+  preparando: { label: 'Preparando', clase: 'mo-badge--preparando' },
+  enviado: { label: 'Enviado', clase: 'mo-badge--enviado' },
+  entregado: { label: 'Entregado', clase: 'mo-badge--entregado' },
+  cancelado: { label: 'Cancelado', clase: 'mo-badge--cancelado' },
 }
 
-const ESTADO_FALLBACK = { label: null, clase: 'badge--neutro' }
+const ESTADO_FALLBACK = { label: null, clase: 'mo-badge--neutro' }
 
 function getEstadoConfig(estado) {
-  const config = ESTADOS_CONFIG[estado] || { ...ESTADO_FALLBACK, label: estado }
-  return config
+  return ESTADOS_CONFIG[estado] || { ...ESTADO_FALLBACK, label: estado }
 }
 
 function OrdenCardSkeleton() {
   return (
-    <div className="orden-card orden-card--skeleton">
-      <div className="skeleton-line skeleton-line--sm" />
-      <div className="skeleton-line skeleton-line--md" />
-      <div className="skeleton-line skeleton-line--sm" />
-      <div className="skeleton-line skeleton-line--btn" />
+    <div className="mo-card mo-card--skeleton">
+      <div className="mo-skeleton-line mo-skeleton-line--sm" />
+      <div className="mo-skeleton-line mo-skeleton-line--md" />
+      <div className="mo-skeleton-line mo-skeleton-line--sm" />
+      <div className="mo-skeleton-line mo-skeleton-line--btn" />
     </div>
   )
 }
@@ -51,12 +51,12 @@ function ProgresoOrden({ estado }) {
   if (pasoActual === -1) return null
 
   return (
-    <div className="orden-progreso">
+    <div className="mo-progreso">
       {ETAPAS_ORDEN.map((etapa, i) => (
-        <div className="orden-progreso__paso" key={etapa.id}>
-          <span className={`orden-progreso__punto ${i <= pasoActual ? 'orden-progreso__punto--activo' : ''}`} />
+        <div className="mo-progreso__paso" key={etapa.id}>
+          <span className={`mo-progreso__punto ${i <= pasoActual ? 'mo-progreso__punto--activo' : ''}`} />
           {i < ETAPAS_ORDEN.length - 1 && (
-            <span className={`orden-progreso__linea ${i < pasoActual ? 'orden-progreso__linea--activa' : ''}`} />
+            <span className={`mo-progreso__linea ${i < pasoActual ? 'mo-progreso__linea--activa' : ''}`} />
           )}
         </div>
       ))}
@@ -72,55 +72,50 @@ function OrdenCard({ orden, esAdmin, onVerDetalle }) {
     year: 'numeric',
   })
 
-  // ── Icono y etiqueta de tipo de envío ──
   const envioInfo = useMemo(() => {
     switch (orden.tipo_envio) {
       case 'retiro':
-        return { icono: '🏪', texto: 'Retiro en tienda' }
+        return { Icono: Store, texto: 'Retiro en tienda' }
       case 'delivery':
-        return { 
-          icono: '🛵', 
-          texto: orden.usuario?.delivery_gratis 
-            ? 'Delivery (¡Gratis!)' 
-            : `Delivery (+$${orden.costo_delivery?.toFixed(2) || '8.00'})` 
+        return {
+          Icono: Truck,
+          texto: orden.usuario?.delivery_gratis
+            ? 'Delivery (¡Gratis!)'
+            : `Delivery (+$${orden.costo_delivery?.toFixed(2) || '8.00'})`,
         }
       case 'envio_nacional':
-        return { icono: '📦', texto: `Envío Nac. (${orden.agencia_envio || 'N/A'})` }
+        return { Icono: Boxes, texto: `Envío Nac. (${orden.agencia_envio || 'N/A'})` }
       default:
-        return { icono: '📋', texto: 'Sin especificar' }
+        return { Icono: Package, texto: 'Sin especificar' }
     }
   }, [orden.tipo_envio, orden.costo_delivery, orden.agencia_envio, orden.usuario?.delivery_gratis])
 
   return (
-    <div className="orden-card">
-      <div className="orden-card__top">
+    <div className="mo-card">
+      <div className="mo-card__top">
         <div>
-          <p className="orden-card__numero">Orden #{orden.id}</p>
-          <p className="orden-card__fecha">{fecha}</p>
+          <p className="mo-card__numero">Orden #{orden.id}</p>
+          <p className="mo-card__fecha">{fecha}</p>
         </div>
-        <span className={`orden-badge ${estadoConfig.clase}`}>{estadoConfig.label}</span>
+        <span className={`mo-badge ${estadoConfig.clase}`}>{estadoConfig.label}</span>
       </div>
 
       <ProgresoOrden estado={orden.estado} />
 
-      <div className="orden-card__envio">
-        <span>{envioInfo.icono}</span>
+      <div className="mo-card__envio">
+        <envioInfo.Icono size={16} />
         <span>{envioInfo.texto}</span>
       </div>
 
       {esAdmin && orden.users?.nombre && (
-        <p className="orden-card__cliente">Cliente: <strong>{orden.users.nombre}</strong></p>
+        <p className="mo-card__cliente">Cliente: <strong>{orden.users.nombre}</strong></p>
       )}
 
-      <div className="orden-card__bottom">
-        <p className="orden-card__total">
+      <div className="mo-card__bottom">
+        <p className="mo-card__total">
           Total: <span>${orden.total_usd.toFixed(2)}</span>
         </p>
-        <button
-          type="button"
-          className="orden-card__ver-btn"
-          onClick={() => onVerDetalle(orden)}
-        >
+        <button type="button" className="mo-card__ver-btn" onClick={() => onVerDetalle(orden)}>
           Ver detalle
         </button>
       </div>
@@ -154,8 +149,6 @@ function MisOrdenes() {
 
   // Tabs dinámicos: "Todos" + un tab por cada estado que exista realmente
   // en las órdenes cargadas, ordenados según el ciclo de vida (ETAPAS_ORDEN).
-  // Si agregas un estado nuevo en el backend que no está en ETAPAS_ORDEN,
-  // el tab igual aparece, solo que al final de la lista.
   const tabs = useMemo(() => {
     const estadosPresentes = [...new Set(ordenes.map((o) => o.estado))]
     const ordenEtapas = ETAPAS_ORDEN.map((e) => e.id)
@@ -175,10 +168,7 @@ function MisOrdenes() {
         count: ordenes.filter((o) => o.estado === estado).length,
       }))
 
-    return [
-      { id: 'todos', label: 'Todos', count: ordenes.length },
-      ...tabsEstados,
-    ]
+    return [{ id: 'todos', label: 'Todos', count: ordenes.length }, ...tabsEstados]
   }, [ordenes])
 
   const ordenesFiltradas = useMemo(() => {
@@ -193,67 +183,63 @@ function MisOrdenes() {
     [ordenes]
   )
 
-  if (error) {
-    return (
-      <div className="misordenes-page">
-        <p className="misordenes-error">{error}</p>
-      </div>
-    )
-  }
+  const titulo = user?.es_admin ? 'Todas las Órdenes' : 'Mis Órdenes'
+  const subtitulo = user?.es_admin
+    ? 'Seguimiento operativo de todos los pedidos de la plataforma'
+    : 'Revisa el estado y el historial de tus pedidos'
 
   return (
-    <div className="misordenes-page">
-      <div className="misordenes-container">
-        <h1 className="misordenes-title">
-          {user?.es_admin ? 'Todas las Órdenes' : 'Mis Órdenes'}
-        </h1>
+    <LayoutPaginaPrincipal activo="ordenes" titulo={titulo} subtitulo={subtitulo}>
+      <div className="mo-page">
+        {error && <p className="mo-error">{error}</p>}
 
         {!user?.es_admin && ordenesPendientesPago.length > 0 && (
-          <button
-            type="button"
-            className="misordenes-banner-pago"
-            onClick={() => navigate('/pagos')}
-          >
+          <button type="button" className="mo-banner-pago" onClick={() => navigate('/pagos')}>
             <span>
-              Tienes {ordenesPendientesPago.length} {ordenesPendientesPago.length === 1 ? 'orden pendiente de pago' : 'órdenes pendientes de pago'}
+              Tienes {ordenesPendientesPago.length}{' '}
+              {ordenesPendientesPago.length === 1 ? 'orden pendiente de pago' : 'órdenes pendientes de pago'}
             </span>
-            <span className="misordenes-banner-pago__cta">Gestionar pagos →</span>
+            <span className="mo-banner-pago__cta">
+              Gestionar pagos <ArrowRight size={15} />
+            </span>
           </button>
         )}
 
         {!cargando && ordenes.length > 0 && (
-          <div className="misordenes-tabs">
+          <div className="mo-tabs">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 type="button"
-                className={`misordenes-tab ${filtroEstado === tab.id ? 'misordenes-tab--activo' : ''}`}
+                className={`mo-tab ${filtroEstado === tab.id ? 'mo-tab--activo' : ''}`}
                 onClick={() => setFiltroEstado(tab.id)}
               >
                 {tab.label}
-                <span className="misordenes-tab__count">{tab.count}</span>
+                <span className="mo-tab__count">{tab.count}</span>
               </button>
             ))}
           </div>
         )}
 
         {cargando ? (
-          <div className="ordenes-grid">
+          <div className="mo-grid">
             {Array.from({ length: 4 }).map((_, i) => (
               <OrdenCardSkeleton key={i} />
             ))}
           </div>
         ) : ordenes.length === 0 ? (
-          <div className="misordenes-vacio">
-            <div className="misordenes-vacio__icon">📦</div>
+          <div className="mo-vacio">
+            <div className="mo-vacio__icon">
+              <Package size={32} />
+            </div>
             <h2>No tenés órdenes todavía</h2>
             <p>Cuando confirmes un pedido, aparecerá aquí.</p>
-            <Link to="/catalogo" className="misordenes-vacio__cta">Ir al catálogo</Link>
+            <Link to="/catalogo" className="mo-vacio__cta">Ir al catálogo</Link>
           </div>
         ) : ordenesFiltradas.length === 0 ? (
-          <p className="misordenes-vacio-filtro">No hay órdenes con este estado.</p>
+          <p className="mo-vacio-filtro">No hay órdenes con este estado.</p>
         ) : (
-          <div className="ordenes-grid">
+          <div className="mo-grid">
             {ordenesFiltradas.map((orden) => (
               <OrdenCard
                 key={orden.id}
@@ -265,8 +251,7 @@ function MisOrdenes() {
           </div>
         )}
       </div>
-      <BottomNav />
-    </div>
+    </LayoutPaginaPrincipal>
   )
 }
 

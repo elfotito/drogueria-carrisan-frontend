@@ -96,7 +96,7 @@ function Pagos() {
     const formData = new FormData()
     formData.append('archivo', comprobante)
 
-    // ✅ Remove the manual headers - let axios handle it
+    
     const { data: subida } = await api.post('/uploads/comprobante', formData)
 
     const { data } = await api.post('/reportes-pago', {

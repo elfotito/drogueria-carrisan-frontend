@@ -1,605 +1,353 @@
-.mi-cuenta,
-.mi-cuenta *,
-.mi-cuenta *::before,
-.mi-cuenta *::after {
+.mo-page,
+.mo-page *,
+.mo-page *::before,
+.mo-page *::after {
   box-sizing: border-box;
 }
 
-.mi-cuenta {
-  --color-brand: #0052DC;
-  --color-brand-dark: #1A1A3A;
-  --color-brand-light: #eaf0ff;
-  --color-accent: #12A594;
-  --color-accent-light: #e7f8f5;
-  --color-positive: #15803d;
-  --color-negative: #dc2626;
-  --color-warning: #d97706;
-  --color-bg: #FBFAF7;
-  --color-surface: #ffffff;
-  --color-border: #e7e6e0;
-  --color-text: #1A1A3A;
-  --color-text-muted: #6b6b7a;
+.mo-page {
+  --mo-brand: #0052DC;
+  --mo-brand-dark: #1A1A3A;
+  --mo-accent: #12A594;
+  --mo-accent-light: #e7f8f5;
+  --mo-bg: #FBFAF7;
+  --mo-surface: #ffffff;
+  --mo-border: #e7e6e0;
+  --mo-text: #1A1A3A;
+  --mo-text-muted: #6b6b7a;
 
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 24px 20px 96px;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  color: var(--color-text);
-  background: var(--color-bg);
-  font-variant-numeric: tabular-nums;
-  overflow-x: hidden;
+  color: var(--mo-text);
 }
 
-.mi-cuenta h1 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin: 0;
-  letter-spacing: -0.01em;
+/* --- Banner de pago pendiente --- */
+.mo-error {
+  color: #dc2626;
+  font-size: 0.9rem;
+  margin: 0 0 14px;
 }
 
-.mi-cuenta h2 {
-  font-size: 1.1rem;
-  font-weight: 700;
-  margin: 0;
-}
-
-.mi-cuenta h3 {
-  font-size: 0.92rem;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-/* --- Encabezado --- */
-.mi-cuenta__header {
+.mo-banner-pago {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
-  margin-bottom: 20px;
+  gap: 12px;
   flex-wrap: wrap;
-}
-
-.mi-cuenta__header-info {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  min-width: 0;
-}
-
-.mi-cuenta__avatar {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--color-brand), var(--color-brand-dark));
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.3rem;
-  font-weight: 700;
-  flex-shrink: 0;
-}
-
-.mi-cuenta__header-info > div {
-  min-width: 0;
-}
-
-.mi-cuenta__email {
-  margin: 2px 0 0;
-  color: var(--color-text-muted);
-  font-size: 0.88rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.mi-cuenta__logout {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 9px 14px;
-  border-radius: 10px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  color: var(--color-text-muted);
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: border-color 0.15s ease, color 0.15s ease;
-}
-
-.mi-cuenta__logout:hover {
-  border-color: var(--color-negative);
-  color: var(--color-negative);
-}
-
-.mi-cuenta__alerta {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: #fef2f2;
-  color: var(--color-negative);
-  border: 1px solid #fecaca;
-  border-radius: 10px;
-  padding: 10px 14px;
-  font-size: 0.85rem;
-  margin-bottom: 16px;
-}
-
-/* ================================================================== */
-/* Bloques grandes con preview (patrón móvil de Amazon: cada bloque    */
-/* es "su propia caja" con título + flecha + contenido de vista previa)*/
-/* ================================================================== */
-.mi-cuenta__previews {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  margin-bottom: 0;
-}
-
-.bloque-preview {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 16px;
-  padding: 18px 18px 16px;
-}
-
-.bloque-preview__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.bloque-preview__flecha {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-text-muted);
-  flex-shrink: 0;
-  transition: color 0.15s ease;
-}
-
-.bloque-preview__flecha:hover {
-  color: var(--color-brand);
-}
-
-.bloque-preview__vacio {
-  text-align: center;
-  padding: 20px 10px 8px;
-  color: var(--color-text-muted);
-  font-size: 0.88rem;
-}
-
-.bloque-preview__vacio p {
-  margin: 0 0 12px;
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 9px 18px;
-  border-radius: 10px;
-  font-size: 0.88rem;
-  font-weight: 600;
-  border: 1px solid transparent;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.btn--primario {
-  background: var(--color-brand);
-  color: #ffffff;
-}
-
-.btn--primario:hover {
-  background: var(--color-brand-dark);
-}
-
-/* --- Franja financiera (dentro del bloque de Estado de cuenta) --- */
-.franja-financiera {
-  display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
-}
-
-.franja-financiera::-webkit-scrollbar {
-  display: none;
-}
-
-.franja-financiera__item {
-  flex: 1 0 auto;
-  min-width: 140px;
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
+  padding: 13px 16px;
+  margin-bottom: 18px;
+  border: 1px solid #fcd34d;
+  background: #fffbeb;
   border-radius: 12px;
-  padding: 12px 16px;
-  display: flex;
-  flex-direction: column;
+  color: #92400e;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+}
+
+.mo-banner-pago__cta {
+  display: inline-flex;
+  align-items: center;
   gap: 4px;
-  text-decoration: none;
-  color: var(--color-text);
-}
-
-.franja-financiera__item strong {
-  font-size: 1.15rem;
-  font-weight: 700;
-}
-
-.franja-financiera__label {
-  font-size: 0.76rem;
-  color: var(--color-text-muted);
-  font-weight: 500;
-}
-
-.franja-financiera__monto--rojo {
-  color: var(--color-negative);
-}
-
-.franja-financiera__item--cta {
-  justify-content: center;
-  align-items: center;
-  flex-direction: row;
-  gap: 6px;
-  background: var(--color-brand);
-  color: #ffffff;
-  border-color: var(--color-brand);
-  font-weight: 600;
-  font-size: 0.88rem;
-  white-space: nowrap;
-}
-
-/* --- Últimas órdenes (lista dentro del bloque preview) --- */
-.ordenes-lista {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.orden-card {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 0;
-  border-bottom: 1px solid #f0f0eb;
-  text-decoration: none;
-  color: var(--color-text);
-}
-
-.ordenes-lista li:last-child .orden-card {
-  border-bottom: none;
-  padding-bottom: 0;
-}
-
-.orden-card__icono {
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
-  background: var(--color-brand-light);
-  color: var(--color-brand);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.orden-card__info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  flex: 1;
-  min-width: 0;
-}
-
-.orden-card__titulo {
-  font-weight: 600;
-  font-size: 0.92rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.orden-card__meta {
-  font-size: 0.78rem;
-  color: var(--color-text-muted);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.orden-card__monto {
-  font-size: 0.92rem;
+  color: var(--mo-brand);
   font-weight: 700;
   white-space: nowrap;
-  flex-shrink: 0;
 }
 
-.estado-badge {
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: #f1f1ea;
-  color: var(--color-text-muted);
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.estado-badge--pendiente,
-.estado-badge--procesando { background: #fff7ed; color: var(--color-warning); }
-.estado-badge--enviado { background: var(--color-accent-light); color: var(--color-accent); }
-.estado-badge--entregado,
-.estado-badge--finalizado { background: #f0fdf4; color: var(--color-positive); }
-.estado-badge--cancelado { background: #fef2f2; color: var(--color-negative); }
-
-/* --- Carrusel de favoritos (dentro del bloque preview) --- */
-.favoritos-carrusel {
+/* --- Tabs de filtro --- */
+.mo-tabs {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   overflow-x: auto;
+  padding-bottom: 4px;
+  margin-bottom: 18px;
   scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
-  padding-bottom: 2px;
 }
 
-.favoritos-carrusel::-webkit-scrollbar {
+.mo-tabs::-webkit-scrollbar {
   display: none;
 }
 
-.favorito-chip {
-  flex: 0 0 auto;
-  width: 96px;
-  text-decoration: none;
-  color: var(--color-text);
-  display: flex;
-  flex-direction: column;
+.mo-tab {
+  display: inline-flex;
+  align-items: center;
   gap: 6px;
+  flex-shrink: 0;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--mo-border);
+  background: var(--mo-surface);
+  color: var(--mo-text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 }
 
-.favorito-chip__media {
-  width: 96px;
-  height: 96px;
-  border-radius: 12px;
-  overflow: hidden;
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
+.mo-tab:hover {
+  border-color: var(--mo-brand);
 }
 
-.favorito-chip__media img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.mo-tab--activo {
+  background: var(--mo-brand);
+  border-color: var(--mo-brand);
+  color: #fff;
 }
 
-.favorito-chip__media-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
+.mo-tab__count {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.65rem;
-  color: var(--color-text-muted);
-  text-align: center;
-  padding: 4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  background: rgba(0, 0, 0, 0.08);
+  color: inherit;
 }
 
-.favorito-chip__nombre {
-  font-size: 0.75rem;
-  line-height: 1.25;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+.mo-tab--activo .mo-tab__count {
+  background: rgba(255, 255, 255, 0.25);
 }
 
-/* ================================================================== */
-/* Hub de categorías (patrón desktop de Amazon: grid de tarjetas       */
-/* con icono, título y descripción — "Tu cuenta")                      */
-/* ================================================================== */
-.hub-cuenta {
-  margin: 18px 0 24px;
-}
-
-.hub-cuenta__titulo {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 14px;
-  color: var(--color-text);
-}
-
-.hub-cuenta__titulo svg {
-  color: var(--color-brand);
-}
-
-.hub-cuenta__grid {
+/* --- Grid de órdenes --- */
+.mo-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
 }
 
-.hub-card {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
+.mo-card {
+  background: var(--mo-surface);
+  border: 1px solid var(--mo-border);
   border-radius: 14px;
   padding: 16px;
-  text-decoration: none;
-  color: var(--color-text);
-  transition: box-shadow 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
-  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.hub-card:hover {
-  box-shadow: 0 8px 22px rgba(26, 26, 58, 0.08);
-  transform: translateY(-2px);
-  border-color: #c9d8ff;
+.mo-card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
 }
 
-.hub-card__icono {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: var(--color-brand-light);
-  color: var(--color-brand);
+.mo-card__numero {
+  margin: 0;
+  font-size: 0.94rem;
+  font-weight: 700;
+  color: var(--mo-text);
+}
+
+.mo-card__fecha {
+  margin: 2px 0 0;
+  font-size: 0.78rem;
+  color: var(--mo-text-muted);
+}
+
+.mo-badge {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.mo-badge--pedido_creado { background: #eaf0ff; color: var(--mo-brand); }
+.mo-badge--procesando { background: #fef3c7; color: #b45309; }
+.mo-badge--preparando { background: #e0e7ff; color: #4338ca; }
+.mo-badge--enviado { background: var(--mo-accent-light); color: var(--mo-accent); }
+.mo-badge--entregado { background: #dcfce7; color: #15803d; }
+.mo-badge--cancelado { background: #fee2e2; color: #dc2626; }
+.mo-badge--neutro { background: #f1f0eb; color: var(--mo-text-muted); }
+
+/* --- Progreso (puntos conectados) --- */
+.mo-progreso {
   display: flex;
   align-items: center;
-  justify-content: center;
+}
+
+.mo-progreso__paso {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.mo-progreso__paso:last-child {
+  flex: 0;
+}
+
+.mo-progreso__punto {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--mo-border);
   flex-shrink: 0;
 }
 
-.hub-card__texto {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
+.mo-progreso__punto--activo {
+  background: var(--mo-brand);
 }
 
-.hub-card__titulo {
-  font-weight: 700;
-  font-size: 0.95rem;
+.mo-progreso__linea {
+  flex: 1;
+  height: 2px;
+  background: var(--mo-border);
+  margin: 0 4px;
 }
 
-.hub-card__descripcion {
-  font-size: 0.8rem;
-  color: var(--color-text-muted);
-  line-height: 1.3;
+.mo-progreso__linea--activa {
+  background: var(--mo-brand);
 }
 
-/* ================================================================== */
-/* Columnas de links de texto (patrón desktop de Amazon: bloques de    */
-/* "Preferencias de pedidos" / "Contenido digital" / etc.)             */
-/* ================================================================== */
-.columnas-links {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 22px;
-  padding: 20px 0 4px;
-  border-top: 1px solid var(--color-border);
-}
-
-.columna-links ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
-}
-
-.columna-links a {
-  color: var(--color-brand);
-  text-decoration: none;
-  font-size: 0.87rem;
-}
-
-.columna-links a:hover {
-  text-decoration: underline;
-}
-
-.mi-cuenta__footer {
+/* --- Info de envío --- */
+.mo-card__envio {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 6px;
-  margin-top: 26px;
-  color: var(--color-text-muted);
-  font-size: 0.76rem;
+  font-size: 0.82rem;
+  color: var(--mo-text-muted);
 }
 
-/* --- Carga --- */
-.mi-cuenta__cargando {
+.mo-card__envio svg {
+  color: var(--mo-text-muted);
+  flex-shrink: 0;
+}
+
+.mo-card__cliente {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--mo-text-muted);
+}
+
+.mo-card__cliente strong {
+  color: var(--mo-text);
+}
+
+/* --- Total + botón --- */
+.mo-card__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 4px;
+  padding-top: 10px;
+  border-top: 1px solid var(--mo-border);
+}
+
+.mo-card__total {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--mo-text-muted);
+}
+
+.mo-card__total span {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--mo-text);
+}
+
+.mo-card__ver-btn {
+  padding: 7px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--mo-brand);
+  background: #fff;
+  color: var(--mo-brand);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.mo-card__ver-btn:hover {
+  background: var(--mo-brand);
+  color: #fff;
+}
+
+/* --- Skeleton de carga --- */
+.mo-card--skeleton {
+  gap: 12px;
+}
+
+.mo-skeleton-line {
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #f1f0eb 25%, #e7e6e0 37%, #f1f0eb 63%);
+  background-size: 400% 100%;
+  animation: mo-shimmer 1.4s ease infinite;
+}
+
+.mo-skeleton-line--sm { width: 40%; }
+.mo-skeleton-line--md { width: 70%; height: 16px; }
+.mo-skeleton-line--btn { width: 100%; height: 34px; margin-top: 8px; }
+
+@keyframes mo-shimmer {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+
+/* --- Estado vacío --- */
+.mo-vacio {
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
+  gap: 6px;
+  padding: 56px 20px;
+  background: var(--mo-surface);
+  border: 1px solid var(--mo-border);
+  border-radius: 14px;
+}
+
+.mo-vacio__icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 100px 20px;
-  color: var(--color-text-muted);
+  background: var(--mo-brand-light, #eaf0ff);
+  color: var(--mo-brand);
+  margin-bottom: 6px;
 }
 
-.mi-cuenta__spinner {
-  animation: girar 0.8s linear infinite;
-  color: var(--color-brand);
+.mo-vacio h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
 }
 
-@keyframes girar {
-  to { transform: rotate(360deg); }
+.mo-vacio p {
+  margin: 0 0 10px;
+  font-size: 0.88rem;
+  color: var(--mo-text-muted);
 }
 
-/* --- Responsive: móvil --- */
-@media (max-width: 560px) {
-  .mi-cuenta {
-    padding: 20px 16px 96px;
-  }
-
-  .orden-card {
-    flex-wrap: wrap;
-  }
-
-  .orden-card__info {
-    order: 1;
-    flex-basis: 60%;
-  }
-
-  .estado-badge {
-    order: 2;
-  }
-
-  .orden-card__monto {
-    order: 3;
-    margin-left: auto;
-  }
+.mo-vacio__cta {
+  padding: 10px 20px;
+  border-radius: 999px;
+  background: var(--mo-brand);
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: none;
 }
 
-/* ================================================================== */
-/* Responsive: escritorio (≥1024px, mismo breakpoint arquitectónico    */
-/* del proyecto donde desaparece el BottomNav)                         */
-/* ================================================================== */
-@media (min-width: 1024px) {
-  .mi-cuenta {
-    padding: 36px 40px 60px;
-  }
-
-  .mi-cuenta__logout {
-    padding: 10px 16px;
-  }
-
-  /* El hub de categorías pasa a grid de 3 columnas, como el desktop de Amazon */
-  .hub-cuenta__grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-  }
-
-  .hub-card {
-    align-items: flex-start;
-    padding: 20px;
-  }
-
-  /* Las columnas de links pasan de apiladas a 4 columnas lado a lado */
-  .columnas-links {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 28px;
-  }
-
-  /* Los tres bloques de preview pasan de apilados a lado a lado */
-  .mi-cuenta__previews {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-  }
+.mo-vacio-filtro {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--mo-text-muted);
+  font-size: 0.9rem;
 }
 
-@media (min-width: 1280px) {
-  .hub-cuenta__grid {
-    grid-template-columns: repeat(4, 1fr);
+@media (max-width: 640px) {
+  .mo-grid {
+    grid-template-columns: 1fr;
   }
 }

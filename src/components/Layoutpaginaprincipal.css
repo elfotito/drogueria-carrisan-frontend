@@ -1,0 +1,348 @@
+/* =================================================================
+   PÁGINAS PRINCIPALES — layout compartido
+   Sidebar flotante/sticky en desktop-tablet (≥1024px).
+   Drawer que "empuja" la página en móvil (<1024px).
+   ================================================================= */
+
+.ppal-root,
+.ppal-root *,
+.ppal-root *::before,
+.ppal-root *::after {
+  box-sizing: border-box;
+}
+
+.ppal-root {
+  --ppal-brand: #0052DC;
+  --ppal-brand-dark: #1A1A3A;
+  --ppal-brand-light: #eaf0ff;
+  --ppal-accent: #12A594;
+  --ppal-bg: #FBFAF7;
+  --ppal-surface: #ffffff;
+  --ppal-border: #e7e6e0;
+  --ppal-text: #1A1A3A;
+  --ppal-text-muted: #6b6b7a;
+  --ppal-drawer-w: min(300px, 84vw);
+
+  position: relative;
+  background: var(--ppal-bg);
+  min-height: 100vh;
+  overflow-x: clip;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: var(--ppal-text);
+}
+
+/* -----------------------------------------------------------------
+   Contenedor "empujable": envuelve todo el contenido de la página.
+   En móvil, cuando el drawer se abre, este bloque se desplaza hacia
+   la derecha con una transición corta (efecto push, no overlay).
+   ----------------------------------------------------------------- */
+.ppal-shift {
+  position: relative;
+  min-height: 100vh;
+  background: var(--ppal-bg);
+  transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1), border-radius 0.28s ease;
+  will-change: transform;
+}
+
+.ppal-shift__catcher {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  background: rgba(26, 26, 58, 0.28);
+  cursor: pointer;
+}
+
+/* -----------------------------------------------------------------
+   Barra superior — SOLO móvil/tablet (<1024px)
+   ----------------------------------------------------------------- */
+.ppal-topbar {
+  display: none;
+}
+
+.ppal-container {
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 32px 24px 96px;
+}
+
+/* -----------------------------------------------------------------
+   Sidebar izquierdo — desktop/tablet
+   ----------------------------------------------------------------- */
+.ppal-sidebar {
+  width: 268px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.ppal-sidebar__sticky {
+  position: sticky;
+  top: 140px;
+  background: var(--ppal-surface);
+  border: 1px solid var(--ppal-border);
+  border-radius: 14px;
+  padding: 18px 14px 22px;
+  box-shadow: 0 2px 12px rgba(26, 26, 58, 0.06);
+}
+
+.ppal-sidebar__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 8px 16px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--ppal-border);
+}
+
+.ppal-sidebar__avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #fff;
+  background: linear-gradient(135deg, var(--ppal-brand), var(--ppal-brand-dark));
+}
+
+.ppal-sidebar__header-texto {
+  min-width: 0;
+}
+
+.ppal-sidebar__nombre {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--ppal-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ppal-sidebar__email {
+  margin: 0;
+  font-size: 0.76rem;
+  color: var(--ppal-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* -----------------------------------------------------------------
+   Navegación (compartida entre sidebar de desktop y drawer móvil)
+   ----------------------------------------------------------------- */
+.ppal-nav__grupo {
+  margin-bottom: 14px;
+}
+
+.ppal-nav__grupo:last-child {
+  margin-bottom: 0;
+}
+
+.ppal-nav__grupo-titulo {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ppal-text-muted);
+  padding: 6px 10px 4px;
+}
+
+.ppal-nav__link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: 9px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--ppal-text);
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.ppal-nav__link svg {
+  flex-shrink: 0;
+  color: var(--ppal-text-muted);
+  transition: color 0.15s ease;
+}
+
+.ppal-nav__link:hover {
+  background: var(--ppal-brand-light);
+}
+
+.ppal-nav__link--activo {
+  background: var(--ppal-brand-light);
+  color: var(--ppal-brand);
+  font-weight: 700;
+}
+
+.ppal-nav__link--activo svg {
+  color: var(--ppal-brand);
+}
+
+.ppal-nav__chevron {
+  margin-left: auto;
+}
+
+/* -----------------------------------------------------------------
+   Cuerpo: sidebar + main
+   ----------------------------------------------------------------- */
+.ppal-main {
+  flex: 1;
+}
+
+.ppal-main__header {
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.ppal-main__titulo {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ppal-text);
+}
+
+.ppal-main__subtitulo {
+  margin: 4px 0 0;
+  font-size: 0.9rem;
+  color: var(--ppal-text-muted);
+}
+
+/* -----------------------------------------------------------------
+   Panel del drawer — oculto por defecto (fuera de la pantalla),
+   solo se muestra/anima en móvil-tablet (<1024px)
+   ----------------------------------------------------------------- */
+.ppal-drawer-panel {
+  display: none;
+}
+
+/* =================================================================
+   MÓVIL + TABLET (<1024px)
+   ================================================================= */
+@media (max-width: 1024px) {
+  .ppal-container {
+    padding: 16px 16px 96px;
+  }
+
+  .ppal-body {
+    flex-direction: column;
+  }
+
+  .ppal-sidebar {
+    display: none;
+  }
+
+  .ppal-topbar {
+    display: flex;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--ppal-surface);
+    border-bottom: 1px solid var(--ppal-border);
+    padding: 10px 12px;
+  }
+
+  .ppal-topbar__menu-btn {
+    flex-shrink: 0;
+    color: var(--ppal-text);
+  }
+
+  .ppal-topbar__titulo {
+    font-size: 1.02rem;
+    font-weight: 700;
+    color: var(--ppal-text);
+  }
+
+  /* En móvil el título ya se muestra en la topbar, así que se oculta
+     el duplicado del header principal para no repetirlo */
+  .ppal-main__header {
+    display: none;
+  }
+
+  /* --- Panel del drawer: fijo a la izquierda, oculto fuera de pantalla --- */
+  .ppal-drawer-panel {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: var(--ppal-drawer-w);
+    background: var(--ppal-surface);
+    z-index: 50;
+    transform: translateX(-100%);
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 4px 0 24px rgba(26, 26, 58, 0.18);
+  }
+
+  .ppal-drawer-panel--abierto {
+    transform: translateX(0);
+  }
+
+  .ppal-drawer-panel__header {
+    padding: 18px 16px 14px;
+    border-bottom: 1px solid var(--ppal-border);
+    flex-shrink: 0;
+  }
+
+  .ppal-drawer-panel__avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, var(--ppal-brand), var(--ppal-brand-dark));
+  }
+
+  .ppal-drawer-panel__nombre {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--ppal-text);
+  }
+
+  .ppal-drawer-panel__email {
+    font-size: 0.76rem;
+    color: var(--ppal-text-muted);
+  }
+
+  .ppal-drawer-panel__scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 12px 8px;
+  }
+
+  .ppal-drawer-panel__logout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 8px 14px 16px;
+    padding: 11px;
+    border: 1px solid var(--ppal-border);
+    border-radius: 10px;
+    background: transparent;
+    color: #dc2626;
+    font-weight: 600;
+    font-size: 0.88rem;
+    cursor: pointer;
+  }
+
+  /* --- Efecto "push": arrastra toda la página hacia la derecha --- */
+  .ppal-shift--empujado {
+    transform: translateX(var(--ppal-drawer-w));
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: -10px 0 30px rgba(26, 26, 58, 0.2);
+  }
+}
