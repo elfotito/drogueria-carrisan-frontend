@@ -4,7 +4,7 @@ import { Box, Flex, IconButton, Text } from '@chakra-ui/react'
 import { Menu, X, ChevronRight, LogOut } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import BottomNav from '../BottomNav'
-import { NAV_PAGINAS_PRINCIPALES } from './Navpaginasprincipales'
+import { NAV_PAGINAS_PRINCIPALES } from '../Navpaginasprincipales'
 import './Layoutpaginaprincipal.css'
 
 // ---------------------------------------------------------------
