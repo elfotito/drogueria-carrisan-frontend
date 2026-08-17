@@ -38,6 +38,9 @@ import Direcciones from './pages/Direcciones'
 import Pagos from './pages/Pagos'
 import Landing from './pages/Landing'
 import { Toaster } from './components/ui/toaster'
+import PagosEstadoCuenta from './pages/PagosEstadoCuenta'
+import FacturasEstadoCuenta from './pages/FacturasEstadoCuenta'
+
 
 function LoadingBarBridge() {
   const bar = useLoadingBar()
@@ -85,6 +88,9 @@ function App() {
             <Route path="/farmacia" element={<PrivateRoute><LineaFarmacia /></PrivateRoute>} />
             <Route path="/hospitalaria" element={<PrivateRoute><LineaHospitalaria /></PrivateRoute>} />
             <Route path="/direcciones" element={<PrivateRoute><Direcciones /></PrivateRoute>} />
+
+<Route path="/estado-cuenta/pagos" element={<PagosEstadoCuenta />} />
+<Route path="/estado-cuenta/facturas" element={<FacturasEstadoCuenta />} />
           </Routes>
             </LoadingBarProvider>
           </EnvioProvider>
