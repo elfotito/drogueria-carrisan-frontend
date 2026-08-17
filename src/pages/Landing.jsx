@@ -75,10 +75,10 @@ function Carrusel({ items, renderItem, claseContenedor, claseTarjeta }) {
 }
 
 const BENEFICIOS = [
-  'Precios bajos',
-  'Resurtidos automáticos',
+  'Linea de Credito personalizada',
+  'Gestion de Abastecimiento',
   'Entregas gratis y rápidas',
-  'Acepta la mayoría de los seguros',
+  'Ahorra tiempo',
   'Farmacéuticos con licencia',
 ]
 
@@ -179,13 +179,13 @@ function Landing() {
           <ImagePlaceholder label="Imagen hero" className="landing-hero__imagen" />
           
           <div className="landing-hero__texto">
-            <h1>La farmacia que cumple de verdad.</h1>
-            <p className="landing-hero__subtitulo">PillPack ya está disponible en Droguería Carrisán.</p>
+            <h1>Abastecimiento a tu Medida</h1>
+            <p className="landing-hero__subtitulo">Plataforma B2B para Clinicas, Farmacias y Medicos</p>
             
             <div className="landing-hero__acciones">
               <a href="#" className="landing-link">Más información ›</a>
-              <a href="#" className="btn-landing btn-landing--primario">Sign up | Sign in</a>
-              <a href="#" className="landing-link landing-link--secundario">¿Ya nos enviaste una receta?</a>
+              <a href="#" className="btn-landing btn-landing--primario">Crear Cuenta | Iniciar Sesion</a>
+              <a href="#" className="landing-link landing-link--secundario">¿Ya eres cliente?</a>
             </div>
           </div>
         </div>
