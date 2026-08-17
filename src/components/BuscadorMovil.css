@@ -21,7 +21,7 @@
   gap: 10px;
   padding: 12px 14px;
   background: #0052dc;
-  padding: 14.6px 14px;
+  padding: 0.9125rem 1rem 0.9125rem 0.875rem;
   padding-right: 5px;
   padding-top: max(15px, env(safe-area-inset-top));
 }

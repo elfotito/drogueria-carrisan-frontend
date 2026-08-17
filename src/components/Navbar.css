@@ -376,6 +376,7 @@ body {
   flex: 1;
   min-width: 0;
   transition: max-width 0.25s ease, padding-left 0.25s ease;
+  padding-inline: 16px;
 }
 
 .navbar__search {

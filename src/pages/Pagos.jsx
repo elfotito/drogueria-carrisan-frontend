@@ -93,20 +93,16 @@ function Pagos() {
     setSubiendo(true)
 
     try {
-      // -----------------------------------------------------------
-      // TODO(Drive): esta subida hoy es un placeholder. Cuando se
-      // integre Google Drive, este paso debe:
-      //   1. Subir 'comprobante' a POST /uploads/comprobante
-      //   2. Recibir { url } de vuelta
-      //   3. Usar esa url en el POST /reportes-pago de abajo
-      // Por ahora no hay endpoint de subida — este bloque debe
-      // completarse en la fase de integración con Drive.
-      // -----------------------------------------------------------
-      const urlComprobante = 'PENDIENTE_INTEGRACION_DRIVE'
+      const formData = new FormData()
+      formData.append('archivo', comprobante)
+
+      const { data: subida } = await api.post('/uploads/comprobante', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
 
       const { data } = await api.post('/reportes-pago', {
         orden_ids: seleccionadas,
-        url_comprobante: urlComprobante,
+        url_comprobante: subida.url,
       })
 
       setReporteCreado(data)
