@@ -41,7 +41,7 @@ import { Toaster } from './components/ui/toaster'
 import PagosEstadoCuenta from './pages/PagosEstadoCuenta'
 import FacturasEstadoCuenta from './pages/FacturasEstadoCuenta'
 import AmpliacionEstadoCuenta from './pages/AmpliacionEstadoCuenta'
-import ReportesEstadoCuenta from './pages/ReportesEstadoCuenta' // ← AGREGADO
+import ReportesEstadoCuenta from './pages/ReportesEstadoCuenta'
 
 function LoadingBarBridge() {
   const bar = useLoadingBar()
@@ -88,8 +88,6 @@ function App() {
                 <Route path="/farmacia" element={<PrivateRoute><LineaFarmacia /></PrivateRoute>} />
                 <Route path="/hospitalaria" element={<PrivateRoute><LineaHospitalaria /></PrivateRoute>} />
                 <Route path="/direcciones" element={<PrivateRoute><Direcciones /></PrivateRoute>} />
-
-                {/* Rutas de estado de cuenta - CORREGIDAS */}
                 <Route path="/estado-cuenta/pagos" element={<PrivateRoute><PagosEstadoCuenta /></PrivateRoute>} />
                 <Route path="/estado-cuenta/facturas" element={<PrivateRoute><FacturasEstadoCuenta /></PrivateRoute>} />
                 <Route path="/estado-cuenta/reportes" element={<PrivateRoute><ReportesEstadoCuenta /></PrivateRoute>} />
