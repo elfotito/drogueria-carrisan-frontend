@@ -11,9 +11,11 @@ import {
   Stack,
   HStack,
   Button,
+  IconButton,
   Badge,
   Separator,
 } from '@chakra-ui/react'
+import { X } from 'lucide-react'
 import api from '../../api/axios'
 import { toaster } from '../ui/toaster'
 
@@ -127,13 +129,17 @@ function UsuarioForm({ usuario, etiquetasSugeridas = [], isOpen, onClose, onGuar
   return (
     <Dialog.Root open={isOpen} onOpenChange={(e) => !e.open && onClose()} placement="center" scrollBehavior="inside">
       <Portal>
-        <Dialog.Backdrop />
-        <Dialog.Positioner>
-          <Dialog.Content maxW="xl" borderRadius="xl">
-            <Dialog.Header bg={INDIGO} color="white" borderTopRadius="xl">
+        <Dialog.Backdrop position="fixed" inset={0} bg="blackAlpha.600" zIndex={1400} />
+        <Dialog.Positioner position="fixed" inset={0} display="flex" alignItems="center" justifyContent="center" p={4} zIndex={1500} overflowY="auto">
+          <Dialog.Content maxW="xl" w="100%" maxH="90vh" my="auto" bg="white" borderRadius="xl" boxShadow="2xl" display="flex" flexDir="column" overflow="hidden">
+            <Dialog.Header bg={INDIGO} color="white" borderTopRadius="xl" flexShrink={0} p={5}>
               <Dialog.Title>{esEdicion ? 'Editar usuario' : 'Nuevo usuario'}</Dialog.Title>
             </Dialog.Header>
-            <Dialog.CloseTrigger color="white" />
+            <Dialog.CloseTrigger position="absolute" top="14px" right="14px" asChild>
+              <IconButton variant="ghost" size="sm" color="white" _hover={{ bg: 'whiteAlpha.300' }} aria-label="Cerrar">
+                <X size={18} />
+              </IconButton>
+            </Dialog.CloseTrigger>
 
             {/* Indicador de pasos */}
             <Flex px={6} pt={5} pb={2} align="center" gap={2}>
@@ -160,7 +166,7 @@ function UsuarioForm({ usuario, etiquetasSugeridas = [], isOpen, onClose, onGuar
               })}
             </Flex>
 
-            <Dialog.Body pt={2}>
+            <Dialog.Body pt={2} flex="1" overflowY="auto">
               {error && (
                 <Box bg="red.50" color="red.600" fontSize="sm" p={3} borderRadius="md" mb={4}>{error}</Box>
               )}
@@ -287,7 +293,7 @@ function UsuarioForm({ usuario, etiquetasSugeridas = [], isOpen, onClose, onGuar
               )}
             </Dialog.Body>
 
-            <Dialog.Footer borderTop="1px solid" borderColor="gray.100">
+            <Dialog.Footer borderTop="1px solid" borderColor="gray.100" flexShrink={0} p={4}>
               {paso > 1 ? (
                 <Button variant="ghost" onClick={irAnterior}>Anterior</Button>
               ) : (
