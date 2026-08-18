@@ -355,3 +355,440 @@
     gap: 1rem;
   }
 }
+
+/* ==========================================================================
+   Centro de Ayuda B2B — Droguería Carrisan
+   ========================================================================== */
+
+:root {
+  --ayuda-primary: #0056b3;
+  --ayuda-primary-hover: #004085;
+  --ayuda-bg-hero: #eef5fc;
+  --ayuda-bg-card: #ffffff;
+  --ayuda-bg-hover: #f8fafc;
+  --ayuda-border: #e2e8f0;
+  --ayuda-text-dark: #1e293b;
+  --ayuda-text-muted: #64748b;
+  --ayuda-radius: 12px;
+  --ayuda-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.ayuda-page {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 0 5rem 0; /* Padding inferior para dar espacio a BottomNav */
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: var(--ayuda-text-dark);
+}
+
+/* Header Azul y Buscador */
+.ayuda-header {
+  background-color: var(--ayuda-primary);
+  color: #ffffff;
+  padding: 2.5rem 1.5rem 2rem;
+  border-radius: 0 0 var(--ayuda-radius) var(--ayuda-radius);
+  text-align: center;
+}
+
+.ayuda-header h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem 0;
+}
+
+.ayuda-header p {
+  font-size: 0.95rem;
+  opacity: 0.9;
+  margin: 0 0 1.5rem 0;
+}
+
+.ayuda-search-box {
+  position: relative;
+  max-width: 550px;
+  margin: 0 auto;
+}
+
+.ayuda-search-box__input {
+  width: 100%;
+  padding: 0.85rem 3.25rem 0.85rem 1.25rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  outline: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+.ayuda-search-box__input:focus {
+  border-color: var(--ayuda-primary-hover);
+}
+
+.ayuda-search-box__btn {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--ayuda-primary);
+  border: none;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* Pills de Categoría (Scroll horizontal) */
+.ayuda-pills {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: none; /* Firefox */
+}
+
+.ayuda-pills::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+.ayuda-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.1rem;
+  border-radius: 999px;
+  background-color: #ffffff;
+  border: 1px solid var(--ayuda-border);
+  color: var(--ayuda-text-dark);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.ayuda-pill--activa {
+  background-color: var(--ayuda-primary);
+  color: #ffffff;
+  border-color: var(--ayuda-primary);
+}
+
+.ayuda-pill__icono {
+  display: flex;
+  align-items: center;
+}
+
+/* Contenedor Principal */
+.ayuda-container {
+  padding: 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+/* Cards Generales */
+.ayuda-card {
+  background: var(--ayuda-bg-card);
+  border: 1px solid var(--ayuda-border);
+  border-radius: var(--ayuda-radius);
+  padding: 1.25rem 1.5rem;
+  box-shadow: var(--ayuda-shadow);
+}
+
+.ayuda-card__titulo {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--ayuda-text-dark);
+}
+
+/* Listas de Enlaces y Preguntas */
+.ayuda-lista {
+  display: flex;
+  flex-direction: column;
+}
+
+.ayuda-fila {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--ayuda-border);
+  text-decoration: none;
+  color: var(--ayuda-text-dark);
+  transition: background 0.15s ease;
+}
+
+.ayuda-fila:last-child {
+  border-bottom: none;
+}
+
+.ayuda-fila__icono-circulo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--ayuda-bg-hero);
+  color: var(--ayuda-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ayuda-fila__texto {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.ayuda-fila__titulo {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.ayuda-fila__desc {
+  font-size: 0.825rem;
+  color: var(--ayuda-text-muted);
+  margin-top: 0.2rem;
+  line-height: 1.35;
+}
+
+.ayuda-fila__chevron {
+  color: var(--ayuda-text-muted);
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s ease;
+}
+
+.ayuda-fila__chevron--abierto {
+  transform: rotate(180deg);
+}
+
+/* Preguntas Frecuentes Acordeón */
+.ayuda-fila--faq .ayuda-fila__boton {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+}
+
+/* Placeholder de Imágenes */
+.ayuda-imagen-placeholder {
+  width: 100%;
+  background-color: var(--ayuda-bg-hero);
+  border: 2px dashed #cbd5e1;
+  border-radius: var(--ayuda-radius);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: var(--ayuda-text-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+  box-sizing: border-box;
+}
+
+/* Bloque Texto Grande */
+.ayuda-texto-grande {
+  text-align: center;
+  padding: 1.5rem 1rem;
+}
+
+.ayuda-texto-grande h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  color: var(--ayuda-text-dark);
+}
+
+.ayuda-texto-grande p {
+  font-size: 0.95rem;
+  color: var(--ayuda-text-muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Bloque Pasos del Pedido */
+.ayuda-pasos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+
+.ayuda-paso {
+  background: var(--ayuda-bg-card);
+  border: 1px solid var(--ayuda-border);
+  border-radius: var(--ayuda-radius);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  box-shadow: var(--ayuda-shadow);
+}
+
+.ayuda-paso__icono {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  background-color: var(--ayuda-bg-hero);
+  color: var(--ayuda-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ayuda-paso h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 0.35rem 0;
+}
+
+.ayuda-paso p {
+  font-size: 0.85rem;
+  color: var(--ayuda-text-muted);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Secciones Necesidades / Carrusel */
+.ayuda-necesidades h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.ayuda-necesidades__fila {
+  display: flex;
+  gap: 1.25rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  scrollbar-width: thin;
+}
+
+.ayuda-necesidad-card {
+  min-width: 240px;
+  max-width: 260px;
+  background: var(--ayuda-bg-card);
+  border: 1px solid var(--ayuda-border);
+  border-radius: var(--ayuda-radius);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  box-shadow: var(--ayuda-shadow);
+  flex-shrink: 0;
+}
+
+.ayuda-necesidad-card h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0.5rem 0 0 0;
+}
+
+.ayuda-necesidad-card p {
+  font-size: 0.825rem;
+  color: var(--ayuda-text-muted);
+  margin: 0;
+  flex: 1;
+  line-height: 1.4;
+}
+
+.ayuda-necesidad-card__boton {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: var(--ayuda-bg-hero);
+  color: var(--ayuda-primary);
+  text-align: center;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+
+.ayuda-necesidad-card__boton:hover {
+  background-color: #dbeafe;
+}
+
+/* Banner de Contacto Final */
+.ayuda-banner {
+  background: linear-gradient(135deg, var(--ayuda-primary) 0%, var(--ayuda-primary-hover) 100%);
+  color: #ffffff;
+  border-radius: var(--ayuda-radius);
+  padding: 2rem 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.ayuda-banner__titulo {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.ayuda-banner__cta {
+  background-color: #ffffff;
+  color: var(--ayuda-primary);
+  padding: 0.65rem 1.75rem;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: transform 0.15s ease;
+}
+
+.ayuda-banner__cta:active {
+  transform: scale(0.96);
+}
+
+.ayuda-sin-resultados {
+  color: var(--ayuda-text-muted);
+  font-size: 0.9rem;
+  padding: 1rem 0;
+}
+
+.ayuda-busqueda-bloque {
+  margin-bottom: 1.5rem;
+}
+
+.ayuda-busqueda-bloque h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ayuda-primary);
+  margin-bottom: 0.5rem;
+}
+
+/* ==========================================================================
+   Responsivo
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .ayuda-pasos {
+    grid-template-columns: 1fr; /* Pasa los pasos a 1 sola columna en móvil */
+  }
+
+  .ayuda-header {
+    border-radius: 0;
+    padding: 2rem 1rem 1.5rem;
+  }
+
+  .ayuda-container {
+    padding: 0 1rem;
+  }
+}
