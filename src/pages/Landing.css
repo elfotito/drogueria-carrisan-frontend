@@ -182,6 +182,7 @@
   width: 100%;
   max-width: 360px;
   margin-bottom: 8px;
+  object-fit: cover;
 }
 
 .landing-hero h1 {
