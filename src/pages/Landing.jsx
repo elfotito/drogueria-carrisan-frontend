@@ -204,7 +204,11 @@ function Landing() {
       {/* ================================================================ */}
       <section className="landing-hero">
         <div className="landing-hero__contenido">
-          <ImagePlaceholder label="Imagen hero" className="landing-hero__imagen" />
+          <img 
+      src="https://fqeshthtycmzgyibiurq.supabase.co/storage/v1/object/sign/dcimages/hero.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mZGI0NTZkYy04YTAyLTQ3Y2EtYjc4Yy0yMWZmMWExOWM0MmEiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJkY2ltYWdlcy9oZXJvLnBuZyIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3ODcwNjk2NjksImV4cCI6MTk0NDc0OTY2OX0.GQ74kvd4FQPZFaEDPcBRkiBZTU-TYqoktWjJimFwNCI" 
+      alt="Hero image - Respaldamos al Medico Venezolano"
+      className="landing-hero__imagen"
+    />
           
           <div className="landing-hero__texto">
             <h1>Respaldamos al Medico Venezolano</h1>
