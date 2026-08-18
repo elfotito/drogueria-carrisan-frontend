@@ -258,9 +258,20 @@ async function handleSolicitarCotizacion() {
   }
 
   const precioVes = tasaVes && producto.precio_usd != null
-    ? (producto.precio_usd * tasaVes).toFixed(2)
-    : null
-
+    ? (producto.precio_usd * tasaVes) : (
+  <>
+    <span className="detalle-precio-usd detalle-precio-usd--consultar">Consultar precio</span>
+    {producto.requiere_cotizacion && user && (
+      <button
+        className="detalle-btn-agregar"
+        onClick={handleSolicitarCotizacion}
+        disabled={solicitandoCotizacion || !!cotizacion}
+      >
+        {cotizacion ? '✓ Solicitud enviada' : (solicitandoCotizacion ? 'Enviando...' : 'Solicitar cotización')}
+      </button>
+    )}
+  </>
+)}
   const secciones = construirSecciones(producto)
 
   return (
