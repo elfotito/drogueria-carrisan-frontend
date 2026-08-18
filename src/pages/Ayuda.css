@@ -1,442 +1,357 @@
-/* ============================================
-   Ayuda — bloques estilo Walmart Farmacia
-   Paleta: Azul #0052DC · Índigo #1A1A3A · Teal #12A594 · Paper #FBFAF7
-   ============================================ */
+/* ==========================================================================
+   Centro de Ayuda B2B — Droguería Carrisan
+   ========================================================================== */
+
+:root {
+  --ayuda-primary: #0056b3;
+  --ayuda-primary-hover: #004085;
+  --ayuda-teal: #008080;
+  --ayuda-bg-hero: #eef5fc;
+  --ayuda-bg-card: #ffffff;
+  --ayuda-bg-hover: #f8fafc;
+  --ayuda-border: #e2e8f0;
+  --ayuda-text-dark: #1e293b;
+  --ayuda-text-muted: #64748b;
+  --ayuda-radius: 12px;
+  --ayuda-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
 
 .ayuda-page {
-  background: #FBFAF7;
-  min-height: 100vh;
-  padding-bottom: 40px;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1rem 1.5rem 3rem;
+  font-family: system-ui, -apple-system, sans-serif;
+  color: var(--ayuda-text-dark);
 }
 
-/* ---------- Header ---------- */
-.ayuda-header {
-  background: #0052DC;
-  padding: 22px 20px;
+/* Breadcrumb & Encabezado */
+.ayuda-breadcrumb {
+  font-size: 0.875rem;
+  color: var(--ayuda-text-muted);
+  margin-bottom: 1rem;
 }
 
-.ayuda-header h1 {
-  font-family: 'Manrope', sans-serif;
-  font-weight: 800;
-  font-size: 1.5rem;
-  color: #FFFFFF;
+.ayuda-breadcrumb a {
+  color: var(--ayuda-text-muted);
+  text-decoration: none;
+}
+
+/* Hero & Accesos Rápidos */
+.ayuda-hero {
+  background-color: var(--ayuda-bg-hero);
+  border-radius: var(--ayuda-radius);
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.ayuda-hero__title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.ayuda-quick-actions {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.ayuda-quick-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: var(--ayuda-text-dark);
+  font-size: 0.875rem;
+  font-weight: 600;
+  width: 90px;
+}
+
+.ayuda-quick-card__icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* Buscador Principal */
+.ayuda-search-section {
+  margin-bottom: 2.5rem;
+}
+
+.ayuda-search-section h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.ayuda-search-box {
+  position: relative;
+  max-width: 680px;
+}
+
+.ayuda-search-box__input {
+  width: 100%;
+  padding: 0.85rem 3.5rem 0.85rem 1.25rem;
+  border: 1.5px solid var(--ayuda-border);
+  border-radius: 999px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.ayuda-search-box__input:focus {
+  border-color: var(--ayuda-primary);
+}
+
+.ayuda-search-box__btn {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background-color: var(--ayuda-primary);
+  border: none;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* Grilla de Categorías (Desktop & Tablet) */
+.ayuda-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.ayuda-category-card {
+  background: var(--ayuda-bg-card);
+  border: 1px solid var(--ayuda-border);
+  border-radius: var(--ayuda-radius);
+  overflow: hidden;
+  box-shadow: var(--ayuda-shadow);
+}
+
+.ayuda-category-card__header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.25rem;
+  border-bottom: 1px solid var(--ayuda-border);
+}
+
+.ayuda-category-card__icon-wrap {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background-color: var(--ayuda-bg-hero);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ayuda-category-card__title {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.ayuda-category-card__list {
+  list-style: none;
+  padding: 0;
   margin: 0;
 }
 
-/* ---------- Pills de categoría ---------- */
-.ayuda-pills {
-  display: flex;
-  gap: 24px;
-  overflow-x: auto;
-  padding: 20px 20px 16px;
-  background: #FFFFFF;
-  border-bottom: 1px solid #e3e4e5;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+.ayuda-category-card__item a {
+  display: block;
+  padding: 0.85rem 1.25rem;
+  color: var(--ayuda-text-dark);
+  text-decoration: none;
+  font-size: 0.9rem;
+  border-bottom: 1px solid #f1f5f9;
+  transition: background 0.15s;
 }
 
-.ayuda-pills::-webkit-scrollbar {
+.ayuda-category-card__item a:hover {
+  background-color: var(--ayuda-bg-hover);
+  color: var(--ayuda-primary);
+}
+
+/* Bloques Desplegables / Acordeón (Móvil) */
+.ayuda-accordion {
   display: none;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 2.5rem;
 }
 
-.ayuda-pill {
+.ayuda-accordion-item {
+  border: 1px solid var(--ayuda-border);
+  border-radius: var(--ayuda-radius);
+  background: var(--ayuda-bg-card);
+  overflow: hidden;
+}
+
+.ayuda-accordion-item__trigger {
+  width: 100%;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 8px;
-  flex: 0 0 auto;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
   background: none;
   border: none;
   cursor: pointer;
-  font-family: 'Inter', sans-serif;
-  color: #74767c;
-}
-
-.ayuda-pill__icono {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: #E9EFFC;
-  color: #0052DC;
-  border: 2px solid transparent;
-  transition: border-color 0.15s ease, background 0.15s ease;
-}
-
-.ayuda-pill__label {
-  font-size: 0.78rem;
-  font-weight: 600;
-  max-width: 84px;
-  text-align: center;
-  line-height: 1.25;
-}
-
-.ayuda-pill--activa {
-  color: #0052DC;
-}
-
-.ayuda-pill--activa .ayuda-pill__icono {
-  background: #FFFFFF;
-  border-color: #0052DC;
-}
-
-/* ---------- Contenedor general ---------- */
-.ayuda-container {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 20px 16px 0;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-/* ---------- Card blanca con lista (ícono + texto + chevron) ---------- */
-.ayuda-card {
-  background: #FFFFFF;
-  border: 1px solid #e3e4e5;
-  border-radius: 16px;
-  padding: 20px;
-}
-
-.ayuda-card__titulo {
-  font-family: 'Manrope', sans-serif;
-  font-weight: 800;
-  font-size: 1.15rem;
-  color: #1A1A3A;
-  margin: 0 0 12px;
-}
-
-.ayuda-lista {
-  display: flex;
-  flex-direction: column;
-}
-
-.ayuda-fila {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 14px 0;
-  border-bottom: 1px solid #eee;
-  text-decoration: none;
-  color: inherit;
-  cursor: pointer;
-  background: none;
-  border-left: none;
-  border-right: none;
-  border-top: none;
-  width: 100%;
-  text-align: left;
-}
-
-.ayuda-lista .ayuda-fila:last-child {
-  border-bottom: none;
-}
-
-.ayuda-fila__icono-circulo {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: #E9EFFC;
-  color: #0052DC;
-}
-
-.ayuda-fila__texto {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.ayuda-fila__titulo {
-  font-family: 'Manrope', sans-serif;
+  font-size: 1rem;
   font-weight: 700;
-  font-size: 0.95rem;
-  color: #1A1A3A;
+  color: var(--ayuda-text-dark);
 }
 
-.ayuda-fila__desc {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.82rem;
-  color: #74767c;
+.ayuda-accordion-item__content {
+  padding: 0.5rem 1.25rem 1rem;
+  border-top: 1px solid var(--ayuda-border);
+}
+
+/* Vista de Resultados de Búsqueda */
+.ayuda-search-layout {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.ayuda-search-sidebar {
+  width: 300px;
+  flex-shrink: 0;
+}
+
+.ayuda-search-results {
+  flex: 1;
+}
+
+.ayuda-result-card {
+  background: var(--ayuda-bg-card);
+  border: 1px solid var(--ayuda-border);
+  border-radius: var(--ayuda-radius);
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  box-shadow: var(--ayuda-shadow);
+  cursor: pointer;
+}
+
+.ayuda-result-card h4 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+}
+
+.ayuda-result-card p {
+  font-size: 0.875rem;
+  color: var(--ayuda-text-muted);
   line-height: 1.4;
 }
 
-.ayuda-fila__chevron {
-  flex-shrink: 0;
-  color: #1A1A3A;
+/* Paginación */
+.ayuda-pagination {
   display: flex;
-}
-
-/* --- Variante FAQ: botón full-width, sin ícono circular --- */
-.ayuda-fila--faq {
-  padding: 0;
-  border-bottom: 1px solid #eee;
-}
-
-.ayuda-fila--faq:last-child {
-  border-bottom: none;
-}
-
-.ayuda-fila__boton {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  padding: 14px 0;
-  background: none;
-  border: none;
-  cursor: pointer;
-  text-align: left;
-  font: inherit;
-}
-
-.ayuda-fila__chevron--abierto {
-  transform: rotate(180deg);
-}
-
-/* ---------- Placeholder de imagen ---------- */
-.ayuda-imagen-placeholder {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  background: #F0F1F3;
-  border: 1.5px dashed #c7cbd6;
-  border-radius: 16px;
-  color: #74767c;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.8rem;
+  gap: 0.5rem;
+  margin: 2rem 0;
+}
+
+.ayuda-page-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--ayuda-border);
+  background: #fff;
+  cursor: pointer;
   font-weight: 600;
 }
 
-/* ---------- Bloque de texto grande ---------- */
-.ayuda-texto-grande h2 {
-  font-family: 'Manrope', sans-serif;
-  font-weight: 800;
-  font-size: 1.4rem;
-  color: #1A1A3A;
-  margin: 0 0 8px;
+.ayuda-page-btn--active {
+  border-color: var(--ayuda-primary);
+  color: var(--ayuda-primary);
+  border-width: 2px;
 }
 
-.ayuda-texto-grande p {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.95rem;
-  color: #464646;
-  line-height: 1.5;
-  margin: 0;
-}
-
-/* ---------- Pasos (íconos + texto) ---------- */
-.ayuda-pasos {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  background: #FFFFFF;
-  border: 1px solid #e3e4e5;
-  border-radius: 16px;
-  padding: 20px;
-}
-
-.ayuda-paso {
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-}
-
-.ayuda-paso__icono {
-  flex-shrink: 0;
+/* Banner Inferior de Contacto */
+.ayuda-footer-banner {
+  background-color: var(--ayuda-bg-hero);
+  border-radius: var(--ayuda-radius);
+  padding: 1.5rem 2rem;
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  color: #0052DC;
+  justify-content: space-between;
 }
 
-.ayuda-paso h3 {
-  font-family: 'Manrope', sans-serif;
-  font-weight: 700;
-  font-size: 0.95rem;
-  color: #1A1A3A;
-  margin: 0 0 4px;
-}
-
-.ayuda-paso p {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.85rem;
-  color: #74767c;
-  line-height: 1.45;
-  margin: 0;
-}
-
-/* ---------- "Para todas tus necesidades" (carrusel) ---------- */
-.ayuda-necesidades h2 {
-  font-family: 'Manrope', sans-serif;
-  font-weight: 800;
-  font-size: 1.15rem;
-  color: #1A1A3A;
-  margin: 0 0 14px;
-}
-
-.ayuda-necesidades__fila {
-  display: flex;
-  gap: 14px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  padding-bottom: 4px;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.ayuda-necesidades__fila::-webkit-scrollbar {
-  display: none;
-}
-
-.ayuda-necesidad-card {
-  flex: 0 0 240px;
-  scroll-snap-align: start;
-  background: #FFFFFF;
-  border: 1px solid #e3e4e5;
-  border-radius: 16px;
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-}
-
-.ayuda-necesidad-card h3 {
-  font-family: 'Manrope', sans-serif;
-  font-weight: 700;
-  font-size: 0.98rem;
-  color: #1A1A3A;
-  margin: 12px 0 6px;
-}
-
-.ayuda-necesidad-card p {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.82rem;
-  color: #74767c;
-  line-height: 1.45;
-  margin: 0 0 14px;
-  flex: 1;
-}
-
-.ayuda-necesidad-card__boton {
-  display: inline-block;
-  text-align: center;
-  padding: 10px 16px;
+.ayuda-footer-banner__btn {
+  background-color: var(--ayuda-primary);
+  color: #fff;
+  padding: 0.65rem 1.5rem;
   border-radius: 999px;
-  border: 1.5px solid #1A1A3A;
-  color: #1A1A3A;
-  font-family: 'Inter', sans-serif;
-  font-weight: 700;
-  font-size: 0.85rem;
   text-decoration: none;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-
-.ayuda-necesidad-card__boton:hover {
-  background: #1A1A3A;
-  color: #FFFFFF;
-}
-
-/* ---------- Banner de contacto final ---------- */
-.ayuda-banner {
-  background: linear-gradient(135deg, #1A1A3A, #0052DC);
-  border-radius: 16px;
-  padding: 32px 24px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-}
-
-.ayuda-banner__titulo {
-  font-family: 'Manrope', sans-serif;
-  font-weight: 800;
-  font-size: 1.2rem;
-  color: #FFFFFF;
-  margin: 0;
-}
-
-.ayuda-banner__cta {
-  background: #FFFFFF;
-  color: #0052DC;
-  font-family: 'Inter', sans-serif;
-  font-weight: 700;
+  font-weight: 600;
   font-size: 0.9rem;
-  padding: 12px 28px;
-  border-radius: 999px;
-  text-decoration: none;
-  transition: transform 0.15s ease;
 }
 
-.ayuda-banner__cta:hover {
-  transform: translateY(-1px);
-}
+/* ==========================================================================
+   Media Queries (Tablet y Móvil)
+   ========================================================================== */
 
-/* ============================================
-   Tablet / Desktop
-   ============================================ */
-@media (min-width: 768px) {
-  .ayuda-header {
-    padding: 32px 40px;
+/* Tablet (768px a 1023px): Retícula de 2 columnas */
+@media (max-width: 1023px) {
+  .ayuda-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 
-  .ayuda-header h1 {
-    font-size: 1.9rem;
-  }
-
-  .ayuda-pills {
-    padding: 24px 40px;
-    gap: 36px;
-  }
-
-  .ayuda-container {
-    max-width: 1000px;
-    padding: 28px 40px 0;
-    gap: 28px;
-  }
-
-  .ayuda-card {
-    padding: 28px;
-  }
-
-  .ayuda-necesidad-card {
-    flex: 0 0 260px;
-  }
-}
-
-@media (min-width: 1200px) {
-  .ayuda-container {
-    max-width: 1100px;
-  }
-
-  .ayuda-pasos {
-    flex-direction: row;
-    gap: 28px;
-  }
-
-  .ayuda-paso {
-    flex: 1;
+  .ayuda-search-layout {
     flex-direction: column;
-    align-items: flex-start;
   }
 
-  .ayuda-paso__icono {
-    width: 48px;
-    height: 48px;
-    background: #E9EFFC;
-    border-radius: 50%;
-    margin-bottom: 4px;
+  .ayuda-search-sidebar {
+    width: 100%;
+  }
+}
+
+/* Móvil (< 768px): Colapso a Acordeón Desplegable */
+@media (max-width: 767px) {
+  .ayuda-grid {
+    display: none; /* Oculta grilla rígida */
+  }
+
+  .ayuda-accordion {
+    display: flex; /* Activa bloques desplegables */
+  }
+
+  .ayuda-quick-actions {
+    gap: 1rem;
+  }
+
+  .ayuda-quick-card {
+    width: 75px;
+    font-size: 0.75rem;
+  }
+
+  .ayuda-quick-card__icon {
+    width: 50px;
+    height: 50px;
+  }
+
+  .ayuda-footer-banner {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
   }
 }
