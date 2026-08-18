@@ -596,7 +596,7 @@
      tener que reestructurar App.jsx ni romper el position:sticky /
      los overlays position:fixed que ya tiene el Navbar.
      ----------------------------------------------------------------- */
-  body.ppal-drawer-open .navbar {
+  body.ppal-drawer-open .navbar-container {
     transform: translateX(var(--ppal-drawer-w)) scale(0.96);
     transform-origin: left center;
     transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
