@@ -136,28 +136,44 @@ const TESTIMONIOS = [
     autor: 'Dra. Carmen S. — Directora de Clínica' 
   },
 ]
-
 const MAS_EXPLORAR = [
   {
-    titulo: 'One Medical membership',
-    texto: 'Get on-demand medical care for $9/mo with Prime, or book a visit at our 200+ offices.',
+    titulo: 'Línea Quirúrgica y Hospitalaria',
+    texto: 'Accede a un catálogo especializado en anestesia, fluidoterapia y material médico-quirúrgico para clínicas y centros médicos.',
   },
   {
-    titulo: 'One Medical Pay-per-visit',
-    texto: 'No-commitment telehealth, as low as $29 per visit.',
+    titulo: 'Programa de Crédito B2B',
+    texto: 'Obtén financiamiento a 7 días diseñado para respaldar el flujo de caja de pequeñas empresas y médicos independientes.',
+  },
+  {
+    titulo: 'Gestion de Entregas personalizadas',
+    texto: 'Atención prioritaria y logística ágil para reposición inmediata de insumos a distintas direcciones de la ciudad',
   },
 ]
 
 const FAQS = [
   {
-    pregunta: '¿Aceptan mi seguro?',
-    respuesta: 'Amazon Pharmacy acepta la mayoría de los planes de seguro. A continuación, indicamos cómo verificar la cobertura de seguro para tu plan específico.',
+    pregunta: '¿Qué requisitos necesito para abrir una cuenta B2B?',
+    respuesta: 'Solo necesitas el RIF comercial o profesional, copia de la cédula del representante legal, y el registro o permiso sanitario correspondiente (SACS) para validar tu establecimiento.',
   },
-  { pregunta: '¿Cómo puedo verificar el precio de mi medicamento?', respuesta: '' },
-  { pregunta: '¿Cómo transfiero o agrego una receta?', respuesta: '' },
-  { pregunta: '¿Qué información necesito proporcionar al profesional que emite mis recetas?', respuesta: '' },
-  { pregunta: '¿Dónde entrega y qué tan rápido?', respuesta: '' },
+  { 
+    pregunta: '¿Cómo puedo consultar precios y disponibilidad de inventario?', 
+    respuesta: 'Al iniciar sesión en nuestro portal, tendrás acceso inmediato a precios actualizados en tiempo real y tu pedido sera confirmado con las cantidades disponibles en cuestion de minutos' 
+  },
+  { 
+    pregunta: '¿Cómo funciona el crédito a 7 días y quiénes aplican?', 
+    respuesta: 'Es una facilidad otorgada a pequeñas farmacias, clínicas y médicos registrados. Te despachamos el pedido de inmediato y dispones de 7 días continuos para liquidar tu orden' 
+  },
+  { 
+    pregunta: '¿Existe un monto mínimo o volumen exigido para comprar?', 
+    respuesta: 'No. Nos adaptamos a tu escala operativa real: puedes solicitar desde unidades o empaques individuales hasta bultos cerrados sin penalizaciones por volumen.' 
+  },
+  { 
+    pregunta: '¿A qué zonas despachan y cuáles son los tiempos de entrega?', 
+    respuesta: 'Contamos con cobertura de despacho en Valencia y ciudades aledañas. Los despachos nacionales se envian entre 24 horas a la agencia de envios de su preferencia.' 
+  },
 ]
+
 
 function FaqItem({ pregunta, respuesta }) {
   const [abierto, setAbierto] = useState(false)
