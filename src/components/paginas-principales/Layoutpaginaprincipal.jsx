@@ -7,31 +7,8 @@ import { NAV_PAGINAS_PRINCIPALES } from './Navpaginasprincipales'
 import './Layoutpaginaprincipal.css'
 
 // ---------------------------------------------------------------
-// <LayoutPaginaPrincipal activo="ordenes" titulo="Mis Órdenes">
-//   {contenido de la página}
-// </LayoutPaginaPrincipal>
-//
-// Este es el layout base de "Páginas Principales": en desktop/tablet
-// (≥1024px) muestra una columna izquierda flotante y sticky con la
-// navegación de cuenta (igual patrón que el resumen sticky de
-// Carrito.jsx, pero a la izquierda). En móvil (<1024px) esa columna
-// se convierte en un drawer que se abre con un botón de menú y
-// "arrastra" el contenido de la página hacia la derecha con una
-// transición corta (efecto push, no overlay).
-//
-// Los grupos con tipo: 'submenu' (ver navPaginasPrincipales.js) se
-// muestran como una sola fila que abre una segunda pantalla dentro
-// del mismo panel, con botón de volver y un link "Ver todo" — igual
-// al patrón "Browse Departments / See all" de Walmart.
-//
-// Nota: este componente usa elementos planos (div/nav/button) en vez
-// de <Box>/<Flex> de Chakra a propósito. Chakra inyecta su propio CSS
-// en runtime (vía Emotion) DESPUÉS de nuestros estilos estáticos, y
-// con especificidad empatada gana el que se inserta al final —
-// rompiendo nuestros media queries de display/flex-wrap responsivos.
-// Mismo criterio que ya usan MenuDrawer.jsx y EstadoCuenta.jsx.
-// ---------------------------------------------------------------
-function ContenidoNav({ activo, titulo, esAdmin, onNavigate }) {
+//  ---------------------------------------------------------------
+function ContenidoNav({ nav, activo, titulo, esAdmin, onNavigate }) {
   // null = menú principal. Si no, es el grupo cuyo submenú está abierto.
   const [grupoAbierto, setGrupoAbierto] = useState(null)
 
@@ -82,7 +59,7 @@ function ContenidoNav({ activo, titulo, esAdmin, onNavigate }) {
         </div>
       )}
 
-      {NAV_PAGINAS_PRINCIPALES.map((grupo) => {
+      {nav.map((grupo) => {
         const items = grupo.items.filter((item) => !esAdmin || !item.soloCliente)
         if (items.length === 0) return null
 
@@ -129,7 +106,7 @@ function ContenidoNav({ activo, titulo, esAdmin, onNavigate }) {
   )
 }
 
-function LayoutPaginaPrincipal({ activo, titulo, subtitulo, acciones, children }) {
+function LayoutPaginaPrincipal({ activo, titulo, subtitulo, acciones, nav = NAV_PAGINAS_PRINCIPALES, children }) {
   const { user, logout } = useAuth()
   const [drawerAbierto, setDrawerAbierto] = useState(false)
   // Se incrementa cada vez que el drawer se cierra, para forzar que
@@ -142,8 +119,10 @@ function LayoutPaginaPrincipal({ activo, titulo, subtitulo, acciones, children }
     setDrawerResetKey((k) => k + 1)
   }
 
-  // Bloquea el scroll del fondo y permite cerrar con Escape mientras
-  // el drawer móvil está abierto — mismo patrón que MenuDrawer.jsx
+  // Bloquea el scroll del fondo, permite cerrar con Escape, y marca el
+  // <body> para que el Navbar global (fuera de este componente, ver
+  // App.jsx) también se corra junto con la página — mismo patrón que
+  // MenuDrawer.jsx, solo que acá además empujamos el navbar.
   useEffect(() => {
     function handleKeyDown(e) {
       if (e.key === 'Escape') cerrarDrawer()
@@ -151,10 +130,12 @@ function LayoutPaginaPrincipal({ activo, titulo, subtitulo, acciones, children }
     if (drawerAbierto) {
       document.addEventListener('keydown', handleKeyDown)
       document.body.style.overflow = 'hidden'
+      document.body.classList.add('ppal-drawer-open')
     }
     return () => {
       document.removeEventListener('keydown', handleKeyDown)
       document.body.style.overflow = ''
+      document.body.classList.remove('ppal-drawer-open')
     }
   }, [drawerAbierto])
 
@@ -183,7 +164,7 @@ function LayoutPaginaPrincipal({ activo, titulo, subtitulo, acciones, children }
         </div>
 
         <div className="ppal-drawer-panel__scroll">
-          <ContenidoNav key={drawerResetKey} activo={activo} titulo={titulo} esAdmin={user?.es_admin} onNavigate={cerrarDrawer} />
+          <ContenidoNav key={drawerResetKey} nav={nav} activo={activo} titulo={titulo} esAdmin={user?.es_admin} onNavigate={cerrarDrawer} />
         </div>
 
         {!user?.es_admin && (
@@ -226,7 +207,7 @@ function LayoutPaginaPrincipal({ activo, titulo, subtitulo, acciones, children }
                     <p className="ppal-sidebar__email">{user?.email}</p>
                   </div>
                 </div>
-                <ContenidoNav activo={activo} titulo={titulo} esAdmin={user?.es_admin} />
+                <ContenidoNav nav={nav} activo={activo} titulo={titulo} esAdmin={user?.es_admin} />
               </div>
             </aside>
 
