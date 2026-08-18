@@ -309,27 +309,27 @@ function UsuariosAdmin() {
         <Box overflowX="auto">
           <Table.Root size="sm">
             <Table.Header bg="gray.50">
-              <Table.Row>
-                <Table.ColumnHeader>Usuario</Table.ColumnHeader>
-                <Table.ColumnHeader>RIF/Cédula</Table.ColumnHeader>
-                <Table.ColumnHeader>Etiqueta</Table.ColumnHeader>
-                <Table.ColumnHeader>Teléfono</Table.ColumnHeader>
-                <Table.ColumnHeader>Crédito</Table.ColumnHeader>
-                <Table.ColumnHeader>Estado</Table.ColumnHeader>
-                <Table.ColumnHeader textAlign="end">Acciones</Table.ColumnHeader>
+              <Table.Row borderBottom="1px solid" borderColor="gray.100">
+                <Table.ColumnHeader px={4} py={3}>Usuario</Table.ColumnHeader>
+                <Table.ColumnHeader px={4} py={3}>RIF/Cédula</Table.ColumnHeader>
+                <Table.ColumnHeader px={4} py={3}>Etiqueta</Table.ColumnHeader>
+                <Table.ColumnHeader px={4} py={3}>Teléfono</Table.ColumnHeader>
+                <Table.ColumnHeader px={4} py={3}>Crédito</Table.ColumnHeader>
+                <Table.ColumnHeader px={4} py={3}>Estado</Table.ColumnHeader>
+                <Table.ColumnHeader textAlign="end" px={4} py={3}>Acciones</Table.ColumnHeader>
               </Table.Row>
             </Table.Header>
             <Table.Body>
               {usuariosPaginados.length === 0 ? (
-                <Table.Row>
-                  <Table.Cell colSpan={7}>
+                <Table.Row borderBottom="1px solid" borderColor="gray.100">
+                  <Table.Cell colSpan={7} px={4} py={3}>
                     <Text py={8} textAlign="center" color="gray.400">No se encontraron usuarios</Text>
                   </Table.Cell>
                 </Table.Row>
               ) : (
                 usuariosPaginados.map((usuario) => (
-                  <Table.Row key={usuario.id} opacity={usuario.activo === false ? 0.55 : 1}>
-                    <Table.Cell>
+                  <Table.Row key={usuario.id} opacity={usuario.activo === false ? 0.55 : 1} borderBottom="1px solid" borderColor="gray.100">
+                    <Table.Cell px={4} py={3}>
                       <HStack gap={3}>
                         <AvatarCirculo nombre={usuario.nombre} />
                         <Box>
@@ -341,23 +341,23 @@ function UsuariosAdmin() {
                         </Box>
                       </HStack>
                     </Table.Cell>
-                    <Table.Cell>{usuario.rif_cedula || '—'}</Table.Cell>
-                    <Table.Cell>
+                    <Table.Cell px={4} py={3}>{usuario.rif_cedula || '—'}</Table.Cell>
+                    <Table.Cell px={4} py={3}>
                       <Badge colorPalette={colorEtiqueta(usuario.etiqueta)} borderRadius="full" textTransform="capitalize">
                         {usuario.etiqueta || 'cliente'}
                       </Badge>
                     </Table.Cell>
-                    <Table.Cell>{usuario.telefono || '—'}</Table.Cell>
-                    <Table.Cell>
+                    <Table.Cell px={4} py={3}>{usuario.telefono || '—'}</Table.Cell>
+                    <Table.Cell px={4} py={3}>
                       <Text fontWeight="600" color={INDIGO} fontSize="sm">${Number(usuario.linea_credito || 0).toFixed(2)}</Text>
                       <BarraCredito usado={usuario.deuda_actual || 0} total={usuario.linea_credito} />
                     </Table.Cell>
-                    <Table.Cell>
+                    <Table.Cell px={4} py={3}>
                       <Button size="xs" variant="outline" colorPalette={usuario.activo !== false ? 'green' : 'gray'} onClick={() => handleToggleActivo(usuario)}>
                         {usuario.activo !== false ? 'Activo' : 'Inactivo'}
                       </Button>
                     </Table.Cell>
-                    <Table.Cell textAlign="end">
+                    <Table.Cell textAlign="end" px={4} py={3}>
                       <Menu.Root>
                         <Menu.Trigger asChild>
                           <IconButton variant="ghost" size="sm" aria-label="Acciones">
