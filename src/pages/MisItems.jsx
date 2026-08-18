@@ -1,9 +1,11 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { createPortal } from 'react-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import api from '../api/axios'
 import { useCart } from '../context/CartContext'
 import { useFavoritos } from '../context/FavoritosContext'
-import BottomNav from '../components/BottomNav'
+import LayoutPaginaPrincipal from '../components/paginas-principales/LayoutPaginaPrincipal'
+import { NAV_ITEMS } from '../components/paginas-principales/navItems'
 import './MisItems.css'
 
 // Sugerencias de listas rápidas. Solo crea la lista con este nombre;
@@ -117,9 +119,17 @@ function ItemsCard({ producto, cantidadEnCarrito, onAgregar, onQuitar, mostrarQu
 // ---------------------------------------------------------
 // Modal genérico de confirmación / formulario, estilo Amazon
 // ("Crear una nueva lista", "Filtrar y ordenar", etc.)
+//
+// Se renderiza vía portal directo a document.body a propósito: así
+// queda completamente afuera de .ppal-shift (el contenedor que
+// LayoutPaginaPrincipal empuja/encoge cuando el drawer móvil está
+// abierto). Si el modal fuera descendiente de ese contenedor, mientras
+// el drawer cierra (overflow:hidden + transform en transición) el
+// modal podría recortarse o mal-posicionarse por una fracción de
+// segundo — con el portal, nunca depende de ese estado.
 // ---------------------------------------------------------
 function Modal({ titulo, onCerrar, children }) {
-  return (
+  return createPortal(
     <div className="misitems-modal-overlay" onClick={onCerrar}>
       <div className="misitems-modal" onClick={(e) => e.stopPropagation()}>
         <div className="misitems-modal__header">
@@ -130,7 +140,8 @@ function Modal({ titulo, onCerrar, children }) {
         </div>
         <div className="misitems-modal__body">{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
 
@@ -270,14 +281,13 @@ function BuscadorProducto({ onSeleccionar }) {
 // ---------------------------------------------------------
 // Tab: Mis Items (favoritos + carrusel de listas + filtro por línea)
 // ---------------------------------------------------------
-function TabMisItems() {
+function TabMisItems({ mostrarCrear, setMostrarCrear }) {
   const { items: cartItems, addItem } = useCart()
   const { favoritos, toggleFavorito, loading: cargandoFav } = useFavoritos()
 
   const [listas, setListas] = useState([])
   const [cargandoListas, setCargandoListas] = useState(true)
   const [nuevoNombre, setNuevoNombre] = useState('')
-  const [mostrarCrear, setMostrarCrear] = useState(false)
   const [creando, setCreando] = useState(false)
 
   const [mostrarAgregarProducto, setMostrarAgregarProducto] = useState(false)
@@ -810,29 +820,57 @@ const TABS = [
 ]
 
 function MisItems() {
-  const [tabActivo, setTabActivo] = useState('items')
+  // La pestaña activa vive en la URL (?tab=recomprar) en vez de un
+  // useState suelto: así el link "Comprar de nuevo" del menú de
+  // Páginas Principales puede llevar directo a esa pestaña, y el
+  // botón "atrás" del navegador también funciona como uno espera.
+  const [searchParams, setSearchParams] = useSearchParams()
+  const tabActivo = searchParams.get('tab') === 'recomprar' ? 'recomprar' : 'items'
+
+  function cambiarTab(id) {
+    setSearchParams(id === 'recomprar' ? { tab: 'recomprar' } : {})
+  }
+
+  // "Crear lista" vive como acción del menú (no una ruta): la
+  // controlamos acá arriba para poder dispararla tanto desde el botón
+  // "+" del carrusel de listas como desde el link del sidebar/drawer.
+  const [mostrarCrear, setMostrarCrear] = useState(false)
+
+  function manejarAccionNav(accion) {
+    if (accion === 'crear-lista') {
+      cambiarTab('items')
+      setMostrarCrear(true)
+    }
+  }
 
   return (
-    <div className="misitems-page">
-      <div className="misitems-tabs">
-        {TABS.map((tab) => (
-          <button
-            key={tab.id}
-            type="button"
-            className={`misitems-tab ${tabActivo === tab.id ? 'misitems-tab--activo' : ''}`}
-            onClick={() => setTabActivo(tab.id)}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+    <LayoutPaginaPrincipal
+      activo={tabActivo}
+      titulo="Mis Items"
+      subtitulo="Tus favoritos, listas y compras frecuentes"
+      nav={NAV_ITEMS}
+      onAccion={manejarAccionNav}
+    >
+      <div className="misitems-page">
+        <div className="misitems-tabs">
+          {TABS.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`misitems-tab ${tabActivo === tab.id ? 'misitems-tab--activo' : ''}`}
+              onClick={() => cambiarTab(tab.id)}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
-      <div className="misitems-container">
-        {tabActivo === 'items' && <TabMisItems />}
-        {tabActivo === 'recomprar' && <TabComprarDeNuevo />}
+        <div className="misitems-container">
+          {tabActivo === 'items' && <TabMisItems mostrarCrear={mostrarCrear} setMostrarCrear={setMostrarCrear} />}
+          {tabActivo === 'recomprar' && <TabComprarDeNuevo />}
+        </div>
       </div>
-      <BottomNav />
-    </div>
+    </LayoutPaginaPrincipal>
   )
 }
 
