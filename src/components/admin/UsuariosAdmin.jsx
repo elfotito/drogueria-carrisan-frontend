@@ -27,6 +27,7 @@ import {
   Bike,
   Search,
   RefreshCcw,
+  ShoppingCart,
   Plus,
   MoreVertical,
   Pencil,
@@ -40,6 +41,7 @@ import api from '../../api/axios'
 import UsuarioForm from './UsuarioForm'
 import DescuentoModal from './DescuentoModal'
 import EstadoCuentaDetalle from './EstadoCuentaDetalle'
+import NuevaOrdenModal from './NuevaOrdenModal'
 import { toaster } from '../ui/toaster'
 
 const AZUL = '#0052DC'
@@ -111,6 +113,7 @@ function UsuariosAdmin() {
   const [usuarioAEliminar, setUsuarioAEliminar] = useState(null)
   const [usuarioDescuento, setUsuarioDescuento] = useState(null)
   const [usuarioCredito, setUsuarioCredito] = useState(null)
+  const [usuarioOrden, setUsuarioOrden] = useState(null)
 
   useEffect(() => { cargarUsuarios() }, [])
 
@@ -373,6 +376,9 @@ function UsuariosAdmin() {
                               <Menu.Item value="credito" onClick={() => setUsuarioCredito(usuario)}>
                                 <Wallet size={14} style={{ marginRight: 8 }} /> Línea de crédito
                               </Menu.Item>
+                              <Menu.Item value="nueva-orden" onClick={() => setUsuarioOrden(usuario)}>
+                                <ShoppingCart size={14} style={{ marginRight: 8 }} /> Nueva orden
+                              </Menu.Item>
                               <Menu.Item value="descuento" onClick={() => setUsuarioDescuento(usuario)}>
                                 <Percent size={14} style={{ marginRight: 8 }} /> Descuento
                               </Menu.Item>
@@ -431,6 +437,15 @@ function UsuariosAdmin() {
         clienteId={usuarioCredito?.id || null}
         isOpen={Boolean(usuarioCredito)}
         onClose={() => { setUsuarioCredito(null); cargarUsuarios() }}
+      />
+
+      {/* Nueva orden para un cliente ya definido desde esta lista */}
+      <NuevaOrdenModal
+        usuarioId={usuarioOrden?.id || null}
+        nombreUsuario={usuarioOrden?.nombre}
+        isOpen={Boolean(usuarioOrden)}
+        onClose={() => setUsuarioOrden(null)}
+        onCreada={cargarUsuarios}
       />
 
       {/* Confirmar eliminación */}
