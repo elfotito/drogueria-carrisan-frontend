@@ -639,7 +639,13 @@
   body.ppal-drawer-open .navbar-container {
     transform: translateX(var(--ppal-drawer-w)) scale(0.96) !important;
     transform-origin: left center;
-    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    /* filter en vez de un overlay aparte: el catcher oscuro vive
+       dentro de .ppal-shift y no llega a cubrir el navbar (que está
+       afuera, empujado por esta misma regla vía la clase del body).
+       brightness() da el mismo efecto de "apagado" sin necesitar un
+       segundo elemento superpuesto, y con la misma transición. */
+    filter: brightness(0.62);
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1), filter 0.28s cubic-bezier(0.4, 0, 0.2, 1);
     border-radius: 0 0 18px 0;
     overflow: hidden;
   }
