@@ -1,34 +1,125 @@
 import { useState, useEffect, useMemo } from 'react'
+import {
+  Box,
+  Flex,
+  Grid,
+  Heading,
+  Text,
+  Input,
+  InputGroup,
+  SimpleGrid,
+  Stack,
+  HStack,
+  VStack,
+  Spinner,
+  Button,
+  Badge,
+  Table,
+  Menu,
+  Portal,
+  Icon,
+  IconButton,
+} from '@chakra-ui/react'
+import {
+  Users,
+  UserCheck,
+  ShieldCheck,
+  Bike,
+  Search,
+  RefreshCcw,
+  Plus,
+  MoreVertical,
+  Pencil,
+  Wallet,
+  Percent,
+  Trash2,
+  ChevronLeft,
+  ChevronRight,
+} from 'lucide-react'
 import api from '../../api/axios'
 import UsuarioForm from './UsuarioForm'
-import './UsuariosAdmin.css'
+import DescuentoModal from './DescuentoModal'
+import EstadoCuentaDetalle from './EstadoCuentaDetalle'
+import { toaster } from '../ui/toaster'
 
+const AZUL = '#0052DC'
+const INDIGO = '#1A1A3A'
 const ITEMS_POR_PAGINA = 10
+
+// Etiquetas conocidas hasta ahora — el sistema acepta cualquier texto libre,
+// esto solo alimenta el filtro y el datalist de sugerencias del formulario.
+const ETIQUETAS_SUGERIDAS = ['admin', 'distribuidor', 'cliente']
+
+function iniciales(nombre) {
+  return (nombre?.trim()?.[0] || 'U').toUpperCase()
+}
+
+function colorEtiqueta(etiqueta) {
+  const mapa = { admin: 'purple', distribuidor: 'blue', cliente: 'gray' }
+  return mapa[etiqueta] || 'teal'
+}
+
+function AvatarCirculo({ nombre, size = '36px' }) {
+  return (
+    <Flex align="center" justify="center" w={size} h={size} minW={size} borderRadius="full" bg={INDIGO} color="white" fontWeight="600" fontSize="sm">
+      {iniciales(nombre)}
+    </Flex>
+  )
+}
+
+function BarraCredito({ usado, total }) {
+  if (!total || total <= 0) return <Text fontSize="xs" color="gray.400">Sin línea asignada</Text>
+  const porcentaje = Math.min(100, (Number(usado) / Number(total)) * 100)
+  return (
+    <Box minW="90px">
+      <Box h="6px" bg="green.100" borderRadius="full" overflow="hidden">
+        <Box h="100%" w={`${porcentaje}%`} bg={porcentaje >= 90 ? 'red.400' : porcentaje >= 60 ? 'orange.400' : 'green.400'} />
+      </Box>
+      <Text fontSize="xs" color="gray.500" mt={1}>{porcentaje.toFixed(0)}% usado</Text>
+    </Box>
+  )
+}
+
+function StatCard({ icon, label, value, color = INDIGO }) {
+  return (
+    <Box bg="white" borderRadius="xl" p={4} boxShadow="0 1px 3px rgba(26,26,58,0.08)" border="1px solid" borderColor="gray.100">
+      <HStack gap={3}>
+        <Flex align="center" justify="center" w="40px" h="40px" borderRadius="lg" bg={`${color}15`}>
+          <Icon as={icon} boxSize={5} color={color} />
+        </Flex>
+        <Box>
+          <Text fontSize="xl" fontWeight="700" color={INDIGO} lineHeight="1.1">{value}</Text>
+          <Text fontSize="xs" color="gray.500">{label}</Text>
+        </Box>
+      </HStack>
+    </Box>
+  )
+}
 
 function UsuariosAdmin() {
   const [usuarios, setUsuarios] = useState([])
+  const [cargando, setCargando] = useState(true)
+  const [error, setError] = useState('')
+
   const [busqueda, setBusqueda] = useState('')
   const [filtroEtiqueta, setFiltroEtiqueta] = useState('todos')
   const [filtroEstado, setFiltroEstado] = useState('todos')
-  const [cargando, setCargando] = useState(true)
-  const [error, setError] = useState('')
+  const [paginaActual, setPaginaActual] = useState(1)
+
   const [usuarioEnEdicion, setUsuarioEnEdicion] = useState(null)
   const [mostrarForm, setMostrarForm] = useState(false)
   const [usuarioAEliminar, setUsuarioAEliminar] = useState(null)
   const [usuarioDescuento, setUsuarioDescuento] = useState(null)
-  const [paginaActual, setPaginaActual] = useState(1)
-  const [ordenarPor, setOrdenarPor] = useState('nombre')
-  const [ordenDireccion, setOrdenDireccion] = useState('asc')
+  const [usuarioCredito, setUsuarioCredito] = useState(null)
 
-  useEffect(() => {
-    cargarUsuarios()
-  }, [])
+  useEffect(() => { cargarUsuarios() }, [])
 
   async function cargarUsuarios() {
     try {
       setCargando(true)
-      const response = await api.get('/users')
-      setUsuarios(response.data)
+      setError('')
+      const { data } = await api.get('/users')
+      setUsuarios(data)
     } catch (err) {
       setError('No se pudieron cargar los usuarios')
       console.error(err)
@@ -54,16 +145,18 @@ function UsuariosAdmin() {
 
   async function handleGuardado() {
     cerrarForm()
+    toaster.create({ title: 'Usuario guardado', type: 'success' })
     await cargarUsuarios()
   }
 
   async function handleEliminarUsuario(id) {
     try {
       await api.delete(`/users/${id}`)
-      setUsuarios(prev => prev.filter(u => u.id !== id))
+      setUsuarios((prev) => prev.filter((u) => u.id !== id))
       setUsuarioAEliminar(null)
+      toaster.create({ title: 'Usuario eliminado', type: 'success' })
     } catch (err) {
-      alert('No se pudo eliminar el usuario')
+      toaster.create({ title: 'No se pudo eliminar el usuario', type: 'error' })
       console.error(err)
     }
   }
@@ -71,510 +164,294 @@ function UsuariosAdmin() {
   async function handleToggleActivo(usuario) {
     try {
       await api.patch(`/users/${usuario.id}`, { activo: !usuario.activo })
-      setUsuarios(prev =>
-        prev.map(u => u.id === usuario.id ? { ...u, activo: !u.activo } : u)
-      )
+      setUsuarios((prev) => prev.map((u) => (u.id === usuario.id ? { ...u, activo: !u.activo } : u)))
     } catch (err) {
-      alert('No se pudo cambiar el estado')
+      toaster.create({ title: 'No se pudo cambiar el estado', type: 'error' })
       console.error(err)
     }
   }
 
-  function abrirDescuento(usuario) {
-    setUsuarioDescuento(usuario)
-  }
-
-  function cerrarDescuento() {
-    setUsuarioDescuento(null)
-  }
-
-  function toggleOrden(campo) {
-    if (ordenarPor === campo) {
-      setOrdenDireccion(prev => prev === 'asc' ? 'desc' : 'asc')
-    } else {
-      setOrdenarPor(campo)
-      setOrdenDireccion('asc')
-    }
-  }
+  const etiquetasDisponibles = useMemo(() => {
+    const desdeDatos = usuarios.map((u) => u.etiqueta).filter(Boolean)
+    return [...new Set([...ETIQUETAS_SUGERIDAS, ...desdeDatos])]
+  }, [usuarios])
 
   const usuariosFiltrados = useMemo(() => {
     let resultado = [...usuarios]
-
     if (busqueda) {
       const texto = busqueda.toLowerCase()
-      resultado = resultado.filter(u =>
-        u.nombre?.toLowerCase().includes(texto) ||
-        u.email?.toLowerCase().includes(texto) ||
-        u.rif_cedula?.toLowerCase().includes(texto) ||
-        u.telefono?.toLowerCase().includes(texto)
+      resultado = resultado.filter(
+        (u) =>
+          u.nombre?.toLowerCase().includes(texto) ||
+          u.email?.toLowerCase().includes(texto) ||
+          u.rif_cedula?.toLowerCase().includes(texto) ||
+          u.telefono?.toLowerCase().includes(texto)
       )
     }
-
     if (filtroEtiqueta !== 'todos') {
-      resultado = resultado.filter(u => u.etiqueta === filtroEtiqueta)
+      resultado = resultado.filter((u) => u.etiqueta === filtroEtiqueta)
     }
-
     if (filtroEstado !== 'todos') {
       const activo = filtroEstado === 'activo'
-      resultado = resultado.filter(u => (u.activo !== false) === activo)
+      resultado = resultado.filter((u) => (u.activo !== false) === activo)
     }
-
-    resultado.sort((a, b) => {
-      let valorA, valorB
-      switch(ordenarPor) {
-        case 'nombre':
-          valorA = (a.nombre || '').toLowerCase()
-          valorB = (b.nombre || '').toLowerCase()
-          break
-        case 'email':
-          valorA = (a.email || '').toLowerCase()
-          valorB = (b.email || '').toLowerCase()
-          break
-        case 'credito':
-          valorA = Number(a.linea_credito) || 0
-          valorB = Number(b.linea_credito) || 0
-          break
-        case 'fecha':
-          valorA = new Date(a.created_at).getTime()
-          valorB = new Date(b.created_at).getTime()
-          break
-        default:
-          valorA = (a.nombre || '').toLowerCase()
-          valorB = (b.nombre || '').toLowerCase()
-      }
-      if (valorA < valorB) return ordenDireccion === 'asc' ? -1 : 1
-      if (valorA > valorB) return ordenDireccion === 'asc' ? 1 : -1
-      return 0
-    })
-
+    resultado.sort((a, b) => (a.nombre || '').localeCompare(b.nombre || ''))
     return resultado
-  }, [usuarios, busqueda, filtroEtiqueta, filtroEstado, ordenarPor, ordenDireccion])
+  }, [usuarios, busqueda, filtroEtiqueta, filtroEstado])
 
-  const totalPaginas = Math.ceil(usuariosFiltrados.length / ITEMS_POR_PAGINA)
+  useEffect(() => { setPaginaActual(1) }, [busqueda, filtroEtiqueta, filtroEstado])
+
+  const totalPaginas = Math.max(1, Math.ceil(usuariosFiltrados.length / ITEMS_POR_PAGINA))
   const usuariosPaginados = usuariosFiltrados.slice(
     (paginaActual - 1) * ITEMS_POR_PAGINA,
     paginaActual * ITEMS_POR_PAGINA
   )
 
-  useEffect(() => {
-    setPaginaActual(1)
-  }, [busqueda, filtroEtiqueta, filtroEstado])
-
-  const etiquetas = [...new Set(usuarios.map(u => u.etiqueta).filter(Boolean))]
-
-  const stats = useMemo(() => {
-    return {
-      total: usuarios.length,
-      activos: usuarios.filter(u => u.activo !== false).length,
-      admins: usuarios.filter(u => u.es_admin || u.etiqueta === 'admin').length,
-      deliveryGratis: usuarios.filter(u => u.delivery_gratis).length
-    }
-  }, [usuarios])
+  const stats = useMemo(() => ({
+    total: usuarios.length,
+    activos: usuarios.filter((u) => u.activo !== false).length,
+    admins: usuarios.filter((u) => u.es_admin).length,
+    deliveryGratis: usuarios.filter((u) => u.delivery_gratis).length,
+  }), [usuarios])
 
   if (cargando) {
     return (
-      <div className="loading-container">
-        <div className="spinner"></div>
-        <p>Cargando usuarios...</p>
-      </div>
+      <Flex direction="column" align="center" justify="center" minH="60vh" gap={3}>
+        <Spinner size="xl" color={AZUL} borderWidth="3px" />
+        <Text color="gray.500">Cargando usuarios...</Text>
+      </Flex>
     )
   }
 
   if (error) {
     return (
-      <div className="error-container">
-        <div className="error-message">{error}</div>
-        <button onClick={cargarUsuarios} className="btn-reintentar">
-          🔄 Reintentar
-        </button>
-      </div>
+      <Flex direction="column" align="center" justify="center" minH="60vh" gap={3}>
+        <Text color="red.500">{error}</Text>
+        <Button onClick={cargarUsuarios} colorPalette="blue">
+          <RefreshCcw size={16} />
+          Reintentar
+        </Button>
+      </Flex>
     )
   }
 
   return (
-    <div className="usuarios-admin">
+    <Box bg="gray.50" minH="100vh" p={{ base: 4, md: 6 }}>
       {/* Header */}
-      <div className="section-header">
-        <div className="header-top">
-          <h2>👥 Usuarios</h2>
-          <div className="header-actions">
-            <button onClick={abrirNuevo} className="btn-agregar">
-              + Nuevo Usuario
-            </button>
-          </div>
-        </div>
-      </div>
+      <Flex justify="space-between" align="center" mb={6} wrap="wrap" gap={3}>
+        <Box>
+          <Heading size="lg" color={INDIGO}>Usuarios</Heading>
+          <Text color="gray.500" fontSize="sm">Gestión de clientes, distribuidores y administradores</Text>
+        </Box>
+        <HStack gap={2}>
+          <Button variant="ghost" onClick={cargarUsuarios} color={AZUL}>
+            <RefreshCcw size={16} />
+          </Button>
+          <Button bg={AZUL} color="white" _hover={{ bg: '#0041B0' }} onClick={abrirNuevo}>
+            <Plus size={16} />
+            Nuevo usuario
+          </Button>
+        </HStack>
+      </Flex>
 
       {/* Estadísticas */}
-      <div className="stats-grid">
-        <div className="stat-card">
-          <div className="stat-icon">👥</div>
-          <div className="stat-info">
-            <div className="stat-valor">{stats.total}</div>
-            <div className="stat-label">Total Usuarios</div>
-          </div>
-        </div>
-        <div className="stat-card stat-activos">
-          <div className="stat-icon">✅</div>
-          <div className="stat-info">
-            <div className="stat-valor">{stats.activos}</div>
-            <div className="stat-label">Activos</div>
-          </div>
-        </div>
-        <div className="stat-card stat-admins">
-          <div className="stat-icon">🛡️</div>
-          <div className="stat-info">
-            <div className="stat-valor">{stats.admins}</div>
-            <div className="stat-label">Administradores</div>
-          </div>
-        </div>
-        <div className="stat-card stat-delivery">
-          <div className="stat-icon">🛵</div>
-          <div className="stat-info">
-            <div className="stat-valor">{stats.deliveryGratis}</div>
-            <div className="stat-label">Delivery Gratis</div>
-          </div>
-        </div>
-      </div>
+      <SimpleGrid columns={{ base: 2, md: 4 }} gap={4} mb={6}>
+        <StatCard icon={Users} label="Total usuarios" value={stats.total} />
+        <StatCard icon={UserCheck} label="Activos" value={stats.activos} color="green.500" />
+        <StatCard icon={ShieldCheck} label="Administradores" value={stats.admins} color="purple.500" />
+        <StatCard icon={Bike} label="Delivery gratis" value={stats.deliveryGratis} color="orange.500" />
+      </SimpleGrid>
 
       {/* Toolbar */}
-      <div className="toolbar">
-        <div className="toolbar-filtros">
-          <div className="search-box">
-            <span className="search-icon">🔍</span>
-            <input
-              type="text"
-              placeholder="Buscar por nombre, email, RIF o teléfono..."
-              value={busqueda}
-              onChange={(e) => setBusqueda(e.target.value)}
-              className="search-input"
-            />
-          </div>
-          <select
-            value={filtroEtiqueta}
-            onChange={(e) => setFiltroEtiqueta(e.target.value)}
-            className="filter-select"
-          >
-            <option value="todos">Todas las etiquetas</option>
-            {etiquetas.map(etq => (
-              <option key={etq} value={etq}>
-                {etq === 'admin' ? '🛡️ Admin' :
-                 etq === 'distribuidor' ? '🏢 Distribuidor' :
-                 `👤 ${etq}`}
-              </option>
-            ))}
-          </select>
-          <select
-            value={filtroEstado}
-            onChange={(e) => setFiltroEstado(e.target.value)}
-            className="filter-select"
-          >
-            <option value="todos">Todos los estados</option>
-            <option value="activo">✅ Activos</option>
-            <option value="inactivo">❌ Inactivos</option>
-          </select>
-        </div>
-      </div>
+      <Flex
+        bg="white"
+        borderRadius="xl"
+        p={3}
+        mb={4}
+        boxShadow="0 1px 3px rgba(26,26,58,0.08)"
+        border="1px solid"
+        borderColor="gray.100"
+        gap={3}
+        wrap="wrap"
+        align="center"
+      >
+        <InputGroup maxW="320px" startElement={<Search size={16} color="#9CA3AF" />}>
+          <Input
+            placeholder="Buscar por nombre, email, RIF o teléfono..."
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+            borderRadius="lg"
+          />
+        </InputGroup>
 
-      {/* Resultados */}
-      <div className="resultados-info">
+        <Box as="select" value={filtroEtiqueta} onChange={(e) => setFiltroEtiqueta(e.target.value)}
+          maxW="200px" borderRadius="lg" border="1px solid" borderColor="gray.200" px={3} py={2} fontSize="sm" bg="white">
+          <option value="todos">Todas las etiquetas</option>
+          {etiquetasDisponibles.map((etq) => (
+            <option key={etq} value={etq}>{etq}</option>
+          ))}
+        </Box>
+
+        <Box as="select" value={filtroEstado} onChange={(e) => setFiltroEstado(e.target.value)}
+          maxW="180px" borderRadius="lg" border="1px solid" borderColor="gray.200" px={3} py={2} fontSize="sm" bg="white">
+          <option value="todos">Todos los estados</option>
+          <option value="activo">Activos</option>
+          <option value="inactivo">Inactivos</option>
+        </Box>
+      </Flex>
+
+      <Text fontSize="sm" color="gray.500" mb={3}>
         Mostrando {usuariosPaginados.length} de {usuariosFiltrados.length} usuarios
-        {busqueda && ` (filtrados de ${usuarios.length} totales)`}
-      </div>
+      </Text>
 
-      {/* Tabla — en móvil (≤768px) cada <tr> se colapsa a tarjeta vía CSS
-          usando los atributos data-label de cada <td> (ver UsuariosAdmin.css) */}
-      <div className="table-container">
-        <table className="usuarios-table">
-          <thead>
-            <tr>
-              <th onClick={() => toggleOrden('nombre')} className="sortable">
-                Usuario {ordenarPor === 'nombre' && (ordenDireccion === 'asc' ? '↑' : '↓')}
-              </th>
-              <th onClick={() => toggleOrden('email')} className="sortable">
-                Email {ordenarPor === 'email' && (ordenDireccion === 'asc' ? '↑' : '↓')}
-              </th>
-              <th>RIF/Cédula</th>
-              <th>Etiqueta</th>
-              <th>Teléfono</th>
-              <th onClick={() => toggleOrden('credito')} className="sortable">
-                Crédito {ordenarPor === 'credito' && (ordenDireccion === 'asc' ? '↑' : '↓')}
-              </th>
-              <th>Delivery</th>
-              <th>Estado</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {usuariosPaginados.length === 0 ? (
-              <tr>
-                <td colSpan="9" className="sin-resultados">
-                  <div className="empty-state">
-                    <span className="empty-icon">👻</span>
-                    <p>No se encontraron usuarios</p>
-                    {busqueda && <p className="empty-hint">Intenta con otros filtros</p>}
-                  </div>
-                </td>
-              </tr>
-            ) : (
-              usuariosPaginados.map((usuario) => (
-                <tr key={usuario.id} className={usuario.activo === false ? 'usuario-inactivo' : ''}>
-                  <td className="td-usuario">
-                    <div className="usuario-cell">
-                      <div className="usuario-avatar">
-                        {(usuario.nombre?.[0] || 'U').toUpperCase()}
-                      </div>
-                      <div>
-                        <div className="usuario-nombre">
-                          {usuario.nombre || 'Sin nombre'}
-                          {usuario.es_admin && <span className="admin-badge">ADMIN</span>}
-                        </div>
-                        <div className="usuario-fecha">
-                          Desde {new Date(usuario.created_at).toLocaleDateString('es-VE')}
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="email-cell" data-label="Email">{usuario.email}</td>
-                  <td data-label="RIF/Cédula">{usuario.rif_cedula || '-'}</td>
-                  <td data-label="Etiqueta">
-                    <span className={`etiqueta-badge etiqueta-${usuario.etiqueta || 'cliente'}`}>
-                      {usuario.etiqueta === 'admin' ? '🛡️ Admin' :
-                       usuario.etiqueta === 'distribuidor' ? '🏢 Distribuidor' :
-                       `👤 ${usuario.etiqueta || 'Cliente'}`}
-                    </span>
-                  </td>
-                  <td data-label="Teléfono">{usuario.telefono || '-'}</td>
-                  <td className="credito-cell" data-label="Crédito">
-                    ${Number(usuario.linea_credito || 0).toFixed(2)}
-                  </td>
-                  <td data-label="Delivery">
-                    {usuario.delivery_gratis ? (
-                      <span className="delivery-badge">🛵 Gratis</span>
-                    ) : (
-                      <span className="delivery-no">-</span>
-                    )}
-                  </td>
-                  <td data-label="Estado">
-                    <button
-                      onClick={() => handleToggleActivo(usuario)}
-                      className={`estado-toggle ${usuario.activo !== false ? 'activo' : 'inactivo'}`}
-                      title={usuario.activo !== false ? 'Desactivar' : 'Activar'}
-                    >
-                      {usuario.activo !== false ? '✅' : '❌'}
-                    </button>
-                  </td>
-                  <td className="td-acciones">
-                    <div className="acciones-cell">
-                      <button
-                        onClick={() => abrirEdicion(usuario)}
-                        className="btn-icon"
-                        title="Editar"
-                      >
-                        ✏️
-                      </button>
-                      <button
-                        onClick={() => abrirDescuento(usuario)}
-                        className="btn-icon btn-descuento"
-                        title="Gestionar descuento"
-                      >
-                        💰
-                      </button>
-                      <button
-                        onClick={() => setUsuarioAEliminar(usuario)}
-                        className="btn-icon btn-danger"
-                        title="Eliminar"
-                      >
-                        🗑️
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+      {/* Tabla */}
+      <Box bg="white" borderRadius="xl" overflow="hidden" border="1px solid" borderColor="gray.100" boxShadow="0 1px 3px rgba(26,26,58,0.08)">
+        <Box overflowX="auto">
+          <Table.Root size="sm">
+            <Table.Header bg="gray.50">
+              <Table.Row>
+                <Table.ColumnHeader>Usuario</Table.ColumnHeader>
+                <Table.ColumnHeader>RIF/Cédula</Table.ColumnHeader>
+                <Table.ColumnHeader>Etiqueta</Table.ColumnHeader>
+                <Table.ColumnHeader>Teléfono</Table.ColumnHeader>
+                <Table.ColumnHeader>Crédito</Table.ColumnHeader>
+                <Table.ColumnHeader>Estado</Table.ColumnHeader>
+                <Table.ColumnHeader textAlign="end">Acciones</Table.ColumnHeader>
+              </Table.Row>
+            </Table.Header>
+            <Table.Body>
+              {usuariosPaginados.length === 0 ? (
+                <Table.Row>
+                  <Table.Cell colSpan={7}>
+                    <Text py={8} textAlign="center" color="gray.400">No se encontraron usuarios</Text>
+                  </Table.Cell>
+                </Table.Row>
+              ) : (
+                usuariosPaginados.map((usuario) => (
+                  <Table.Row key={usuario.id} opacity={usuario.activo === false ? 0.55 : 1}>
+                    <Table.Cell>
+                      <HStack gap={3}>
+                        <AvatarCirculo nombre={usuario.nombre} />
+                        <Box>
+                          <HStack gap={2}>
+                            <Text fontWeight="600" color={INDIGO}>{usuario.nombre || 'Sin nombre'}</Text>
+                            {usuario.es_admin && <Badge colorPalette="purple" size="sm">Admin</Badge>}
+                          </HStack>
+                          <Text fontSize="xs" color="gray.500">{usuario.email}</Text>
+                        </Box>
+                      </HStack>
+                    </Table.Cell>
+                    <Table.Cell>{usuario.rif_cedula || '—'}</Table.Cell>
+                    <Table.Cell>
+                      <Badge colorPalette={colorEtiqueta(usuario.etiqueta)} borderRadius="full" textTransform="capitalize">
+                        {usuario.etiqueta || 'cliente'}
+                      </Badge>
+                    </Table.Cell>
+                    <Table.Cell>{usuario.telefono || '—'}</Table.Cell>
+                    <Table.Cell>
+                      <Text fontWeight="600" color={INDIGO} fontSize="sm">${Number(usuario.linea_credito || 0).toFixed(2)}</Text>
+                      <BarraCredito usado={usuario.deuda_actual || 0} total={usuario.linea_credito} />
+                    </Table.Cell>
+                    <Table.Cell>
+                      <Button size="xs" variant="outline" colorPalette={usuario.activo !== false ? 'green' : 'gray'} onClick={() => handleToggleActivo(usuario)}>
+                        {usuario.activo !== false ? 'Activo' : 'Inactivo'}
+                      </Button>
+                    </Table.Cell>
+                    <Table.Cell textAlign="end">
+                      <Menu.Root>
+                        <Menu.Trigger asChild>
+                          <IconButton variant="ghost" size="sm" aria-label="Acciones">
+                            <MoreVertical size={16} />
+                          </IconButton>
+                        </Menu.Trigger>
+                        <Portal>
+                          <Menu.Positioner>
+                            <Menu.Content>
+                              <Menu.Item value="editar" onClick={() => abrirEdicion(usuario)}>
+                                <Pencil size={14} style={{ marginRight: 8 }} /> Editar datos
+                              </Menu.Item>
+                              <Menu.Item value="credito" onClick={() => setUsuarioCredito(usuario)}>
+                                <Wallet size={14} style={{ marginRight: 8 }} /> Línea de crédito
+                              </Menu.Item>
+                              <Menu.Item value="descuento" onClick={() => setUsuarioDescuento(usuario)}>
+                                <Percent size={14} style={{ marginRight: 8 }} /> Descuento
+                              </Menu.Item>
+                              <Menu.Item value="eliminar" color="red.500" onClick={() => setUsuarioAEliminar(usuario)}>
+                                <Trash2 size={14} style={{ marginRight: 8 }} /> Eliminar
+                              </Menu.Item>
+                            </Menu.Content>
+                          </Menu.Positioner>
+                        </Portal>
+                      </Menu.Root>
+                    </Table.Cell>
+                  </Table.Row>
+                ))
+              )}
+            </Table.Body>
+          </Table.Root>
+        </Box>
+      </Box>
 
       {/* Paginación */}
       {totalPaginas > 1 && (
-        <div className="paginacion">
-          <button
-            onClick={() => setPaginaActual(1)}
-            disabled={paginaActual === 1}
-            className="btn-pagina"
-          >⏮️</button>
-          <button
-            onClick={() => setPaginaActual(p => Math.max(1, p - 1))}
-            disabled={paginaActual === 1}
-            className="btn-pagina"
-          >◀️</button>
-          {Array.from({ length: totalPaginas }, (_, i) => i + 1)
-            .filter(p => p === 1 || p === totalPaginas || Math.abs(p - paginaActual) <= 2)
-            .map((p, i, arr) => (
-              <span key={p}>
-                {i > 0 && arr[i - 1] !== p - 1 && <span className="paginacion-dots">...</span>}
-                <button
-                  onClick={() => setPaginaActual(p)}
-                  className={`btn-pagina ${paginaActual === p ? 'active' : ''}`}
-                >{p}</button>
-              </span>
-            ))}
-          <button
-            onClick={() => setPaginaActual(p => Math.min(totalPaginas, p + 1))}
-            disabled={paginaActual === totalPaginas}
-            className="btn-pagina"
-          >▶️</button>
-          <button
-            onClick={() => setPaginaActual(totalPaginas)}
-            disabled={paginaActual === totalPaginas}
-            className="btn-pagina"
-          >⏭️</button>
-        </div>
+        <HStack justify="center" mt={5} gap={2}>
+          <IconButton size="sm" variant="outline" disabled={paginaActual === 1} onClick={() => setPaginaActual((p) => Math.max(1, p - 1))}>
+            <ChevronLeft size={16} />
+          </IconButton>
+          <Text fontSize="sm" color="gray.500">Página {paginaActual} de {totalPaginas}</Text>
+          <IconButton size="sm" variant="outline" disabled={paginaActual === totalPaginas} onClick={() => setPaginaActual((p) => Math.min(totalPaginas, p + 1))}>
+            <ChevronRight size={16} />
+          </IconButton>
+        </HStack>
       )}
 
-      {/* Modal de descuento */}
-      {usuarioDescuento && (
-        <DescuentoUsuarioModal
-          usuario={usuarioDescuento}
-          onClose={cerrarDescuento}
-          onGuardado={cargarUsuarios}
-        />
-      )}
-
-      {/* Modal formulario */}
+      {/* Modal formulario (crear/editar) */}
       {mostrarForm && (
         <UsuarioForm
           usuario={usuarioEnEdicion}
+          etiquetasSugeridas={etiquetasDisponibles}
+          isOpen={mostrarForm}
           onClose={cerrarForm}
           onGuardado={handleGuardado}
         />
       )}
 
-      {/* Modal confirmar eliminación */}
-      {usuarioAEliminar && (
-        <div className="modal-overlay" onClick={() => setUsuarioAEliminar(null)}>
-          <div className="modal-content modal-confirmacion" onClick={(e) => e.stopPropagation()}>
-            <h3>🗑️ Confirmar Eliminación</h3>
-            <p>¿Estás seguro de eliminar al usuario <strong>{usuarioAEliminar.nombre || usuarioAEliminar.email}</strong>?</p>
-            <p className="warning-text">Esta acción no se puede deshacer. Se eliminarán todos sus datos, órdenes y descuentos asociados.</p>
-            <div className="modal-acciones">
-              <button onClick={() => setUsuarioAEliminar(null)} className="btn-cancelar">
-                Cancelar
-              </button>
-              <button onClick={() => handleEliminarUsuario(usuarioAEliminar.id)} className="btn-eliminar">
-                Eliminar
-              </button>
-            </div>
-          </div>
-        </div>
+      {/* Modal de descuento */}
+      {usuarioDescuento && (
+        <DescuentoModal
+          usuario={usuarioDescuento}
+          isOpen={Boolean(usuarioDescuento)}
+          onClose={() => setUsuarioDescuento(null)}
+          onGuardado={cargarUsuarios}
+        />
       )}
-    </div>
-  )
-}
 
-// ============================================================
-// Componente DescuentoUsuarioModal
-// ============================================================
-function DescuentoUsuarioModal({ usuario, onClose, onGuardado }) {
-  const [porcentaje, setPorcentaje] = useState(usuario.descuento_porcentaje || 0)
-  const [guardando, setGuardando] = useState(false)
-  const [mensaje, setMensaje] = useState('')
+      {/* Resumen financiero / línea de crédito — reutiliza el mismo panel de Estado de Cuenta */}
+      <EstadoCuentaDetalle
+        clienteId={usuarioCredito?.id || null}
+        isOpen={Boolean(usuarioCredito)}
+        onClose={() => { setUsuarioCredito(null); cargarUsuarios() }}
+      />
 
-  async function handleGuardarDescuento() {
-    setGuardando(true)
-    setMensaje('')
-    try {
-      // Aquí harías la llamada a tu API para guardar el descuento
-      // await api.post('/usuario-descuento', {
-      //   usuario_id: usuario.id,
-      //   porcentaje: Number(porcentaje)
-      // })
-
-      // Simulación
-      await new Promise(resolve => setTimeout(resolve, 500))
-      setMensaje('✅ Descuento guardado correctamente')
-      setTimeout(() => {
-        onGuardado()
-        onClose()
-      }, 1500)
-    } catch (err) {
-      setMensaje('❌ Error al guardar el descuento')
-    } finally {
-      setGuardando(false)
-    }
-  }
-
-  return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content descuento-modal" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2>💰 Descuento de Usuario</h2>
-          <button className="modal-close" onClick={onClose}>✕</button>
-        </div>
-
-        <div className="descuento-body">
-          <div className="descuento-usuario-info">
-            <div className="usuario-avatar-grande">
-              {(usuario.nombre?.[0] || 'U').toUpperCase()}
-            </div>
-            <div>
-              <strong>{usuario.nombre || 'Sin nombre'}</strong>
-              <span>{usuario.email}</span>
-              {/* Antes: className="etiqueta-badge etiqueta-{...}" (string literal, sin
-                  interpolar) — el badge nunca tomaba el color correcto. Corregido con
-                  template literal, igual que en UsuarioForm.jsx. */}
-              <span className={`etiqueta-badge etiqueta-${usuario.etiqueta || 'cliente'}`}>
-                {usuario.etiqueta || 'Cliente'}
-              </span>
-            </div>
-          </div>
-
-          <div className="descuento-divider" />
-
-          <div className="descuento-form">
-            <label>Porcentaje de descuento para todos los productos</label>
-            <div className="descuento-input-wrapper">
-              <input
-                type="number"
-                min="0"
-                max="100"
-                step="0.01"
-                value={porcentaje}
-                onChange={(e) => setPorcentaje(e.target.value)}
-                placeholder="0.00"
-              />
-              <span className="descuento-simbolo">%</span>
-            </div>
-            {porcentaje > 0 && (
-              <div className="descuento-ejemplo">
-                <p>📊 Ejemplo:</p>
-                <span>Producto de $100.00 → <strong>${(100 - Number(porcentaje)).toFixed(2)}</strong></span>
-              </div>
-            )}
-          </div>
-
-          {mensaje && (
-            <div className={`mensaje ${mensaje.includes('✅') ? 'exito' : 'error'}`}>
-              {mensaje}
-            </div>
-          )}
-
-          <div className="descuento-acciones">
-            <button onClick={onClose} className="btn-cancelar">
-              Cancelar
-            </button>
-            <button
-              onClick={handleGuardarDescuento}
-              className="btn-guardar"
-              disabled={guardando}
-            >
-              {guardando ? 'Guardando...' : '💾 Guardar Descuento'}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+      {/* Confirmar eliminación */}
+      {usuarioAEliminar && (
+        <Box position="fixed" inset={0} bg="blackAlpha.600" zIndex={1400} display="flex" alignItems="center" justifyContent="center" onClick={() => setUsuarioAEliminar(null)}>
+          <Box bg="white" borderRadius="xl" p={6} maxW="400px" w="90%" onClick={(e) => e.stopPropagation()}>
+            <Heading size="md" color={INDIGO} mb={2}>Eliminar usuario</Heading>
+            <Text fontSize="sm" color="gray.600" mb={1}>
+              ¿Estás seguro de eliminar a <strong>{usuarioAEliminar.nombre || usuarioAEliminar.email}</strong>?
+            </Text>
+            <Text fontSize="xs" color="red.500" mb={4}>
+              Esta acción no se puede deshacer. Se eliminarán sus órdenes y datos asociados.
+            </Text>
+            <HStack justify="end" gap={3}>
+              <Button variant="ghost" onClick={() => setUsuarioAEliminar(null)}>Cancelar</Button>
+              <Button colorPalette="red" onClick={() => handleEliminarUsuario(usuarioAEliminar.id)}>Eliminar</Button>
+            </HStack>
+          </Box>
+        </Box>
+      )}
+    </Box>
   )
 }
 
