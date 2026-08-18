@@ -1,20 +1,108 @@
 import { useEffect, useState } from 'react'
-import { NavLink } from 'react-router-dom'
-import { Menu, X, ChevronRight, LogOut } from 'lucide-react'
+import { Link, NavLink } from 'react-router-dom'
+import { Menu, X, ChevronRight, ChevronLeft, LogOut } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import BottomNav from '../BottomNav'
-import { NAV_PAGINAS_PRINCIPALES } from './Navpaginasprincipales'
-import './Layoutpaginaprincipal.css'
-
+import { NAV_PAGINAS_PRINCIPALES } from './navPaginasPrincipales'
+import './LayoutPaginaPrincipal.css'
 
 // ---------------------------------------------------------------
-function ContenidoNav({ activo, esAdmin, onNavigate }) {
+// <LayoutPaginaPrincipal activo="ordenes" titulo="Mis Órdenes">
+//   {contenido de la página}
+// </LayoutPaginaPrincipal>
+//
+// Este es el layout base de "Páginas Principales": en desktop/tablet
+// (≥1024px) muestra una columna izquierda flotante y sticky con la
+// navegación de cuenta (igual patrón que el resumen sticky de
+// Carrito.jsx, pero a la izquierda). En móvil (<1024px) esa columna
+// se convierte en un drawer que se abre con un botón de menú y
+// "arrastra" el contenido de la página hacia la derecha con una
+// transición corta (efecto push, no overlay).
+//
+// Los grupos con tipo: 'submenu' (ver navPaginasPrincipales.js) se
+// muestran como una sola fila que abre una segunda pantalla dentro
+// del mismo panel, con botón de volver y un link "Ver todo" — igual
+// al patrón "Browse Departments / See all" de Walmart.
+//
+// Nota: este componente usa elementos planos (div/nav/button) en vez
+// de <Box>/<Flex> de Chakra a propósito. Chakra inyecta su propio CSS
+// en runtime (vía Emotion) DESPUÉS de nuestros estilos estáticos, y
+// con especificidad empatada gana el que se inserta al final —
+// rompiendo nuestros media queries de display/flex-wrap responsivos.
+// Mismo criterio que ya usan MenuDrawer.jsx y EstadoCuenta.jsx.
+// ---------------------------------------------------------------
+function ContenidoNav({ activo, titulo, esAdmin, onNavigate }) {
+  // null = menú principal. Si no, es el grupo cuyo submenú está abierto.
+  const [grupoAbierto, setGrupoAbierto] = useState(null)
+
+  if (grupoAbierto) {
+    const items = grupoAbierto.items.filter((item) => !esAdmin || !item.soloCliente)
+
+    return (
+      <nav className="ppal-nav" aria-label={`Submenú ${grupoAbierto.titulo}`}>
+        <button type="button" className="ppal-nav__volver" onClick={() => setGrupoAbierto(null)}>
+          <ChevronLeft size={17} />
+          Volver al menú principal
+        </button>
+
+        <div className="ppal-nav__submenu-header">
+          <span className="ppal-nav__submenu-titulo">{grupoAbierto.titulo}</span>
+          {grupoAbierto.verTodoTo && (
+            <Link to={grupoAbierto.verTodoTo} onClick={onNavigate} className="ppal-nav__ver-todo">
+              Ver todo
+            </Link>
+          )}
+        </div>
+
+        {items.map((item) => {
+          const esActivo = item.id === activo
+          return (
+            <NavLink
+              key={item.id}
+              to={item.to}
+              onClick={onNavigate}
+              className={`ppal-nav__sublink ${esActivo ? 'ppal-nav__sublink--activo' : ''}`}
+            >
+              <span>{item.texto}</span>
+              <ChevronRight size={16} />
+            </NavLink>
+          )
+        })}
+      </nav>
+    )
+  }
+
   return (
     <nav className="ppal-nav" aria-label="Navegación de cuenta">
+      {titulo && (
+        <div className="ppal-nav__breadcrumb">
+          <Link to="/" onClick={onNavigate}>Inicio</Link>
+          <span className="ppal-nav__breadcrumb-sep">/</span>
+          <span className="ppal-nav__breadcrumb-actual">{titulo}</span>
+        </div>
+      )}
+
       {NAV_PAGINAS_PRINCIPALES.map((grupo) => {
         const items = grupo.items.filter((item) => !esAdmin || !item.soloCliente)
         if (items.length === 0) return null
 
+        // Grupo expandible: una sola fila que abre el submenú
+        if (grupo.tipo === 'submenu') {
+          const grupoActivo = items.some((item) => item.id === activo)
+          return (
+            <button
+              key={grupo.titulo}
+              type="button"
+              className={`ppal-nav__grupo-btn ${grupoActivo ? 'ppal-nav__grupo-btn--activo' : ''}`}
+              onClick={() => setGrupoAbierto(grupo)}
+            >
+              <span>{grupo.titulo}</span>
+              <ChevronRight size={16} />
+            </button>
+          )
+        }
+
+        // Grupo normal: items listados directo
         return (
           <div className="ppal-nav__grupo" key={grupo.titulo}>
             <span className="ppal-nav__grupo-titulo">{grupo.titulo}</span>
@@ -44,8 +132,15 @@ function ContenidoNav({ activo, esAdmin, onNavigate }) {
 function LayoutPaginaPrincipal({ activo, titulo, subtitulo, acciones, children }) {
   const { user, logout } = useAuth()
   const [drawerAbierto, setDrawerAbierto] = useState(false)
+  // Se incrementa cada vez que el drawer se cierra, para forzar que
+  // ContenidoNav se remonte y vuelva al menú principal (no se queda
+  // "pegado" en un submenú la próxima vez que se abre)
+  const [drawerResetKey, setDrawerResetKey] = useState(0)
 
-  const cerrarDrawer = () => setDrawerAbierto(false)
+  const cerrarDrawer = () => {
+    setDrawerAbierto(false)
+    setDrawerResetKey((k) => k + 1)
+  }
 
   // Bloquea el scroll del fondo y permite cerrar con Escape mientras
   // el drawer móvil está abierto — mismo patrón que MenuDrawer.jsx
@@ -88,7 +183,7 @@ function LayoutPaginaPrincipal({ activo, titulo, subtitulo, acciones, children }
         </div>
 
         <div className="ppal-drawer-panel__scroll">
-          <ContenidoNav activo={activo} esAdmin={user?.es_admin} onNavigate={cerrarDrawer} />
+          <ContenidoNav key={drawerResetKey} activo={activo} titulo={titulo} esAdmin={user?.es_admin} onNavigate={cerrarDrawer} />
         </div>
 
         {!user?.es_admin && (
@@ -131,7 +226,7 @@ function LayoutPaginaPrincipal({ activo, titulo, subtitulo, acciones, children }
                     <p className="ppal-sidebar__email">{user?.email}</p>
                   </div>
                 </div>
-                <ContenidoNav activo={activo} esAdmin={user?.es_admin} />
+                <ContenidoNav activo={activo} titulo={titulo} esAdmin={user?.es_admin} />
               </div>
             </aside>
 
@@ -149,6 +244,8 @@ function LayoutPaginaPrincipal({ activo, titulo, subtitulo, acciones, children }
             </main>
           </div>
         </div>
+
+        <BottomNav />
       </div>
     </div>
   )
