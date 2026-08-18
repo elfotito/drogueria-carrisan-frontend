@@ -1,9 +1,26 @@
+/* =================================================================
+   PÁGINAS PRINCIPALES — layout compartido
+   Sidebar flotante/sticky en desktop-tablet (≥1024px).
+   Drawer que "empuja" la página en móvil (<1024px).
+
+   Nota: todo este archivo usa elementos planos (div/nav/button), no
+   componentes de Chakra, a propósito — ver comentario en
+   LayoutPaginaPrincipal.jsx.
+   ================================================================= */
 
 .ppal-root,
 .ppal-root *,
 .ppal-root *::before,
 .ppal-root *::after {
   box-sizing: border-box;
+}
+
+/* --ppal-drawer-w vive en :root (no solo en .ppal-root) porque el
+   Navbar global se empuja desde fuera del árbol de este componente
+   (ver la sección "Empuje del Navbar global" más abajo) y necesita
+   leer la misma variable. */
+:root {
+  --ppal-drawer-w: min(300px, 84vw);
 }
 
 .ppal-root {
@@ -16,7 +33,6 @@
   --ppal-border: #e7e6e0;
   --ppal-text: #1A1A3A;
   --ppal-text-muted: #6b6b7a;
-  --ppal-drawer-w: min(300px, 84vw);
 
   position: relative;
   background: var(--ppal-bg);
@@ -31,12 +47,15 @@
    Contenedor "empujable": envuelve todo el contenido de la página.
    En móvil, cuando el drawer se abre, este bloque se desplaza hacia
    la derecha con una transición corta (efecto push, no overlay).
+   También se "encoge" levemente (scale) para dar sensación de
+   profundidad, como si la página retrocediera detrás del drawer.
    ----------------------------------------------------------------- */
 .ppal-shift {
   position: relative;
   width: 100%;
   min-height: 100vh;
   background: var(--ppal-bg);
+  transform-origin: left center;
   transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1), border-radius 0.28s ease;
   will-change: transform;
 }
@@ -45,7 +64,7 @@
   position: absolute;
   inset: 0;
   z-index: 40;
-  background: rgba(26, 26, 58, 0.28);
+  background: rgba(26, 26, 58, 0.38);
   cursor: pointer;
   border: 0;
   padding: 0;
@@ -199,6 +218,150 @@
 }
 
 /* -----------------------------------------------------------------
+   Breadcrumb de ubicación — "Inicio / Página actual"
+   ----------------------------------------------------------------- */
+.ppal-nav__breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 2px 10px 14px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid var(--ppal-border);
+  font-size: 0.82rem;
+}
+
+.ppal-nav__breadcrumb a {
+  color: var(--ppal-text-muted);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.ppal-nav__breadcrumb a:hover {
+  color: var(--ppal-brand);
+  text-decoration: underline;
+}
+
+.ppal-nav__breadcrumb-sep {
+  color: var(--ppal-border);
+}
+
+.ppal-nav__breadcrumb-actual {
+  color: var(--ppal-text);
+  font-weight: 700;
+}
+
+/* -----------------------------------------------------------------
+   Grupo expandible (ej. "Ayuda >") — abre un submenú
+   ----------------------------------------------------------------- */
+.ppal-nav__grupo-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 11px 10px;
+  margin-bottom: 4px;
+  border: none;
+  background: transparent;
+  border-radius: 9px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--ppal-text);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.ppal-nav__grupo-btn:hover {
+  background: var(--ppal-brand-light);
+}
+
+.ppal-nav__grupo-btn--activo {
+  color: var(--ppal-brand);
+}
+
+.ppal-nav__grupo-btn svg {
+  color: var(--ppal-text-muted);
+  flex-shrink: 0;
+}
+
+/* -----------------------------------------------------------------
+   Vista de submenú — botón volver + header con "Ver todo" + lista
+   ----------------------------------------------------------------- */
+.ppal-nav__volver {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 6px;
+  margin-bottom: 10px;
+  border: none;
+  background: transparent;
+  color: var(--ppal-text-muted);
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ppal-nav__volver:hover {
+  color: var(--ppal-brand);
+}
+
+.ppal-nav__submenu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 4px 10px 12px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid var(--ppal-border);
+}
+
+.ppal-nav__submenu-titulo {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ppal-text);
+}
+
+.ppal-nav__ver-todo {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ppal-brand);
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
+.ppal-nav__sublink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 11px 10px;
+  border-bottom: 1px solid var(--ppal-border);
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--ppal-text);
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.ppal-nav__sublink:last-child {
+  border-bottom: none;
+}
+
+.ppal-nav__sublink svg {
+  flex-shrink: 0;
+  color: var(--ppal-text-muted);
+}
+
+.ppal-nav__sublink:hover {
+  background: var(--ppal-brand-light);
+}
+
+.ppal-nav__sublink--activo {
+  color: var(--ppal-brand);
+  font-weight: 700;
+}
+
+/* -----------------------------------------------------------------
    Cuerpo: sidebar + main
    ----------------------------------------------------------------- */
 .ppal-main {
@@ -303,7 +466,9 @@
     display: none;
   }
 
-  /* --- Panel del drawer: fijo a la izquierda, oculto fuera de pantalla --- */
+  /* --- Panel del drawer: fijo a la izquierda, oculto fuera de pantalla ---
+     Sombra en dos capas (una cercana + una difusa) para dar sensación
+     real de elevación, en vez de una sombra plana de un solo tono. */
   .ppal-drawer-panel {
     display: flex;
     flex-direction: column;
@@ -316,7 +481,9 @@
     z-index: 50;
     transform: translateX(-100%);
     transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 4px 0 24px rgba(26, 26, 58, 0.18);
+    box-shadow:
+      2px 0 4px rgba(26, 26, 58, 0.12),
+      12px 0 32px rgba(26, 26, 58, 0.22);
   }
 
   .ppal-drawer-panel--abierto {
@@ -412,11 +579,28 @@
     cursor: pointer;
   }
 
-  /* --- Efecto "push": arrastra toda la página hacia la derecha --- */
+  /* --- Efecto "push": arrastra toda la página (y el navbar, ver abajo)
+     hacia la derecha, encogiéndola levemente para dar sensación de
+     profundidad — como si retrocediera detrás del drawer. --- */
   .ppal-shift--empujado {
-    transform: translateX(var(--ppal-drawer-w));
+    transform: translateX(var(--ppal-drawer-w)) scale(0.96);
     border-radius: 18px;
     overflow: hidden;
     box-shadow: -10px 0 30px rgba(26, 26, 58, 0.2);
+  }
+
+  /* -----------------------------------------------------------------
+     Empuje del Navbar global (vive en App.jsx, fuera de este
+     componente — ver LayoutPaginaPrincipal.jsx). Se activa con una
+     clase en <body> en vez de anidarlo en el árbol de React, para no
+     tener que reestructurar App.jsx ni romper el position:sticky /
+     los overlays position:fixed que ya tiene el Navbar.
+     ----------------------------------------------------------------- */
+  body.ppal-drawer-open .navbar {
+    transform: translateX(var(--ppal-drawer-w)) scale(0.96);
+    transform-origin: left center;
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 0 0 18px 0;
+    overflow: hidden;
   }
 }
