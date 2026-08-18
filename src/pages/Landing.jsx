@@ -208,7 +208,7 @@ function Landing() {
       {/* ================================================================ */}
       <section className="landing-beneficios">
         <div className="landing-beneficios__header">
-          <h2>Beneficios de Droguería Carrisán</h2>
+          <h2>Beneficios de Droguería Carrisan</h2>
           <a href="#" className="landing-link">Ver todo +</a>
         </div>
         <ul className="landing-beneficios__lista">
@@ -225,9 +225,9 @@ function Landing() {
       {/* 3. MÁS FORMAS DE GASTAR MENOS                                    */}
       {/* ================================================================ */}
       <section className="landing-ahorros">
-        <h2>Más formas de gastar menos</h2>
+        <h2>Más formas de optimizar tu presupuesto</h2>
         <p className="landing-ahorros__subtitulo">
-          Desde cupones hasta ahorros para miembros Prime, trabajamos duro para encontrar precios bajos para ti.
+          Diseñamos soluciones comerciales que protegen la rentabilidad de tu institución.
         </p>
         <div className="landing-ahorros__grid">
           {AHORROS.map((item) => (
@@ -240,59 +240,60 @@ function Landing() {
           ))}
         </div>
         <a href="#" className="btn-landing btn-landing--outline landing-ahorros__cta">
-          Explore all the ways to save
+          Explora nuestros tipo de descuentos
         </a>
       </section>
 
       {/* ================================================================ */}
-      {/* 4. SEGUROS                                                       */}
+      {/* ================================================================ */}
+      {/* 4. NORMATIVA Y FACTURACIÓN FISCAL                                */}
       {/* ================================================================ */}
       <section className="landing-seguros">
-        <ImagePlaceholder label="Imagen seguros" className="landing-seguros__imagen" />
+        <ImagePlaceholder label="Imagen Facturación y Permisos" className="landing-seguros__imagen" />
         <div className="landing-seguros__texto">
-          <h2>Se aceptan la mayoría de planes de seguros</h2>
-          <p>Calculamos tu copago de forma automática para que nunca tengas que preguntarte qué cobertura tienes.</p>
-          <a href="#" className="btn-landing btn-landing--primario">Check if we accept your insurance</a>
+          <h2>Facturación fiscal y respaldo sanitario al día</h2>
+          <p>Cumplimiento total de la normativa sanitaria venezolana, emisión de facturación clara adaptada a contribuyentes especiales y trazabilidad documentada en cada lote.</p>
+          <a href="#" className="btn-landing btn-landing--primario">Ver condiciones comerciales</a>
         </div>
       </section>
 
       {/* ================================================================ */}
-      {/* 5. DESPÍDETE DE LAS FILAS                                        */}
+      {/* 5. LOGÍSTICA Y DESPACHOS PRIORITARIOS                            */}
       {/* ================================================================ */}
       <section className="landing-envios">
         <div className="landing-envios__media">
-          <ImagePlaceholder label="Imagen envío" className="landing-envios__imagen" />
+          <ImagePlaceholder label="Imagen Despacho B2B" className="landing-envios__imagen" />
           <div className="landing-envios__notificacion">
             <Check size={16} className="landing-envios__notificacion-icono" />
             <div>
-              <strong>Paquete enviado</strong>
-              <span>Ayer a las 12:44 AM, Austin, TX</span>
+              <strong>Orden en ruta de entrega</strong>
+              <span>Hoy a las 09:15 AM — Enviado</span>
             </div>
           </div>
         </div>
         <div className="landing-envios__texto">
-          <h2>Despídete de las filas en la farmacia</h2>
-          <p>Entregamos tus medicamentos directamente en tu puerta, con actualizaciones sobre el estado del envío.</p>
-          <a href="#" className="btn-landing btn-landing--primario">Sign up | Sign in</a>
-          <a href="#" className="landing-link">¿Ya nos enviaste una receta?</a>
+          <h2>Cero interrupciones en tu cadena de suministro</h2>
+          <p>Entregamos tus medicamentos e insumos quirúrgicos directamente en la puerta de tu clínica o farmacia, con tiempos de respuesta prioritarios para urgencias médicas.</p>
+          <a href="#" className="btn-landing btn-landing--primario">Crear Cuenta B2B</a>
+          <a href="#" className="landing-link">¿Necesitas un despacho de emergencia?</a>
         </div>
       </section>
 
       {/* ================================================================ */}
-      {/* 6. AYUDA CON MEDICAMENTOS                                        */}
+      {/* 6. GESTIÓN MULTIUSUARIO CORPORATIVA                              */}
       {/* ================================================================ */}
       <section className="landing-ayuda-meds">
-        <ImagePlaceholder label="Imagen ayuda" className="landing-ayuda-meds__imagen" />
+        <ImagePlaceholder label="Imagen Gestión Multiusuario" className="landing-ayuda-meds__imagen" />
         <div className="landing-ayuda-meds__texto">
-          <span className="landing-badge">NUEVO</span>
-          <h2>Obtén ayuda con tus medicamentos</h2>
-          <p>Deja que alguien de tu confianza administre tus recetas, configure los resurtidos y mantenga actualizada tu información de salud.</p>
-          <a href="#" className="btn-landing btn-landing--primario">Invite someone to help with your meds</a>
+          <span className="landing-badge">NUEVO B2B</span>
+          <h2>Gestión en una sola cuenta para tu equipo</h2>
+          <p>Permite que tu farmacéutico regente, jefe de compras o departamento de administración gestionen solicitudes, aprueben órdenes y descarguen facturas desde una misma cuenta corporativa.</p>
+          <a href="#" className="btn-landing btn-landing--primario">Configurar cuenta institucional</a>
           <div className="landing-ayuda-meds__nota">
             <HeartHandshake size={22} />
             <div>
-              <strong>¿Quieres ayudar a otro adulto?</strong>
-              <p>Pídele que te invite desde su configuración de cuenta. <a href="#">Consulta las preguntas frecuentes</a>.</p>
+              <strong>¿Gestionas una red de farmacias o grupo médico?</strong>
+              <p>Consolida el abastecimiento de múltiples sedes con atención personalizada. <a href="#">Hablar con un asesor de cuentas</a>.</p>
             </div>
           </div>
         </div>
@@ -303,24 +304,24 @@ function Landing() {
       {/* ================================================================ */}
       <section className="landing-ayudarte">
         <div className="landing-ayudarte__texto">
-          <h2>Estamos aquí para ayudarte</h2>
-          <p>Nuestros profesionales de farmacia autorizados revisan cada pedido antes del envío. ¿Quieres preguntarles algo? Comunícate en cualquier momento, de día o de noche.</p>
+          <h2>Asesoría técnica y respaldo comercial</h2>
+          <p>Nuestro equipo de regentes farmacéuticos y especialistas B2B verifica la calidad y trazabilidad de cada despacho. ¿Necesitas un requerimiento especial para tu quirófano o farmacia? Contáctanos directamente.</p>
           <div className="landing-ayudarte__badges">
-            <ImagePlaceholder label="Badge 1" className="landing-badge-img" />
-            <ImagePlaceholder label="Badge 2" className="landing-badge-img" />
+            <ImagePlaceholder label="Permiso Sanitario SACS" className="landing-badge-img" />
+            <ImagePlaceholder label="Soporte Directo B2B" className="landing-badge-img" />
           </div>
         </div>
-        <ImagePlaceholder label="Imagen farmacéutica" className="landing-ayudarte__imagen" />
+        <ImagePlaceholder label="Imagen Atención Farmacéutica B2B" className="landing-ayudarte__imagen" />
       </section>
 
       {/* ================================================================ */}
-      {/* 8. HOW IT WORKS                                                  */}
+      {/* 8. CÓMO FUNCIONA                                                 */}
       {/* ================================================================ */}
       <section className="landing-como-funciona">
-        <h2>How it works</h2>
+        <h2>¿Cómo funciona nuestro portal?</h2>
         <a href="#" className="landing-video-link">
           <span className="landing-video-link__icono"><Play size={16} /></span>
-          Discover Amazon Pharmacy (0:47)
+          Conoce la plataforma de Droguería Carrisan en 1 minuto
         </a>
         <Carrusel
           items={PASOS}
@@ -334,14 +335,14 @@ function Landing() {
             </>
           )}
         />
-        <a href="#" className="btn-landing btn-landing--solido">Learn more about how it works</a>
+        <a href="#" className="btn-landing btn-landing--solido">Conocer más sobre el proceso de compra</a>
       </section>
 
       {/* ================================================================ */}
       {/* 9. OPINIONES DE CLIENTES                                         */}
       {/* ================================================================ */}
       <section className="landing-testimonios">
-        <h2>Las opiniones de los clientes</h2>
+        <h2>Lo que dicen instituciones y médicos que confían en nosotros</h2>
         <Carrusel
           items={TESTIMONIOS}
           claseContenedor="landing-testimonios__grid"
@@ -354,26 +355,26 @@ function Landing() {
                 ))}
               </div>
               <p>“{t.texto}”</p>
-              <span>– {t.autor}, cliente de Droguería Carrisán</span>
+              <span>– {t.autor}</span>
             </>
           )}
         />
       </section>
 
       {/* ================================================================ */}
-      {/* 10. MORE TO EXPLORE                                              */}
+      {/* 10. MÁS POR EXPLORAR                                             */}
       {/* ================================================================ */}
       <section className="landing-explorar">
-        <h2>More to explore</h2>
-        <p className="landing-explorar__subtitulo">Discover other ways Droguería Carrisán can help you stay healthy.</p>
+        <h2>Más soluciones para tu institución</h2>
+        <p className="landing-explorar__subtitulo">Descubre todos los servicios diseñados para potenciar la operatividad de tu centro de salud o farmacia.</p>
         <div className="landing-explorar__grid">
           {MAS_EXPLORAR.map((item) => (
             <div key={item.titulo} className="landing-explorar__card">
-              <ImagePlaceholder label="Imagen" className="landing-explorar__card-imagen" />
+              <ImagePlaceholder label="Imagen Servicio" className="landing-explorar__card-imagen" />
               <div className="landing-explorar__card-texto">
                 <h3>{item.titulo}</h3>
                 <p>{item.texto}</p>
-                <a href="#" className="landing-link">Learn more ›</a>
+                <a href="#" className="landing-link">Saber más ›</a>
               </div>
             </div>
           ))}
@@ -381,17 +382,17 @@ function Landing() {
       </section>
 
       {/* ================================================================ */}
-      {/* 11. FAQ                                                          */}
+      {/* 11. PREGUNTAS FRECUENTES                                         */}
       {/* ================================================================ */}
       <section className="landing-faq">
-        <h2>Tal vez te preguntes</h2>
+        <h2>Preguntas frecuentes</h2>
         <div className="landing-faq__lista">
           {FAQS.map((faq) => (
             <FaqItem key={faq.pregunta} {...faq} />
           ))}
         </div>
         <p className="landing-faq__otras">
-          Other questions? Visit our <a href="#">Help Center ›</a>
+          ¿Tienes otras dudas sobre aperturas de cuenta o líneas de crédito? Visita nuestro <a href="#">Centro de Ayuda›</a>
         </p>
       </section>
 
@@ -399,9 +400,9 @@ function Landing() {
       {/* 12. CTA FINAL                                                    */}
       {/* ================================================================ */}
       <section className="landing-cta-final">
-        <h2>Entregamos tu medicamento.</h2>
-        <a href="#" className="btn-landing btn-landing--primario">Sign up | Sign in</a>
-        <a href="#" className="landing-link landing-link--claro">¿Ya nos enviaste una receta?</a>
+        <h2>Abastece tu institución con la droguería que te respalda.</h2>
+        <a href="#" className="btn-landing btn-landing--primario">Crear Cuenta | Iniciar Sesión</a>
+        <a href="#" className="landing-link landing-link--claro">¿Necesitas ayuda para completar tus recaudos?</a>
       </section>
 
       {/* ================================================================ */}
