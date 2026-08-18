@@ -4,8 +4,8 @@ import { Link, useSearchParams } from 'react-router-dom'
 import api from '../api/axios'
 import { useCart } from '../context/CartContext'
 import { useFavoritos } from '../context/FavoritosContext'
-import LayoutPaginaPrincipal from '../components/paginas-principales/LayoutPaginaPrincipal'
-import { NAV_ITEMS } from '../components/paginas-principales/navItems'
+import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
+import { NAV_ITEMS } from '../components/paginas-principales/NavItems'
 import './MisItems.css'
 
 // Sugerencias de listas rápidas. Solo crea la lista con este nombre;
