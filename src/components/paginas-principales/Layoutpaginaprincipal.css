@@ -596,8 +596,12 @@
      tener que reestructurar App.jsx ni romper el position:sticky /
      los overlays position:fixed que ya tiene el Navbar.
      ----------------------------------------------------------------- */
+  /* !important a propósito: esta regla debe ganar pase lo que pase,
+     incluso si algún día otro CSS le agrega su propio transform al
+     navbar (ej. un efecto de scroll) — no queremos volver a perseguir
+     un problema de especificidad como el de "display:none" con Chakra. */
   body.ppal-drawer-open .navbar-container {
-    transform: translateX(var(--ppal-drawer-w)) scale(0.96);
+    transform: translateX(var(--ppal-drawer-w)) scale(0.96) !important;
     transform-origin: left center;
     transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
     border-radius: 0 0 18px 0;
