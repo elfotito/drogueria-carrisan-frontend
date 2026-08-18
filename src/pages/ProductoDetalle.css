@@ -1,7 +1,7 @@
 /* ==========================================================
    ProductoDetalle — Droguería Carrisán
    Paleta: Índigo #232B45 · Azul #1B4B8F · Teal #12A594
-           Ink #14182A · Paper #FBFAF7
+   Ink #14182A · Paper #FBFAF7
    ========================================================== */
 
 .detalle-container,
@@ -18,12 +18,12 @@
   padding: 20px 24px 60px;
   font-family: 'Inter', sans-serif;
   background: #FBFAF7;
-  overflow-x: hidden; /* red de seguridad contra desborde horizontal */
+  overflow-x: hidden;
 }
 
 /* ---------------------------------------------------------
    Breadcrumb
---------------------------------------------------------- */
+   --------------------------------------------------------- */
 .detalle-breadcrumb {
   display: flex;
   align-items: center;
@@ -50,21 +50,27 @@
 }
 
 /* ---------------------------------------------------------
-   Sección principal: imagen + info
---------------------------------------------------------- */
+   Layout principal — grid con áreas nombradas
+   Desktop: imagen y buybox arriba una al lado de la otra;
+   buybox ocupa las 3 filas y queda "sticky" mientras el
+   usuario recorre imagen → acordeón → reseñas.
+   --------------------------------------------------------- */
 .detalle-main {
   display: grid;
-  grid-template-columns: minmax(0, 480px) 1fr;
-  gap: 48px;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  grid-template-areas:
+    "imagen   buybox"
+    "acordeon buybox"
+    "resenas  buybox";
+  gap: 40px;
+  align-items: start;
   margin-bottom: 56px;
 }
 
-@media (max-width: 860px) {
-  .detalle-main {
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
-}
+.detalle-area-imagen { grid-area: imagen; }
+.detalle-area-buybox { grid-area: buybox; min-width: 0; }
+.detalle-area-acordeon { grid-area: acordeon; }
+.detalle-area-resenas { grid-area: resenas; }
 
 /* Imagen */
 .detalle-imagen-wrapper {
@@ -97,12 +103,24 @@
   font-weight: 700;
 }
 
-/* Info */
-.detalle-info {
+/* ---------------------------------------------------------
+   Buybox flotante (columna derecha)
+   --------------------------------------------------------- */
+.detalle-buybox-wrapper {
+  position: sticky;
+  top: 96px; /* ajusta según la altura real de tu navbar fija */
+}
+
+.detalle-buybox {
   display: flex;
   flex-direction: column;
   gap: 14px;
   min-width: 0;
+  background: #FFFFFF;
+  border: 1px solid #E7E5DE;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(20, 24, 42, 0.06);
 }
 
 .detalle-marca {
@@ -116,12 +134,31 @@
 
 .detalle-titulo {
   font-family: 'Manrope', sans-serif;
-  font-size: 1.7rem;
+  font-size: 1.5rem;
   font-weight: 800;
   color: #14182A;
   margin: 0;
   line-height: 1.3;
   overflow-wrap: break-word;
+}
+
+/* Placeholder de estrellas — reemplazar cuando se conecten reseñas reales */
+.detalle-buybox-estrellas {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  color: #A9AC9F;
+}
+
+.detalle-estrellas-icono {
+  color: #D8D6CE;
+  letter-spacing: 2px;
+  font-size: 0.9rem;
+}
+
+.detalle-estrellas-texto {
+  color: #A9AC9F;
 }
 
 .detalle-disponibilidad {
@@ -155,7 +192,7 @@
 
 .detalle-precio-usd {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 2.1rem;
+  font-size: 2rem;
   font-weight: 800;
   color: #12A594;
 }
@@ -175,18 +212,17 @@
 /* Acciones */
 .detalle-acciones {
   display: flex;
+  flex-direction: column;
   gap: 12px;
-  align-items: center;
-  flex-wrap: wrap;
 }
 
 .detalle-cantidad {
   display: flex;
   align-items: center;
+  align-self: flex-start;
   border: 1.5px solid #E7E5DE;
   border-radius: 999px;
   overflow: hidden;
-  flex-shrink: 0;
 }
 
 .detalle-cantidad button {
@@ -218,15 +254,14 @@
 }
 
 .detalle-btn-agregar {
-  flex: 1 1 180px;
-  min-width: 0;
-  padding: 12px 28px;
+  width: 100%;
+  padding: 14px 28px;
   background: #1B4B8F;
   color: #FBFAF7;
   border: none;
   border-radius: 999px;
   font-weight: 700;
-  font-size: 0.92rem;
+  font-size: 0.95rem;
   cursor: pointer;
   transition: background 0.15s ease;
 }
@@ -262,33 +297,69 @@
 }
 
 .detalle-nota-precio {
-  font-size: 0.76rem;
+  font-size: 0.72rem;
   color: #A9AC9F;
-  margin: 4px 0 0;
+  margin: 0;
 }
 
 /* ---------------------------------------------------------
-   Sección de detalles
---------------------------------------------------------- */
-.detalle-detalles {
-  border-top: 1px solid #E7E5DE;
-  padding-top: 32px;
-  margin-bottom: 40px;
-}
-
-.detalle-detalles h2 {
+   Título de sección genérico (acordeón / reseñas)
+   --------------------------------------------------------- */
+.detalle-seccion-titulo {
   font-family: 'Manrope', sans-serif;
   font-size: 1.2rem;
   font-weight: 800;
-  margin: 0 0 18px;
+  margin: 0 0 16px;
   color: #14182A;
 }
 
-.detalle-grid {
+/* ---------------------------------------------------------
+   Acordeón "Acerca de este producto"
+   --------------------------------------------------------- */
+.detalle-acordeon {
+  border-top: 1px solid #E7E5DE;
+  padding-top: 32px;
+}
+
+.detalle-acc-item {
+  border-bottom: 1px solid #E7E5DE;
+}
+
+.detalle-acc-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: 'Manrope', sans-serif;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #14182A;
+  text-align: left;
+}
+
+.detalle-acc-flecha {
+  color: #5B6270;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.detalle-acc-flecha.abierta {
+  transform: rotate(180deg);
+}
+
+.detalle-acc-contenido {
+  padding: 0 4px 20px;
+}
+
+.detalle-acc-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr));
   gap: 12px;
-  margin-bottom: 28px;
 }
 
 .detalle-campo {
@@ -296,7 +367,7 @@
   flex-direction: column;
   gap: 4px;
   padding: 14px 16px;
-  background: #FFFFFF;
+  background: #F7F6F1;
   border: 1px solid #E7E5DE;
   border-radius: 12px;
   min-width: 0;
@@ -317,27 +388,10 @@
   overflow-wrap: break-word;
 }
 
-.detalle-valor.disponible {
-  color: #0E7C63;
-}
+.detalle-valor.disponible { color: #0E7C63; }
+.detalle-valor.agotado { color: #B3261E; }
 
-.detalle-valor.agotado {
-  color: #B3261E;
-}
-
-.detalle-descripcion {
-  margin-top: 20px;
-}
-
-.detalle-descripcion h3 {
-  font-family: 'Manrope', sans-serif;
-  font-size: 1rem;
-  font-weight: 700;
-  margin: 0 0 8px;
-  color: #14182A;
-}
-
-.detalle-descripcion p {
+.detalle-acc-texto {
   font-size: 0.92rem;
   line-height: 1.7;
   color: #5B6270;
@@ -346,20 +400,50 @@
 }
 
 /* ---------------------------------------------------------
+   Reseñas — placeholder
+   --------------------------------------------------------- */
+.detalle-resenas {
+  border-top: 1px solid #E7E5DE;
+  padding-top: 32px;
+}
+
+.detalle-resenas-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 20px;
+  background: #F7F6F1;
+  border: 1px dashed #D8D6CE;
+  border-radius: 12px;
+}
+
+.detalle-resenas-placeholder .detalle-estrellas-icono {
+  font-size: 1.2rem;
+}
+
+.detalle-resenas-placeholder p {
+  margin: 0;
+  font-size: 0.88rem;
+  color: #5B6270;
+}
+
+/* ---------------------------------------------------------
    Carruseles relacionados
---------------------------------------------------------- */
+   --------------------------------------------------------- */
 .detalle-carruseles {
   display: flex;
   flex-direction: column;
   gap: 40px;
   border-top: 1px solid #E7E5DE;
   padding-top: 36px;
+  padding-bottom: 40px;
   min-width: 0;
 }
 
 /* ---------------------------------------------------------
    Skeleton
---------------------------------------------------------- */
+   --------------------------------------------------------- */
 .detalle-skeleton {
   display: grid;
   grid-template-columns: minmax(0, 480px) 1fr;
@@ -395,14 +479,8 @@
   overflow: hidden;
 }
 
-.skeleton-titulo {
-  height: 32px;
-  width: 70%;
-}
-
-.skeleton-corto {
-  width: 40%;
-}
+.skeleton-titulo { height: 32px; width: 70%; }
+.skeleton-corto { width: 40%; }
 
 .skeleton-imagen::after,
 .skeleton-line::after {
@@ -420,7 +498,7 @@
 
 /* ---------------------------------------------------------
    Error
---------------------------------------------------------- */
+   --------------------------------------------------------- */
 .detalle-error {
   text-align: center;
   padding: 80px 20px;
@@ -448,10 +526,27 @@
 
 /* ---------------------------------------------------------
    Responsive — tablet y móvil
---------------------------------------------------------- */
+   Se apila todo en una sola columna y la buybox deja de
+   ser sticky (fluye en el orden natural, justo después
+   de la imagen, como en tu referencia móvil).
+   --------------------------------------------------------- */
 @media (max-width: 860px) {
   .detalle-container {
     padding: 16px 16px 48px;
+  }
+
+  .detalle-main {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "imagen"
+      "buybox"
+      "acordeon"
+      "resenas";
+    gap: 20px;
+  }
+
+  .detalle-buybox-wrapper {
+    position: static;
   }
 
   .detalle-imagen-wrapper {
@@ -464,21 +559,18 @@
   }
 
   .detalle-titulo {
-    font-size: 1.35rem;
+    font-size: 1.3rem;
   }
 
   .detalle-precio-usd {
     font-size: 1.7rem;
   }
-}
 
-@media (max-width: 480px) {
-  .detalle-imagen-wrapper {
-    padding: 16px;
-    min-height: 240px;
-  }
-
-  .detalle-btn-agregar {
-    flex-basis: 100%;
+  .detalle-buybox {
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    box-shadow: none;
+    padding: 0 0 20px;
   }
 }
