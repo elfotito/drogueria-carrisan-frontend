@@ -75,54 +75,66 @@ function Carrusel({ items, renderItem, claseContenedor, claseTarjeta }) {
 }
 
 const BENEFICIOS = [
-  'Linea de Credito personalizada',
-  'Abastecimiento a tu Medida',
-  'Entregas gratis y rápidas',
-  'Soluciones de Suministro Médico',
-  'Farmacéuticos con licencia',
+  'Línea de Crédito B2B para todo tipo de empresa',
+  'Catalogo Integral Unificado',
+  'Logística de Entrega Prioritaria',
+  'Pedidos Flexibles y Sin Mínimos Exigentes',
+  'Seguridad y Garantía Sanitaria 100% Certificada',
 ]
 
 const AHORROS = [
   {
-    titulo: 'Ahorros Prime',
-    texto: 'Ahorra hasta el 80%* con descuentos exclusivos para miembros Prime.',
-    link: 'Más información sobre ahorros Prime',
+    titulo: 'Descuento por Volumen y Escala',
+    texto: 'Reduce tu costo por unidad al comprar por empaque cerrado o bulto. Mientas más consolides, mejor es tu margen.',
+    link: 'Ver escalas de precio',
   },
   {
-    titulo: 'RxPass',
-    texto: 'Los miembros Prime obtienen todos los medicamentos elegibles que tomen por una suscripción de $5 al mes.**',
-    link: 'Más información sobre RxPass',
+    titulo: 'Financiamiento B2B a 7 Días',
+    texto: 'Ahorra en costo de oportunidad: recibe tu inventario hoy, genera ingresos con tus pacientes y paga a los 7 días sin intereses.',
+    link: 'Más información sobre el crédito',
   },
   {
-    titulo: 'Cupones',
-    texto: 'Aplicamos automáticamente los cupones del fabricante elegibles al proceder al pago.',
-    link: 'Más información sobre cupones',
+    titulo: 'Precios Directos de Distribución',
+    texto: 'Sin intermediarios. Accede a precios especiales de origen y ofertas semanales en líneas comerciales y hospitalarias seleccionadas.',
+    link: 'Ver ofertas del mes',
   },
 ]
 
 const PASOS = [
   {
     numero: 1,
-    titulo: 'Sign up for Amazon Pharmacy',
-    texto: 'It’s simple. And free, always. Sign in or sign up to get started.',
+    titulo: 'Crea tu Cuenta B2B',
+    texto: 'Un proceso 100% gratuito y rápido. Vincula tu farmacia, clínica o registro médico para habilitar tus precios preferenciales de distribución.',
   },
   {
     numero: 2,
-    titulo: 'We’ll get your prescription',
-    texto: 'We can work with your insurance and current pharmacy to get your prescription.',
+    titulo: 'Arma tu Pedido en Tiempo Real',
+    texto: 'Explora el catálogo comercial y hospitalario, consulta el inventario disponible al instante y genera tu orden a cualquier hora.',
   },
   {
     numero: 3,
-    titulo: 'Get your meds delivered',
-    texto: 'Have a question? Our pharmacists are available 24/7.',
+    titulo: 'Recibe y Paga a los 7 Días',
+    texto: 'Despachamos de forma prioritaria directo a tu establecimiento para que utilices tu mercancía y gestiones tu pago con tu línea de crédito.',
   },
 ]
 
 const TESTIMONIOS = [
-  { texto: 'Menos viajes a la farmacia y un servicio más confiable que el que recibía en la farmacia de antes', autor: 'Anita F.' },
-  { texto: 'Comprar en Amazon es muy sencillo. No tengo que esperar en la cola y cuando hago el pedido llega a mi puerta.', autor: 'Louis D.' },
-  { texto: 'Ya no tengo que acudir a la consulta de mi médico para resurtir mis medicamentos. Amazon Pharmacy se encarga de todo.', autor: 'Meredith M.' },
-  { texto: 'Es muy fácil comprar mis medicamentos con receta y luego recibirlos rápidamente en mi domicilio.', autor: 'Kathleen F.' },
+  { 
+    texto: 'El crédito a 7 días transformó nuestro flujo de caja. Ahora podemos mantener los anaqueles llenos y vender el producto antes de pagar la factura.', 
+    autor: 'Dra. Elena R. — Propietaria de Farmacia' 
+  },
+  { 
+    texto: 'Consultar el inventario disponible en tiempo real y hacer pedidos a cualquier hora eliminó las esperas por cotizaciones en WhatsApp. Ganamos semanas de trabajo.', 
+    autor: 'Lic. Marcos T. — Administración de Centro Médico' 
+  },
+  { 
+    texto: 'Poder pedir exactamente las ampollas y la insumos que necesito para mis cirugías sin la presión de un volumen mínimo es una ventaja enorme.', 
+    autor: 'Dr. Gustavo M. — Cirujano General' 
+  },
+  { 
+    texto: 'Consolidamos nuestras compras en un solo lugar. Conseguimos desde medicamentos de alta rotación hasta la línea hospitalaria, siempre con despacho puntual.', 
+    autor: 'Dra. Carmen S. — Directora de Clínica' 
+  },
 ]
 
 const MAS_EXPLORAR = [
@@ -184,7 +196,7 @@ function Landing() {
             
             <div className="landing-hero__acciones">
               <a href="#" className="landing-link">Más información ›</a>
-              <a href="#" className="btn-landing btn-landing--primario">Crear Cuenta | Iniciar Sesion</a>
+              <a href="#" className="btn-landing btn-landing--primario">Crear Cuenta   |   Iniciar Sesion</a>
               <a href="#" className="landing-link landing-link--secundario">¿Ya eres cliente?</a>
             </div>
           </div>
