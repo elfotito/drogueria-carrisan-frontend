@@ -1,50 +1,50 @@
 /* ==========================================================
    MisItems — Droguería Carrisán
-   Paleta: Índigo #232B45 · Azul #1B4B8F · Teal #12A594
+   Paleta: Índigo #1A1A3A · Azul #0052DC · Teal #12A594
            Ink #14182A · Paper #FBFAF7
    ========================================================== */
 
 .misitems-page {
-  min-height: 100vh;
-  background: #FBFAF7;
   font-family: 'Inter', sans-serif;
 }
 
 /* ---------------------------------------------------------
    Tabs superiores (Mis Items / Comprar de nuevo)
+   Nota: ya no usan position:sticky — esta página ahora vive
+   dentro de <LayoutPaginaPrincipal>, que ya tiene su propia
+   topbar sticky en móvil; dos sticky apilados se pisaban entre sí.
 --------------------------------------------------------- */
 .misitems-tabs {
   display: flex;
   background: #FFFFFF;
-  border-bottom: 1px solid #E7E5DE;
-  position: sticky;
-  top: 0;
-  z-index: 10;
+  border: 1px solid #E7E5DE;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 18px;
 }
 
 .misitems-tab {
   flex: 1;
   background: none;
   border: none;
-  padding: 16px 8px 13px;
+  padding: 13px 8px;
   font-family: 'Manrope', sans-serif;
   font-weight: 700;
   font-size: 0.88rem;
   color: #5B6270;
   cursor: pointer;
   border-bottom: 3px solid transparent;
-  transition: color 0.15s ease, border-color 0.15s ease;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
 }
 
 .misitems-tab--activo {
   color: #14182A;
-  border-bottom-color: #1B4B8F;
+  background: #EEF3FB;
+  border-bottom-color: #0052DC;
 }
 
 .misitems-container {
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: 20px 16px 40px;
+  padding: 0;
 }
 
 .misitems-section {
@@ -92,8 +92,8 @@
 .misitems-agregar-todos {
   flex-shrink: 0;
   background: none;
-  border: 1.5px solid #1B4B8F;
-  color: #1B4B8F;
+  border: 1.5px solid #0052DC;
+  color: #0052DC;
   font-weight: 700;
   font-size: 0.8rem;
   padding: 8px 16px;
@@ -104,7 +104,7 @@
 }
 
 .misitems-agregar-todos:hover {
-  background: #1B4B8F;
+  background: #0052DC;
   color: #FBFAF7;
 }
 
@@ -123,8 +123,8 @@
 }
 
 .misitems-buscador:focus-within {
-  border-color: #1B4B8F;
-  color: #1B4B8F;
+  border-color: #0052DC;
+  color: #0052DC;
 }
 
 .misitems-buscador input {
@@ -325,7 +325,7 @@
 
 .itemcard__cta {
   flex-shrink: 0;
-  background: #1B4B8F;
+  background: #0052DC;
   color: #FBFAF7;
   border: none;
   border-radius: 999px;
@@ -337,7 +337,7 @@
 }
 
 .itemcard__cta:hover {
-  background: #163c72;
+  background: #003bad;
 }
 
 .itemcard__cta--cantidad {
@@ -403,7 +403,7 @@
 
 .misitems-vacio__cta {
   display: inline-block;
-  background: #1B4B8F;
+  background: #0052DC;
   color: #FBFAF7;
   font-weight: 700;
   padding: 10px 22px;
@@ -447,8 +447,8 @@
 }
 
 .carrusel-listas__agregar:hover {
-  border-color: #1B4B8F;
-  color: #1B4B8F;
+  border-color: #0052DC;
+  color: #0052DC;
 }
 
 .carrusel-listas__scroll {
@@ -535,11 +535,11 @@
 }
 
 .lista-chip--nueva:hover {
-  border-color: #1B4B8F;
+  border-color: #0052DC;
 }
 
 .lista-chip--nueva:hover .lista-chip__nombre {
-  color: #1B4B8F;
+  color: #0052DC;
 }
 
 .lista-chip--skeleton {
@@ -585,12 +585,12 @@
   padding: 10px 16px;
   font-weight: 600;
   font-size: 0.85rem;
-  color: #1B4B8F;
+  color: #0052DC;
   cursor: pointer;
 }
 
 .sugerencia-chip:hover {
-  border-color: #1B4B8F;
+  border-color: #0052DC;
 }
 
 .sugerencia-chip__icon {
@@ -774,7 +774,7 @@
 .misitems-modal__input {
   width: 100%;
   padding: 12px 14px;
-  border: 1.5px solid #1B4B8F;
+  border: 1.5px solid #0052DC;
   border-radius: 10px;
   font-size: 0.92rem;
   font-family: inherit;
@@ -1123,9 +1123,9 @@
    RESPONSIVE — Escritorio (≥1024px)
    ================================================================ */
 @media (min-width: 1024px) {
-  .misitems-container {
-    padding: 32px 40px 60px;
-  }
+  /* .misitems-container ya no necesita padding propio — el espaciado
+     ahora lo da el <LayoutPaginaPrincipal> que envuelve esta página
+     (.ppal-container), evitar duplicarlo acá. */
 
   /* Layout de favoritos: sidebar de filtros a la izquierda + contenido */
   .favoritos-layout {
@@ -1138,7 +1138,9 @@
   .favoritos-filtros--desktop {
     display: block;
     position: sticky;
-    top: 84px;
+    /* Mismo offset que el sidebar de cuenta (.ppal-sidebar__sticky)
+       para que ambas columnas se sientan alineadas al hacer scroll. */
+    top: 140px;
   }
 
   .favoritos-filtros-movil {
