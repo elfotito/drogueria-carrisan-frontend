@@ -2,12 +2,47 @@ import { useEffect, useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { Menu, X, ChevronRight, ChevronLeft, LogOut } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
-import BottomNav from '../BottomNav'
 import { NAV_PAGINAS_PRINCIPALES } from './Navpaginasprincipales'
 import './Layoutpaginaprincipal.css'
 
 // ---------------------------------------------------------------
-----------------
+// <LayoutPaginaPrincipal activo="ordenes" titulo="Mis Órdenes">
+//   {contenido de la página}
+// </LayoutPaginaPrincipal>
+//
+// Este es el layout base de "Páginas Principales": en desktop/tablet
+// (≥1024px) muestra una columna izquierda flotante y sticky con la
+// navegación (igual patrón que el resumen sticky de Carrito.jsx, pero
+// a la izquierda). En móvil (<1024px) esa columna se convierte en un
+// drawer que se abre con un botón de menú y "arrastra" el contenido
+// de la página (y el navbar) hacia la derecha con una transición
+// corta (efecto push, no overlay).
+//
+// El menú (prop "nav") es intercambiable: por defecto usa el menú de
+// cuenta (navPaginasPrincipales.js — Mis Órdenes, Estado de Cuenta,
+// Pagos, etc.), pero cualquier página puede pasarle otro array con la
+// misma forma para mostrar un menú totalmente distinto, por ejemplo:
+//
+//   <LayoutPaginaPrincipal activo="grocery" titulo="Grocery" nav={NAV_DEPARTAMENTOS}>
+//
+// Esto es para cuando armemos las páginas departamentales/catálogo:
+// van a necesitar links a categorías relacionadas (lo que el cliente
+// está explorando para comprar), no los links de cuenta de Mis
+// Órdenes/Pagos. Mismo componente, mismo drawer, mismo push del
+// navbar, mismos submenús — solo cambia qué lista de grupos renderiza.
+//
+// Los grupos con tipo: 'submenu' (ver navPaginasPrincipales.js) se
+// muestran como una sola fila que abre una segunda pantalla dentro
+// del mismo panel, con botón de volver y un link "Ver todo" — igual
+// al patrón "Browse Departments / See all" de Walmart.
+//
+// Nota: este componente usa elementos planos (div/nav/button) en vez
+// de <Box>/<Flex> de Chakra a propósito. Chakra inyecta su propio CSS
+// en runtime (vía Emotion) DESPUÉS de nuestros estilos estáticos, y
+// con especificidad empatada gana el que se inserta al final —
+// rompiendo nuestros media queries de display/flex-wrap responsivos.
+// Mismo criterio que ya usan MenuDrawer.jsx y EstadoCuenta.jsx.
+// ---------------------------------------------------------------
 // Un solo link/botón de nav, reusado en el menú principal y en los
 // submenús. Si el item trae "accion" (en vez de "to") se renderiza
 // como botón y dispara onAccion — para casos como "Crear lista nueva"
@@ -249,7 +284,6 @@ function LayoutPaginaPrincipal({ activo, titulo, subtitulo, acciones, nav = NAV_
           </div>
         </div>
 
-        <BottomNav />
       </div>
     </div>
   )
