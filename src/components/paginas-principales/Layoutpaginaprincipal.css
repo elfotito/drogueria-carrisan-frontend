@@ -180,6 +180,24 @@
   padding: 6px 10px 4px;
 }
 
+/* Grupo "pie" (footer del menú) — para cosas de soporte que no son el
+   foco de la página (ej. Ayuda/Contacto en Mis Items). Separado con
+   una línea arriba y algo más discreto que el resto del menú. */
+.ppal-nav__grupo--pie {
+  margin-top: 6px;
+  padding-top: 12px;
+  border-top: 1px solid var(--ppal-border);
+}
+
+.ppal-nav__grupo--pie .ppal-nav__link {
+  font-size: 0.85rem;
+  color: var(--ppal-text-muted);
+}
+
+.ppal-nav__grupo--pie .ppal-nav__link svg {
+  color: var(--ppal-text-muted);
+}
+
 .ppal-nav__link {
   display: flex;
   align-items: center;
@@ -191,6 +209,15 @@
   color: var(--ppal-text);
   text-decoration: none;
   transition: background 0.15s ease, color 0.15s ease;
+  /* Reset para cuando este mismo estilo se aplica a un <button>
+     (items tipo "accion", ej. "Crear lista nueva") en vez de a un
+     link — así se ven idénticos sin importar el elemento real. */
+  width: 100%;
+  border: none;
+  background: none;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
 }
 
 .ppal-nav__link svg {
@@ -341,6 +368,15 @@
   color: var(--ppal-text);
   text-decoration: none;
   transition: background 0.15s ease, color 0.15s ease;
+  /* Mismo reset que .ppal-nav__link, por si el item es "accion" */
+  width: 100%;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  background: none;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
 }
 
 .ppal-nav__sublink:last-child {
