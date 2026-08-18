@@ -3,8 +3,8 @@ import { Link, NavLink } from 'react-router-dom'
 import { Menu, X, ChevronRight, ChevronLeft, LogOut } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import BottomNav from '../BottomNav'
-import { NAV_PAGINAS_PRINCIPALES } from './navPaginasPrincipales'
-import './LayoutPaginaPrincipal.css'
+import { NAV_PAGINAS_PRINCIPALES } from './Navpaginasprincipales'
+import './Layoutpaginaprincipal.css'
 
 // ---------------------------------------------------------------
 // <LayoutPaginaPrincipal activo="ordenes" titulo="Mis Órdenes">
