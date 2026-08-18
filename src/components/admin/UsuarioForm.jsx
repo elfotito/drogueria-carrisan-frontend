@@ -1,8 +1,32 @@
 import { useState } from 'react'
+import {
+  Dialog,
+  Portal,
+  Field,
+  Input,
+  Textarea,
+  Box,
+  Text,
+  Flex,
+  Stack,
+  HStack,
+  Button,
+  Badge,
+  Separator,
+} from '@chakra-ui/react'
 import api from '../../api/axios'
-import './UsuarioForm.css'
+import { toaster } from '../ui/toaster'
 
-function UsuarioForm({ usuario, onClose, onGuardado }) {
+const AZUL = '#0052DC'
+const INDIGO = '#1A1A3A'
+const PASOS = ['Cuenta', 'Contacto', 'Preferencias']
+
+function colorEtiqueta(etiqueta) {
+  const mapa = { admin: 'purple', distribuidor: 'blue', cliente: 'gray' }
+  return mapa[etiqueta] || 'teal'
+}
+
+function UsuarioForm({ usuario, etiquetasSugeridas = [], isOpen, onClose, onGuardado }) {
   const esEdicion = Boolean(usuario)
 
   const [email, setEmail] = useState(usuario?.email || '')
@@ -13,9 +37,10 @@ function UsuarioForm({ usuario, onClose, onGuardado }) {
   const [direccionFiscal, setDireccionFiscal] = useState(usuario?.direccion_fiscal || '')
   const [direccionEntrega, setDireccionEntrega] = useState(usuario?.direccion_entrega || '')
   const [telefono, setTelefono] = useState(usuario?.telefono || '')
-  const [lineaCredito, setLineaCredito] = useState(usuario?.linea_credito || '')
+  const [lineaCredito, setLineaCredito] = useState(usuario?.linea_credito ?? '')
   const [activo, setActivo] = useState(usuario?.activo ?? true)
   const [deliveryGratis, setDeliveryGratis] = useState(usuario?.delivery_gratis || false)
+
   const [guardando, setGuardando] = useState(false)
   const [error, setError] = useState('')
   const [errores, setErrores] = useState({})
@@ -28,69 +53,46 @@ function UsuarioForm({ usuario, onClose, onGuardado }) {
     } else if (!/\S+@\S+\.\S+/.test(email)) {
       errs.email = 'Email inválido'
     }
-    
     if (!esEdicion && !password) {
       errs.password = 'La contraseña es requerida'
-    } else if (password && password.length < 6) {
+    } else if (!esEdicion && password.length < 6) {
       errs.password = 'Mínimo 6 caracteres'
     }
-    
     if (!nombre.trim()) {
       errs.nombre = 'El nombre es requerido'
     }
-    
     setErrores(errs)
     return Object.keys(errs).length === 0
   }
 
   function validarPaso2() {
     const errs = {}
-    // Las validaciones del paso 2 son opcionales, solo validar formato si hay datos
-    if (rifCedula && rifCedula.length < 6) {
-      errs.rifCedula = 'RIF/Cédula muy corto'
-    }
-    if (telefono && telefono.length < 7) {
-      errs.telefono = 'Teléfono muy corto'
-    }
-    if (lineaCredito && Number(lineaCredito) < 0) {
-      errs.lineaCredito = 'El crédito no puede ser negativo'
-    }
-    
+    if (rifCedula && rifCedula.length < 6) errs.rifCedula = 'RIF/Cédula muy corto'
+    if (telefono && telefono.length < 7) errs.telefono = 'Teléfono muy corto'
     setErrores(errs)
     return Object.keys(errs).length === 0
   }
 
-  function handleSiguiente() {
-    if (paso === 1) {
-      if (validarPaso1()) {
-        setPaso(2)
-      }
-    } else if (paso === 2) {
-      // Paso 2 no requiere validación estricta, solo validar formato
-      validarPaso2()
-      setPaso(3)
-    }
+  function irSiguiente() {
+    if (paso === 1 && validarPaso1()) setPaso(2)
+    else if (paso === 2 && validarPaso2()) setPaso(3)
   }
 
-  function handleAnterior() {
-    setPaso(p => Math.max(1, p - 1))
+  function irAnterior() {
+    setPaso((p) => Math.max(1, p - 1))
   }
 
-  async function handleSubmit(e) {
-    e.preventDefault()
+  async function guardar() {
     setError('')
-
-    // Validar todo antes de guardar
     if (!validarPaso1()) {
       setPaso(1)
       return
     }
-
     setGuardando(true)
 
     const payload = {
-      email,
-      nombre,
+      email: email.trim().toLowerCase(),
+      nombre: nombre.trim(),
       etiqueta,
       rif_cedula: rifCedula || null,
       direccion_fiscal: direccionFiscal || null,
@@ -98,12 +100,12 @@ function UsuarioForm({ usuario, onClose, onGuardado }) {
       telefono: telefono || null,
       linea_credito: Number(lineaCredito) || 0,
       delivery_gratis: deliveryGratis,
-      ...(esEdicion && { activo })
+      ...(esEdicion && { activo }),
     }
 
+    // La contraseña solo se envía al crear un usuario nuevo — no se permite
+    // modificarla desde el panel de administración una vez creado.
     if (!esEdicion) {
-      payload.password = password
-    } else if (password) {
       payload.password = password
     }
 
@@ -115,269 +117,195 @@ function UsuarioForm({ usuario, onClose, onGuardado }) {
       }
       onGuardado()
     } catch (err) {
-      setError(err.response?.data?.error || 'Error al guardar el usuario')
+      setError(err?.response?.data?.error || 'Error al guardar el usuario')
+      toaster.create({ title: 'No se pudo guardar el usuario', type: 'error' })
+    } finally {
       setGuardando(false)
     }
   }
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content usuario-form-modal" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2>{esEdicion ? '✏️ Editar Usuario' : '🆕 Nuevo Usuario'}</h2>
-          <button className="modal-close" onClick={onClose}>✕</button>
-        </div>
+    <Dialog.Root open={isOpen} onOpenChange={(e) => !e.open && onClose()} placement="center" scrollBehavior="inside">
+      <Portal>
+        <Dialog.Backdrop />
+        <Dialog.Positioner>
+          <Dialog.Content maxW="xl" borderRadius="xl">
+            <Dialog.Header bg={INDIGO} color="white" borderTopRadius="xl">
+              <Dialog.Title>{esEdicion ? 'Editar usuario' : 'Nuevo usuario'}</Dialog.Title>
+            </Dialog.Header>
+            <Dialog.CloseTrigger color="white" />
 
-        {/* Pasos */}
-        <div className="form-pasos">
-          <div className={`paso ${paso === 1 ? 'active' : paso > 1 ? 'completed' : ''}`}>
-            <div className="paso-numero">{paso > 1 ? '✓' : '1'}</div>
-            <span>Cuenta</span>
-          </div>
-          <div className="paso-linea"></div>
-          <div className={`paso ${paso === 2 ? 'active' : paso > 2 ? 'completed' : ''}`}>
-            <div className="paso-numero">{paso > 2 ? '✓' : '2'}</div>
-            <span>Contacto</span>
-          </div>
-          <div className="paso-linea"></div>
-          <div className={`paso ${paso === 3 ? 'active' : ''}`}>
-            <div className="paso-numero">3</div>
-            <span>Preferencias</span>
-          </div>
-        </div>
+            {/* Indicador de pasos */}
+            <Flex px={6} pt={5} pb={2} align="center" gap={2}>
+              {PASOS.map((nombrePaso, i) => {
+                const numero = i + 1
+                const activo_ = paso === numero
+                const completado = paso > numero
+                return (
+                  <HStack key={nombrePaso} flex={1} gap={2}>
+                    <Flex
+                      align="center" justify="center" w="26px" h="26px" borderRadius="full"
+                      bg={activo_ || completado ? AZUL : 'gray.100'}
+                      color={activo_ || completado ? 'white' : 'gray.400'}
+                      fontSize="xs" fontWeight="700"
+                    >
+                      {completado ? '✓' : numero}
+                    </Flex>
+                    <Text fontSize="xs" color={activo_ ? INDIGO : 'gray.400'} fontWeight={activo_ ? '600' : '400'}>
+                      {nombrePaso}
+                    </Text>
+                    {numero < PASOS.length && <Box flex={1} h="1px" bg="gray.100" />}
+                  </HStack>
+                )
+              })}
+            </Flex>
 
-        {error && <div className="error-banner">{error}</div>}
-
-        <form onSubmit={handleSubmit}>
-          {/* Paso 1: Cuenta */}
-          {paso === 1 && (
-            <div className="form-section">
-              <div className="form-group">
-                <label>Email *</label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => { setEmail(e.target.value); setErrores({...errores, email: ''}) }}
-                  className={errores.email ? 'error' : ''}
-                  placeholder="usuario@ejemplo.com"
-                />
-                {errores.email && <span className="error-text">{errores.email}</span>}
-              </div>
-
-              <div className="form-group">
-                <label>
-                  Contraseña {esEdicion && '(dejar vacío para mantener la actual)'}
-                  {!esEdicion && ' *'}
-                </label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => { setPassword(e.target.value); setErrores({...errores, password: ''}) }}
-                  className={errores.password ? 'error' : ''}
-                  placeholder={esEdicion ? '•••••••• (sin cambios)' : 'Mínimo 6 caracteres'}
-                  minLength={!esEdicion ? 6 : undefined}
-                />
-                {errores.password && <span className="error-text">{errores.password}</span>}
-              </div>
-
-              <div className="form-group">
-                <label>Nombre completo *</label>
-                <input
-                  value={nombre}
-                  onChange={(e) => { setNombre(e.target.value); setErrores({...errores, nombre: ''}) }}
-                  className={errores.nombre ? 'error' : ''}
-                  placeholder="Nombre y apellido"
-                />
-                {errores.nombre && <span className="error-text">{errores.nombre}</span>}
-              </div>
-
-              <div className="form-group">
-                <label>Etiqueta / Rol</label>
-                <select value={etiqueta} onChange={(e) => setEtiqueta(e.target.value)}>
-                  <option value="distribuidor">🏢 Distribuidor</option>
-                  <option value="admin">🛡️ Administrador</option>
-                  <option value="cliente">👤 Cliente</option>
-                </select>
-              </div>
-            </div>
-          )}
-
-          {/* Paso 2: Contacto */}
-          {paso === 2 && (
-            <div className="form-section">
-              <div className="form-group">
-                <label>RIF / Cédula</label>
-                <input
-                  value={rifCedula}
-                  onChange={(e) => { setRifCedula(e.target.value); setErrores({...errores, rifCedula: ''}) }}
-                  className={errores.rifCedula ? 'error' : ''}
-                  placeholder="J-12345678-9"
-                />
-                {errores.rifCedula && <span className="error-text">{errores.rifCedula}</span>}
-              </div>
-
-              <div className="form-group">
-                <label>Teléfono</label>
-                <input
-                  type="tel"
-                  value={telefono}
-                  onChange={(e) => { setTelefono(e.target.value); setErrores({...errores, telefono: ''}) }}
-                  className={errores.telefono ? 'error' : ''}
-                  placeholder="+58 212-555-1234"
-                />
-                {errores.telefono && <span className="error-text">{errores.telefono}</span>}
-              </div>
-
-              <div className="form-group">
-                <label>Dirección Fiscal</label>
-                <textarea
-                  value={direccionFiscal}
-                  onChange={(e) => setDireccionFiscal(e.target.value)}
-                  rows="2"
-                  placeholder="Dirección principal de la empresa"
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Dirección de Entrega</label>
-                <textarea
-                  value={direccionEntrega}
-                  onChange={(e) => setDireccionEntrega(e.target.value)}
-                  rows="2"
-                  placeholder="Dirección para envíos"
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Paso 3: Preferencias */}
-          {paso === 3 && (
-            <div className="form-section">
-              <div className="form-group">
-                <label>Línea de Crédito (USD)</label>
-                <div className="input-precio">
-                  <span className="precio-simbolo">$</span>
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={lineaCredito}
-                    onChange={(e) => setLineaCredito(e.target.value)}
-                    placeholder="0.00"
-                  />
-                </div>
-              </div>
-
-              {/* Delivery Gratis */}
-              <div className="form-group">
-                <label className="checkbox-card">
-                  <input
-                    type="checkbox"
-                    checked={deliveryGratis}
-                    onChange={(e) => setDeliveryGratis(e.target.checked)}
-                  />
-                  <div className="checkbox-card-content">
-                    <div className="checkbox-card-header">
-                      <span className="checkbox-card-icon">🛵</span>
-                      <strong>Delivery Gratis</strong>
-                    </div>
-                    <small>El cliente no pagará los $8.00 de envío en moto dentro de la ciudad</small>
-                  </div>
-                </label>
-              </div>
-
-              {/* Estado (solo edición) */}
-              {esEdicion && (
-                <div className="form-group">
-                  <label className="checkbox-card">
-                    <input
-                      type="checkbox"
-                      checked={activo}
-                      onChange={(e) => setActivo(e.target.checked)}
-                    />
-                    <div className="checkbox-card-content">
-                      <div className="checkbox-card-header">
-                        <span className="checkbox-card-icon">{activo ? '✅' : '❌'}</span>
-                        <strong>Usuario Activo</strong>
-                      </div>
-                      <small>Los usuarios inactivos no pueden iniciar sesión</small>
-                    </div>
-                  </label>
-                </div>
+            <Dialog.Body pt={2}>
+              {error && (
+                <Box bg="red.50" color="red.600" fontSize="sm" p={3} borderRadius="md" mb={4}>{error}</Box>
               )}
 
-              {/* Resumen */}
-              <div className="resumen-card">
-                <h4>📋 Resumen del Usuario</h4>
-                <div className="resumen-item">
-                  <span>Email:</span>
-                  <strong>{email || '-'}</strong>
-                </div>
-                <div className="resumen-item">
-                  <span>Nombre:</span>
-                  <strong>{nombre || '-'}</strong>
-                </div>
-                <div className="resumen-item">
-                  <span>Rol:</span>
-                  <span className={`etiqueta-badge etiqueta-${etiqueta}`}>
-                    {etiqueta === 'admin' ? '🛡️ Admin' :
-                     etiqueta === 'distribuidor' ? '🏢 Distribuidor' : '👤 Cliente'}
-                  </span>
-                </div>
-                <div className="resumen-item">
-                  <span>Crédito:</span>
-                  <strong>${Number(lineaCredito || 0).toFixed(2)}</strong>
-                </div>
-                <div className="resumen-item">
-                  <span>Delivery:</span>
-                  <strong>{deliveryGratis ? '🛵 Gratis' : 'Pago normal'}</strong>
-                </div>
-                {esEdicion && (
-                  <div className="resumen-item">
-                    <span>Estado:</span>
-                    <strong>{activo ? '✅ Activo' : '❌ Inactivo'}</strong>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
+              {/* Paso 1: Cuenta */}
+              {paso === 1 && (
+                <Stack gap={4}>
+                  <Field.Root invalid={Boolean(errores.email)} required>
+                    <Field.Label fontSize="sm">Email</Field.Label>
+                    <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="usuario@ejemplo.com" />
+                    {errores.email && <Field.ErrorText>{errores.email}</Field.ErrorText>}
+                  </Field.Root>
 
-          {/* Navegación */}
-          <div className="form-navegacion">
-            {paso > 1 ? (
-              <button type="button" onClick={handleAnterior} className="btn-secundario">
-                ← Anterior
-              </button>
-            ) : (
-              <button type="button" onClick={onClose} className="btn-secundario">
-                Cancelar
-              </button>
-            )}
-            
-            {paso < 3 ? (
-              <button 
-                type="button" 
-                onClick={handleSiguiente}
-                className="btn-primario"
-              >
-                Siguiente →
-              </button>
-            ) : (
-              <button type="submit" disabled={guardando} className="btn-guardar">
-                {guardando ? (
-                  <>
-                    <span className="spinner-small"></span>
-                    Guardando...
-                  </>
-                ) : (
-                  esEdicion ? '💾 Guardar Cambios' : '✨ Crear Usuario'
-                )}
-              </button>
-            )}
-          </div>
-        </form>
-      </div>
-    </div>
+                  {esEdicion ? (
+                    <Box bg="gray.50" borderRadius="md" p={3}>
+                      <Text fontSize="xs" color="gray.500">
+                        La contraseña no se puede modificar desde este panel por seguridad.
+                      </Text>
+                    </Box>
+                  ) : (
+                    <Field.Root invalid={Boolean(errores.password)} required>
+                      <Field.Label fontSize="sm">Contraseña</Field.Label>
+                      <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Mínimo 6 caracteres" />
+                      {errores.password && <Field.ErrorText>{errores.password}</Field.ErrorText>}
+                    </Field.Root>
+                  )}
+
+                  <Field.Root invalid={Boolean(errores.nombre)} required>
+                    <Field.Label fontSize="sm">Nombre completo</Field.Label>
+                    <Input value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder="Nombre y apellido" />
+                    {errores.nombre && <Field.ErrorText>{errores.nombre}</Field.ErrorText>}
+                  </Field.Root>
+
+                  <Field.Root>
+                    <Field.Label fontSize="sm">Etiqueta</Field.Label>
+                    <Input
+                      list="etiquetas-sugeridas"
+                      value={etiqueta}
+                      onChange={(e) => setEtiqueta(e.target.value)}
+                      placeholder="ej: distribuidor, cliente, mayorista..."
+                    />
+                    <datalist id="etiquetas-sugeridas">
+                      {etiquetasSugeridas.map((etq) => <option key={etq} value={etq} />)}
+                    </datalist>
+                    <Field.HelperText>
+                      Texto libre — aún no hay etiquetas fijas definidas, escribe la que corresponda.
+                    </Field.HelperText>
+                  </Field.Root>
+                </Stack>
+              )}
+
+              {/* Paso 2: Contacto */}
+              {paso === 2 && (
+                <Stack gap={4}>
+                  <Field.Root invalid={Boolean(errores.rifCedula)}>
+                    <Field.Label fontSize="sm">RIF / Cédula</Field.Label>
+                    <Input value={rifCedula} onChange={(e) => setRifCedula(e.target.value)} placeholder="J-12345678-9" />
+                    {errores.rifCedula && <Field.ErrorText>{errores.rifCedula}</Field.ErrorText>}
+                  </Field.Root>
+
+                  <Field.Root invalid={Boolean(errores.telefono)}>
+                    <Field.Label fontSize="sm">Teléfono</Field.Label>
+                    <Input type="tel" value={telefono} onChange={(e) => setTelefono(e.target.value)} placeholder="+58 212-555-1234" />
+                    {errores.telefono && <Field.ErrorText>{errores.telefono}</Field.ErrorText>}
+                  </Field.Root>
+
+                  <Field.Root>
+                    <Field.Label fontSize="sm">Dirección fiscal</Field.Label>
+                    <Textarea value={direccionFiscal} onChange={(e) => setDireccionFiscal(e.target.value)} rows={2} placeholder="Dirección principal de la empresa" />
+                  </Field.Root>
+
+                  <Field.Root>
+                    <Field.Label fontSize="sm">Dirección de entrega</Field.Label>
+                    <Textarea value={direccionEntrega} onChange={(e) => setDireccionEntrega(e.target.value)} rows={2} placeholder="Dirección para envíos" />
+                  </Field.Root>
+                </Stack>
+              )}
+
+              {/* Paso 3: Preferencias */}
+              {paso === 3 && (
+                <Stack gap={4}>
+                  <Field.Root>
+                    <Field.Label fontSize="sm">Línea de crédito (USD)</Field.Label>
+                    <Input type="number" step="0.01" min="0" value={lineaCredito} onChange={(e) => setLineaCredito(e.target.value)} placeholder="0.00" />
+                  </Field.Root>
+
+                  <Flex as="label" align="center" gap={3} p={3} border="1px solid" borderColor="gray.100" borderRadius="lg" cursor="pointer">
+                    <input type="checkbox" checked={deliveryGratis} onChange={(e) => setDeliveryGratis(e.target.checked)} />
+                    <Box>
+                      <Text fontSize="sm" fontWeight="600" color={INDIGO}>Delivery gratis</Text>
+                      <Text fontSize="xs" color="gray.500">No pagará el envío en moto dentro de la ciudad</Text>
+                    </Box>
+                  </Flex>
+
+                  {esEdicion && (
+                    <Flex as="label" align="center" gap={3} p={3} border="1px solid" borderColor="gray.100" borderRadius="lg" cursor="pointer">
+                      <input type="checkbox" checked={activo} onChange={(e) => setActivo(e.target.checked)} />
+                      <Box>
+                        <Text fontSize="sm" fontWeight="600" color={INDIGO}>Usuario activo</Text>
+                        <Text fontSize="xs" color="gray.500">Los usuarios inactivos no pueden iniciar sesión</Text>
+                      </Box>
+                    </Flex>
+                  )}
+
+                  <Separator />
+
+                  <Box bg="gray.50" borderRadius="lg" p={4}>
+                    <Text fontSize="sm" fontWeight="700" color={INDIGO} mb={2}>Resumen</Text>
+                    <Stack gap={1} fontSize="sm">
+                      <Flex justify="space-between"><Text color="gray.500">Email</Text><Text fontWeight="600">{email || '—'}</Text></Flex>
+                      <Flex justify="space-between"><Text color="gray.500">Nombre</Text><Text fontWeight="600">{nombre || '—'}</Text></Flex>
+                      <Flex justify="space-between" align="center">
+                        <Text color="gray.500">Etiqueta</Text>
+                        <Badge colorPalette={colorEtiqueta(etiqueta)} textTransform="capitalize">{etiqueta || '—'}</Badge>
+                      </Flex>
+                      <Flex justify="space-between"><Text color="gray.500">Crédito</Text><Text fontWeight="600">${Number(lineaCredito || 0).toFixed(2)}</Text></Flex>
+                      <Flex justify="space-between"><Text color="gray.500">Delivery</Text><Text fontWeight="600">{deliveryGratis ? 'Gratis' : 'Pago normal'}</Text></Flex>
+                      {esEdicion && (
+                        <Flex justify="space-between"><Text color="gray.500">Estado</Text><Text fontWeight="600">{activo ? 'Activo' : 'Inactivo'}</Text></Flex>
+                      )}
+                    </Stack>
+                  </Box>
+                </Stack>
+              )}
+            </Dialog.Body>
+
+            <Dialog.Footer borderTop="1px solid" borderColor="gray.100">
+              {paso > 1 ? (
+                <Button variant="ghost" onClick={irAnterior}>Anterior</Button>
+              ) : (
+                <Button variant="ghost" onClick={onClose}>Cancelar</Button>
+              )}
+              <Box flex={1} />
+              {paso < 3 ? (
+                <Button bg={AZUL} color="white" _hover={{ bg: '#0041B0' }} onClick={irSiguiente}>Siguiente</Button>
+              ) : (
+                <Button bg={AZUL} color="white" _hover={{ bg: '#0041B0' }} loading={guardando} onClick={guardar}>
+                  {esEdicion ? 'Guardar cambios' : 'Crear usuario'}
+                </Button>
+              )}
+            </Dialog.Footer>
+          </Dialog.Content>
+        </Dialog.Positioner>
+      </Portal>
+    </Dialog.Root>
   )
 }
 
