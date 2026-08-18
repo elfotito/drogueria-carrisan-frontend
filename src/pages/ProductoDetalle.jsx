@@ -149,7 +149,8 @@ function ProductoDetalle() {
   const navigate = useNavigate()
   const { addItem } = useCart()
   const { user } = useAuth()
-
+const [cotizacion, setCotizacion] = useState(null) // null | { estado: 'pendiente' | 'cotizada', ... }
+const [solicitandoCotizacion, setSolicitandoCotizacion] = useState(false)
   const [producto, setProducto] = useState(null)
   const [tasaVes, setTasaVes] = useState(null)
   const [cargando, setCargando] = useState(true)
@@ -174,6 +175,17 @@ function ProductoDetalle() {
         api.get('/prices'),
       ])
       setProducto(resProducto.data)
+if (user) {
+  try {
+    const { data: misCotizaciones } = await api.get('/cotizaciones/mias')
+    const activa = misCotizaciones.find(
+      (c) => c.producto_id === resProducto.data.id && ['pendiente', 'cotizada'].includes(c.estado)
+    )
+    setCotizacion(activa || null)
+  } catch (err) {
+    console.error('No se pudo verificar cotización existente', err)
+  }
+}
       setTasaVes(resTasa.data.usd_a_ves)
       setError('')
       setSeccionesAbiertas({ detalles: true })
@@ -198,6 +210,21 @@ function ProductoDetalle() {
     setAgregado(true)
     setTimeout(() => setAgregado(false), 2000)
   }
+
+async function handleSolicitarCotizacion() {
+  setSolicitandoCotizacion(true)
+  try {
+    const { data } = await api.post('/cotizaciones', { producto_id: producto.id })
+    setCotizacion(data)
+  } catch (err) {
+    // 409 = ya existía una activa; el backend nos la devuelve en err.response.data.cotizacion
+    if (err.response?.status === 409 && err.response.data?.cotizacion) {
+      setCotizacion(err.response.data.cotizacion)
+    }
+  } finally {
+    setSolicitandoCotizacion(false)
+  }
+}
 
   function toggleSeccion(id) {
     setSeccionesAbiertas((prev) => ({ ...prev, [id]: !prev[id] }))
