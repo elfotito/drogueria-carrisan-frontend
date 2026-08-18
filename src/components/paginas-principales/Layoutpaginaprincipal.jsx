@@ -7,8 +7,49 @@ import { NAV_PAGINAS_PRINCIPALES } from './Navpaginasprincipales'
 import './Layoutpaginaprincipal.css'
 
 // ---------------------------------------------------------------
-//  ---------------------------------------------------------------
-function ContenidoNav({ nav, activo, titulo, esAdmin, onNavigate }) {
+----------------
+// Un solo link/botón de nav, reusado en el menú principal y en los
+// submenús. Si el item trae "accion" (en vez de "to") se renderiza
+// como botón y dispara onAccion — para casos como "Crear lista nueva"
+// que no navegan a ningún lado, solo abren algo en la página actual.
+function ItemNav({ item, activo, onNavigate, onAccion, variante }) {
+  const esActivo = item.id === activo
+  const Icono = item.icono
+  const esSublink = variante === 'sublink'
+  const clase = esSublink ? 'ppal-nav__sublink' : 'ppal-nav__link'
+  const claseActivo = esSublink ? 'ppal-nav__sublink--activo' : 'ppal-nav__link--activo'
+
+  const contenido = (
+    <>
+      {Icono && !esSublink && <Icono size={18} strokeWidth={esActivo ? 2.4 : 2} />}
+      <span>{item.texto}</span>
+      {esSublink ? <ChevronRight size={16} /> : esActivo && <ChevronRight size={16} className="ppal-nav__chevron" />}
+    </>
+  )
+
+  if (item.accion) {
+    return (
+      <button
+        type="button"
+        className={`${clase} ${esActivo ? claseActivo : ''}`}
+        onClick={() => {
+          onAccion?.(item.accion)
+          onNavigate?.()
+        }}
+      >
+        {contenido}
+      </button>
+    )
+  }
+
+  return (
+    <NavLink to={item.to} onClick={onNavigate} className={`${clase} ${esActivo ? claseActivo : ''}`}>
+      {contenido}
+    </NavLink>
+  )
+}
+
+function ContenidoNav({ nav, activo, titulo, esAdmin, onNavigate, onAccion }) {
   // null = menú principal. Si no, es el grupo cuyo submenú está abierto.
   const [grupoAbierto, setGrupoAbierto] = useState(null)
 
@@ -31,26 +72,49 @@ function ContenidoNav({ nav, activo, titulo, esAdmin, onNavigate }) {
           )}
         </div>
 
-        {items.map((item) => {
-          const esActivo = item.id === activo
-          return (
-            <NavLink
-              key={item.id}
-              to={item.to}
-              onClick={onNavigate}
-              className={`ppal-nav__sublink ${esActivo ? 'ppal-nav__sublink--activo' : ''}`}
-            >
-              <span>{item.texto}</span>
-              <ChevronRight size={16} />
-            </NavLink>
-          )
-        })}
+        {items.map((item) => (
+          <ItemNav key={item.id} item={item} activo={activo} onNavigate={onNavigate} onAccion={onAccion} variante="sublink" />
+        ))}
       </nav>
     )
   }
 
+  const gruposPrincipales = nav.filter((g) => !g.pie)
+  const gruposPie = nav.filter((g) => g.pie)
+
+  function renderGrupo(grupo) {
+    const items = grupo.items.filter((item) => !esAdmin || !item.soloCliente)
+    if (items.length === 0) return null
+
+    // Grupo expandible: una sola fila que abre el submenú
+    if (grupo.tipo === 'submenu') {
+      const grupoActivo = items.some((item) => item.id === activo)
+      return (
+        <button
+          key={grupo.titulo}
+          type="button"
+          className={`ppal-nav__grupo-btn ${grupoActivo ? 'ppal-nav__grupo-btn--activo' : ''}`}
+          onClick={() => setGrupoAbierto(grupo)}
+        >
+          <span>{grupo.titulo}</span>
+          <ChevronRight size={16} />
+        </button>
+      )
+    }
+
+    // Grupo normal: items listados directo
+    return (
+      <div className={`ppal-nav__grupo ${grupo.pie ? 'ppal-nav__grupo--pie' : ''}`} key={grupo.titulo}>
+        <span className="ppal-nav__grupo-titulo">{grupo.titulo}</span>
+        {items.map((item) => (
+          <ItemNav key={item.id} item={item} activo={activo} onNavigate={onNavigate} onAccion={onAccion} />
+        ))}
+      </div>
+    )
+  }
+
   return (
-    <nav className="ppal-nav" aria-label="Navegación de cuenta">
+    <nav className="ppal-nav" aria-label="Navegación">
       {titulo && (
         <div className="ppal-nav__breadcrumb">
           <Link to="/" onClick={onNavigate}>Inicio</Link>
@@ -59,54 +123,13 @@ function ContenidoNav({ nav, activo, titulo, esAdmin, onNavigate }) {
         </div>
       )}
 
-      {nav.map((grupo) => {
-        const items = grupo.items.filter((item) => !esAdmin || !item.soloCliente)
-        if (items.length === 0) return null
-
-        // Grupo expandible: una sola fila que abre el submenú
-        if (grupo.tipo === 'submenu') {
-          const grupoActivo = items.some((item) => item.id === activo)
-          return (
-            <button
-              key={grupo.titulo}
-              type="button"
-              className={`ppal-nav__grupo-btn ${grupoActivo ? 'ppal-nav__grupo-btn--activo' : ''}`}
-              onClick={() => setGrupoAbierto(grupo)}
-            >
-              <span>{grupo.titulo}</span>
-              <ChevronRight size={16} />
-            </button>
-          )
-        }
-
-        // Grupo normal: items listados directo
-        return (
-          <div className="ppal-nav__grupo" key={grupo.titulo}>
-            <span className="ppal-nav__grupo-titulo">{grupo.titulo}</span>
-            {items.map((item) => {
-              const Icono = item.icono
-              const esActivo = item.id === activo
-              return (
-                <NavLink
-                  key={item.id}
-                  to={item.to}
-                  onClick={onNavigate}
-                  className={`ppal-nav__link ${esActivo ? 'ppal-nav__link--activo' : ''}`}
-                >
-                  <Icono size={18} strokeWidth={esActivo ? 2.4 : 2} />
-                  <span>{item.texto}</span>
-                  {esActivo && <ChevronRight size={16} className="ppal-nav__chevron" />}
-                </NavLink>
-              )
-            })}
-          </div>
-        )
-      })}
+      {gruposPrincipales.map(renderGrupo)}
+      {gruposPie.map(renderGrupo)}
     </nav>
   )
 }
 
-function LayoutPaginaPrincipal({ activo, titulo, subtitulo, acciones, nav = NAV_PAGINAS_PRINCIPALES, children }) {
+function LayoutPaginaPrincipal({ activo, titulo, subtitulo, acciones, nav = NAV_PAGINAS_PRINCIPALES, onAccion, children }) {
   const { user, logout } = useAuth()
   const [drawerAbierto, setDrawerAbierto] = useState(false)
   // Se incrementa cada vez que el drawer se cierra, para forzar que
@@ -164,7 +187,7 @@ function LayoutPaginaPrincipal({ activo, titulo, subtitulo, acciones, nav = NAV_
         </div>
 
         <div className="ppal-drawer-panel__scroll">
-          <ContenidoNav key={drawerResetKey} nav={nav} activo={activo} titulo={titulo} esAdmin={user?.es_admin} onNavigate={cerrarDrawer} />
+          <ContenidoNav key={drawerResetKey} nav={nav} activo={activo} titulo={titulo} esAdmin={user?.es_admin} onNavigate={cerrarDrawer} onAccion={onAccion} />
         </div>
 
         {!user?.es_admin && (
@@ -207,7 +230,7 @@ function LayoutPaginaPrincipal({ activo, titulo, subtitulo, acciones, nav = NAV_
                     <p className="ppal-sidebar__email">{user?.email}</p>
                   </div>
                 </div>
-                <ContenidoNav nav={nav} activo={activo} titulo={titulo} esAdmin={user?.es_admin} />
+                <ContenidoNav nav={nav} activo={activo} titulo={titulo} esAdmin={user?.es_admin} onAccion={onAccion} />
               </div>
             </aside>
 
