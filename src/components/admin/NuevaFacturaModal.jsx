@@ -10,8 +10,10 @@ import {
   Flex,
   Stack,
   Button,
+  IconButton,
   Spinner,
 } from '@chakra-ui/react'
+import { X } from 'lucide-react'
 import api from '../../api/axios'
 import { toaster } from '../ui/toaster'
 
@@ -100,14 +102,18 @@ function NuevaFacturaModal({ clienteId, isOpen, onClose, onCreada }) {
   return (
     <Dialog.Root open={isOpen} onOpenChange={(e) => !e.open && onClose()} placement="center" scrollBehavior="inside">
       <Portal>
-        <Dialog.Backdrop />
-        <Dialog.Positioner>
-          <Dialog.Content maxW="lg" borderRadius="xl">
-            <Dialog.Header bg={INDIGO} color="white" borderTopRadius="xl">
+        <Dialog.Backdrop position="fixed" inset={0} bg="blackAlpha.600" zIndex={1400} />
+        <Dialog.Positioner position="fixed" inset={0} display="flex" alignItems="center" justifyContent="center" p={4} zIndex={1500} overflowY="auto">
+          <Dialog.Content maxW="lg" w="100%" maxH="90vh" my="auto" bg="white" borderRadius="xl" boxShadow="2xl" display="flex" flexDir="column" overflow="hidden">
+            <Dialog.Header bg={INDIGO} color="white" borderTopRadius="xl" flexShrink={0} p={5}>
               <Dialog.Title>Registrar factura</Dialog.Title>
             </Dialog.Header>
-            <Dialog.CloseTrigger color="white" />
-            <Dialog.Body py={5}>
+            <Dialog.CloseTrigger position="absolute" top="14px" right="14px" asChild>
+              <IconButton variant="ghost" size="sm" color="white" _hover={{ bg: 'whiteAlpha.300' }} aria-label="Cerrar">
+                <X size={18} />
+              </IconButton>
+            </Dialog.CloseTrigger>
+            <Dialog.Body py={5} flex="1" overflowY="auto">
               <Stack gap={4}>
                 <Field.Root required>
                   <Field.Label fontSize="sm">Número de factura</Field.Label>
@@ -174,7 +180,7 @@ function NuevaFacturaModal({ clienteId, isOpen, onClose, onCreada }) {
                 </Field.Root>
               </Stack>
             </Dialog.Body>
-            <Dialog.Footer borderTop="1px solid" borderColor="gray.100">
+            <Dialog.Footer borderTop="1px solid" borderColor="gray.100" flexShrink={0} p={4}>
               <Button variant="ghost" mr={3} onClick={onClose}>Cancelar</Button>
               <Button bg={AZUL} color="white" _hover={{ bg: '#0041B0' }} loading={guardando} onClick={guardar}>
                 Registrar factura
