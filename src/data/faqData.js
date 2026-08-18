@@ -1,92 +1,84 @@
 // src/data/faqData.js
-// Preguntas frecuentes agrupadas por categoría — Droguería Carrisán (B2B farma)
+// Preguntas frecuentes B2B — Droguería Carrisan
 
 const faqCategorias = [
   {
     id: 'pedidos',
-    titulo: 'Pedidos',
+    titulo: 'Pedidos y Catálogo',
     icono: 'pedido',
     preguntas: [
       {
-        pregunta: '¿Cómo realizo un pedido?',
-        respuesta: 'Navega por el catálogo, agrega los productos que necesitas al carrito y confirma tu orden. Recibirás una notificación con el número de orden y podrás seguir su estado desde "Mis Órdenes".',
+        pregunta: '¿Cómo realizo un pedido en la plataforma?',
+        respuesta: 'Explora el catálogo con tus precios personalizados ya cargados, añade los productos al carrito y selecciona tu modalidad de pago (Contado o Crédito a 7 días). Recibirás confirmación con tu número de orden.',
       },
       {
-        pregunta: '¿Puedo editar o cancelar un pedido ya realizado?',
-        respuesta: 'Sí, siempre que la orden no haya sido despachada. Contáctanos por el Centro de Ayuda o a ventas@carrisan.com indicando tu número de orden.',
+        pregunta: '¿Existen mínimos de compra obligatorios (MOQ)?',
+        respuesta: 'No. Ofrecemos compras flexibles a la medida. Puedes pedir desde unidades fraccionadas para consultorios hasta bultos cerrados para farmacias con descuentos adicionales.',
       },
       {
-        pregunta: '¿Qué pasa si un producto no está disponible?',
-        respuesta: 'Si algún producto de tu pedido no tiene stock, te contactamos antes de despachar para ofrecerte una sustitución equivalente o ajustar la orden.',
+        pregunta: '¿Puedo editar o cancelar un pedido enviado?',
+        respuesta: 'Puedes modificar o cancelar la orden desde "Mis Pedidos" siempre que el estatus se encuentre en "Pendiente de Facturación". Si ya fue despachado, debes contactar a tu asesor.',
       },
       {
-        pregunta: '¿Cómo repito un pedido anterior?',
-        respuesta: 'Desde "Mis Órdenes" puedes seleccionar cualquier orden pasada y usar la opción de volver a pedir, que carga los mismos productos al carrito.',
+        pregunta: '¿Cómo vuelvo a pedir el mismo stock de la semana pasada?',
+        respuesta: 'Ingresa a "Mis Pedidos", ubica la orden previa y haz clic en "Repetir Pedido". El sistema cargará los mismos ítems y cantidades al carrito verificando stock en tiempo real.',
       },
     ],
   },
   {
     id: 'envios',
-    titulo: 'Envíos',
+    titulo: 'Despacho y Envíos',
     icono: 'camion',
     preguntas: [
       {
-        pregunta: '¿Cuáles son los tiempos de entrega?',
-        respuesta: 'El despacho se coordina directamente contigo según tu ubicación y la disponibilidad de los productos solicitados. Un asesor confirma la fecha estimada al procesar tu orden.',
+        pregunta: '¿Cuáles son los tiempos de entrega en Valencia y zonas aliadas?',
+        respuesta: 'Los despachos en la zona metropolitana se realizan dentro de las 24 a 48 horas hábiles tras la confirmación del pedido.',
       },
       {
-        pregunta: '¿Qué hago si mi pedido llegó incompleto o dañado?',
-        respuesta: 'Repórtalo dentro de las primeras 48 horas posteriores a la entrega, indicando el número de orden y fotos del producto. Procesamos el cambio o ajuste correspondiente.',
+        pregunta: '¿Qué hago si la mercancía llega con faltantes o averías?',
+        respuesta: 'Dispones de un lapso estricto de 48 horas continuas desde la recepción para reportar inconsistencias o averías adjuntando fotos del embalaje y factura fiscal.',
       },
       {
-        pregunta: '¿Realizan envíos fuera de la zona habitual?',
-        respuesta: 'Coordinamos entregas según cobertura y volumen del pedido. Consulta con tu asesor comercial la disponibilidad para tu ubicación.',
+        pregunta: '¿Cómo garantizan el control térmico de insumos delicados?',
+        respuesta: 'Las ampollas y productos de refrigeración se despachan bajo estrictos protocolos de cadena de frío en empaques térmicos inspeccionados previa salida.',
       },
     ],
   },
   {
     id: 'cuenta',
-    titulo: 'Tu Cuenta',
+    titulo: 'Cuenta y Verificación',
     icono: 'cuenta',
     preguntas: [
       {
-        pregunta: '¿Cómo me registro en la plataforma?',
-        respuesta: 'El registro es gestionado por nuestro equipo comercial. Escríbenos a ventas@carrisan.com y crearemos tu cuenta con los precios correspondientes a tu perfil (mayorista, distribuidor, farmacia, etc.).',
+        pregunta: '¿Qué documentos necesito para registrarme y comprar?',
+        respuesta: 'Debes completar el formulario de registro adjuntando el RIF digitalizado de la empresa y la cédula del representante legal. Tu cuenta se activará tras la validación fiscal en menos de 24h.',
       },
       {
-        pregunta: '¿Cómo recupero mi contraseña?',
-        respuesta: 'Desde la pantalla de inicio de sesión selecciona "¿Olvidaste tu contraseña?" e ingresa tu RIF o cédula registrada para restablecer el acceso.',
+        pregunta: '¿Por qué no puedo ver mis precios finales antes de registrarme?',
+        respuesta: 'Nuestra estructura de tarifas se adapta al tipo de cliente (Mayorista, Institucional o Médico) y a la modalidad de pago para garantizar márgenes competitivos según tu perfil comercial.',
       },
       {
-        pregunta: '¿Puedo ver precios personalizados según mi perfil?',
-        respuesta: 'Sí. Al iniciar sesión, el catálogo muestra automáticamente los precios correspondientes a tu etiqueta comercial.',
-      },
-      {
-        pregunta: '¿Cómo actualizo mis datos de entrega o facturación?',
-        respuesta: 'Desde "Mi Cuenta" puedes editar tu dirección fiscal, dirección de entrega y teléfono de contacto en cualquier momento.',
+        pregunta: '¿Puedo registrar múltiples direcciones de entrega para un mismo RIF?',
+        respuesta: 'Sí, desde el panel "Mi Cuenta" puedes añadir varias sedes o farmacias aliadas asociadas a la misma razón social.',
       },
     ],
   },
   {
     id: 'pagos',
-    titulo: 'Pagos',
+    titulo: 'Crédito y Pagos',
     icono: 'pagos',
     preguntas: [
       {
-        pregunta: '¿Qué métodos de pago aceptan?',
-        respuesta: 'Trabajamos con transferencia bancaria y pago móvil. Los datos de pago se envían al confirmar tu orden.',
+        pregunta: '¿Cómo funciona la línea de crédito a 7 días?',
+        respuesta: 'Una vez aprobada tu línea, puedes facturar pedidos a crédito con un plazo de pago de 7 días continuos. El mantenimiento al día de tus facturas renovará tu saldo disponible de forma automática.',
       },
       {
-        pregunta: '¿Cómo consulto mi estado de cuenta o línea de crédito?',
-        respuesta: 'En la sección "Estado de Cuenta" puedes ver tus facturas, pagos registrados y el crédito disponible según tu línea asignada.',
+        pregunta: '¿Qué métodos de pago están habilitados?',
+        respuesta: 'Aceptamos transferencias bancarias en bolívares, Pago Móvil corporativo, transferencias en divisas (Zelle/Mercantil Panamá) y depósitos en efectivo en cuenta verde.',
       },
       {
-        pregunta: '¿Qué hago si mi pago no fue reflejado?',
-        respuesta: 'Contáctanos con tu comprobante de pago y número de orden a ventas@carrisan.com y verificamos el estado dentro del mismo día hábil.',
-      },
-      {
-        pregunta: '¿Emiten factura por cada compra?',
-        respuesta: 'Sí, cada orden genera un comprobante que puedes descargar desde el detalle de la orden o solicitar por correo.',
+        pregunta: '¿Cómo reporto los comprobantes de retención de IVA (SENIAT)?',
+        respuesta: 'Si eres Contribuyente Especial, puedes adjuntar la imagen o PDF de la retención al momento de registrar tu pago en el módulo de "Estado de Cuenta".',
       },
     ],
   },

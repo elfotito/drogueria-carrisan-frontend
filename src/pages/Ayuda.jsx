@@ -4,8 +4,7 @@ import BottomNav from '../components/BottomNav'
 import './Ayuda.css'
 
 // ---------------------------------------------------------
-// Íconos inline (SVG) — reemplazables luego por tu banco de imágenes.
-// Cada ícono vive en un solo lugar así que el swap es rápido.
+// Íconos inline (SVG)
 // ---------------------------------------------------------
 const ICONOS = {
   pedido: (
@@ -66,10 +65,15 @@ const ICONOS = {
       <rect x="2" y="4" width="20" height="16" rx="2" /><path d="m2 6 10 7 10-7" />
     </svg>
   ),
+  lupa: (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" />
+    </svg>
+  )
 }
 
 // ---------------------------------------------------------
-// Datos — categorías de ayuda (pills de arriba)
+// Datos
 // ---------------------------------------------------------
 const categorias = [
   {
@@ -125,14 +129,12 @@ const preguntas = [
   { pregunta: '¿Tienen política de devolución?', respuesta: 'Sí. Las devoluciones aplican por productos vencidos o defectuosos. Debes notificarlo dentro de las 48 horas posteriores a la entrega.' },
 ]
 
-// Pasos de "cómo funciona un pedido" (equivalente al bloque de 3 íconos del ejemplo)
 const pasos = [
   { icono: 'catalogo', titulo: 'Arma tu pedido desde el catálogo', desc: 'Elige tus productos y agrégalos al carrito con tus precios de siempre.' },
   { icono: 'carrito', titulo: 'Confirmamos disponibilidad y precio', desc: 'Revisamos tu orden y te avisamos si algo cambia antes de despacharla.' },
   { icono: 'camion', titulo: 'Coordinamos la entrega contigo', desc: 'Te contactamos para acordar fecha, lugar y forma de pago.' },
 ]
 
-// Tarjetas "Para todas tus necesidades" (carrusel horizontal con imagen)
 const necesidades = [
   { titulo: 'Catálogo completo', desc: 'Explora todas nuestras líneas de farmacia y hospitalaria.', to: '/catalogo', boton: 'Ver catálogo' },
   { titulo: 'Estado de cuenta', desc: 'Revisa tus facturas, pagos y línea de crédito disponible.', to: '/estado-cuenta', boton: 'Ver estado de cuenta' },
@@ -140,7 +142,6 @@ const necesidades = [
   { titulo: 'Mis Órdenes', desc: 'Consulta el historial y estado de tus pedidos.', to: '/orders', boton: 'Ver mis órdenes' },
 ]
 
-// Enlaces útiles (card final, con ícono de "externo" cuando aplica)
 const enlacesUtiles = [
   { label: 'Escríbenos por correo', desc: '¿Necesitas ayuda? Estamos aquí para ayudarte.', href: 'mailto:ventas@carrisan.com', externo: true, icono: 'mail' },
   { label: 'Ver catálogo completo', desc: 'Todos nuestros productos, marcas y ofertas.', to: '/catalogo', icono: 'catalogo' },
@@ -150,11 +151,11 @@ const enlacesUtiles = [
 // ---------------------------------------------------------
 // Subcomponentes
 // ---------------------------------------------------------
-function FaqAcordeon() {
+function FaqAcordeon({ lista = preguntas }) {
   const [abierta, setAbierta] = useState(null)
   return (
     <div className="ayuda-lista">
-      {preguntas.map((item, index) => (
+      {lista.map((item, index) => (
         <div key={index} className="ayuda-fila ayuda-fila--faq">
           <button
             type="button"
@@ -188,8 +189,6 @@ function CategoriaPill({ categoria, activa, onClick }) {
   )
 }
 
-// Placeholder de imagen — Tito reemplaza el <img> por la imagen real
-// (o quita el placeholder y deja solo <img src="..." alt="..." />)
 function ImagenPlaceholder({ alto = 220, texto = 'Imagen próximamente' }) {
   return (
     <div className="ayuda-imagen-placeholder" style={{ height: alto }}>
@@ -208,51 +207,123 @@ function ImagenPlaceholder({ alto = 220, texto = 'Imagen próximamente' }) {
 // ---------------------------------------------------------
 function Ayuda() {
   const [categoriaActiva, setCategoriaActiva] = useState('pedido')
+  const [busqueda, setBusqueda] = useState('')
+
   const categoria = categorias.find((c) => c.id === categoriaActiva)
+
+  // Filtrado de preguntas frecuentes e items según el texto escrito
+  const preguntasFiltradas = preguntas.filter(
+    (p) =>
+      p.pregunta.toLowerCase().includes(busqueda.toLowerCase()) ||
+      p.respuesta.toLowerCase().includes(busqueda.toLowerCase())
+  )
+
+  const itemsFiltrados = categorias
+    .flatMap((c) => c.items || [])
+    .filter(
+      (item) =>
+        item.label.toLowerCase().includes(busqueda.toLowerCase()) ||
+        item.desc.toLowerCase().includes(busqueda.toLowerCase())
+    )
 
   return (
     <div className="ayuda-page">
       {/* Header azul con título */}
       <div className="ayuda-header">
-        <h1>Ayuda</h1>
+        <h1>Centro de Ayuda</h1>
+        <p>¿En qué podemos ayudarte hoy?</p>
+
+        {/* Buscador Integrado */}
+        <div className="ayuda-search-box">
+          <input
+            type="text"
+            className="ayuda-search-box__input"
+            placeholder="Buscar por tema, palabra clave o pregunta..."
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+          />
+          <button type="button" className="ayuda-search-box__btn" aria-label="Buscar">
+            {ICONOS.lupa}
+          </button>
+        </div>
       </div>
 
       {/* Pills de categoría — scroll horizontal en mobile */}
-      <div className="ayuda-pills">
-        {categorias.map((c) => (
-          <CategoriaPill
-            key={c.id}
-            categoria={c}
-            activa={categoriaActiva === c.id}
-            onClick={() => setCategoriaActiva(c.id)}
-          />
-        ))}
-      </div>
+      {!busqueda && (
+        <div className="ayuda-pills">
+          {categorias.map((c) => (
+            <CategoriaPill
+              key={c.id}
+              categoria={c}
+              activa={categoriaActiva === c.id}
+              onClick={() => setCategoriaActiva(c.id)}
+            />
+          ))}
+        </div>
+      )}
 
       <div className="ayuda-container">
-        {/* Card de la categoría activa */}
-        <section className="ayuda-card">
-          <h2 className="ayuda-card__titulo">
-            {categoria.esFaq ? 'Preguntas frecuentes' : `¿Cómo podemos ayudarte con ${categoria.titulo.toLowerCase()}?`}
-          </h2>
+        {/* Vista si el usuario está buscando algo */}
+        {busqueda.trim() !== '' ? (
+          <section className="ayuda-card">
+            <h2 className="ayuda-card__titulo">Resultados para "{busqueda}"</h2>
+            {preguntasFiltradas.length === 0 && itemsFiltrados.length === 0 ? (
+              <p className="ayuda-sin-resultados">
+                No encontramos temas relacionados. Escríbenos directamente a ventas@carrisan.com.
+              </p>
+            ) : (
+              <>
+                {preguntasFiltradas.length > 0 && (
+                  <div className="ayuda-busqueda-bloque">
+                    <h3>Preguntas Frecuentes</h3>
+                    <FaqAcordeon lista={preguntasFiltradas} />
+                  </div>
+                )}
+                {itemsFiltrados.length > 0 && (
+                  <div className="ayuda-busqueda-bloque">
+                    <h3>Artículos e Guías</h3>
+                    <div className="ayuda-lista">
+                      {itemsFiltrados.map((item) => (
+                        <Link key={item.slug} to={`/ayuda/item/${item.slug}`} className="ayuda-fila">
+                          <span className="ayuda-fila__icono-circulo">{ICONOS.pedido}</span>
+                          <span className="ayuda-fila__texto">
+                            <span className="ayuda-fila__titulo">{item.label}</span>
+                            <span className="ayuda-fila__desc">{item.desc}</span>
+                          </span>
+                          <span className="ayuda-fila__chevron">{ICONOS.chevron}</span>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </section>
+        ) : (
+          /* Card de la categoría activa */
+          <section className="ayuda-card">
+            <h2 className="ayuda-card__titulo">
+              {categoria.esFaq ? 'Preguntas frecuentes' : `¿Cómo podemos ayudarte con ${categoria.titulo.toLowerCase()}?`}
+            </h2>
 
-          {categoria.esFaq ? (
-            <FaqAcordeon />
-          ) : (
-            <div className="ayuda-lista">
-              {categoria.items.map((item) => (
-                <Link key={item.slug} to={`/ayuda/${categoria.id}/${item.slug}`} className="ayuda-fila">
-                  <span className="ayuda-fila__icono-circulo">{ICONOS[categoria.icono]}</span>
-                  <span className="ayuda-fila__texto">
-                    <span className="ayuda-fila__titulo">{item.label}</span>
-                    <span className="ayuda-fila__desc">{item.desc}</span>
-                  </span>
-                  <span className="ayuda-fila__chevron">{ICONOS.chevron}</span>
-                </Link>
-              ))}
-            </div>
-          )}
-        </section>
+            {categoria.esFaq ? (
+              <FaqAcordeon />
+            ) : (
+              <div className="ayuda-lista">
+                {categoria.items.map((item) => (
+                  <Link key={item.slug} to={`/ayuda/${categoria.id}/${item.slug}`} className="ayuda-fila">
+                    <span className="ayuda-fila__icono-circulo">{ICONOS[categoria.icono]}</span>
+                    <span className="ayuda-fila__texto">
+                      <span className="ayuda-fila__titulo">{item.label}</span>
+                      <span className="ayuda-fila__desc">{item.desc}</span>
+                    </span>
+                    <span className="ayuda-fila__chevron">{ICONOS.chevron}</span>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
 
         {/* Banner de imagen — placeholder a reemplazar */}
         <ImagenPlaceholder texto="Foto de equipo / bodega Carrisán" />
@@ -276,7 +347,7 @@ function Ayuda() {
           ))}
         </section>
 
-        {/* "Para todas tus necesidades" — carrusel horizontal */}
+        {/* "Para todas tus necesidades" — carrusel horizontal / tarjetas */}
         <section className="ayuda-necesidades">
           <h2>Para todas tus necesidades</h2>
           <div className="ayuda-necesidades__fila">
@@ -325,6 +396,7 @@ function Ayuda() {
           <a href="mailto:ventas@carrisan.com" className="ayuda-banner__cta">Escríbenos</a>
         </div>
       </div>
+
       <BottomNav />
     </div>
   )
