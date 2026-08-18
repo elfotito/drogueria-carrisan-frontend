@@ -15,7 +15,7 @@ const RUTAS_SIN_NAVBAR = ['/login', '/registro', '/recuperar']
 const RUTAS_CON_BACK_MOVIL_PREFIXES = [
   '/admin', '/cuenta', '/mis-items', '/orders',
   '/estado-cuenta', '/notificaciones', '/producto', '/carrito',
-  '/servicios', '/catalogo'
+  '/servicios'
 ]
 
 const EMOJIS_ENVIO = {

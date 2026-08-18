@@ -1,10 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
 import { Box } from '@chakra-ui/react'
+import { useLocation } from 'react-router-dom'
 import { useLoadingBar } from '../context/LoadingBarContext'
 
 function TopLoadingBar() {
   const { isLoading } = useLoadingBar()
   const [navHeight, setNavHeight] = useState(0)
+  const location = useLocation()
+  
+  // Rutas donde NO queremos mostrar el loading bar
+  const excludedRoutes = ['/login', '/registro']
+  const shouldShowLoadingBar = !excludedRoutes.includes(location.pathname)
 
   useEffect(() => {
     function medirNavbar() {
@@ -15,7 +21,6 @@ function TopLoadingBar() {
     medirNavbar()
     window.addEventListener('resize', medirNavbar)
 
-    // 🆕 por si el navbar cambia de alto (ej: aparece/desaparece la flecha, o cambia de ruta)
     const observer = new ResizeObserver(medirNavbar)
     const nav = document.querySelector('.navbar-container')
     if (nav) observer.observe(nav)
@@ -26,19 +31,19 @@ function TopLoadingBar() {
     }
   }, [])
 
-  if (!isLoading) return null
+  if (!isLoading || !shouldShowLoadingBar) return null
 
   return (
     <Box
-      position="fixed"          // 🆕 antes: sticky
-      top={`${navHeight}px`}    // 🆕 pegado justo debajo del navbar medido
+      position="fixed"          
+      top={`${navHeight}px`}    
       left="0"
       width="100%"
       height="3px"
       zIndex={1001}
       overflow="hidden"
       bg="rgba(0,0,0,0.1)"
-      pointerEvents="none"      // 🆕 no bloquea clics del contenido debajo
+      pointerEvents="none"
     >
       <Box
         height="100%"

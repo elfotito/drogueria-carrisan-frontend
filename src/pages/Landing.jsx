@@ -205,8 +205,8 @@ function Landing() {
       <section className="landing-hero">
         <div className="landing-hero__contenido">
           <img 
-      src="https://fqeshthtycmzgyibiurq.supabase.co/storage/v1/object/sign/dcimages/hero.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mZGI0NTZkYy04YTAyLTQ3Y2EtYjc4Yy0yMWZmMWExOWM0MmEiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJkY2ltYWdlcy9oZXJvLnBuZyIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3ODcwNzM4NDcsImV4cCI6MTk0NDc1Mzg0N30.wIXwMjprwF431A1_lgmNp_xBiSljeJkYwAVoRh3S_Ig" 
-      alt="Hero image - Respaldamos al Medico Venezolano"
+      src="https://fqeshthtycmzgyibiurq.supabase.co/storage/v1/object/sign/dcimages/hero.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mZGI0NTZkYy04YTAyLTQ3Y2EtYjc4Yy0yMWZmMWExOWM0MmEiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJkY2ltYWdlcy9oZXJvLnBuZyIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3ODcwODEwODgsImV4cCI6MTk0NDc2MTA4OH0.VD77hymFeyPj4FpXuWgwBAmFPBTqutU04pHi2qry0sA" 
+      alt="Evita las espumosas hasta el viernes c:"
       className="landing-hero__imagen"
     />
           
