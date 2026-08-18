@@ -10,7 +10,9 @@ import {
   Stack,
   HStack,
   Button,
+  IconButton,
 } from '@chakra-ui/react'
+import { X } from 'lucide-react'
 import api from '../../api/axios'
 import { toaster } from '../ui/toaster'
 
@@ -49,14 +51,18 @@ function DescuentoModal({ usuario, isOpen, onClose, onGuardado }) {
   return (
     <Dialog.Root open={isOpen} onOpenChange={(e) => !e.open && onClose()} placement="center">
       <Portal>
-        <Dialog.Backdrop />
-        <Dialog.Positioner>
-          <Dialog.Content maxW="md" borderRadius="xl">
-            <Dialog.Header bg={INDIGO} color="white" borderTopRadius="xl">
+        <Dialog.Backdrop position="fixed" inset={0} bg="blackAlpha.600" zIndex={1400} />
+        <Dialog.Positioner position="fixed" inset={0} display="flex" alignItems="center" justifyContent="center" p={4} zIndex={1500} overflowY="auto">
+          <Dialog.Content maxW="md" w="100%" maxH="90vh" my="auto" bg="white" borderRadius="xl" boxShadow="2xl" display="flex" flexDir="column" overflow="hidden">
+            <Dialog.Header bg={INDIGO} color="white" borderTopRadius="xl" flexShrink={0} p={5}>
               <Dialog.Title>Descuento de usuario</Dialog.Title>
             </Dialog.Header>
-            <Dialog.CloseTrigger color="white" />
-            <Dialog.Body py={5}>
+            <Dialog.CloseTrigger position="absolute" top="14px" right="14px" asChild>
+              <IconButton variant="ghost" size="sm" color="white" _hover={{ bg: 'whiteAlpha.300' }} aria-label="Cerrar">
+                <X size={18} />
+              </IconButton>
+            </Dialog.CloseTrigger>
+            <Dialog.Body py={5} flex="1" overflowY="auto">
               <HStack gap={3} mb={4}>
                 <Flex align="center" justify="center" w="40px" h="40px" borderRadius="full" bg={AZUL} color="white" fontWeight="700">
                   {iniciales(usuario?.nombre)}
@@ -88,7 +94,7 @@ function DescuentoModal({ usuario, isOpen, onClose, onGuardado }) {
                 </Box>
               )}
             </Dialog.Body>
-            <Dialog.Footer borderTop="1px solid" borderColor="gray.100">
+            <Dialog.Footer borderTop="1px solid" borderColor="gray.100" flexShrink={0} p={4}>
               <Button variant="ghost" mr={3} onClick={onClose}>Cancelar</Button>
               <Button bg={AZUL} color="white" _hover={{ bg: '#0041B0' }} loading={guardando} onClick={guardar}>
                 Guardar descuento
