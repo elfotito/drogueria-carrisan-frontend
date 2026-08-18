@@ -20,7 +20,7 @@ import { FileText, Wallet, ShoppingCart, Plus, Receipt, CreditCard, X } from 'lu
 import api from '../../api/axios'
 import NuevaFacturaModal from './NuevaFacturaModal'
 import NuevoPagoModal from './NuevoPagoModal'
-import { toaster } from '../ui/toaster'
+import NuevaOrdenModal from './NuevaOrdenModal'
 
 const AZUL = '#0052DC'
 const INDIGO = '#1A1A3A'
@@ -80,6 +80,7 @@ function EstadoCuentaDetalle({ clienteId, isOpen, onClose }) {
   const [error, setError] = useState('')
   const facturaModal = useDisclosure()
   const pagoModal = useDisclosure()
+  const ordenModal = useDisclosure()
 
   useEffect(() => {
     if (isOpen && clienteId) {
@@ -101,15 +102,6 @@ function EstadoCuentaDetalle({ clienteId, isOpen, onClose }) {
     } finally {
       setCargando(false)
     }
-  }
-
-  function proximamente(funcion) {
-    toaster.create({
-      title: `${funcion} — próximamente`,
-      description: 'Esta función se agregará en la siguiente iteración del panel.',
-      type: 'info',
-      duration: 2500,
-    })
   }
 
   return (
@@ -175,7 +167,7 @@ function EstadoCuentaDetalle({ clienteId, isOpen, onClose }) {
 
                   {/* Acciones rápidas */}
                   <HStack gap={3} wrap="wrap">
-                    <Button size="sm" colorPalette="blue" onClick={() => proximamente('Agregar orden')}>
+                    <Button size="sm" colorPalette="blue" onClick={ordenModal.onOpen}>
                       <Plus size={15} />
                       Agregar orden
                     </Button>
@@ -321,10 +313,17 @@ function EstadoCuentaDetalle({ clienteId, isOpen, onClose }) {
       />
       <NuevoPagoModal
         clienteId={clienteId}
-        facturas={datos?.facturas}
+        ordenes={datos?.ordenes_pendientes}
         isOpen={pagoModal.open}
         onClose={pagoModal.onClose}
         onCreado={cargarDetalle}
+      />
+      <NuevaOrdenModal
+        usuarioId={clienteId}
+        nombreUsuario={datos?.cliente?.nombre}
+        isOpen={ordenModal.open}
+        onClose={ordenModal.onClose}
+        onCreada={cargarDetalle}
       />
     </Dialog.Root>
   )
