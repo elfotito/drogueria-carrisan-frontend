@@ -13,9 +13,10 @@ import {
   Button,
   HStack,
   VStack,
+  IconButton,
   useDisclosure,
 } from '@chakra-ui/react'
-import { FileText, Wallet, ShoppingCart, Plus, Receipt, CreditCard } from 'lucide-react'
+import { FileText, Wallet, ShoppingCart, Plus, Receipt, CreditCard, X } from 'lucide-react'
 import api from '../../api/axios'
 import NuevaFacturaModal from './NuevaFacturaModal'
 import NuevoPagoModal from './NuevoPagoModal'
@@ -112,12 +113,23 @@ function EstadoCuentaDetalle({ clienteId, isOpen, onClose }) {
   }
 
   return (
-    <Dialog.Root open={isOpen} onOpenChange={(e) => !e.open && onClose()} size="cover" placement="center" scrollBehavior="inside">
+    <Dialog.Root open={isOpen} onOpenChange={(e) => !e.open && onClose()} placement="center">
       <Portal>
-        <Dialog.Backdrop />
-        <Dialog.Positioner>
-          <Dialog.Content maxW="4xl" borderRadius="xl">
-            <Dialog.Header bg={INDIGO} color="white" borderTopRadius="xl">
+        <Dialog.Backdrop position="fixed" inset={0} bg="blackAlpha.600" zIndex={1400} />
+        <Dialog.Positioner position="fixed" inset={0} display="flex" alignItems="center" justifyContent="center" p={4} zIndex={1500} overflowY="auto">
+          <Dialog.Content
+            maxW="4xl"
+            w="100%"
+            maxH="90vh"
+            my="auto"
+            bg="white"
+            borderRadius="xl"
+            boxShadow="2xl"
+            display="flex"
+            flexDir="column"
+            overflow="hidden"
+          >
+            <Dialog.Header bg={INDIGO} color="white" borderTopRadius="xl" flexShrink={0} p={5}>
               {cargando || !datos ? (
                 <Dialog.Title>Cargando cliente...</Dialog.Title>
               ) : (
@@ -130,9 +142,13 @@ function EstadoCuentaDetalle({ clienteId, isOpen, onClose }) {
                 </HStack>
               )}
             </Dialog.Header>
-            <Dialog.CloseTrigger color="white" />
+            <Dialog.CloseTrigger position="absolute" top="14px" right="14px" color="white" asChild>
+              <IconButton variant="ghost" size="sm" color="white" _hover={{ bg: 'whiteAlpha.300' }} aria-label="Cerrar">
+                <X size={18} />
+              </IconButton>
+            </Dialog.CloseTrigger>
 
-            <Dialog.Body bg="gray.50" pb={6}>
+            <Dialog.Body bg="gray.50" pb={6} flex="1" overflowY="auto" px={{ base: 4, md: 6 }}>
               {cargando ? (
                 <Flex align="center" justify="center" minH="300px">
                   <Spinner size="lg" color={AZUL} borderWidth="3px" />
@@ -185,33 +201,33 @@ function EstadoCuentaDetalle({ clienteId, isOpen, onClose }) {
                       <Box bg="white" borderRadius="lg" overflow="hidden" border="1px solid" borderColor="gray.100">
                         <Table.Root size="sm">
                           <Table.Header bg="gray.50">
-                            <Table.Row>
-                              <Table.ColumnHeader>Orden</Table.ColumnHeader>
-                              <Table.ColumnHeader>Fecha</Table.ColumnHeader>
-                              <Table.ColumnHeader>Forma de pago</Table.ColumnHeader>
-                              <Table.ColumnHeader>Estado</Table.ColumnHeader>
-                              <Table.ColumnHeader textAlign="end">Monto</Table.ColumnHeader>
+                            <Table.Row borderBottom="1px solid" borderColor="gray.100">
+                              <Table.ColumnHeader px={4} py={3}>Orden</Table.ColumnHeader>
+                              <Table.ColumnHeader px={4} py={3}>Fecha</Table.ColumnHeader>
+                              <Table.ColumnHeader px={4} py={3}>Forma de pago</Table.ColumnHeader>
+                              <Table.ColumnHeader px={4} py={3}>Estado</Table.ColumnHeader>
+                              <Table.ColumnHeader textAlign="end" px={4} py={3}>Monto</Table.ColumnHeader>
                             </Table.Row>
                           </Table.Header>
                           <Table.Body>
                             {(datos.ordenes_pendientes || []).length === 0 ? (
-                              <Table.Row>
-                                <Table.Cell colSpan={5}>
+                              <Table.Row borderBottom="1px solid" borderColor="gray.100">
+                                <Table.Cell colSpan={5} px={4} py={3}>
                                   <Text py={4} textAlign="center" color="gray.400">Sin órdenes pendientes</Text>
                                 </Table.Cell>
                               </Table.Row>
                             ) : (
                               datos.ordenes_pendientes.map((o) => (
-                                <Table.Row key={o.id}>
-                                  <Table.Cell>#{o.id}</Table.Cell>
-                                  <Table.Cell>{fecha(o.created_at)}</Table.Cell>
-                                  <Table.Cell textTransform="capitalize">{o.forma_pago}</Table.Cell>
-                                  <Table.Cell>
+                                <Table.Row key={o.id} borderBottom="1px solid" borderColor="gray.100">
+                                  <Table.Cell px={4} py={3}>#{o.id}</Table.Cell>
+                                  <Table.Cell px={4} py={3}>{fecha(o.created_at)}</Table.Cell>
+                                  <Table.Cell textTransform="capitalize" px={4} py={3}>{o.forma_pago}</Table.Cell>
+                                  <Table.Cell px={4} py={3}>
                                     <Badge colorPalette={ESTADO_ORDEN_COLOR[o.estado] || 'gray'} borderRadius="full">
                                       {o.estado}
                                     </Badge>
                                   </Table.Cell>
-                                  <Table.Cell textAlign="end" fontWeight="600">${money(o.total_usd)}</Table.Cell>
+                                  <Table.Cell textAlign="end" fontWeight="600" px={4} py={3}>${money(o.total_usd)}</Table.Cell>
                                 </Table.Row>
                               ))
                             )}
@@ -224,27 +240,27 @@ function EstadoCuentaDetalle({ clienteId, isOpen, onClose }) {
                       <Box bg="white" borderRadius="lg" overflow="hidden" border="1px solid" borderColor="gray.100">
                         <Table.Root size="sm">
                           <Table.Header bg="gray.50">
-                            <Table.Row>
-                              <Table.ColumnHeader>Factura</Table.ColumnHeader>
-                              <Table.ColumnHeader>Fecha</Table.ColumnHeader>
-                              <Table.ColumnHeader textAlign="end">Tasa usada</Table.ColumnHeader>
-                              <Table.ColumnHeader textAlign="end">Monto</Table.ColumnHeader>
+                            <Table.Row borderBottom="1px solid" borderColor="gray.100">
+                              <Table.ColumnHeader px={4} py={3}>Factura</Table.ColumnHeader>
+                              <Table.ColumnHeader px={4} py={3}>Fecha</Table.ColumnHeader>
+                              <Table.ColumnHeader textAlign="end" px={4} py={3}>Tasa usada</Table.ColumnHeader>
+                              <Table.ColumnHeader textAlign="end" px={4} py={3}>Monto</Table.ColumnHeader>
                             </Table.Row>
                           </Table.Header>
                           <Table.Body>
                             {(datos.facturas || []).length === 0 ? (
-                              <Table.Row>
-                                <Table.Cell colSpan={4}>
+                              <Table.Row borderBottom="1px solid" borderColor="gray.100">
+                                <Table.Cell colSpan={4} px={4} py={3}>
                                   <Text py={4} textAlign="center" color="gray.400">Sin facturas registradas</Text>
                                 </Table.Cell>
                               </Table.Row>
                             ) : (
                               datos.facturas.map((f) => (
-                                <Table.Row key={f.id}>
-                                  <Table.Cell>#{f.numero_factura || f.id}</Table.Cell>
-                                  <Table.Cell>{fecha(f.created_at)}</Table.Cell>
-                                  <Table.Cell textAlign="end">{f.tasa_cambio ? money(f.tasa_cambio) : '—'}</Table.Cell>
-                                  <Table.Cell textAlign="end" fontWeight="600">${money(f.monto_facturado)}</Table.Cell>
+                                <Table.Row key={f.id} borderBottom="1px solid" borderColor="gray.100">
+                                  <Table.Cell px={4} py={3}>#{f.numero_factura || f.id}</Table.Cell>
+                                  <Table.Cell px={4} py={3}>{fecha(f.created_at)}</Table.Cell>
+                                  <Table.Cell textAlign="end" px={4} py={3}>{f.tasa_cambio ? money(f.tasa_cambio) : '—'}</Table.Cell>
+                                  <Table.Cell textAlign="end" fontWeight="600" px={4} py={3}>${money(f.monto_facturado)}</Table.Cell>
                                 </Table.Row>
                               ))
                             )}
@@ -257,31 +273,31 @@ function EstadoCuentaDetalle({ clienteId, isOpen, onClose }) {
                       <Box bg="white" borderRadius="lg" overflow="hidden" border="1px solid" borderColor="gray.100">
                         <Table.Root size="sm">
                           <Table.Header bg="gray.50">
-                            <Table.Row>
-                              <Table.ColumnHeader>Pago</Table.ColumnHeader>
-                              <Table.ColumnHeader>Fecha</Table.ColumnHeader>
-                              <Table.ColumnHeader>Estado</Table.ColumnHeader>
-                              <Table.ColumnHeader textAlign="end">Monto</Table.ColumnHeader>
+                            <Table.Row borderBottom="1px solid" borderColor="gray.100">
+                              <Table.ColumnHeader px={4} py={3}>Pago</Table.ColumnHeader>
+                              <Table.ColumnHeader px={4} py={3}>Fecha</Table.ColumnHeader>
+                              <Table.ColumnHeader px={4} py={3}>Estado</Table.ColumnHeader>
+                              <Table.ColumnHeader textAlign="end" px={4} py={3}>Monto</Table.ColumnHeader>
                             </Table.Row>
                           </Table.Header>
                           <Table.Body>
                             {(datos.pagos || []).length === 0 ? (
-                              <Table.Row>
-                                <Table.Cell colSpan={4}>
+                              <Table.Row borderBottom="1px solid" borderColor="gray.100">
+                                <Table.Cell colSpan={4} px={4} py={3}>
                                   <Text py={4} textAlign="center" color="gray.400">Sin pagos registrados</Text>
                                 </Table.Cell>
                               </Table.Row>
                             ) : (
                               datos.pagos.map((p) => (
-                                <Table.Row key={p.id}>
-                                  <Table.Cell>#{p.id}</Table.Cell>
-                                  <Table.Cell>{fecha(p.created_at)}</Table.Cell>
-                                  <Table.Cell>
+                                <Table.Row key={p.id} borderBottom="1px solid" borderColor="gray.100">
+                                  <Table.Cell px={4} py={3}>#{p.id}</Table.Cell>
+                                  <Table.Cell px={4} py={3}>{fecha(p.created_at)}</Table.Cell>
+                                  <Table.Cell px={4} py={3}>
                                     <Badge colorPalette={ESTADO_PAGO_COLOR[p.estado] || 'gray'} borderRadius="full">
                                       {p.estado?.replace('_', ' ') || '—'}
                                     </Badge>
                                   </Table.Cell>
-                                  <Table.Cell textAlign="end" fontWeight="600">${money(p.monto)}</Table.Cell>
+                                  <Table.Cell textAlign="end" fontWeight="600" px={4} py={3}>${money(p.monto)}</Table.Cell>
                                 </Table.Row>
                               ))
                             )}
