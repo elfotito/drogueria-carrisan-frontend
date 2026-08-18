@@ -10,6 +10,13 @@
 //
 // El id de cada link debe ser único y es lo que compara
 // LayoutPaginaPrincipal para resaltar el ítem activo.
+//
+// Un grupo normal muestra sus items directo en la lista. Un grupo con
+// tipo: 'submenu' se muestra como una sola fila (ej. "Ayuda >") que al
+// tocarla abre una pantalla de submenú dentro del mismo drawer/sidebar,
+// con botón de volver y un link "Ver todo" (verTodoTo) que manda a la
+// página principal de esa sección — igual al "Browse Departments /
+// See all" de Walmart.
 // ---------------------------------------------------------------
 import { Package, Wallet, CreditCard, Settings, MapPin, Star, Bell, HelpCircle, MessageCircle, FileQuestion } from 'lucide-react'
 
@@ -35,6 +42,11 @@ export const NAV_PAGINAS_PRINCIPALES = [
   },
   {
     titulo: 'Ayuda',
+    // TODO(Tito): cuando esté lista la reestructuración de Ayuda, este es
+    // el lugar para agregar las secciones reales (cada una con su propio
+    // "to") y ajustar verTodoTo si la landing de Ayuda cambia de ruta.
+    tipo: 'submenu',
+    verTodoTo: '/ayuda',
     items: [
       { id: 'faq', to: '/faq', icono: FileQuestion, texto: 'Preguntas frecuentes' },
       { id: 'ayuda', to: '/ayuda', icono: HelpCircle, texto: 'Cómo usar la plataforma' },
