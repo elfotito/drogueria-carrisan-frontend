@@ -20,6 +20,19 @@ import './Landing.css'
   const img = (path, width = 800) => {
   return `${BASE_URL}/${path}?width=${width}&quality=80`
 }
+
+const ImagePlaceholder = ({ label, className }) => {
+  return (
+    <div className={className} style={{ 
+      backgroundColor: '#e0e0e0', 
+      padding: '40px', 
+      textAlign: 'center',
+      color: '#888'
+    }}>
+      {label || 'Imagen'}
+    </div>
+  )
+}
  
 
 
