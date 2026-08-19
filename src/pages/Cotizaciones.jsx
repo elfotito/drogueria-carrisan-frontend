@@ -105,16 +105,17 @@ function Cotizaciones() {
   }
 
   return (
-    <LayoutPaginaPrincipal activo="cotizaciones" titulo="Cotizaciones" nav={NAV_COTIZACIONES}>
+  <LayoutPaginaPrincipal activo="cotizaciones" titulo="Cotizaciones" nav={NAV_COTIZACIONES}>
+    <div className="cot-page">
       {cargando ? (
-        <div className="cotizaciones-loading">Cargando tus cotizaciones...</div>
+        <div className="cot-loading">Cargando tus cotizaciones...</div>
       ) : cotizaciones.length === 0 ? (
-        <div className="cotizaciones-vacio">
+        <div className="cot-vacio">
           <p>Todavía no has solicitado ninguna cotización.</p>
           <Link to="/catalogo">Ir al catálogo</Link>
         </div>
       ) : (
-        <div className="cotizaciones-lista">
+        <div className="cot-grid">
           {cotizaciones.map((c) => (
             <CotizacionCard
               key={c.id}
@@ -125,8 +126,9 @@ function Cotizaciones() {
           ))}
         </div>
       )}
-    </LayoutPaginaPrincipal>
-  )
+    </div>
+  </LayoutPaginaPrincipal>
+)
 }
 
 export default Cotizaciones
