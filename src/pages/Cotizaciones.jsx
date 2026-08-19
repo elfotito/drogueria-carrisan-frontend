@@ -1,8 +1,9 @@
-// src/pages/MisSolicitudes/Cotizaciones.jsx
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import api from '../../api/axios'
-import { useCart } from '../../context/CartContext'
+import api from '../api/axios'
+import { useCart } from '../context/CartContext'
+import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
+import { NAV_COTIZACIONES } from '../components/paginas-principales/NavCotizaciones'
 import './Cotizaciones.css'
 
 function formatUSD(valor) {
@@ -103,30 +104,28 @@ function Cotizaciones() {
     addItemCotizado(cotizacion.producto, cotizacion)
   }
 
-  if (cargando) {
-    return <div className="cotizaciones-loading">Cargando tus cotizaciones...</div>
-  }
-
-  if (cotizaciones.length === 0) {
-    return (
-      <div className="cotizaciones-vacio">
-        <p>Todavía no has solicitado ninguna cotización.</p>
-        <Link to="/catalogo">Ir al catálogo</Link>
-      </div>
-    )
-  }
-
   return (
-    <div className="cotizaciones-lista">
-      {cotizaciones.map((c) => (
-        <CotizacionCard
-          key={c.id}
-          cotizacion={c}
-          onAgregar={handleAgregar}
-          yaEnCarrito={items.some((item) => item.producto.id === c.producto?.id)}
-        />
-      ))}
-    </div>
+    <LayoutPaginaPrincipal activo="cotizaciones" titulo="Cotizaciones" nav={NAV_COTIZACIONES}>
+      {cargando ? (
+        <div className="cotizaciones-loading">Cargando tus cotizaciones...</div>
+      ) : cotizaciones.length === 0 ? (
+        <div className="cotizaciones-vacio">
+          <p>Todavía no has solicitado ninguna cotización.</p>
+          <Link to="/catalogo">Ir al catálogo</Link>
+        </div>
+      ) : (
+        <div className="cotizaciones-lista">
+          {cotizaciones.map((c) => (
+            <CotizacionCard
+              key={c.id}
+              cotizacion={c}
+              onAgregar={handleAgregar}
+              yaEnCarrito={items.some((item) => item.producto.id === c.producto?.id)}
+            />
+          ))}
+        </div>
+      )}
+    </LayoutPaginaPrincipal>
   )
 }
 
