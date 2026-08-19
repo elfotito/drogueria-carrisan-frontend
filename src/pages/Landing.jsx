@@ -260,7 +260,7 @@ function Landing() {
           ))}
         </div>
         <a href="#" className="btn-landing btn-landing--outline landing-ahorros__cta">
-          Explora nuestros tipo de descuentos
+          Explora nuestros descuentos
         </a>
       </section>
 
