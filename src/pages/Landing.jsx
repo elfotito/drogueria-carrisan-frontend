@@ -16,19 +16,6 @@ const imageConfigs = [
     { path: 'footer/logo.png', width: 200 },
   ]
 
-const LandingPage = () => {
-  const { images, loading } = useSupabaseImages(imageConfigs)
-
-  return (
-    <div>
-      {/* ⚠️ Solo muestra cuando está cargado */}
-      {!loading && (
-        <img src={images.hero} alt="Hero" />
-      )}
-    </div>
-  )
-}
-
 const SUPABASE_URL = 'https://fqeshthtycmzgyibiurq.supabase.co'
 const BUCKET = 'crsnimages'
 
