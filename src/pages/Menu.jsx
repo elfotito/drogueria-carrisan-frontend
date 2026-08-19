@@ -117,7 +117,7 @@ const GRID_PRINCIPAL = [
   { to: '/hospitalaria', label: 'Línea Hospitalaria', icono: 'hospital', tinte: 'azul' },
   { to: '/ofertas', label: 'Ofertas', icono: 'ofertas', tinte: 'indigo' },
   { to: '/admin', label: 'Plan Carrisán+', icono: 'plan', tinte: 'teal' },
-  { to: '/servicios-aliados', label: 'Servicios Aliados', icono: 'aliados', tinte: 'azul' },
+  { to: '/mis-solicitudes', label: 'Servicios Aliados', icono: 'aliados', tinte: 'azul' },
   { to: '/ayuda', label: 'Ayuda', icono: 'ayuda', tinte: 'indigo' },
 ]
 
