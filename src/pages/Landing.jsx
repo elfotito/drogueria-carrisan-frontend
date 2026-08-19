@@ -17,12 +17,11 @@ import './Landing.css'
     footerLogo: `${BASE_URL}/footer/logo.png?width=200&quality=80`,
   }
 
-
-  const SUPABASE_URL = 'https://fqeshthtycmzgyibiurq.supabase.co'
-  const BUCKET = 'crsnimages'
   const img = (path, width = 800) => {
-  return `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${path}?width=${width}&quality=80`
+  return `${BASE_URL}/${path}?width=${width}&quality=80`
 }
+ 
+
 
 
 function Carrusel({ items, renderItem, claseContenedor, claseTarjeta }) {
@@ -87,19 +86,19 @@ const AHORROS = [
     titulo: 'Descuento por Volumen y Escala',
     texto: 'Reduce tu costo por unidad al comprar por empaque cerrado o bulto. Mientas más consolides, mejor es tu margen.',
     link: 'Ver escalas de precio',
-    imagen: 'descuentoxvolumen.jpg' 
+    imagen: urls.descuento 
   },
   {
     titulo: 'Financiamiento B2B a 7 Días',
     texto: 'Ahorra en costo de oportunidad: recibe tu inventario hoy, genera ingresos con tus pacientes y paga a los 7 días sin intereses.',
     link: 'Más información sobre el crédito',
-    imagen: 'financiamientocarrisan.jpg'
+    imagen: urls.financiamiento
   }, 
   {
     titulo: 'Precios Directos de Distribución',
     texto: 'Sin intermediarios. Accede a precios especiales de origen y ofertas semanales en líneas comerciales y hospitalarias seleccionadas.',
     link: 'Ver ofertas del mes',
-    imagen: 'precioscompetitivos.jpg'
+    imagen: urls.precios
   },
 ]
 
@@ -251,12 +250,12 @@ function Landing() {
         <div className="landing-ahorros__grid">
           {AHORROS.map((item) => (
               <div key={item.titulo} className="landing-ahorros__card">
-            <img 
-              src={img(item.imagen, 800)} 
-              alt={item.titulo}
-              className="landing-ahorros__card-imagen"
-              loading="lazy"
-            />
+                    <img 
+                      src={item.imagen}  // ← Ya viene con la URL completa
+                      alt={item.titulo}
+                      className="landing-ahorros__card-imagen"
+                      loading="lazy"
+                    />
               <h3>{item.titulo}</h3>
               <p>{item.texto}</p>
               <a href="#" className="landing-link">{item.link} ›</a>
