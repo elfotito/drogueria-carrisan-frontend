@@ -45,6 +45,7 @@ import ReportesEstadoCuenta from './pages/ReportesEstadoCuenta'
 import Cotizaciones from './pages/Cotizaciones'
 import Requerimientos from './pages/Requerimientos'
 import Documentos from './pages/Documentos'
+import ChatCentro from './pages/Chat'
 
 
 function LoadingBarBridge() {
@@ -99,6 +100,8 @@ function App() {
 <Route path="/mis-solicitudes/cotizaciones" element={<PrivateRoute><Cotizaciones /></PrivateRoute>} />
 <Route path="/mis-solicitudes/requerimientos" element={<PrivateRoute><Requerimientos /></PrivateRoute>} />
 <Route path="/mis-solicitudes/documentos" element={<PrivateRoute><Documentos /></PrivateRoute>} />
+<Route path="/chat" element={<ChatCentro />} />
+<Route path="/chat/orden/:ordenId" element={<ChatCentro />} />
               </Routes>
             </LoadingBarProvider>
           </EnvioProvider>
