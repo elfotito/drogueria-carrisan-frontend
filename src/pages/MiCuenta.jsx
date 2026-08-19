@@ -10,8 +10,8 @@ import {
   MessageCircle, ShieldCheck, Wallet, Bell, LogOut, Settings, X, Lock, Scale,
 } from 'lucide-react'
 import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
+import { NAV_CUENTA } from '../components/paginas-principales/navCuenta'
 import './MiCuenta.css'
-import HojaInferior from '../components/HojaInferior'
 
 // ---------------------------------------------------------------
 // Mi Cuenta — dashboard visual de la cuenta.
@@ -81,6 +81,36 @@ function calcularPedidosActivos(ordenes) {
     cantidad: activas.filter((o) => o.estado === estado).length,
   })).filter((e) => e.cantidad > 0)
   return { total: activas.length, conteos }
+}
+
+// ---------------------------------------------------------
+// Hoja inferior genérica (bottom sheet) — overlay + tarjeta que sube
+// desde abajo en móvil, centrada en desktop. Vía portal directo a
+// document.body por la misma razón que el modal de MisItems: así
+// nunca queda atrapada dentro de .ppal-shift mientras el drawer del
+// sidebar está transicionando (overflow:hidden / transform).
+//
+// Se usa para "Tu cuenta" (selector estilo Amazon) y "Permisos y
+// notificaciones" — si en el futuro aparece un tercer lugar que
+// necesite este mismo patrón, conviene moverlo a un archivo propio
+// dentro de components/.
+// ---------------------------------------------------------
+function HojaInferior({ titulo, onCerrar, children }) {
+  return createPortal(
+    <div className="hoja-inferior-overlay" onClick={onCerrar}>
+      <div className="hoja-inferior" onClick={(e) => e.stopPropagation()}>
+        <div className="hoja-inferior__manija" />
+        <div className="hoja-inferior__header">
+          <h3>{titulo}</h3>
+          <button type="button" className="hoja-inferior__cerrar" onClick={onCerrar} aria-label="Cerrar">
+            <X size={18} />
+          </button>
+        </div>
+        <div className="hoja-inferior__body">{children}</div>
+      </div>
+    </div>,
+    document.body
+  )
 }
 
 // ---------------------------------------------------------
@@ -427,7 +457,7 @@ function MiCuenta() {
   }
 
   return (
-    <LayoutPaginaPrincipal activo="cuenta" titulo="Mi Cuenta" subtitulo="Un vistazo general a tu cuenta">
+    <LayoutPaginaPrincipal activo="cuenta" titulo="Mi Cuenta" subtitulo="Un vistazo general a tu cuenta" nav={NAV_CUENTA}>
       <div className="mi-cuenta">
         <header className="mi-cuenta__header">
           <div className="mi-cuenta__header-info">
