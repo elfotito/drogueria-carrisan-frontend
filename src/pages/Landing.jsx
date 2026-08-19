@@ -355,6 +355,7 @@ function Landing() {
         <ImagePlaceholder label="Imagen Atención Farmacéutica B2B" className="landing-ayudarte__imagen" />
       </section>
 
+      
       {/* ================================================================ */}
       {/* 8. CÓMO FUNCIONA                                                 */}
       {/* ================================================================ */}
@@ -370,12 +371,12 @@ function Landing() {
           claseTarjeta="landing-como-funciona__card"
           renderItem={(paso) => (
             <>
-            <img 
-                      src={item.imagen}
-                      alt={item.titulo}
-                      className="landing-ahorros__card-imagen"
-                      loading="lazy"
-                    />
+              <img 
+                src={paso.imagen}  
+                alt={paso.titulo}  
+                className="landing-como-funciona__imagen"  
+                loading="lazy"
+              />
               <h3>{paso.numero}. {paso.titulo}</h3>
               <p>{paso.texto}</p>
             </>
