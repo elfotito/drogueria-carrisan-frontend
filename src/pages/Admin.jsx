@@ -27,8 +27,8 @@ function Admin() {
     { id: 'usuarios', nombre: 'Usuarios', icono: '👤' },
     { id: 'pagos', nombre: '💵 Pagos', icono: '💰' },
     { id: 'estadoCuenta', nombre: 'Estado de cuenta', icono: '🏦' },
-    { id: 'descuentos', nombre: 'Descuentos', icono: '💎' }
-{ id: 'cotizaciones', nombre: '💬 Cotizaciones', icono: '💬' },
+    { id: 'descuentos', nombre: 'Descuentos', icono: '💎' },
+{ id: 'cotizaciones', nombre: '💬 Cotizaciones', icono: '💬' }
   ]
 
   const seccionActual = secciones.find(s => s.id === seccionActiva)
