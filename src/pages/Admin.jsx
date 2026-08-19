@@ -32,7 +32,7 @@ function Admin() {
     { id: 'descuentos', nombre: 'Descuentos', icono: '💎' },
 { id: 'cotizaciones', nombre: '💬 Cotizaciones', icono: '💬' },
 { id: 'requerimientos', nombre: '📦 Requerimientos', icono: '📦' },
-{ id: 'documentos', nombre: '📄 Documentos', icono: '📄' }
+{ id: 'documentos', nombre: '📄 Documentos', icono: '📄' },
   ]
 
   const seccionActual = secciones.find(s => s.id === seccionActiva)
