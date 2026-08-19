@@ -1,0 +1,177 @@
+/* ============ TABLERO KANBAN ============ */
+.kb-board-wrap {
+  padding: 4px 0;
+}
+
+.kb-board {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(260px, 1fr));
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.kb-columna {
+  background: #f8fafc;
+  border-radius: 14px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 200px;
+}
+
+.kb-columna__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px;
+}
+
+.kb-columna__titulo {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #1e293b;
+}
+
+.kb-columna__count {
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.kb-columna__cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.kb-columna__vacio {
+  text-align: center;
+  padding: 20px 8px;
+  font-size: 0.82rem;
+  color: #94a3b8;
+}
+
+.kb-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.kb-card:hover {
+  border-color: #94a3b8;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.kb-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.kb-card__id {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  font-family: 'Courier New', monospace;
+}
+
+.kb-card__vencida {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.kb-card__producto {
+  margin: 0;
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: #1e293b;
+}
+
+.kb-card__cliente {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+.kb-card__cliente-email {
+  font-size: 0.72rem;
+}
+
+.kb-card__precio {
+  margin: 2px 0 0;
+  font-weight: 700;
+  color: #2563eb;
+  font-size: 0.95rem;
+}
+
+.kb-card__fecha {
+  margin: 2px 0 0;
+  font-size: 0.72rem;
+  color: #94a3b8;
+}
+
+/* ============ ACCIONES DEL MODAL ============ */
+.kb-modal-acciones {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.kb-btn-rechazar {
+  flex: 1;
+  padding: 11px;
+  border-radius: 10px;
+  border: 2px solid #fee2e2;
+  background: #fff;
+  color: #ef4444;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.kb-btn-responder {
+  flex: 2;
+  padding: 11px;
+  border-radius: 10px;
+  border: none;
+  background: #2563eb;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.kb-btn-rechazar:disabled,
+.kb-btn-responder:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.kb-error {
+  color: #dc2626;
+  font-size: 0.82rem;
+  margin: 8px 0 0;
+}
+
+@media (max-width: 900px) {
+  .kb-board {
+    grid-template-columns: 1fr;
+  }
+}
