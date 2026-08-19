@@ -11,6 +11,7 @@ import EstadoCuentaAdmin from '../components/admin/EstadoCuentaAdmin'
 import DescuentosPanel from '../components/admin/DescuentosAdmin'
 import PagosAdmin from '../components/admin/PagosAdmin'
 import CotizacionesAdmin from '../components/admin/CotizacionesAdmin'
+import RequerimientosAdmin from '../components/admin/RequerimientosAdmin'
 
 import './Admin.css'
 
@@ -28,7 +29,8 @@ function Admin() {
     { id: 'pagos', nombre: '💵 Pagos', icono: '💰' },
     { id: 'estadoCuenta', nombre: 'Estado de cuenta', icono: '🏦' },
     { id: 'descuentos', nombre: 'Descuentos', icono: '💎' },
-{ id: 'cotizaciones', nombre: '💬 Cotizaciones', icono: '💬' }
+{ id: 'cotizaciones', nombre: '💬 Cotizaciones', icono: '💬' },
+{ id: 'requerimientos', nombre: '📦 Requerimientos', icono: '📦' }
   ]
 
   const seccionActual = secciones.find(s => s.id === seccionActiva)
@@ -57,6 +59,7 @@ function Admin() {
       case 'descuentos': return <DescuentosPanel />
       default: return <TasaCambio />
 case 'cotizaciones': return <CotizacionesAdmin />
+case 'requerimientos': return <RequerimientosAdmin />
     }
   }
 
