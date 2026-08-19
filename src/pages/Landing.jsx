@@ -4,27 +4,39 @@ import {
   Check, ChevronDown, Play, Star, HeartHandshake,
 } from 'lucide-react'
 import './Landing.css'
+import { useSupabaseImages } from '../hooks/useSupabaseImages'
 
-// Dependencia: npm install lucide-react (ya usada en el resto del proyecto)
 
-// ---------------------------------------------------------------------
-// TODO: reemplazar cada <ImagePlaceholder /> por la imagen real cuando
-// esté lista, y cada href="#" por el enlace/acción definitivos.
-// Se dejó el texto exacto de las capturas de referencia como base;
-// ajústalo libremente sin romper la estructura de cada sección.
-// ---------------------------------------------------------------------
+const imageConfigs = [
+    { path: 'hero.png', width: 1200 },
+    { path: 'financiamientocarrisan.jpg', width: 800 },
+    { path: 'descuentoxvolumen.jpg', width: 800 },
+    { path: 'precioscompetitivos.jpg', width: 800 },
+    { path: 'testimonials/user1.jpg', width: 400 },
+    { path: 'testimonials/user2.jpg', width: 400 },
+    { path: 'footer/logo.png', width: 200 },
+  ]
 
-function ImagePlaceholder({ label, className = '' }) {
+const LandingPage = () => {
+  const { images, loading } = useSupabaseImages(imageConfigs)
+
   return (
-    <div className={`landing-img-placeholder ${className}`}>
-      <span>{label}</span>
+    <div>
+      {/* ⚠️ Solo muestra cuando está cargado */}
+      {!loading && (
+        <img src={images.hero} alt="Hero" />
+      )}
     </div>
   )
 }
 
-// Carrusel con paginado de circulitos — en móvil es scroll horizontal con
-// snap (cada tarjeta ocupa el ancho visible); en desktop, .landing.css
-// convierte el mismo contenedor en un grid y oculta los dots.
+const SUPABASE_URL = 'https://fqeshthtycmzgyibiurq.supabase.co'
+const BUCKET = 'crsnimages'
+
+const img = (path, width = 800) => {
+  return `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${path}?width=${width}&quality=80`
+}
+
 function Carrusel({ items, renderItem, claseContenedor, claseTarjeta }) {
   const [activo, setActivo] = useState(0)
   const scrollRef = useRef(null)
@@ -87,16 +99,19 @@ const AHORROS = [
     titulo: 'Descuento por Volumen y Escala',
     texto: 'Reduce tu costo por unidad al comprar por empaque cerrado o bulto. Mientas más consolides, mejor es tu margen.',
     link: 'Ver escalas de precio',
+    imagen: 'descuentoxvolumen.jpg' 
   },
   {
     titulo: 'Financiamiento B2B a 7 Días',
     texto: 'Ahorra en costo de oportunidad: recibe tu inventario hoy, genera ingresos con tus pacientes y paga a los 7 días sin intereses.',
     link: 'Más información sobre el crédito',
-  },
+    imagen: 'financiamientocarrisan.jpg'
+  }, 
   {
     titulo: 'Precios Directos de Distribución',
     texto: 'Sin intermediarios. Accede a precios especiales de origen y ofertas semanales en líneas comerciales y hospitalarias seleccionadas.',
     link: 'Ver ofertas del mes',
+    imagen: 'precioscompetitivos.jpg'
   },
 ]
 
@@ -204,11 +219,11 @@ function Landing() {
       {/* ================================================================ */}
       <section className="landing-hero">
         <div className="landing-hero__contenido">
-          <img 
-      src="https://fqeshthtycmzgyibiurq.supabase.co/storage/v1/object/sign/dcimages/hero.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mZGI0NTZkYy04YTAyLTQ3Y2EtYjc4Yy0yMWZmMWExOWM0MmEiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJkY2ltYWdlcy9oZXJvLnBuZyIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3ODcwODEwODgsImV4cCI6MTk0NDc2MTA4OH0.VD77hymFeyPj4FpXuWgwBAmFPBTqutU04pHi2qry0sA" 
-      alt="Evita las espumosas hasta el viernes c:"
-      className="landing-hero__imagen"
-    />
+                <img 
+        src={images.hero} 
+        alt="Hero" 
+        className="landing-hero__imagen"
+      />
           
           <div className="landing-hero__texto">
             <h1>Respaldamos al Medico Venezolano</h1>
@@ -251,8 +266,13 @@ function Landing() {
         </p>
         <div className="landing-ahorros__grid">
           {AHORROS.map((item) => (
-            <div key={item.titulo} className="landing-ahorros__card">
-              <ImagePlaceholder label="Imagen" className="landing-ahorros__card-imagen" />
+              <div key={item.titulo} className="landing-ahorros__card">
+            <img 
+              src={img(item.imagen, 800)} 
+              alt={item.titulo}
+              className="landing-ahorros__card-imagen"
+              loading="lazy"
+            />
               <h3>{item.titulo}</h3>
               <p>{item.texto}</p>
               <a href="#" className="landing-link">{item.link} ›</a>
