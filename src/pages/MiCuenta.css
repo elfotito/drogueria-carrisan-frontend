@@ -252,64 +252,6 @@
   justify-content: center;
 }
 
-/* ================================================================== */
-/* Hoja inferior genérica (bottom sheet) — "Tu cuenta" y "Permisos"    */
-/* ================================================================== */
-.hoja-inferior-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(26, 26, 58, 0.45);
-  z-index: 1000;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-}
-
-.hoja-inferior {
-  width: 100%;
-  max-width: 440px;
-  background: var(--color-surface);
-  border-radius: 20px 20px 0 0;
-  padding: 10px 20px 26px;
-  max-height: 85vh;
-  overflow-y: auto;
-}
-
-.hoja-inferior__manija {
-  width: 40px;
-  height: 4px;
-  border-radius: 999px;
-  background: var(--color-border);
-  margin: 0 auto 14px;
-}
-
-.hoja-inferior__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 14px;
-}
-
-.hoja-inferior__header h3 {
-  margin: 0;
-  font-size: 1.15rem;
-  font-weight: 700;
-}
-
-.hoja-inferior__cerrar {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  border: none;
-  background: var(--color-bg);
-  color: var(--color-text-muted);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  flex-shrink: 0;
-}
 
 /* --- Contenido: "Tu cuenta" --- */
 .modal-cuenta__usuario {
