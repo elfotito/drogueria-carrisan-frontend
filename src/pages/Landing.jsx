@@ -4,7 +4,6 @@ import {
   Check, ChevronDown, Play, Star, HeartHandshake,
 } from 'lucide-react'
 import './Landing.css'
-import { useSupabaseImages } from '../hooks/useSupabaseImages'
 
 
 const imageConfigs = [
