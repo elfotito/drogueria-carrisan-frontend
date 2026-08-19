@@ -5,23 +5,25 @@ import {
 } from 'lucide-react'
 import './Landing.css'
 
+  const BASE_URL = 'https://fqeshthtycmzgyibiurq.supabase.co/storage/v1/object/public/crsnimages'
+  
+  const urls = {
+    hero: `${BASE_URL}/hero.png?width=1200&quality=80`,
+    financiamiento: `${BASE_URL}/financiamientocarrisan.jpg?width=800&quality=80`,
+    descuento: `${BASE_URL}/descuentoxvolumen.jpg?width=800&quality=80`,
+    precios: `${BASE_URL}/precioscompetitivos.jpg?width=800&quality=80`,
+    user1: `${BASE_URL}/testimonials/user1.jpg?width=400&quality=80`,
+    user2: `${BASE_URL}/testimonials/user2.jpg?width=400&quality=80`,
+    footerLogo: `${BASE_URL}/footer/logo.png?width=200&quality=80`,
+  }
 
-const imageConfigs = [
-    { path: 'hero.png', width: 1200 },
-    { path: 'financiamientocarrisan.jpg', width: 800 },
-    { path: 'descuentoxvolumen.jpg', width: 800 },
-    { path: 'precioscompetitivos.jpg', width: 800 },
-    { path: 'testimonials/user1.jpg', width: 400 },
-    { path: 'testimonials/user2.jpg', width: 400 },
-    { path: 'footer/logo.png', width: 200 },
-  ]
 
-const SUPABASE_URL = 'https://fqeshthtycmzgyibiurq.supabase.co'
-const BUCKET = 'crsnimages'
-
-const img = (path, width = 800) => {
+  const SUPABASE_URL = 'https://fqeshthtycmzgyibiurq.supabase.co'
+  const BUCKET = 'crsnimages'
+  const img = (path, width = 800) => {
   return `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${path}?width=${width}&quality=80`
 }
+
 
 function Carrusel({ items, renderItem, claseContenedor, claseTarjeta }) {
   const [activo, setActivo] = useState(0)
@@ -205,11 +207,7 @@ function Landing() {
       {/* ================================================================ */}
       <section className="landing-hero">
         <div className="landing-hero__contenido">
-                <img 
-        src={images.hero} 
-        alt="Hero" 
-        className="landing-hero__imagen"
-      />
+                <img src={urls.hero} alt="Hero" className="landing-hero__imagen" />
           
           <div className="landing-hero__texto">
             <h1>Respaldamos al Medico Venezolano</h1>
