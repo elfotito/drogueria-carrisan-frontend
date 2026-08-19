@@ -9,12 +9,12 @@ import './Landing.css'
   
   const urls = {
     hero: `${BASE_URL}/hero.png?width=1200&quality=80`,
-    financiamiento: `${BASE_URL}/financiamientocarrisan.jpg?width=800&quality=80`,
-    descuento: `${BASE_URL}/descuentoxvolumen.jpg?width=800&quality=80`,
-    precios: `${BASE_URL}/precioscompetitivos.jpg?width=800&quality=80`,
-    user1: `${BASE_URL}/testimonials/user1.jpg?width=400&quality=80`,
-    user2: `${BASE_URL}/testimonials/user2.jpg?width=400&quality=80`,
-    footerLogo: `${BASE_URL}/footer/logo.png?width=200&quality=80`,
+    financiamiento: `${BASE_URL}/financiamientocarrisan.png?width=800&quality=80`,
+    descuento: `${BASE_URL}/descuentoxvolumen.png?width=800&quality=80`,
+    precios: `${BASE_URL}/precioscompetitivos.png?width=800&quality=80`,
+    registrate: `${BASE_URL}/registrate.png?width=800&quality=80`,
+    pedidoenlinea: `${BASE_URL}/pedidoenlinea.png?width=800&quality=80`,
+    recibe: `${BASE_URL}/recibe.png?width=800&quality=80`,
   }
 
   const img = (path, width = 800) => {
@@ -99,19 +99,19 @@ const AHORROS = [
     titulo: 'Descuento por Volumen y Escala',
     texto: 'Reduce tu costo por unidad al comprar por empaque cerrado o bulto. Mientas más consolides, mejor es tu margen.',
     link: 'Ver escalas de precio',
-    imagen: urls.descuento 
+    imagen: urls.descuento,
   },
   {
     titulo: 'Financiamiento B2B a 7 Días',
     texto: 'Ahorra en costo de oportunidad: recibe tu inventario hoy, genera ingresos con tus pacientes y paga a los 7 días sin intereses.',
     link: 'Más información sobre el crédito',
-    imagen: urls.financiamiento
+    imagen: urls.financiamiento,
   }, 
   {
     titulo: 'Precios Directos de Distribución',
     texto: 'Sin intermediarios. Accede a precios especiales de origen y ofertas semanales en líneas comerciales y hospitalarias seleccionadas.',
     link: 'Ver ofertas del mes',
-    imagen: urls.precios
+    imagen: urls.precios,
   },
 ]
 
@@ -120,16 +120,19 @@ const PASOS = [
     numero: 1,
     titulo: 'Crea tu Cuenta B2B',
     texto: 'Un proceso 100% gratuito y rápido. Vincula tu farmacia, clínica o registro médico para habilitar tus precios preferenciales de distribución.',
+    imagen: urls.registrate,
   },
   {
     numero: 2,
     titulo: 'Arma tu Pedido en Tiempo Real',
     texto: 'Explora el catálogo comercial y hospitalario, consulta el inventario disponible al instante y genera tu orden a cualquier hora.',
+    imagen: urls.pedidoenlinea,
   },
   {
     numero: 3,
     titulo: 'Recibe y Paga a los 7 Días',
     texto: 'Despachamos de forma prioritaria directo a tu establecimiento para que utilices tu mercancía y gestiones tu pago con tu línea de crédito.',
+    imagen: urls.recibe,
   },
 ]
 
