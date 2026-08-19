@@ -1,0 +1,83 @@
+.ra-filas {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ra-fila {
+  display: grid;
+  grid-template-columns: 1fr 1fr 90px auto;
+  gap: 8px;
+  align-items: center;
+  padding: 8px;
+  border-radius: 10px;
+  background: #f8fafc;
+}
+
+.ra-fila--rechazada {
+  opacity: 0.5;
+}
+
+.ra-fila--lectura {
+  grid-template-columns: 1fr 1fr;
+}
+
+.ra-fila__original {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.82rem;
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.ra-fila__cantidad {
+  font-size: 0.72rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.ra-fila__nota {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.ra-fila__input {
+  padding: 7px 10px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  font-size: 0.82rem;
+}
+
+.ra-fila__input:disabled {
+  background: #f1f5f9;
+  color: #94a3b8;
+}
+
+.ra-fila__rechazar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.7rem;
+  color: #ef4444;
+  white-space: nowrap;
+}
+
+.ra-fila__resultado {
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-align: right;
+}
+
+.ra-fila__resultado--ok { color: #10b981; }
+.ra-fila__resultado--rechazado { color: #ef4444; }
+
+@media (max-width: 560px) {
+  .ra-fila {
+    grid-template-columns: 1fr;
+  }
+  .ra-fila--lectura {
+    grid-template-columns: 1fr;
+  }
+}
