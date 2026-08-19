@@ -470,7 +470,7 @@
 }
 
 /* ================================================================== */
-/* 8. HOW IT WORKS                                                     */
+/* 8. HOW IT WORKS                                                    */
 /* ================================================================== */
 .landing-como-funciona {
   background: var(--color-bg);
@@ -502,28 +502,40 @@
   margin-bottom: 24px;
 }
 
+/* --- ESTILOS DE LA CARD "FLOTANTE" --- */
 .landing-como-funciona__card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 18px;
-  padding: 24px 20px;
+  /* ELIMINAMOS background, border y border-radius para quitar la caja */
+  background: transparent;
+  border: none;
+  padding: 0 10px; /* Solo un poco de padding lateral por si es móvil */
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centra todo perfectamente */
 }
 
-.landing-como-funciona__card-imagen {
-  min-height: 160px;
-  margin-bottom: 16px;
+.landing-como-funciona__imagen {
+  height: 160px; /* Mantiene la altura, puedes subirla si la imagen se ve muy chica */
+  width: auto;
+  margin-bottom: 16px; /* Separación controlada con el título */
+  object-fit: contain; /* Evita que la ilustración se recorte o deforme */
 }
 
-.landing-como-funciona__card p {
-  color: var(--color-text-muted);
+/* --- TIPOGRAFÍA MÁS PEQUEÑA Y JUNTITA --- */
+.landing-como-funciona__titulo {
+  font-size: 1.1rem; /* Letra más pequeña */
+  color: #002f36; /* Un tono oscuro sólido para resaltar */
+  margin: 0 0 6px 0; /* Solo 6px de separación hacia abajo (el texto) */
+  font-weight: 700;
 }
 
-/* ================================================================== */
-/* Carrusel genérico (How it works / Opiniones) — scroll horizontal    */
-/* con snap y dots en móvil; en desktop se convierte en grid, ver      */
-/* la sección @media (min-width: 1024px) más abajo.                    */
-/* ================================================================== */
+.landing-como-funciona__texto {
+  font-size: 0.9rem; /* Letra más pequeña para la descripción */
+  color: #002f36; /* Quitamos el text-muted para que se vea más nítido como en la foto 1 */
+  margin: 0;
+  line-height: 1.4; /* Interlineado más apretado */
+  max-width: 290px; /* CLAVE: Limita el ancho del texto para que no se estire demasiado a los lados */
+}
 .landing-carrusel {
   display: flex;
   overflow-x: auto;

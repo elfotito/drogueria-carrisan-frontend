@@ -360,30 +360,33 @@ function Landing() {
       {/* 8. CÓMO FUNCIONA                                                 */}
       {/* ================================================================ */}
       <section className="landing-como-funciona">
-        <h2>¿Cómo funciona nuestro portal?</h2>
-        <a href="#" className="landing-video-link">
-          <span className="landing-video-link__icono"><Play size={16} /></span>
-          Conoce la plataforma de Droguería Carrisan en 1 minuto
-        </a>
-        <Carrusel
-          items={PASOS}
-          claseContenedor="landing-como-funciona__grid"
-          claseTarjeta="landing-como-funciona__card"
-          renderItem={(paso) => (
-            <>
-              <img 
-                src={paso.imagen}  
-                alt={paso.titulo}  
-                className="landing-como-funciona__imagen"  
-                loading="lazy"
-              />
-              <h3>{paso.numero}. {paso.titulo}</h3>
-              <p>{paso.texto}</p>
-            </>
-          )}
+  <h2>¿Cómo funciona nuestro portal?</h2>
+  <a href="#" className="landing-video-link">
+    <span className="landing-video-link__icono"><Play size={16} /></span>
+    Conoce la plataforma de Droguería Carrisan en 1 minuto
+  </a>
+  
+  <Carrusel
+    items={PASOS}
+    claseContenedor="landing-como-funciona__grid"
+    claseTarjeta="landing-como-funciona__card"
+    renderItem={(paso) => (
+      <>
+        <img 
+          src={paso.imagen}  
+          alt={paso.titulo}  
+          className="landing-como-funciona__imagen"  
+          loading="lazy"
         />
-        <a href="#" className="btn-landing btn-landing--solido">Conocer más sobre el proceso de compra</a>
-      </section>
+        {/* Agregamos clases específicas para el título y el texto */}
+        <h3 className="landing-como-funciona__titulo">{paso.numero}. {paso.titulo}</h3>
+        <p className="landing-como-funciona__texto">{paso.texto}</p>
+      </>
+    )}
+  />
+  
+  <a href="#" className="btn-landing btn-landing--solido">Conocer más sobre el proceso de compra</a>
+</section>
 
       {/* ================================================================ */}
       {/* 9. OPINIONES DE CLIENTES                                         */}
