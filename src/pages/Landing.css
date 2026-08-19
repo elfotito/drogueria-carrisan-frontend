@@ -248,7 +248,7 @@
 }
 
 /* ================================================================== */
-/* 3. MÁS FORMAS DE GASTAR MENOS                                       */
+/* 3. MÁS FORMAS DE GASTAR MENOS                                      */
 /* ================================================================== */
 .landing-ahorros {
   background: var(--bg-rosado);
@@ -258,10 +258,6 @@
 .landing-ahorros__subtitulo {
   max-width: 480px;
   margin: 0 auto 28px;
-  color: var(--color-text-muted);
-  margin-left: auto !important;
-  margin-right: auto !important;
-  margin-bottom: 28px;
   color: var(--color-text-muted);
   text-align: center !important;
 }
@@ -273,20 +269,53 @@
   margin-bottom: 24px;
 }
 
+/* --- ESTILOS DE LA CARD MODIFICADOS --- */
+
 .landing-ahorros__card {
   background: var(--color-surface);
-  border-radius: 18px;
-  padding: 22px 20px;
-  text-align: center;
+  border-radius: 12px; /* Redondeo general de la tarjeta */
+  overflow: hidden; /* CLAVE: Corta la imagen para que respete el borde redondeado */
+  border: 1px solid #e0e0e0; /* Opcional: borde sutil como en el diseño */
+  display: flex;
+  flex-direction: column;
+  /* IMPORTANTE: Quitamos el padding de aquí */
 }
 
 .landing-ahorros__card-imagen {
+  width: 100%; /* Obliga a la imagen a tocar los bordes laterales */
   min-height: 120px;
-  margin-bottom: 14px;
+  display: block; /* Quita el espacio blanco "fantasma" debajo de las imágenes */
+  object-fit: cover; /* Asegura que la imagen no se deforme si cambia el tamaño */
 }
 
-.landing-ahorros__card p {
+/* NUEVO: Contenedor exclusivo para los textos */
+.landing-ahorros__card-content {
+  padding: 20px 24px 24px; /* Ahora el padding solo aplica aquí */
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Separación automática entre título, texto y link */
+  text-align: center;
+}
+
+/* Redujimos la letra como pediste */
+.landing-ahorros__card-titulo {
+  font-size: 1rem;
+  margin: 0;
+  font-weight: 700;
+}
+
+.landing-ahorros__card-texto {
   color: var(--color-text-muted);
+  font-size: 0.85rem;
+  margin: 0;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+/* Ajuste sutil del link para que haga match con la card */
+.landing-ahorros__card-content .landing-link {
+  font-size: 0.85rem;
+  margin-top: 4px;
 }
 
 .landing-ahorros__cta {
