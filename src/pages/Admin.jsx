@@ -13,6 +13,7 @@ import PagosAdmin from '../components/admin/PagosAdmin'
 import CotizacionesAdmin from '../components/admin/CotizacionesAdmin'
 import RequerimientosAdmin from '../components/admin/RequerimientosAdmin'
 import DocumentosAdmin from '../components/admin/DocumentosAdmin'
+import ChatAdmin from '../components/admin/ChatAdmin'
 
 import './Admin.css'
 
@@ -22,18 +23,14 @@ function Admin() {
   const [menuMobileAbierto, setMenuMobileAbierto] = useState(false)
   const { user } = useAuth()
   const secciones = [
-    { id: 'dashboard', nombre: 'Resumen', icono: '📊' },
-    { id: 'tasa', nombre: 'Tasa de cambio', icono: '💱' },
-    { id: 'productos', nombre: 'Productos', icono: '🛍️' },
-    { id: 'ordenes', nombre: 'Órdenes', icono: '📊' },
-    { id: 'usuarios', nombre: 'Usuarios', icono: '👤' },
-    { id: 'pagos', nombre: '💵 Pagos', icono: '💰' },
-    { id: 'estadoCuenta', nombre: 'Estado de cuenta', icono: '🏦' },
-    { id: 'descuentos', nombre: 'Descuentos', icono: '💎' },
-{ id: 'cotizaciones', nombre: '💬 Cotizaciones', icono: '💬' },
-{ id: 'requerimientos', nombre: '📦 Requerimientos', icono: '📦' },
-{ id: 'documentos', nombre: '📄 Documentos', icono: '📄' },
-  ]
+  { id: 'tasa', nombre: '💰 Tasa de Cambio', icono: '💱' },
+  { id: 'productos', nombre: '📦 Productos', icono: '🛍️' },
+  { id: 'ordenes', nombre: '📋 Órdenes', icono: '📊' },
+  { id: 'chat', nombre: '💬 Chat', icono: '💬' },          // <-- nuevo
+  { id: 'usuarios', nombre: '👥 Usuarios', icono: '👤' },
+  { id: 'estadoCuenta', nombre: '💳 Estado de Cuenta', icono: '🏦' },
+  { id: 'descuentos', nombre: '🏷️ Descuentos', icono: '💎' }
+]
 
   const seccionActual = secciones.find(s => s.id === seccionActiva)
 
@@ -55,6 +52,7 @@ function Admin() {
       case 'tasa': return <TasaCambio />
       case 'productos': return <ProductosAdmin />
       case 'ordenes': return <OrdenesAdmin />
+      case 'chat': return <ChatAdmin />
       case 'usuarios': return <UsuariosAdmin />
       case 'estadoCuenta': return <EstadoCuentaAdmin />
       case 'pagos': return <PagosAdmin />
