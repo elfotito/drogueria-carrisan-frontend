@@ -1,23 +1,29 @@
-import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useState, useEffect, useMemo } from 'react'
+import { Link } from 'react-router-dom'
+import { Progress } from '@chakra-ui/react'
 import api from '../api/axios'
 import { useAuth } from '../context/AuthContext'
 import { useFavoritos } from '../context/FavoritosContext'
 import {
-  Package, Wallet, MapPin, Star, Bell, CreditCard, HelpCircle,
-  ChevronRight, Loader2, AlertCircle, LogOut, Settings, ShieldCheck, X,
+  Package, ChevronRight, Loader2, AlertCircle,
+  MessageCircle, ShieldCheck, Wallet,
 } from 'lucide-react'
-import BottomNav from '../components/BottomNav'
+import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
 import './MiCuenta.css'
 
-// Dependencia: npm install lucide-react (la misma que usa EstadoCuenta.jsx)
+// ---------------------------------------------------------------
+// Mi Cuenta — dashboard visual de la cuenta.
+//
+// Antes esta página era básicamente navegación repetida (accesos
+// rápidos + grid "Tu cuenta" + columnas de links) — todo eso ya lo
+// resuelve el sidebar/drawer de <LayoutPaginaPrincipal>. Ahora esta
+// página se enfoca en lo que el sidebar NO puede mostrar: información
+// real de la cuenta en bloques visuales (crédito, pedidos activos,
+// gasto mensual, favoritos).
+// ---------------------------------------------------------------
 
 function formatearMonto(valor) {
   return new Intl.NumberFormat('es-VE', { style: 'currency', currency: 'USD' }).format(valor || 0)
-}
-
-function formatearFecha(fecha) {
-  return new Date(fecha).toLocaleDateString('es-VE', { day: '2-digit', month: 'short', year: 'numeric' })
 }
 
 const ETIQUETAS_ENVIO = {
@@ -41,69 +47,42 @@ function getEstadoOrden(estado) {
   return ESTADOS_ORDEN[estado] || { label: estado, color: '#6b6b7a', bg: '#f1f1ea', resena: '' }
 }
 
-// Pills de acceso rápido — carrusel horizontal, enlaces más usados
-const ACCESOS_RAPIDOS = [
-  { to: '/mis-items', icono: Star, texto: 'Mis items' },
-  { to: '/orders', icono: Package, texto: 'Mis órdenes' },
-  { to: '/estado-cuenta', icono: Wallet, texto: 'Estado de cuenta' },
-  { to: '/pagos', icono: CreditCard, texto: 'Pagar orden' },
-  { to: '/direcciones', icono: MapPin, texto: 'Direcciones' },
-  { to: '/ayuda', icono: HelpCircle, texto: 'Ayuda' },
-]
+const MESES_CORTOS = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic']
 
-// Grid de categorías tipo "hub" (equivalente a la vista de escritorio de Amazon:
-// Tus pedidos / Inicio de sesión / Amazon Prime / etc.) — se usa en desktop
-const HUB_CUENTA = [
-  { to: '/orders', icono: Package, titulo: 'Tus órdenes', descripcion: 'Rastrea, revisa el historial y descarga tus facturas' },
-  { to: '/estado-cuenta', icono: Wallet, titulo: 'Estado de cuenta', descripcion: 'Consulta tu línea de crédito y tu deuda actual' },
-  { to: '/direcciones', icono: MapPin, titulo: 'Direcciones', descripcion: 'Edita o agrega direcciones de entrega' },
-  { to: '/mis-items', icono: Star, titulo: 'Mis items', descripcion: 'Productos y listas que has guardado' },
-  { to: '/notificaciones', icono: Bell, titulo: 'Notificaciones', descripcion: 'Alertas y avisos de tu cuenta' },
-  { to: '/pagos', icono: CreditCard, titulo: 'Pagos', descripcion: 'Métodos de pago y reportes de pago' },
-]
+// Últimos 6 meses (incluyendo el actual) con el total gastado en cada uno,
+// para el gráfico de barras — meses sin compras quedan en $0, no se omiten.
+function calcularGastoMensual(ordenes) {
+  const hoy = new Date()
+  const meses = []
+  for (let i = 5; i >= 0; i--) {
+    const fecha = new Date(hoy.getFullYear(), hoy.getMonth() - i, 1)
+    meses.push({ anio: fecha.getFullYear(), mes: fecha.getMonth(), label: MESES_CORTOS[fecha.getMonth()], total: 0 })
+  }
+  ordenes.forEach((orden) => {
+    if (!orden.created_at || orden.estado === 'cancelado') return
+    const fecha = new Date(orden.created_at)
+    const punto = meses.find((m) => m.anio === fecha.getFullYear() && m.mes === fecha.getMonth())
+    if (punto) punto.total += orden.total_usd || 0
+  })
+  return meses
+}
 
-// Columnas de links de texto (equivalente a la parte inferior de la vista de
-// escritorio de Amazon: "Preferencias de pedidos", "Contenido digital", etc.)
-const COLUMNAS_LINKS = [
-  {
-    titulo: 'Cuenta y seguridad',
-    links: [
-      { to: '/cuenta', texto: 'Editar perfil' },
-      { to: '/direcciones', texto: 'Direcciones del usuario' },
-    ],
-  },
-  {
-    titulo: 'Compras',
-    links: [
-      { to: '/orders', texto: 'Mis órdenes' },
-      { to: '/estado-cuenta', texto: 'Estado de cuenta' },
-      { to: '/mis-items', texto: 'Mis items y favoritos' },
-      { to: '/pagos', texto: 'Pagos' },
-    ],
-  },
-  {
-    titulo: 'Soporte',
-    links: [
-      { to: '/ayuda', texto: 'Centro de ayuda' },
-      { to: '/faq', texto: 'Preguntas frecuentes' },
-      { to: '/contacto', texto: 'Contáctanos' },
-      { to: '/notificaciones', texto: 'Notificaciones' },
-    ],
-  },
-  {
-    titulo: 'Legal',
-    links: [
-      { to: '/terminos', texto: 'Términos y condiciones' },
-      { to: '/privacidad', texto: 'Aviso de privacidad' },
-    ],
-  },
-]
+// Distribución por estado de las órdenes que todavía están "en curso"
+// (ni entregadas ni canceladas) — para la barra apilada de "Pedidos activos".
+const ORDEN_ETAPAS = ['pedido_creado', 'procesando', 'preparando', 'enviado']
+
+function calcularPedidosActivos(ordenes) {
+  const activas = ordenes.filter((o) => !['entregado', 'cancelado'].includes(o.estado))
+  const conteos = ORDEN_ETAPAS.map((estado) => ({
+    estado,
+    ...getEstadoOrden(estado),
+    cantidad: activas.filter((o) => o.estado === estado).length,
+  })).filter((e) => e.cantidad > 0)
+  return { total: activas.length, conteos }
+}
 
 // ---------------------------------------------------------
-// MiniOrdenCard — tarjeta compacta para el carrusel de "Tus pedidos",
-// estilo la referencia de envíos (imagen 3): icono, destino/id, badge de
-// estado a la derecha, reseña breve, y flecha "›" sobre círculo oscuro
-// que indica que toda la tarjeta es clickeable hacia el detalle.
+// MiniOrdenCard — tarjeta compacta para el carrusel de "Tus pedidos"
 // ---------------------------------------------------------
 function MiniOrdenCard({ orden }) {
   const estado = getEstadoOrden(orden.estado)
@@ -119,10 +98,7 @@ function MiniOrdenCard({ orden }) {
             {ETIQUETAS_ENVIO[orden.tipo_envio] || ETIQUETAS_ENVIO.retiro}
           </span>
         </div>
-        <span
-          className="mini-orden-card__badge"
-          style={{ color: estado.color, background: estado.bg }}
-        >
+        <span className="mini-orden-card__badge" style={{ color: estado.color, background: estado.bg }}>
           {estado.label}
         </span>
       </div>
@@ -140,229 +116,294 @@ function MiniOrdenCard({ orden }) {
   )
 }
 
-function MiCuenta() {
-  const { user, logout } = useAuth()
-  const navigate = useNavigate()
-  const { favoritos, loading: cargandoFav } = useFavoritos()
-  const [estadoCuenta, setEstadoCuenta] = useState(null)
-  const [ultimasOrdenes, setUltimasOrdenes] = useState([])
-  const [cargando, setCargando] = useState(true)
-  const [error, setError] = useState('')
-  const [confirmandoLogout, setConfirmandoLogout] = useState(false)
+// ---------------------------------------------------------
+// Bloque de crédito — barra de progreso (Chakra) si el cliente tiene
+// línea de crédito asignada; si es cliente de contado, un bloque
+// distinto invitando a Pagos en su lugar.
+// ---------------------------------------------------------
+function BloqueCredito({ resumen }) {
+  const tieneCredito = (resumen?.linea_credito || 0) > 0
 
-  async function cargarDatos() {
-    try {
-      const { data: dataCuenta } = await api.get(`/clientes/${user.id}/estado-cuenta`)
-      setEstadoCuenta(dataCuenta)
-
-      const { data: dataOrdenes } = await api.get('/orders')
-      setUltimasOrdenes(dataOrdenes.slice(0, 5))
-    } catch (err) {
-      setError('No se pudieron cargar los datos de tu cuenta')
-      console.error(err)
-    } finally {
-      setCargando(false)
-    }
-  }
-
-  useEffect(() => {
-    cargarDatos()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  if (cargando) {
+  if (!tieneCredito) {
     return (
-      <div className="mi-cuenta__cargando">
-        <Loader2 className="mi-cuenta__spinner" size={28} />
-        <p>Cargando tu cuenta…</p>
+      <div className="bloque-tarjeta bloque-credito bloque-credito--contado">
+        <div className="bloque-tarjeta__icono bloque-tarjeta__icono--azul">
+          <Wallet size={20} />
+        </div>
+        <div className="bloque-credito__texto">
+          <span className="bloque-tarjeta__titulo">Cliente de contado</span>
+          <p className="bloque-tarjeta__descripcion">Reportá tus pagos y revisá tu historial de facturas.</p>
+        </div>
+        <Link to="/pagos" className="bloque-tarjeta__cta">
+          Ir a Pagos <ChevronRight size={15} />
+        </Link>
       </div>
     )
   }
 
-  const resumen = estadoCuenta?.resumen
-  const inicial = (user.nombre || user.email || '?').charAt(0).toUpperCase()
-  const previewFavoritos = (favoritos || []).slice(0, 4)
-  const pedidosPendientes = ultimasOrdenes.filter(
-    (o) => o.estado && !['entregado', 'cancelado'].includes(o.estado)
-  ).length
+  const porcentaje = Math.min((resumen.deuda_actual / resumen.linea_credito) * 100, 100)
+  const colorPalette = porcentaje >= 90 ? 'red' : porcentaje >= 60 ? 'orange' : 'blue'
 
   return (
-    <div className="mi-cuenta">
-      <header className="mi-cuenta__header">
-        <div className="mi-cuenta__header-info">
+    <Link to="/estado-cuenta" className="bloque-tarjeta bloque-credito">
+      <div className="bloque-credito__header">
+        <span className="bloque-tarjeta__titulo">Línea de crédito</span>
+        <span className="bloque-credito__porcentaje">{Math.round(porcentaje)}% usado</span>
+      </div>
+
+      <Progress.Root value={porcentaje} colorPalette={colorPalette} size="sm" className="bloque-credito__barra">
+        <Progress.Track borderRadius="999px">
+          <Progress.Range borderRadius="999px" />
+        </Progress.Track>
+      </Progress.Root>
+
+      <div className="bloque-credito__cifras">
+        <div>
+          <span className="bloque-credito__cifra-label">Deuda actual</span>
+          <strong className={resumen.deuda_actual > 0 ? 'bloque-credito__cifra--rojo' : ''}>
+            {formatearMonto(resumen.deuda_actual)}
+          </strong>
+        </div>
+        <div>
+          <span className="bloque-credito__cifra-label">Línea total</span>
+          <strong>{formatearMonto(resumen.linea_credito)}</strong>
+        </div>
+      </div>
+    </Link>
+  )
+}
+
+// ---------------------------------------------------------
+// Bloque de pedidos activos — barra apilada con la distribución por
+// estado de las órdenes en curso.
+// ---------------------------------------------------------
+function BloquePedidosActivos({ ordenes }) {
+  const { total, conteos } = ordenes
+
+  return (
+    <Link to="/orders" className="bloque-tarjeta bloque-pedidos-activos">
+      <div className="bloque-pedidos-activos__header">
+        <span className="bloque-tarjeta__titulo">Pedidos activos</span>
+        <span className="bloque-pedidos-activos__total">{total}</span>
+      </div>
+
+      {total === 0 ? (
+        <p className="bloque-tarjeta__descripcion">No tenés pedidos en curso ahora mismo.</p>
+      ) : (
+        <>
+          <div className="bloque-pedidos-activos__barra">
+            {conteos.map((c) => (
+              <span
+                key={c.estado}
+                style={{ width: `${(c.cantidad / total) * 100}%`, background: c.color }}
+                title={`${c.label}: ${c.cantidad}`}
+              />
+            ))}
+          </div>
+          <div className="bloque-pedidos-activos__leyenda">
+            {conteos.map((c) => (
+              <span key={c.estado} className="bloque-pedidos-activos__leyenda-item">
+                <span className="bloque-pedidos-activos__punto" style={{ background: c.color }} />
+                {c.label} · {c.cantidad}
+              </span>
+            ))}
+          </div>
+        </>
+      )}
+    </Link>
+  )
+}
+
+// ---------------------------------------------------------
+// Gráfico de gasto mensual — barras simples de los últimos 6 meses
+// ---------------------------------------------------------
+function GraficoGastoMensual({ datos }) {
+  const max = Math.max(1, ...datos.map((m) => m.total))
+  const totalPeriodo = datos.reduce((acc, m) => acc + m.total, 0)
+
+  return (
+    <div className="bloque-tarjeta gasto-mensual">
+      <div className="gasto-mensual__header">
+        <span className="bloque-tarjeta__titulo">Tu gasto en los últimos 6 meses</span>
+        <span className="gasto-mensual__total">{formatearMonto(totalPeriodo)}</span>
+      </div>
+
+      {totalPeriodo === 0 ? (
+        <p className="bloque-tarjeta__descripcion">Todavía no hay compras registradas en este período.</p>
+      ) : (
+        <div className="gasto-mensual__grafico">
+          {datos.map((m) => (
+            <div className="gasto-mensual__columna" key={`${m.anio}-${m.mes}`}>
+              <div className="gasto-mensual__barra-wrap">
+                <div
+                  className="gasto-mensual__barra"
+                  style={{ height: `${Math.max((m.total / max) * 100, m.total > 0 ? 6 : 0)}%` }}
+                  title={formatearMonto(m.total)}
+                />
+              </div>
+              <span className="gasto-mensual__mes">{m.label}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ---------------------------------------------------------
+// Preview de favoritos — mini grid con imagen
+// ---------------------------------------------------------
+function BloqueFavoritos({ favoritos }) {
+  const preview = (favoritos || []).slice(0, 4)
+
+  return (
+    <Link to="/mis-items" className="bloque-tarjeta bloque-favoritos">
+      <div className="bloque-favoritos__header">
+        <span className="bloque-tarjeta__titulo">Favoritos guardados</span>
+        <span className="bloque-pedidos-activos__total">{(favoritos || []).length}</span>
+      </div>
+
+      {preview.length === 0 ? (
+        <p className="bloque-tarjeta__descripcion">Guardá productos que uses seguido para encontrarlos rápido.</p>
+      ) : (
+        <div className="bloque-favoritos__grid">
+          {preview.map((producto) => (
+            <div className="bloque-favoritos__item" key={producto.id}>
+              {producto.foto_url ? (
+                <img src={producto.foto_url} alt={producto.nombre_comercial} loading="lazy" />
+              ) : (
+                <div className="bloque-favoritos__item-sin-foto" />
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </Link>
+  )
+}
+
+function MiCuenta() {
+  const { user } = useAuth()
+  const { favoritos } = useFavoritos()
+  const [estadoCuenta, setEstadoCuenta] = useState(null)
+  const [ordenes, setOrdenes] = useState([])
+  const [cargando, setCargando] = useState(true)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    async function cargarDatos() {
+      try {
+        const [{ data: dataCuenta }, { data: dataOrdenes }] = await Promise.all([
+          api.get(`/clientes/${user.id}/estado-cuenta`),
+          api.get('/orders'),
+        ])
+        setEstadoCuenta(dataCuenta)
+        setOrdenes(dataOrdenes)
+      } catch (err) {
+        setError('No se pudieron cargar los datos de tu cuenta')
+        console.error(err)
+      } finally {
+        setCargando(false)
+      }
+    }
+
+    cargarDatos()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const resumen = estadoCuenta?.resumen
+  const ultimasOrdenes = useMemo(() => ordenes.slice(0, 5), [ordenes])
+  const gastoMensual = useMemo(() => calcularGastoMensual(ordenes), [ordenes])
+  const pedidosActivos = useMemo(() => calcularPedidosActivos(ordenes), [ordenes])
+  const inicial = (user.nombre || user.email || '?').charAt(0).toUpperCase()
+
+  return (
+    <LayoutPaginaPrincipal activo="cuenta" titulo="Mi Cuenta" subtitulo="Un vistazo general a tu cuenta">
+      <div className="mi-cuenta">
+        <header className="mi-cuenta__header">
           <div className="mi-cuenta__avatar">{inicial}</div>
-          <div>
+          <div className="mi-cuenta__header-texto">
             <h1>Hola, {user.nombre || 'Usuario'}</h1>
             <p className="mi-cuenta__email">{user.email}</p>
           </div>
-        </div>
-        <div className="mi-cuenta__header-acciones">
-          <Link to="/notificaciones" className="mi-cuenta__icono-btn" aria-label="Notificaciones">
-            <Bell size={20} />
-          </Link>
-          <button
-            type="button"
-            className="mi-cuenta__icono-btn"
-            aria-label="Cerrar sesión"
-            onClick={() => setConfirmandoLogout(true)}
-          >
-            <LogOut size={20} />
-          </button>
-        </div>
-      </header>
+        </header>
 
-      {confirmandoLogout && (
-        <div className="modal-overlay" onClick={() => setConfirmandoLogout(false)}>
-          <div className="modal-confirmar" onClick={(e) => e.stopPropagation()}>
-            <button
-              type="button"
-              className="modal-confirmar__cerrar"
-              aria-label="Cerrar"
-              onClick={() => setConfirmandoLogout(false)}
-            >
-              <X size={16} />
-            </button>
-            <h3>¿Cerrar sesión?</h3>
-            <p>Tendrás que iniciar sesión de nuevo para acceder a tu cuenta.</p>
-            <div className="modal-confirmar__acciones">
-              <button
-                type="button"
-                className="btn btn--secundario"
-                onClick={() => setConfirmandoLogout(false)}
-              >
-                Cancelar
-              </button>
-              <button type="button" className="btn btn--peligro" onClick={logout}>
-                Cerrar sesión
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {error && (
-        <div className="mi-cuenta__alerta">
-          <AlertCircle size={16} /> {error}
-        </div>
-      )}
-
-      {/* ---------------------------------------------------------------- */}
-      {/* Pills de acceso rápido — carrusel horizontal con los enlaces      */}
-      {/* más usados de la cuenta                                          */}
-      {/* ---------------------------------------------------------------- */}
-      <div className="accesos-rapidos">
-        {ACCESOS_RAPIDOS.map(({ to, icono: Icono, texto }) => (
-          <Link key={to} to={to} className="accesos-rapidos__item">
-            <Icono size={16} /> {texto}
-          </Link>
-        ))}
-      </div>
-
-      {/* ---------------------------------------------------------------- */}
-      {/* Resumen financiero — carrusel de mini estadísticas                */}
-      {/* ---------------------------------------------------------------- */}
-      <section className="resumen-financiero">
-        <h2 className="resumen-financiero__titulo">Resumen Financiero</h2>
-        <div className="resumen-financiero__carrusel">
-          <Link to="/estado-cuenta" className="stat-card">
-            <span className="stat-card__label">Línea de crédito</span>
-            <strong className="stat-card__valor">{formatearMonto(resumen?.linea_credito)}</strong>
-          </Link>
-          <Link to="/estado-cuenta" className="stat-card">
-            <span className="stat-card__label">Deuda actual</span>
-            <strong className={`stat-card__valor ${resumen?.deuda_actual > 0 ? 'stat-card__valor--rojo' : ''}`}>
-              {formatearMonto(resumen?.deuda_actual)}
-            </strong>
-          </Link>
-          <Link to="/orders" className="stat-card">
-            <span className="stat-card__label">Pedidos pendientes</span>
-            <strong className="stat-card__valor">{pedidosPendientes}</strong>
-          </Link>
-          <Link to="/mis-items" className="stat-card">
-            <span className="stat-card__label">Favoritos guardados</span>
-            <strong className="stat-card__valor">{(favoritos || []).length}</strong>
-          </Link>
-        </div>
-      </section>
-
-      {/* ---------------------------------------------------------------- */}
-      {/* Tus pedidos — título + flecha (estilo Amazon), carrusel de        */}
-      {/* MiniOrdenCard sin bordes ni fondo propio                          */}
-      {/* ---------------------------------------------------------------- */}
-      <section className="seccion-pedidos">
-        <div className="seccion-pedidos__header">
-          <h2>Tus pedidos</h2>
-          <Link to="/orders" className="seccion-pedidos__flecha" aria-label="Ver todos los pedidos">
-            <ChevronRight size={20} />
-          </Link>
-        </div>
-
-        {ultimasOrdenes.length === 0 ? (
-          <div className="bloque-preview__vacio">
-            <p>Parece que no tienes pedidos recientes</p>
-            <Link to="/catalogo" className="btn btn--primario">Ir al catálogo</Link>
-          </div>
-        ) : (
-          <div className="mini-ordenes-carrusel">
-            {ultimasOrdenes.map((orden) => (
-              <MiniOrdenCard key={orden.id} orden={orden} />
-            ))}
+        {error && (
+          <div className="mi-cuenta__alerta">
+            <AlertCircle size={16} /> {error}
           </div>
         )}
-      </section>
 
-      {/* ---------------------------------------------------------------- */}
-      {/* Grid de categorías tipo "hub" — solo visible en escritorio,       */}
-      {/* equivalente a la vista de Amazon (Tus pedidos / Prime / etc.)     */}
-      {/* ---------------------------------------------------------------- */}
-      <section className="hub-cuenta hub-cuenta--desktop">
-        <h2 className="hub-cuenta__titulo"><Settings size={18} /> Tu cuenta</h2>
-        <div className="hub-cuenta__grid">
-          {HUB_CUENTA.map(({ to, icono: Icono, titulo, descripcion }) => (
-            <Link key={to} to={to} className="hub-card">
-              <div className="hub-card__icono"><Icono size={22} /></div>
-              <div className="hub-card__texto">
-                <span className="hub-card__titulo">{titulo}</span>
-                <span className="hub-card__descripcion">{descripcion}</span>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* ---------------------------------------------------------------- */}
-      {/* Columnas de links de texto — solo visible en escritorio           */}
-      {/* ---------------------------------------------------------------- */}
-      <section className="columnas-links columnas-links--desktop">
-        {COLUMNAS_LINKS.map((columna) => (
-          <div key={columna.titulo} className="columna-links">
-            <h3>{columna.titulo}</h3>
-            <ul>
-              {columna.links.map((link) => (
-                <li key={link.to}>
-                  <Link to={link.to}>{link.texto}</Link>
-                </li>
-              ))}
-            </ul>
+        {cargando ? (
+          <div className="mi-cuenta__cargando">
+            <Loader2 className="mi-cuenta__spinner" size={28} />
+            <p>Cargando tu cuenta…</p>
           </div>
-        ))}
-      </section>
+        ) : (
+          <>
+            <div className="mi-cuenta__grid-2col">
+              <BloqueCredito resumen={resumen} />
+              <BloquePedidosActivos ordenes={pedidosActivos} />
+            </div>
 
-      {/* ---------------------------------------------------------------- */}
-      {/* ¿Necesitas ayuda? — cierre de la página, enlaza a contacto        */}
-      {/* ---------------------------------------------------------------- */}
-      <Link to="/contacto" className="ayuda-footer">
-        <span>¿Necesitas ayuda? Contacta con nosotros</span>
-        <ChevronRight size={18} />
-      </Link>
+            <GraficoGastoMensual datos={gastoMensual} />
 
-      <div className="mi-cuenta__footer">
-        <ShieldCheck size={14} />
-        <span>Droguería Carrisán · Tu información está protegida</span>
+            {/* ---------------------------------------------------------------- */}
+            {/* Tus pedidos — título + flecha, carrusel de MiniOrdenCard          */}
+            {/* ---------------------------------------------------------------- */}
+            <section className="seccion-pedidos">
+              <div className="seccion-pedidos__header">
+                <h2>Tus pedidos</h2>
+                <Link to="/orders" className="seccion-pedidos__flecha" aria-label="Ver todos los pedidos">
+                  <ChevronRight size={20} />
+                </Link>
+              </div>
+
+              {ultimasOrdenes.length === 0 ? (
+                <div className="bloque-preview__vacio">
+                  <p>Parece que no tenés pedidos recientes</p>
+                  <Link to="/catalogo" className="btn btn--primario">Ir al catálogo</Link>
+                </div>
+              ) : (
+                <div className="mini-ordenes-carrusel">
+                  {ultimasOrdenes.map((orden) => (
+                    <MiniOrdenCard key={orden.id} orden={orden} />
+                  ))}
+                </div>
+              )}
+            </section>
+
+            <div className="mi-cuenta__grid-2col">
+              <BloqueFavoritos favoritos={favoritos} />
+
+              <Link to="/contacto" className="bloque-tarjeta soporte-card">
+                <div className="bloque-tarjeta__icono bloque-tarjeta__icono--teal">
+                  <MessageCircle size={20} />
+                </div>
+                <div className="bloque-credito__texto">
+                  <span className="bloque-tarjeta__titulo">¿Necesitás ayuda?</span>
+                  <p className="bloque-tarjeta__descripcion">Escribinos y te respondemos a la brevedad.</p>
+                </div>
+                <span className="bloque-tarjeta__cta">
+                  Contactar <ChevronRight size={15} />
+                </span>
+              </Link>
+            </div>
+
+            <div className="legal-footer">
+              <Link to="/terminos">Términos y condiciones</Link>
+              <span>·</span>
+              <Link to="/privacidad">Aviso de privacidad</Link>
+            </div>
+
+            <div className="mi-cuenta__footer">
+              <ShieldCheck size={14} />
+              <span>Droguería Carrisán · Tu información está protegida</span>
+            </div>
+          </>
+        )}
       </div>
-
-      <BottomNav />
-    </div>
+    </LayoutPaginaPrincipal>
   )
 }
 
