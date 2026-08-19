@@ -42,6 +42,8 @@ import PagosEstadoCuenta from './pages/PagosEstadoCuenta'
 import FacturasEstadoCuenta from './pages/FacturasEstadoCuenta'
 import AmpliacionEstadoCuenta from './pages/AmpliacionEstadoCuenta'
 import ReportesEstadoCuenta from './pages/ReportesEstadoCuenta'
+import Cotizaciones from './pages/Cotizaciones'
+
 
 function LoadingBarBridge() {
   const bar = useLoadingBar()
@@ -92,6 +94,7 @@ function App() {
                 <Route path="/estado-cuenta/facturas" element={<PrivateRoute><FacturasEstadoCuenta /></PrivateRoute>} />
                 <Route path="/estado-cuenta/reportes" element={<PrivateRoute><ReportesEstadoCuenta /></PrivateRoute>} />
                 <Route path="/estado-cuenta/ampliacion" element={<PrivateRoute><AmpliacionEstadoCuenta /></PrivateRoute>} />
+<Route path="/mis-solicitudes/cotizaciones" element={<PrivateRoute><Cotizaciones /></PrivateRoute>} />
               </Routes>
             </LoadingBarProvider>
           </EnvioProvider>
