@@ -259,33 +259,31 @@ function Landing() {
       {/* 3. MÁS FORMAS DE GASTAR MENOS                                    */}
       {/* ================================================================ */}
       <section className="landing-ahorros">
-  <h2>Más formas de optimizar tu presupuesto</h2>
-  <p className="landing-ahorros__subtitulo">
-    Diseñamos soluciones comerciales que protegen la rentabilidad de tu institución.
-  </p>
-  
-  <div className="landing-ahorros__grid">
-    {AHORROS.map((item) => (
-    <div key={item.titulo} className="landing-ahorros__card">
-      <img 
-        src={item.imagen}
-        alt={item.titulo}
-        className="landing-ahorros__card-imagen"
-        loading="lazy"
-      />
-      <div className="landing-ahorros__card-content">
-        <h3 className="landing-ahorros__card-titulo">{item.titulo}</h3>
-        <p className="landing-ahorros__card-texto">{item.texto}</p>
-        <a href="#" className="landing-link">{item.link} ›</a>
-      </div>
-    </div>
-  ))}
-  </div>
-
-  <a href="#" className="btn-landing btn-landing--outline landing-ahorros__cta">
-    Explora nuestros descuentos
-  </a>
-</section>
+        <h2>Más formas de optimizar tu presupuesto</h2>
+        <p className="landing-ahorros__subtitulo">
+          Diseñamos soluciones comerciales que protegen la rentabilidad de tu institución.
+        </p>
+        <div className="landing-ahorros__grid">
+          {AHORROS.map((item) => (
+              <div key={item.titulo} className="landing-ahorros__card">
+                    <img 
+                      src={item.imagen}
+                      alt={item.titulo}
+                      className="landing-ahorros__card-imagen"
+                      loading="lazy"
+                    />
+              <div className="landing-ahorros__card-content">
+          <h3 className="landing-ahorros__card-titulo">{item.titulo}</h3>
+          <p className="landing-ahorros__card-texto">{item.texto}</p>
+          <a href="#" className="landing-link">{item.link} ›</a>
+        </div>
+        </div>
+          ))}
+        </div>
+        <a href="#" className="btn-landing btn-landing--outline landing-ahorros__cta">
+          Explora nuestros descuentos
+        </a>
+      </section>
 
       {/* ================================================================ */}
       {/* ================================================================ */}
