@@ -11,6 +11,7 @@ export const NAV_COTIZACIONES = [
     titulo: 'Mis Solicitudes',
     items: [
       { id: 'cotizaciones', to: '/mis-solicitudes/cotizaciones', icono: FileText, texto: 'Cotizaciones' },
+{ id: 'requerimientos', to: '/mis-solicitudes/requerimientos', icono: PackagePlus, texto: 'Requerimientos' }
       // TODO: agregar aquí cuando estén listas —
       // { id: 'ampliacion-credito', to: '/mis-solicitudes/ampliacion-credito', icono: TrendingUp, texto: 'Ampliación de crédito' },
       // { id: 'documentacion', to: '/mis-solicitudes/documentacion', icono: FileCheck, texto: 'Documentación' },
