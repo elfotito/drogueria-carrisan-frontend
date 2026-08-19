@@ -1,0 +1,186 @@
+.cot-page,
+.cot-page *,
+.cot-page *::before,
+.cot-page *::after {
+  box-sizing: border-box;
+}
+
+.cot-page {
+  --cot-brand: #0052DC;
+  --cot-brand-dark: #1A1A3A;
+  --cot-accent: #12A594;
+  --cot-accent-light: #e7f8f5;
+  --cot-bg: #FBFAF7;
+  --cot-surface: #ffffff;
+  --cot-border: #e7e6e0;
+  --cot-text: #1A1A3A;
+  --cot-text-muted: #6b6b7a;
+
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: var(--cot-text);
+}
+
+/* --- Grid de cotizaciones --- */
+.cot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.cot-card {
+  background: var(--cot-surface);
+  border: 1px solid var(--cot-border);
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  gap: 14px;
+}
+
+.cot-card__media {
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--cot-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cot-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cot-card__media-placeholder {
+  font-size: 0.68rem;
+  color: var(--cot-text-muted);
+  text-align: center;
+  padding: 4px;
+}
+
+.cot-card__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cot-card__nombre {
+  margin: 0;
+  font-size: 0.94rem;
+  font-weight: 700;
+}
+
+.cot-card__nombre a {
+  color: var(--cot-text);
+  text-decoration: none;
+}
+
+.cot-card__nombre a:hover {
+  color: var(--cot-brand);
+}
+
+/* --- Badges de estado (mismo patrón de píldora que mo-badge) --- */
+.cot-card__estado {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.cot-card__estado--pendiente { background: #eaf0ff; color: var(--cot-brand); }
+.cot-card__estado--vencida { background: #f1f0eb; color: var(--cot-text-muted); }
+.cot-card__estado--rechazada { background: #fee2e2; color: #dc2626; }
+
+.cot-card__nota {
+  font-weight: 500;
+}
+
+/* --- Precio + vigencia + acción --- */
+.cot-card__precio {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--cot-text);
+}
+
+.cot-card__vigencia {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--cot-text-muted);
+}
+
+.cot-card__btn {
+  align-self: flex-start;
+  margin-top: 4px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: none;
+  background: var(--cot-brand);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.cot-card__btn:hover {
+  opacity: 0.9;
+}
+
+.cot-card__btn:disabled {
+  background: var(--cot-border);
+  color: var(--cot-text-muted);
+  cursor: not-allowed;
+}
+
+/* --- Loading --- */
+.cot-loading {
+  text-align: center;
+  padding: 56px 20px;
+  color: var(--cot-text-muted);
+  font-size: 0.9rem;
+}
+
+/* --- Estado vacío (mismo patrón que mo-vacio) --- */
+.cot-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  padding: 56px 20px;
+  background: var(--cot-surface);
+  border: 1px solid var(--cot-border);
+  border-radius: 14px;
+}
+
+.cot-vacio p {
+  margin: 0 0 10px;
+  font-size: 0.88rem;
+  color: var(--cot-text-muted);
+}
+
+.cot-vacio a {
+  padding: 10px 20px;
+  border-radius: 999px;
+  background: var(--cot-brand);
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+@media (max-width: 640px) {
+  .cot-grid {
+    grid-template-columns: 1fr;
+  }
+}
