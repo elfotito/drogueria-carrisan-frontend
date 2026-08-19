@@ -43,6 +43,7 @@ import FacturasEstadoCuenta from './pages/FacturasEstadoCuenta'
 import AmpliacionEstadoCuenta from './pages/AmpliacionEstadoCuenta'
 import ReportesEstadoCuenta from './pages/ReportesEstadoCuenta'
 import Cotizaciones from './pages/Cotizaciones'
+import Requerimientos from './pages/Requerimientos'
 
 
 function LoadingBarBridge() {
@@ -95,6 +96,7 @@ function App() {
                 <Route path="/estado-cuenta/reportes" element={<PrivateRoute><ReportesEstadoCuenta /></PrivateRoute>} />
                 <Route path="/estado-cuenta/ampliacion" element={<PrivateRoute><AmpliacionEstadoCuenta /></PrivateRoute>} />
 <Route path="/mis-solicitudes/cotizaciones" element={<PrivateRoute><Cotizaciones /></PrivateRoute>} />
+<Route path="/mis-solicitudes/requerimientos" element={<PrivateRoute><Requerimientos /></PrivateRoute>} />
               </Routes>
             </LoadingBarProvider>
           </EnvioProvider>
