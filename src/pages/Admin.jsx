@@ -29,7 +29,10 @@ function Admin() {
   { id: 'chat', nombre: '💬 Chat', icono: '💬' },          // <-- nuevo
   { id: 'usuarios', nombre: '👥 Usuarios', icono: '👤' },
   { id: 'estadoCuenta', nombre: '💳 Estado de Cuenta', icono: '🏦' },
-  { id: 'descuentos', nombre: '🏷️ Descuentos', icono: '💎' }
+  { id: 'descuentos', nombre: '🏷️ Descuentos', icono: '💎' },
+{ id: 'cotizaciones', nombre: '📝', icono: '🔖' },
+{ id: 'requerimientos', nombre: '📮 Requerimientos', icono: '📃' }
+
 ]
 
   const seccionActual = secciones.find(s => s.id === seccionActiva)
