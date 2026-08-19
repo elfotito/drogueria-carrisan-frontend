@@ -9,7 +9,7 @@ import {
   Package, ChevronRight, ChevronDown, Loader2, AlertCircle,
   MessageCircle, ShieldCheck, Wallet, Bell, LogOut, Settings, X, Lock, Scale,
 } from 'lucide-react'
-import LayoutPaginaPrincipal from '../components/paginas-principales/LayoutPaginaPrincipal'
+import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
 import './MiCuenta.css'
 
 // ---------------------------------------------------------------
