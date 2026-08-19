@@ -41,9 +41,17 @@
 /* --- Encabezado --- */
 .mi-cuenta__header {
   display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.mi-cuenta__header-info {
+  display: flex;
   align-items: center;
   gap: 14px;
-  margin-bottom: 20px;
+  min-width: 0;
 }
 
 .mi-cuenta__avatar {
@@ -60,7 +68,40 @@
   flex-shrink: 0;
 }
 
+.mi-cuenta__avatar--sm {
+  width: 40px;
+  height: 40px;
+  font-size: 1.05rem;
+}
+
+/* El saludo ahora es un botón (abre "Tu cuenta"), no texto suelto */
+.mi-cuenta__saludo-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  border: none;
+  background: none;
+  padding: 4px 6px 4px 0;
+  margin: -4px 0 -4px -6px;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: background 0.15s ease;
+}
+
+.mi-cuenta__saludo-btn:hover {
+  background: var(--color-bg);
+}
+
+.mi-cuenta__saludo-btn:hover .mi-cuenta__saludo-flecha {
+  transform: translateY(1px);
+}
+
 .mi-cuenta__header-texto {
+  display: flex;
+  flex-direction: column;
   min-width: 0;
 }
 
@@ -71,6 +112,40 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.mi-cuenta__saludo-flecha {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+  transition: transform 0.15s ease;
+}
+
+.mi-cuenta__header-acciones {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.mi-cuenta__icono-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  cursor: pointer;
+  text-decoration: none;
+  flex-shrink: 0;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.mi-cuenta__icono-btn:hover {
+  border-color: var(--color-brand);
+  color: var(--color-brand);
 }
 
 .mi-cuenta__alerta {
@@ -97,6 +172,307 @@
   border: 1px solid transparent;
   text-decoration: none;
   cursor: pointer;
+}
+
+.btn--secundario {
+  background: var(--color-bg);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+.btn--peligro {
+  background: var(--color-negative);
+  color: #ffffff;
+}
+
+.btn--peligro:hover {
+  background: #b91c1c;
+}
+
+/* ================================================================== */
+/* Modal de confirmación rápida (icono de logout del header)           */
+/* ================================================================== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 26, 58, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal-confirmar {
+  position: relative;
+  background: var(--color-surface);
+  border-radius: 18px;
+  padding: 24px 22px 20px;
+  width: 100%;
+  max-width: 340px;
+  text-align: center;
+}
+
+.modal-confirmar__cerrar {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.modal-confirmar h3 {
+  margin: 6px 0 8px;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.modal-confirmar p {
+  margin: 0 0 20px;
+  font-size: 0.87rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+.modal-confirmar__acciones {
+  display: flex;
+  gap: 10px;
+}
+
+.modal-confirmar__acciones .btn {
+  flex: 1;
+  justify-content: center;
+}
+
+/* ================================================================== */
+/* Hoja inferior genérica (bottom sheet) — "Tu cuenta" y "Permisos"    */
+/* ================================================================== */
+.hoja-inferior-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 26, 58, 0.45);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.hoja-inferior {
+  width: 100%;
+  max-width: 440px;
+  background: var(--color-surface);
+  border-radius: 20px 20px 0 0;
+  padding: 10px 20px 26px;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.hoja-inferior__manija {
+  width: 40px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--color-border);
+  margin: 0 auto 14px;
+}
+
+.hoja-inferior__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.hoja-inferior__header h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.hoja-inferior__cerrar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* --- Contenido: "Tu cuenta" --- */
+.modal-cuenta__usuario {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 2px 18px;
+}
+
+.modal-cuenta__usuario-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+}
+
+.modal-cuenta__usuario-nombre {
+  font-weight: 700;
+  font-size: 0.98rem;
+}
+
+.modal-cuenta__usuario-rol {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.modal-cuenta__ver {
+  border: none;
+  background: none;
+  color: var(--color-brand);
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.modal-cuenta__fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 13px 2px;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.modal-cuenta__fila--proximamente {
+  color: var(--color-text-muted);
+}
+
+.etiqueta-proximamente {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--color-text-muted);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 3px 9px;
+  white-space: nowrap;
+}
+
+.modal-cuenta__separador {
+  height: 1px;
+  background: var(--color-border);
+  margin: 6px 0 16px;
+}
+
+.modal-cuenta__sesion-como {
+  margin: 0 0 12px;
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+}
+
+.modal-cuenta__cambiar-btn {
+  width: 100%;
+  padding: 13px;
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--color-text);
+  cursor: pointer;
+  margin-bottom: 12px;
+}
+
+.modal-cuenta__cambiar-btn:hover {
+  border-color: var(--color-brand);
+  color: var(--color-brand);
+}
+
+.modal-cuenta__cerrar-sesion {
+  display: block;
+  width: 100%;
+  text-align: center;
+  border: none;
+  background: none;
+  color: var(--color-brand);
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 4px;
+}
+
+/* --- Contenido: "Permisos y notificaciones" --- */
+.modal-permisos__fila {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 2px;
+  border-bottom: 1px solid var(--color-border);
+  text-decoration: none;
+  color: var(--color-text);
+}
+
+.modal-permisos__fila:last-child {
+  border-bottom: none;
+}
+
+.modal-permisos__fila-icono {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.modal-permisos__fila-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+}
+
+.modal-permisos__fila-titulo {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.modal-permisos__fila-descripcion {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+}
+
+.modal-permisos__fila--link {
+  cursor: pointer;
+}
+
+.modal-permisos__fila--link:hover .modal-permisos__fila-titulo {
+  color: var(--color-brand);
+}
+
+.modal-permisos__fila-flecha {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
 }
 
 .btn--primario {

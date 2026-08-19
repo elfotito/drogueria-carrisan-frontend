@@ -1,14 +1,15 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Link } from 'react-router-dom'
-import { Progress } from '@chakra-ui/react'
+import { createPortal } from 'react-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { Progress, Switch } from '@chakra-ui/react'
 import api from '../api/axios'
 import { useAuth } from '../context/AuthContext'
 import { useFavoritos } from '../context/FavoritosContext'
 import {
-  Package, ChevronRight, Loader2, AlertCircle,
-  MessageCircle, ShieldCheck, Wallet,
+  Package, ChevronRight, ChevronDown, Loader2, AlertCircle,
+  MessageCircle, ShieldCheck, Wallet, Bell, LogOut, Settings, X, Lock, Scale,
 } from 'lucide-react'
-import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
+import LayoutPaginaPrincipal from '../components/paginas-principales/LayoutPaginaPrincipal'
 import './MiCuenta.css'
 
 // ---------------------------------------------------------------
@@ -79,6 +80,117 @@ function calcularPedidosActivos(ordenes) {
     cantidad: activas.filter((o) => o.estado === estado).length,
   })).filter((e) => e.cantidad > 0)
   return { total: activas.length, conteos }
+}
+
+// ---------------------------------------------------------
+// Hoja inferior genérica (bottom sheet) — overlay + tarjeta que sube
+// desde abajo en móvil, centrada en desktop. Vía portal directo a
+// document.body por la misma razón que el modal de MisItems: así
+// nunca queda atrapada dentro de .ppal-shift mientras el drawer del
+// sidebar está transicionando (overflow:hidden / transform).
+//
+// Se usa para "Tu cuenta" (selector estilo Amazon) y "Permisos y
+// notificaciones" — si en el futuro aparece un tercer lugar que
+// necesite este mismo patrón, conviene moverlo a un archivo propio
+// dentro de components/.
+// ---------------------------------------------------------
+function HojaInferior({ titulo, onCerrar, children }) {
+  return createPortal(
+    <div className="hoja-inferior-overlay" onClick={onCerrar}>
+      <div className="hoja-inferior" onClick={(e) => e.stopPropagation()}>
+        <div className="hoja-inferior__manija" />
+        <div className="hoja-inferior__header">
+          <h3>{titulo}</h3>
+          <button type="button" className="hoja-inferior__cerrar" onClick={onCerrar} aria-label="Cerrar">
+            <X size={18} />
+          </button>
+        </div>
+        <div className="hoja-inferior__body">{children}</div>
+      </div>
+    </div>,
+    document.body
+  )
+}
+
+// ---------------------------------------------------------
+// Contenido de "Tu cuenta" — selector estilo Amazon (imagen de
+// referencia): usuario + "Ver", Reiniciar Contraseña, y abajo
+// Cambiar cuenta / Cerrar sesión.
+// ---------------------------------------------------------
+function ContenidoModalCuenta({ user, inicial, onCerrar, onCambiarCuenta, onCerrarSesion }) {
+  return (
+    <>
+      <div className="modal-cuenta__usuario">
+        <div className="mi-cuenta__avatar mi-cuenta__avatar--sm">{inicial}</div>
+        <div className="modal-cuenta__usuario-texto">
+          <span className="modal-cuenta__usuario-nombre">{user.nombre || 'Usuario'}</span>
+          <span className="modal-cuenta__usuario-rol">Titular de la cuenta</span>
+        </div>
+        <button type="button" className="modal-cuenta__ver" onClick={onCerrar}>Ver</button>
+      </div>
+
+      <div className="modal-cuenta__fila modal-cuenta__fila--proximamente">
+        <span>Reiniciar Contraseña</span>
+        <span className="etiqueta-proximamente">Próximamente</span>
+      </div>
+
+      <div className="modal-cuenta__separador" />
+
+      <p className="modal-cuenta__sesion-como">Sesión iniciada como {user.email}</p>
+
+      <button type="button" className="modal-cuenta__cambiar-btn" onClick={onCambiarCuenta}>
+        Cambiar cuenta
+      </button>
+
+      <button type="button" className="modal-cuenta__cerrar-sesion" onClick={onCerrarSesion}>
+        Cerrar sesión
+      </button>
+    </>
+  )
+}
+
+// ---------------------------------------------------------
+// Contenido de "Permisos y notificaciones" — todo texto/placeholder
+// por ahora, no hay configuraciones reales conectadas todavía.
+// ---------------------------------------------------------
+function ContenidoModalPermisos() {
+  return (
+    <>
+      <div className="modal-permisos__fila">
+        <div className="modal-permisos__fila-texto">
+          <span className="modal-permisos__fila-titulo">Avisos y notificaciones</span>
+          <span className="modal-permisos__fila-descripcion">Activar o desactivar los avisos de tu cuenta</span>
+        </div>
+        <Switch.Root checked={false} disabled size="md">
+          <Switch.HiddenInput />
+          <Switch.Control>
+            <Switch.Thumb />
+          </Switch.Control>
+        </Switch.Root>
+      </div>
+
+      <div className="modal-permisos__fila">
+        <div className="modal-permisos__fila-icono">
+          <Lock size={17} />
+        </div>
+        <div className="modal-permisos__fila-texto">
+          <span className="modal-permisos__fila-titulo">Reiniciar contraseña</span>
+          <span className="modal-permisos__fila-descripcion">Próximamente</span>
+        </div>
+      </div>
+
+      <Link to="/terminos" className="modal-permisos__fila modal-permisos__fila--link">
+        <div className="modal-permisos__fila-icono">
+          <Scale size={17} />
+        </div>
+        <div className="modal-permisos__fila-texto">
+          <span className="modal-permisos__fila-titulo">Información legal</span>
+          <span className="modal-permisos__fila-descripcion">Términos, condiciones y privacidad</span>
+        </div>
+        <ChevronRight size={18} className="modal-permisos__fila-flecha" />
+      </Link>
+    </>
+  )
 }
 
 // ---------------------------------------------------------
@@ -283,12 +395,17 @@ function BloqueFavoritos({ favoritos }) {
 }
 
 function MiCuenta() {
-  const { user } = useAuth()
+  const { user, logout } = useAuth()
   const { favoritos } = useFavoritos()
+  const navigate = useNavigate()
   const [estadoCuenta, setEstadoCuenta] = useState(null)
   const [ordenes, setOrdenes] = useState([])
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
+
+  const [mostrarConfirmarLogout, setMostrarConfirmarLogout] = useState(false)
+  const [mostrarModalCuenta, setMostrarModalCuenta] = useState(false)
+  const [mostrarModalPermisos, setMostrarModalPermisos] = useState(false)
 
   useEffect(() => {
     async function cargarDatos() {
@@ -317,16 +434,111 @@ function MiCuenta() {
   const pedidosActivos = useMemo(() => calcularPedidosActivos(ordenes), [ordenes])
   const inicial = (user.nombre || user.email || '?').charAt(0).toUpperCase()
 
+  // "Cambiar cuenta": cierra sesión para que otra persona inicie con
+  // otra cuenta. No hace falta navegar a mano: PrivateRoute redirige
+  // solo a /login en cuanto el usuario queda en null.
+  function cambiarCuenta() {
+    setMostrarModalCuenta(false)
+    logout()
+  }
+
+  // "Cerrar sesión" (desde el selector de cuenta): a diferencia de
+  // "Cambiar cuenta", esta va a Inicio en vez de al login — usamos "/"
+  // (Landing pública) y no "/home", que está detrás de PrivateRoute y
+  // rebotaría al login apenas cerramos sesión, sin dejar ver el toast.
+  // El toast en sí lo dejamos para cuando lo diseñemos: por ahora solo
+  // viaja en el state de navegación, listo para que ese componente lo
+  // lea cuando exista.
+  function cerrarSesionEIrAInicio() {
+    setMostrarModalCuenta(false)
+    logout()
+    navigate('/', { state: { toast: 'Cerraste sesión correctamente' } })
+  }
+
   return (
     <LayoutPaginaPrincipal activo="cuenta" titulo="Mi Cuenta" subtitulo="Un vistazo general a tu cuenta">
       <div className="mi-cuenta">
         <header className="mi-cuenta__header">
-          <div className="mi-cuenta__avatar">{inicial}</div>
-          <div className="mi-cuenta__header-texto">
-            <h1>Hola, {user.nombre || 'Usuario'}</h1>
-            <p className="mi-cuenta__email">{user.email}</p>
+          <div className="mi-cuenta__header-info">
+            <div className="mi-cuenta__avatar">{inicial}</div>
+            <button type="button" className="mi-cuenta__saludo-btn" onClick={() => setMostrarModalCuenta(true)}>
+              <span className="mi-cuenta__header-texto">
+                <h1>Hola, {user.nombre || 'Usuario'}</h1>
+                <span className="mi-cuenta__email">{user.email}</span>
+              </span>
+              <ChevronDown size={18} className="mi-cuenta__saludo-flecha" />
+            </button>
+          </div>
+
+          <div className="mi-cuenta__header-acciones">
+            <button
+              type="button"
+              className="mi-cuenta__icono-btn"
+              aria-label="Permisos y notificaciones"
+              onClick={() => setMostrarModalPermisos(true)}
+            >
+              <Settings size={19} />
+            </button>
+            <Link to="/notificaciones" className="mi-cuenta__icono-btn" aria-label="Notificaciones">
+              <Bell size={19} />
+            </Link>
+            <button
+              type="button"
+              className="mi-cuenta__icono-btn"
+              aria-label="Cerrar sesión"
+              onClick={() => setMostrarConfirmarLogout(true)}
+            >
+              <LogOut size={19} />
+            </button>
           </div>
         </header>
+
+        {mostrarModalCuenta && (
+          <HojaInferior titulo="Tu cuenta" onCerrar={() => setMostrarModalCuenta(false)}>
+            <ContenidoModalCuenta
+              user={user}
+              inicial={inicial}
+              onCerrar={() => setMostrarModalCuenta(false)}
+              onCambiarCuenta={cambiarCuenta}
+              onCerrarSesion={cerrarSesionEIrAInicio}
+            />
+          </HojaInferior>
+        )}
+
+        {mostrarModalPermisos && (
+          <HojaInferior titulo="Permisos y notificaciones" onCerrar={() => setMostrarModalPermisos(false)}>
+            <ContenidoModalPermisos />
+          </HojaInferior>
+        )}
+
+        {mostrarConfirmarLogout && (
+          <div className="modal-overlay" onClick={() => setMostrarConfirmarLogout(false)}>
+            <div className="modal-confirmar" onClick={(e) => e.stopPropagation()}>
+              <button
+                type="button"
+                className="modal-confirmar__cerrar"
+                aria-label="Cerrar"
+                onClick={() => setMostrarConfirmarLogout(false)}
+              >
+                <X size={16} />
+              </button>
+              <h3>¿Cerrar sesión?</h3>
+              <p>Tendrás que iniciar sesión de nuevo para acceder a tu cuenta.</p>
+              <div className="modal-confirmar__acciones">
+                <button
+                  type="button"
+                  className="btn btn--secundario"
+                  onClick={() => setMostrarConfirmarLogout(false)}
+                >
+                  Cancelar
+                </button>
+                <button type="button" className="btn btn--peligro" onClick={logout}>
+                  Cerrar sesión
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {error && (
           <div className="mi-cuenta__alerta">
