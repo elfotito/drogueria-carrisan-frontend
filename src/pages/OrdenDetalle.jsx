@@ -3,6 +3,8 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import api from '../api/axios'
 import { useCart } from '../context/CartContext'
 import './OrdenDetalle.css'
+import { MessageCircle } from 'lucide-react'
+
 
 // ---------------------------------------------------------
 // Pipeline de estados — debe coincidir con el backend
@@ -271,9 +273,14 @@ function OrdenDetalle() {
           >
             {pidiendoDeNuevo ? 'Agregando...' : 'Volver a pedir'}
           </button>
-          <a href="mailto:ventas@carrisan.com" className="od-boton od-boton--secundario">
-            ¿Necesitás ayuda con esta orden?
-          </a>
+          <button
+  type="button"
+  className="od-boton od-boton--secundario"
+  onClick={() => navigate(`/chat/orden/${orden.id}`)}
+>
+  <MessageCircle size={16} style={{ marginRight: 6 }} />
+  ¿Necesitás ayuda con esta orden?
+</button>
         </section>
       </div>
     </div>
