@@ -267,7 +267,7 @@ function Landing() {
           {AHORROS.map((item) => (
               <div key={item.titulo} className="landing-ahorros__card">
                     <img 
-                      src={item.imagen}  // ← Ya viene con la URL completa
+                      src={item.imagen}
                       alt={item.titulo}
                       className="landing-ahorros__card-imagen"
                       loading="lazy"
@@ -368,7 +368,12 @@ function Landing() {
           claseTarjeta="landing-como-funciona__card"
           renderItem={(paso) => (
             <>
-              <ImagePlaceholder label={`Paso ${paso.numero}`} className="landing-como-funciona__card-imagen" />
+            <img 
+                      src={item.imagen}
+                      alt={item.titulo}
+                      className="landing-ahorros__card-imagen"
+                      loading="lazy"
+                    />
               <h3>{paso.numero}. {paso.titulo}</h3>
               <p>{paso.texto}</p>
             </>
