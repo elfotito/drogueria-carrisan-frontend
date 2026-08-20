@@ -15,6 +15,12 @@ import './Landing.css'
     registrate: `${BASE_URL}/registrate.png?width=800&quality=80`,
     pedidoenlinea: `${BASE_URL}/pedidoenlinea.png?width=800&quality=80`,
     recibe: `${BASE_URL}/recibe.png?width=800&quality=80`,
+    cadena: `${BASE_URL}/cadena.png?width=800&quality=80`,
+    deliverydc: `${BASE_URL}/deliverydc.png?width=800&quality=80`,
+    encargada: `${BASE_URL}/encargada.png?width=800&quality=80`,
+    equipomedico: `${BASE_URL}/equipomedico.png?width=800&quality=80`,
+    victor: `${BASE_URL}/victor.png?width=800&quality=80`,
+    financiamiento: `${BASE_URL}/financiamiento.png?width=800&quality=80`, 
   }
 
   const img = (path, width = 800) => {
@@ -290,7 +296,12 @@ function Landing() {
       {/* 4. NORMATIVA Y FACTURACIÓN FISCAL                                */}
       {/* ================================================================ */}
       <section className="landing-seguros">
-        <ImagePlaceholder label="Imagen Facturación y Permisos" className="landing-seguros__imagen" />
+                    <img 
+                      src={urls.encargada}
+                      alt="Imagen Facturación y Permisos"
+                      className="landing-seguros__imagen"
+                      loading="lazy"
+                    />
         <div className="landing-seguros__texto">
           <h2>Facturación fiscal y respaldo sanitario al día</h2>
           <p>Cumplimiento total de la normativa sanitaria venezolana, emisión de facturación clara adaptada a contribuyentes especiales y trazabilidad documentada en cada lote.</p>
@@ -303,7 +314,13 @@ function Landing() {
       {/* ================================================================ */}
       <section className="landing-envios">
         <div className="landing-envios__media">
-          <ImagePlaceholder label="Imagen Despacho B2B" className="landing-envios__imagen" />
+                    <img 
+                      src={urls.cadena}
+                      alt="Imagen Despacho B2B"
+                      className="landing-envios__imagen"
+                      loading="lazy"
+                    />
+          
           <div className="landing-envios__notificacion">
             <Check size={16} className="landing-envios__notificacion-icono" />
             <div>
@@ -324,7 +341,12 @@ function Landing() {
       {/* 6. GESTIÓN MULTIUSUARIO CORPORATIVA                              */}
       {/* ================================================================ */}
       <section className="landing-ayuda-meds">
-        <ImagePlaceholder label="Imagen Gestión Multiusuario" className="landing-ayuda-meds__imagen" />
+                    <img 
+                      src={urls.equipomedico}
+                      alt="Imagen Gestión Multiusuario"
+                      className="landing-ayuda-meds__imagen"
+                      loading="lazy"
+                    />
         <div className="landing-ayuda-meds__texto">
           <span className="landing-badge">NUEVO B2B</span>
           <h2>Gestión en una sola cuenta para tu equipo</h2>
@@ -348,11 +370,16 @@ function Landing() {
           <h2>Asesoría técnica y respaldo comercial</h2>
           <p>Nuestro equipo de regentes farmacéuticos y especialistas B2B verifica la calidad y trazabilidad de cada despacho. ¿Necesitas un requerimiento especial para tu quirófano o farmacia? Contáctanos directamente.</p>
           <div className="landing-ayudarte__badges">
-            <ImagePlaceholder label="Permiso Sanitario SACS" className="landing-badge-img" />
-            <ImagePlaceholder label="Soporte Directo B2B" className="landing-badge-img" />
+            <ImagePlaceholder label="P" className="landing-badge-img" />
+            <ImagePlaceholder label="B2B" className="landing-badge-img" />
           </div>
         </div>
-        <ImagePlaceholder label="Imagen Atención Farmacéutica B2B" className="landing-ayudarte__imagen" />
+                    <img 
+                      src={urls.victor}
+                      alt="Imagen Atención Farmacéutica B2B"
+                      className="landing-ayudarte__imagen"
+                      loading="lazy"
+                    />
       </section>
 
       
@@ -360,30 +387,30 @@ function Landing() {
       {/* 8. CÓMO FUNCIONA                                                 */}
       {/* ================================================================ */}
       <section className="landing-como-funciona">
-  <h2>¿Cómo funciona nuestro portal?</h2>
-  <a href="#" className="landing-video-link">
-    <span className="landing-video-link__icono"><Play size={16} /></span>
-    Conoce la plataforma de Droguería Carrisan en 1 minuto
-  </a>
-  
-  <Carrusel
-    items={PASOS}
-    claseContenedor="landing-como-funciona__grid"
-    claseTarjeta="landing-como-funciona__card"
-    renderItem={(paso) => (
-      <>
-        <img 
-          src={paso.imagen}  
-          alt={paso.titulo}  
-          className="landing-como-funciona__imagen"  
-          loading="lazy"
+        <h2>¿Cómo funciona nuestro portal?</h2>
+        <a href="#" className="landing-video-link">
+          <span className="landing-video-link__icono"><Play size={16} /></span>
+          Conoce la plataforma de Droguería Carrisan en 1 minuto
+        </a>
+        
+        <Carrusel
+          items={PASOS}
+          claseContenedor="landing-como-funciona__grid"
+          claseTarjeta="landing-como-funciona__card"
+          renderItem={(paso) => (
+            <>
+              <img 
+                src={paso.imagen}  
+                alt={paso.titulo}  
+                className="landing-como-funciona__imagen"  
+                loading="lazy"
+              />
+              {/* Agregamos clases específicas para el título y el texto */}
+              <h3 className="landing-como-funciona__titulo">{paso.numero}. {paso.titulo}</h3>
+              <p className="landing-como-funciona__texto">{paso.texto}</p>
+            </>
+          )}
         />
-        {/* Agregamos clases específicas para el título y el texto */}
-        <h3 className="landing-como-funciona__titulo">{paso.numero}. {paso.titulo}</h3>
-        <p className="landing-como-funciona__texto">{paso.texto}</p>
-      </>
-    )}
-  />
   
   <a href="#" className="btn-landing btn-landing--solido">Conocer más sobre el proceso de compra</a>
 </section>
