@@ -191,7 +191,10 @@ function ContenidoDashboard({
   const porcentajeUsado = tieneCredito
     ? Math.min((resumen.deuda_actual / resumen.linea_credito) * 100, 100)
     : 0
-  const nivelAlerta = porcentajeUsado >= 90 ? 'critico' : porcentajeUsado >= 80 ? 'alto' : null
+  const tieneVencidas = resumen.cantidad_ordenes_vencidas > 0
+  const nivelAlerta = tieneVencidas
+    ? 'critico'
+    : porcentajeUsado >= 90 ? 'critico' : porcentajeUsado >= 80 ? 'alto' : null
 
   return (
     <>
@@ -205,8 +208,17 @@ function ContenidoDashboard({
         <div className={`ec-banner-alerta ec-banner-alerta--${nivelAlerta}`}>
           <AlertCircle size={18} />
           <div>
-            <strong>{nivelAlerta === 'critico' ? 'Estás muy cerca de tu límite de crédito' : 'Tu línea de crédito se está agotando'}</strong>
-            <p>Usaste {Math.round(porcentajeUsado)}% de tu línea disponible. Considera reportar un pago o solicitar una ampliación.</p>
+            {tieneVencidas ? (
+              <>
+                <strong>Tenés {resumen.cantidad_ordenes_vencidas} {resumen.cantidad_ordenes_vencidas === 1 ? 'orden vencida' : 'órdenes vencidas'}</strong>
+                <p>Suman {formatearMonto(resumen.deuda_vencida)}. Reportá el pago para evitar que se pause tu cuenta.</p>
+              </>
+            ) : (
+              <>
+                <strong>{nivelAlerta === 'critico' ? 'Estás muy cerca de tu límite de crédito' : 'Tu línea de crédito se está agotando'}</strong>
+                <p>Usaste {Math.round(porcentajeUsado)}% de tu línea disponible. Considera reportar un pago o solicitar una ampliación.</p>
+              </>
+            )}
           </div>
         </div>
       )}
@@ -229,21 +241,36 @@ function ContenidoDashboard({
         </div>
       </section>
 
-      {/* Placeholders reservados — requieren campos nuevos en backend
-          (fecha_vencimiento / dia_corte) que todavía no existen */}
+      {/* Vencimientos: ya no son placeholders — cada orden a crédito
+          trae su propia fecha_vencimiento (created_at + dias_credito
+          del cliente, congelada al crearse). "Próximo corte" como
+          concepto de ciclo fijo no existe; en su lugar mostramos la
+          próxima orden por vencer y cuántas ya están vencidas. */}
       <section className="ec-proximamente">
         <div className="ec-proximamente__card">
           <div className="ec-proximamente__icono"><CalendarClock size={18} /></div>
           <div className="ec-proximamente__texto">
-            <span className="ec-proximamente__titulo">Próximo corte</span>
-            <span className="ec-proximamente__etiqueta">Próximamente</span>
+            <span className="ec-proximamente__titulo">Próxima orden por vencer</span>
+            {resumen.proxima_orden_vencer ? (
+              <span className="ec-proximamente__valor">
+                Orden #{resumen.proxima_orden_vencer.id} — {new Date(resumen.proxima_orden_vencer.fecha_vencimiento).toLocaleDateString('es-VE', { day: '2-digit', month: 'short' })}
+              </span>
+            ) : (
+              <span className="ec-proximamente__etiqueta">Sin órdenes con vencimiento</span>
+            )}
           </div>
         </div>
         <div className="ec-proximamente__card">
-          <div className="ec-proximamente__icono"><Clock size={18} /></div>
+          <div className={`ec-proximamente__icono ${resumen.cantidad_ordenes_vencidas > 0 ? 'ec-proximamente__icono--alerta' : ''}`}><Clock size={18} /></div>
           <div className="ec-proximamente__texto">
-            <span className="ec-proximamente__titulo">Órdenes por vencer</span>
-            <span className="ec-proximamente__etiqueta">Próximamente</span>
+            <span className="ec-proximamente__titulo">Órdenes vencidas</span>
+            {resumen.cantidad_ordenes_vencidas > 0 ? (
+              <span className="ec-proximamente__valor ec-proximamente__valor--alerta">
+                {resumen.cantidad_ordenes_vencidas} · {formatearMonto(resumen.deuda_vencida)}
+              </span>
+            ) : (
+              <span className="ec-proximamente__etiqueta">Al día</span>
+            )}
           </div>
         </div>
       </section>
@@ -320,8 +347,8 @@ function ContenidoDashboard({
                       <span className="ec-movimiento__titulo">
                         {mov.tipo === 'factura' ? `Factura #${mov.numero_factura}` : mov.tipo === 'pago' ? `Pago #${mov.id}` : `Orden #${mov.id}`}
                       </span>
-                      <span className={`ec-badge ec-badge--${mov.tipo === 'orden_pendiente' ? 'pendiente' : (mov.estado || 'registrado')}`}>
-                        {mov.tipo === 'orden_pendiente' ? 'por pagar' : (mov.estado || 'registrado')}
+                      <span className={`ec-badge ec-badge--${mov.tipo === 'orden_pendiente' ? (mov.vencida ? 'vencido' : 'pendiente') : (mov.estado || 'registrado')}`}>
+                        {mov.tipo === 'orden_pendiente' ? (mov.vencida ? 'vencida' : 'por pagar') : (mov.estado || 'registrado')}
                       </span>
                     </div>
                     <strong className={`ec-movimiento__monto ${mov.tipo === 'pago' ? 'ec-movimiento__monto--verde' : 'ec-movimiento__monto--rojo'}`}>
