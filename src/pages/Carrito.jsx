@@ -363,6 +363,10 @@ const [tieneSubUsuarios, setTieneSubUsuarios] = useState(false)
       setEnvioExpandido(true)
       return
     }
+if (tieneSubUsuarios && !subUsuarioId) {
+    setError('Ingresa tu PIN para identificar quién hace el pedido')
+    return
+  }
 
     setEnviando(true)
 
@@ -377,6 +381,7 @@ const [tieneSubUsuarios, setTieneSubUsuarios] = useState(false)
         costo_delivery: costoEnvio,
         agencia_envio: agenciaSeleccionada || null,
         forma_pago: formaPago,
+        sub_usuario_id: subUsuarioId,
       }
       await api.post('/orders', payload)
       clearCart()
