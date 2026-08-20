@@ -478,6 +478,7 @@
 .landing-como-funciona {
   background: #fafafc;
   text-align: center;
+  padding: 40px 20px;
 }
 
 .landing-video-link {
@@ -976,20 +977,21 @@
     flex: 1;
   }
 
-  /* --- Carrusel genérico: en desktop se vuelve grid normal, sin scroll  */
-  /* horizontal ni snap, y los dots de paginado se ocultan. --- */
-  .landing-carrusel {
-    overflow-x: visible;
-    scroll-snap-type: none;
-    margin: 0;
+    .landing-carrusel {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    overflow: visible;
+    margin: 0 auto 24px;
     padding: 0;
-    gap: 16px;
+    justify-items: center;
+    align-items: start;
   }
 
-  .landing-carrusel__item {
-    flex: 1;
-    scroll-snap-align: none;
+    .landing-carrusel__item {
+    flex: none;
     padding-right: 0;
+    width: 100%;
   }
 
   .landing-carrusel__dots {
