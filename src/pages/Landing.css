@@ -455,7 +455,7 @@
 /* 7. ESTAMOS AQUÍ PARA AYUDARTE                                       */
 /* ================================================================== */
 .landing-ayudarte {
-  background: var(--bg-menta);
+  background: #e5eee7;
   display: flex;
   flex-direction: column-reverse;
   gap: 24px;
@@ -463,6 +463,7 @@
 
 .landing-ayudarte__imagen {
   min-height: 220px;
+  max-width: 560px;
   border-radius: 50% / 30%;
 }
 
@@ -476,7 +477,7 @@
 /* 8. HOW IT WORKS                                                    */
 /* ================================================================== */
 .landing-como-funciona {
-  background: var(--color-bg);
+  background: #fafafc;
   text-align: center;
 }
 
@@ -873,6 +874,7 @@
 
   .landing-seguros__texto {
     flex: 1;
+    max-width: 600px;
   }
 
   .landing-seguros .btn-landing {
@@ -897,6 +899,7 @@
   .landing-envios__texto {
     flex: 1;
     padding-top: 0;
+    max-width: 600px;
   }
 
   .landing-envios .btn-landing {
@@ -921,6 +924,7 @@
 
   .landing-ayuda-meds__texto {
     flex: 1;
+    max-width: 600px;
   }
 
   .landing-ayuda-meds .btn-landing {
@@ -938,11 +942,13 @@
 
   .landing-ayudarte__texto {
     flex: 1;
+    max-width: 600px;
   }
 
   .landing-ayudarte__imagen {
     flex: 1;
     min-height: 320px;
+    max-width: 560px;
   }
 
   /* --- How it works: 3 columnas --- */
