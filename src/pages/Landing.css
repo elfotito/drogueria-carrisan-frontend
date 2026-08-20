@@ -327,7 +327,7 @@
 /* 4. SEGUROS                                                          */
 /* ================================================================== */
 .landing-seguros {
-  background: var(--bg-teal);
+  background: #e7f5f3;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -347,7 +347,7 @@
 /* 5. DESPÍDETE DE LAS FILAS                                           */
 /* ================================================================== */
 .landing-envios {
-  background: var(--bg-durazno);
+  background: #fcebe5;
 }
 
 .landing-envios__media {
@@ -357,6 +357,7 @@
 
 .landing-envios__imagen {
   min-height: 200px;
+  max-width: 560px;
 }
 
 .landing-envios__notificacion {
@@ -410,7 +411,7 @@
 /* 6. AYUDA CON MEDICAMENTOS                                           */
 /* ================================================================== */
 .landing-ayuda-meds {
-  background: var(--color-surface);
+  background: #eadeec;
 }
 
 .landing-ayuda-meds__imagen {
@@ -790,7 +791,7 @@
 /* ================================================================== */
 @media (min-width: 1024px) {
   .landing section {
-    padding: 72px 60px;
+    padding: 25px 60px;
   }
 
   .landing h1 {
@@ -860,7 +861,7 @@
   .landing-seguros {
     flex-direction: row;
     align-items: center;
-    max-width: 1600px;
+    width: 100vw;
     margin: 0 auto;
     gap: 60px;
   }

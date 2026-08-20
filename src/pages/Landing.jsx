@@ -317,6 +317,12 @@ function Landing() {
       {/* 5. LOGÍSTICA Y DESPACHOS PRIORITARIOS                            */}
       {/* ================================================================ */}
       <section className="landing-envios">
+        <div className="landing-envios__texto">
+          <h2>Cero interrupciones en tu cadena de suministro</h2>
+          <p>Entregamos tus medicamentos e insumos quirúrgicos directamente en la puerta de tu clínica o farmacia, con tiempos de respuesta prioritarios para urgencias médicas.</p>
+          <a href="#" className="btn-landing btn-landing--primario">Crear Cuenta B2B</a>
+          <a href="#" className="landing-link">¿Necesitas un despacho de emergencia?</a>
+        </div>
         <div className="landing-envios__media">
                     <img 
                       src={urls.cadena}
@@ -332,12 +338,6 @@ function Landing() {
               <span>Hoy a las 09:15 AM — Enviado</span>
             </div>
           </div>
-        </div>
-        <div className="landing-envios__texto">
-          <h2>Cero interrupciones en tu cadena de suministro</h2>
-          <p>Entregamos tus medicamentos e insumos quirúrgicos directamente en la puerta de tu clínica o farmacia, con tiempos de respuesta prioritarios para urgencias médicas.</p>
-          <a href="#" className="btn-landing btn-landing--primario">Crear Cuenta B2B</a>
-          <a href="#" className="landing-link">¿Necesitas un despacho de emergencia?</a>
         </div>
       </section>
 
