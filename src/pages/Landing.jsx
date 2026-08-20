@@ -21,7 +21,7 @@ import './Landing.css'
     equipomedico: `${BASE_URL}/equipomedico.png?width=800&quality=40`,
     victor: `${BASE_URL}/victor.png?width=800&quality=60`,
     tratohecho: `${BASE_URL}/financiamiento.png?width=800&quality=40`,
-    lineahospitalariaa: `${BASE_URL}/financiamiento.png?width=800&quality=40`,
+    lineahospitalariaa: `${BASE_URL}/lineahospitalariaa.png?width=800&quality=40`,
   }
 
   const img = (path, width = 800) => {
