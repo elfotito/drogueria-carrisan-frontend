@@ -1,0 +1,83 @@
+.pc-caja {
+  background: #FBFAF7;
+  border: 1px solid #e3e4e5;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.pc-titulo {
+  margin: 0 0 12px;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: #1A1A3A;
+}
+
+/* ---------- Bloques tipo app bancaria ---------- */
+
+.pc-bloques {
+  display: flex;
+  gap: 10px;
+}
+
+.pc-bloque {
+  width: 48px;
+  height: 54px;
+  border-radius: 10px;
+  border: 1.5px solid #e3e4e5;
+  background: #FFFFFF;
+  text-align: center;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.3rem;
+  color: #1A1A3A;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.pc-bloque:focus {
+  border-color: #0052DC;
+  box-shadow: 0 0 0 3px rgba(0, 82, 220, 0.12);
+}
+
+.pc-bloque:disabled {
+  opacity: 0.6;
+}
+
+.pc-verificando {
+  margin: 10px 0 0;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  color: #74767c;
+}
+
+.pc-confirmado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pc-confirmado__nombre {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #16a34a;
+}
+
+.pc-cambiar {
+  border: none;
+  background: none;
+  color: #0052DC;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.pc-error {
+  margin: 10px 0 0;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  color: #dc2626;
+}
