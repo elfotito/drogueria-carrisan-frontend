@@ -349,6 +349,19 @@
   width: fit-content;
 }
 
+.ec-proximamente__valor {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--ec-text);
+}
+
+.ec-proximamente__valor--alerta { color: var(--ec-negativo); }
+
+.ec-proximamente__icono--alerta {
+  background: #fef2f2;
+  color: var(--ec-negativo);
+}
+
 /* ============ COMPARATIVA MENSUAL ============ */
 .ec-comparativa {
   background: var(--ec-surface);
