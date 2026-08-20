@@ -95,10 +95,8 @@ function Carrusel({ items, renderItem, claseContenedor, claseTarjeta }) {
 
 const BENEFICIOS = [
   'Catalogo Integral Unificado',
-  'Logística de Entrega Prioritaria',
-  'Pedidos Flexibles y Sin Mínimos Exigentes',
-  'Seguridad y Garantía Sanitaria 100% Certificada',
-  'Línea de Crédito B2B para todo tipo de empresa',
+  'Línea de Crédito B2B',
+  'Pedidos flexibles y sin mínimos exigentes',
 ]
 
 const AHORROS = [
