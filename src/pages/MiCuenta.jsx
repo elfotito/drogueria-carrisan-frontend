@@ -12,7 +12,7 @@ import {
 import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
 import { NAV_CUENTA } from '../components/paginas-principales/navCuenta'
 import './MiCuenta.css'
-import './HojaInferior.jsx'
+import '../components/HojaInferior.jsx'
 
 // ---------------------------------------------------------------
 // Mi Cuenta — dashboard visual de la cuenta.
