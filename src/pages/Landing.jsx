@@ -8,20 +8,20 @@ import './Landing.css'
   const BASE_URL = 'https://fqeshthtycmzgyibiurq.supabase.co/storage/v1/object/public/crsnimages'
   
   const urls = {
-    hero: `${BASE_URL}/hero.png?width=1200&quality=80`,
-    financiamiento: `${BASE_URL}/financiamientocarrisan.png?width=800&quality=40`,
-    descuento: `${BASE_URL}/descuentoxvolumen.png?width=800&quality=40`,
-    precios: `${BASE_URL}/precioscompetitivos.png?width=800&quality=40`,
-    registrate: `${BASE_URL}/registrate.png?width=800&quality=40`,
-    pedidoenlinea: `${BASE_URL}/pedidoenlinea.png?width=800&quality=40`,
-    recibe: `${BASE_URL}/recibe.png?width=800&quality=80`,
-    cadena: `${BASE_URL}/cadena.png?width=800&quality=80`,
-    deliverydc: `${BASE_URL}/deliverydc.png?width=800&quality=40`,
-    encargada: `${BASE_URL}/encargada.png?width=800&quality=40`,
-    equipomedico: `${BASE_URL}/equipomedico.png?width=800&quality=40`,
+    hero: `${BASE_URL}/hero.png?width=1200&quality=60&format=webp`,
+    financiamiento: `${BASE_URL}/financiamientocarrisan.png?width=800&quality=40&format=webp`,
+    descuento: `${BASE_URL}/descuentoxvolumen.png?width=800&quality=40&format=webp`,
+    precios: `${BASE_URL}/precioscompetitivos.png?width=800&quality=40&format=webp`,
+    registrate: `${BASE_URL}/registrate.png?width=800&quality=40&format=webp`,
+    pedidoenlinea: `${BASE_URL}/pedidoenlinea.png?width=800&quality=40&format=webp`,
+    recibe: `${BASE_URL}/recibe.png?width=800&quality=60&format=webp`,
+    cadena: `${BASE_URL}/cadena.png?width=800&quality=60&format=webp`,
+    deliverydc: `${BASE_URL}/deliverydc.png?width=800&quality=40&format=webp`,
+    encargada: `${BASE_URL}/encargada.png?width=800&quality=40&format=webp`,
+    equipomedico: `${BASE_URL}/equipomedico.png?width=800&quality=40&format=webp`,
     victor: `${BASE_URL}/victor.png?width=800&quality=60`,
-    tratohecho: `${BASE_URL}/financiamiento.png?width=800&quality=40`,
-    lineahospitalariaa: `${BASE_URL}/lineahospitalariaa.png?width=800&quality=40`,
+    tratohecho: `${BASE_URL}/financiamiento.png?width=400&quality=40&format=webp`,
+    lineahospitalariaa: `${BASE_URL}/lineahospitalariaa.png?width=400&quality=40&format=webp`,
   }
 
   const img = (path, width = 800) => {
