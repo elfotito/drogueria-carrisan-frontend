@@ -5,6 +5,7 @@ import { useCart } from '../context/CartContext'
 import { useEnvio } from '../context/EnvioContext'
 import { useAuth } from '../context/AuthContext'
 import './Carrito.css'
+import PinCheckout from '../components/PinCheckout'
 
 function formatUSD(valor) {
   return valor.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
@@ -307,6 +308,8 @@ function Carrito() {
   const [enviando, setEnviando] = useState(false)
   const [error, setError] = useState('')
   const [envioExpandido, setEnvioExpandido] = useState(false)
+const [subUsuarioId, setSubUsuarioId] = useState(null)
+const [tieneSubUsuarios, setTieneSubUsuarios] = useState(false)
   
   const navigate = useNavigate()
 
@@ -473,6 +476,10 @@ function Carrito() {
             </div>
           </div>
         )}
+<PinCheckout
+  onResuelto={(id) => setSubUsuarioId(id)}
+  onDisponibilidad={(hay) => setTieneSubUsuarios(hay)}
+/>
 
         {error && <p className="carrito-error carrito-error--sidebar">{error}</p>}
 
