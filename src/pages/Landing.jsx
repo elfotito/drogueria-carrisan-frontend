@@ -323,6 +323,7 @@ function Landing() {
           <a href="#" className="btn-landing btn-landing--primario">Crear Cuenta B2B</a>
           <a href="#" className="landing-link">¿Necesitas un despacho de emergencia?</a>
         </div>
+        <div>
         <div className="landing-envios__media">
                     <img 
                       src={urls.cadena}
@@ -337,6 +338,7 @@ function Landing() {
               <strong>Orden en ruta de entrega</strong>
               <span>Hoy a las 09:15 AM — Enviado</span>
             </div>
+          </div>
           </div>
         </div>
       </section>
