@@ -335,6 +335,7 @@
 
 .landing-seguros__imagen {
   min-height: 220px;
+  max-width: 560px;
 }
 
 .landing-seguros .btn-landing {
@@ -858,7 +859,7 @@
   .landing-seguros {
     flex-direction: row;
     align-items: center;
-    max-width: 1160px;
+    max-width: 1600px;
     margin: 0 auto;
     gap: 60px;
   }
@@ -881,7 +882,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    max-width: 1160px;
+    max-width: 1600px;
     margin: 0 auto;
     gap: 60px;
   }
@@ -905,7 +906,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    max-width: 1160px;
+    max-width: 1600px;
     margin: 0 auto;
     gap: 60px;
   }
