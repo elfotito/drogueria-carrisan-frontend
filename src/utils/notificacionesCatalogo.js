@@ -1,4 +1,4 @@
-import { Package, DollarSign, MessageCircle, Info } from 'lucide-react'
+import { Package, DollarSign, MessageCircle, Info, AlertTriangle } from 'lucide-react'
 
 // ---------------------------------------------------------------
 // Catálogo de tipos de notificación. Es estático porque los tipos
@@ -35,6 +35,13 @@ export const CATEGORIAS = {
     icono: MessageCircle,
     tipos: ['chat_mensaje'],
   },
+  credito: {
+    id: 'credito',
+    nombre: 'Crédito',
+    color: 'orange',
+    icono: AlertTriangle,
+    tipos: ['orden_por_vencer', 'orden_vencida'],
+  },
   sistema: {
     id: 'sistema',
     nombre: 'Sistema',
@@ -44,7 +51,7 @@ export const CATEGORIAS = {
   },
 }
 
-export const ORDEN_CATEGORIAS = ['ordenes', 'pagos', 'chat', 'sistema']
+export const ORDEN_CATEGORIAS = ['ordenes', 'pagos', 'chat', 'credito', 'sistema']
 
 // Una línea explicando qué significa cada tipo — para la leyenda.
 export const DESCRIPCION_TIPO = {
@@ -57,6 +64,8 @@ export const DESCRIPCION_TIPO = {
   pago_recibido: 'Registramos un pago en tu cuenta.',
   pago_rechazado: 'Un pago reportado no pudo verificarse.',
   chat_mensaje: 'Tienes una respuesta nueva en el Centro de Comunicaciones.',
+  orden_por_vencer: 'Una orden a crédito está por vencer.',
+  orden_vencida: 'Una orden a crédito venció sin registrar el pago.',
   sistema: 'Aviso general de la plataforma.',
 }
 
