@@ -248,18 +248,11 @@
 }
 
 /* ================================================================== */
-/* 2. BENEFICIOS                                                       */
+/* 2. BENEFICIOS                                                      */
 /* ================================================================== */
-.landing-beneficios__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-}
-
-.landing-beneficios__header h2 {
-  font-size: 1.2rem;
-  margin: 0;
+.landing-beneficios {
+  padding: 16px 0;
+  border-bottom: 1px solid #e0e0e0; /* La imagen parece tener una sutil línea gris abajo */
 }
 
 .landing-beneficios__lista {
@@ -267,24 +260,64 @@
   margin: 0;
   padding: 0;
   display: flex;
-  flex-direction: column;
+  flex-direction: column; /* Apilado en móviles */
+  gap: 16px;
+}
+
+/* Reemplazamos la clase 'chip' por 'item' sin fondos ni bordes */
+.landing-beneficios__item {
+  display: flex;
+  align-items: center;
   gap: 10px;
 }
 
-.landing-beneficios__chip {
+/* El círculo verde/menta sólido que envuelve al check */
+.landing-beneficios__icono {
   display: flex;
   align-items: center;
-  gap: 8px;
-  background: var(--bg-menta);
-  border-radius: 10px;
-  padding: 12px 16px;
-  font-size: 0.92rem;
-  font-weight: 600;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background-color: #00a699; /* Ajusta a tu variable si tienes una igual */
+  color: #ffffff; /* El check por dentro es blanco */
+  border-radius: 50%;
+  flex-shrink: 0;
 }
 
-.landing-beneficios__check {
-  color: var(--color-accent);
-  flex-shrink: 0;
+.landing-beneficios__texto {
+  font-size: 0.95rem;
+  color: #002f36;
+  font-weight: 500;
+}
+
+.landing-link {
+  color: #007185;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.landing-link:hover {
+  text-decoration: underline;
+}
+
+/* Diseño de Escritorio (Desktop) */
+@media (min-width: 1024px) {
+  .landing-beneficios {
+    max-width: 1160px;
+    margin: 0 auto;
+  }
+
+  .landing-beneficios__lista {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between; /* Separa los elementos uniformemente */
+  }
+
+  /* Si quieres que el enlace quede empujado totalmente a la derecha */
+  .landing-beneficios__item--enlace {
+    margin-left: auto; 
+  }
 }
 
 /* ================================================================== */

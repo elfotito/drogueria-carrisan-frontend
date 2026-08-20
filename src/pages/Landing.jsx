@@ -256,17 +256,22 @@ function Landing() {
       {/* 2. BENEFICIOS                                                    */}
       {/* ================================================================ */}
       <section className="landing-beneficios">
-        <div className="landing-beneficios__header">
-          <h2>Beneficios de Droguería Carrisan</h2>
-          <a href="#" className="landing-link">Ver todo +</a>
-        </div>
         <ul className="landing-beneficios__lista">
           {BENEFICIOS.map((beneficio) => (
-            <li key={beneficio} className="landing-beneficios__chip">
-              <Check size={16} className="landing-beneficios__check" />
-              {beneficio}
+            <li key={beneficio} className="landing-beneficios__item">
+              
+              <span className="landing-beneficios__icono">
+                
+                <Check size={14} strokeWidth={3} />
+              </span>
+              <span className="landing-beneficios__texto">{beneficio}</span>
             </li>
           ))}
+          
+          
+          <li className="landing-beneficios__item landing-beneficios__item--enlace">
+            <a href="#" className="landing-link">Ver todos los beneficios +</a>
+          </li>
         </ul>
       </section>
 
