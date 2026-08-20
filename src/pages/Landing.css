@@ -126,8 +126,14 @@
   color: var(--color-brand-dark);
 }
 
+.btn-landing--primario {
+  transition: all 0.3s ease; /* Hace que la iluminación sea suave y no de golpe */
+}
+
 .btn-landing--primario:hover {
-  filter: brightness(0.96);
+  filter: brightness(1.1); 
+  box-shadow: 0 4px 12px rgba(255, 170, 45, 0.6); 
+  transform: translateY(-2px); 
 }
 
 .btn-landing--solido {
@@ -205,6 +211,40 @@
 
 .landing-hero .landing-link--secundario {
   margin-top: 0; /* El gap del contenedor maneja el espaciado */
+}
+
+/* Contenedor del enlace */
+.enlace-seguridad {
+  display: inline-flex;
+  align-items: center; /* Centra el candado con el texto verticalmente */
+  gap: 8px; /* Espacio entre el candado y el texto */
+  text-decoration: none; /* Quitamos el subrayado por defecto de toda la etiqueta <a> */
+  cursor: pointer;
+}
+
+/* Estilo específico para el candado */
+.enlace-seguridad__icono {
+  color: #232f3e; /* Un gris muy oscuro/azulado, típico de Amazon */
+  flex-shrink: 0;
+}
+
+/* Estilo del texto y su subrayado */
+.enlace-seguridad__texto {
+  font-size: 0.95rem;
+  color: #007185; /* Azul clásico de los enlaces */
+  font-weight: 500;
+  
+  /* CLAVE: Creación del subrayado idéntico a la imagen */
+  text-decoration: underline;
+  text-decoration-color: #007185;
+  text-decoration-thickness: 1px; /* Grosor de la línea */
+  text-underline-offset: 3px; /* Separa la línea ligeramente hacia abajo del texto */
+}
+
+/* Efecto hover opcional para cuando pasas el mouse */
+.enlace-seguridad:hover .enlace-seguridad__texto {
+  color: #c45500; /* Naranja (estilo Amazon) o puedes usar un azul más oscuro */
+  text-decoration-color: #c45500;
 }
 
 /* ================================================================== */
