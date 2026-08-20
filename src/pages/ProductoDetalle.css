@@ -280,6 +280,37 @@
   background: #0E7C63;
 }
 
+detalle-btn-avisame {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border-radius: 10px;
+  border: 1.5px solid #0052DC;
+  background: #FFFFFF;
+  color: #0052DC;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.detalle-btn-avisame:hover:not(:disabled) {
+  background: #E9EFFC;
+}
+
+.detalle-btn-avisame--activo {
+  background: #E6F7EC;
+  border-color: #16a34a;
+  color: #16a34a;
+}
+
+.detalle-btn-avisame:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
 .detalle-login-aviso {
   font-size: 0.85rem;
   color: #5B6270;
