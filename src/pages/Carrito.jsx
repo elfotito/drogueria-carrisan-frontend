@@ -5,7 +5,6 @@ import { useCart } from '../context/CartContext'
 import { useEnvio } from '../context/EnvioContext'
 import { useAuth } from '../context/AuthContext'
 import './Carrito.css'
-import PinCheckout from '../components/PinCheckout'
 
 function formatUSD(valor) {
   return valor.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
@@ -304,12 +303,11 @@ function Carrito() {
 
   const [tasaVes, setTasaVes] = useState(null)
   const [saldoDisponible, setSaldoDisponible] = useState(null)
+  const [ordenesVencidas, setOrdenesVencidas] = useState(0)
   const [formaPago, setFormaPago] = useState('contado')
   const [enviando, setEnviando] = useState(false)
   const [error, setError] = useState('')
   const [envioExpandido, setEnvioExpandido] = useState(false)
-const [subUsuarioId, setSubUsuarioId] = useState(null)
-const [tieneSubUsuarios, setTieneSubUsuarios] = useState(false)
   
   const navigate = useNavigate()
 
@@ -320,14 +318,19 @@ const [tieneSubUsuarios, setTieneSubUsuarios] = useState(false)
       .catch(() => setTasaVes(null))
   }, [])
 
-  // Traemos el saldo de crédito disponible del cliente (linea_credito - deuda).
-  // Si el usuario no tiene línea de crédito asignada (0 o null), simplemente
-  // nunca alcanzará el total y la opción de crédito no se ofrece.
+  // Traemos el saldo de crédito disponible del cliente (linea_credito - deuda)
+  // y si tiene órdenes vencidas — con vencidas, la línea de crédito se
+  // bloquea para compras nuevas hasta que regularice (contado no se ve
+  // afectado). Si el usuario no tiene línea de crédito asignada (0 o
+  // null), simplemente nunca alcanzará el total y la opción no se ofrece.
   useEffect(() => {
     if (!user?.id) return
     api
       .get(`/clientes/${user.id}/estado-cuenta`)
-      .then((res) => setSaldoDisponible(res.data.resumen.saldo))
+      .then((res) => {
+        setSaldoDisponible(res.data.resumen.saldo)
+        setOrdenesVencidas(res.data.resumen.cantidad_ordenes_vencidas || 0)
+      })
       .catch(() => setSaldoDisponible(null))
   }, [user?.id])
 
@@ -363,10 +366,6 @@ const [tieneSubUsuarios, setTieneSubUsuarios] = useState(false)
       setEnvioExpandido(true)
       return
     }
-if (tieneSubUsuarios && !subUsuarioId) {
-    setError('Ingresa tu PIN para identificar quién hace el pedido')
-    return
-  }
 
     setEnviando(true)
 
@@ -381,13 +380,12 @@ if (tieneSubUsuarios && !subUsuarioId) {
         costo_delivery: costoEnvio,
         agencia_envio: agenciaSeleccionada || null,
         forma_pago: formaPago,
-        sub_usuario_id: subUsuarioId,
       }
       await api.post('/orders', payload)
       clearCart()
       navigate('/orders')
     } catch (err) {
-      setError(err.response?.data?.message || 'Error al confirmar la orden')
+      setError(err.response?.data?.error || 'Error al confirmar la orden')
     } finally {
       setEnviando(false)
     }
@@ -398,10 +396,12 @@ if (tieneSubUsuarios && !subUsuarioId) {
   const totalVes = tasaVes ? totalConEnvio * tasaVes : null
 
   // El crédito solo se ofrece si el usuario tiene saldo suficiente para
-  // cubrir el total actual del carrito (incluyendo envío). Si el carrito
-  // cambia y deja de alcanzar, volvemos automáticamente a 'contado' para
-  // no dejar seleccionada una opción que el backend rechazaría.
-  const creditoDisponible = saldoDisponible !== null && saldoDisponible >= totalConEnvio
+  // cubrir el total actual del carrito (incluyendo envío) Y no tiene
+  // órdenes vencidas pendientes de pago. Si el carrito cambia y deja de
+  // alcanzar (o aparece una orden vencida), volvemos automáticamente a
+  // 'contado' para no dejar seleccionada una opción que el backend
+  // rechazaría.
+  const creditoDisponible = saldoDisponible !== null && saldoDisponible >= totalConEnvio && ordenesVencidas === 0
 
   useEffect(() => {
     if (formaPago === 'credito' && !creditoDisponible) {
@@ -458,6 +458,17 @@ if (tieneSubUsuarios && !subUsuarioId) {
           </div>
         </div>
 
+        {ordenesVencidas > 0 && (
+          <div className="cart-alerta-vencidas">
+            <span className="cart-alerta-vencidas__icono">⚠️</span>
+            <div>
+              <strong>Tenés {ordenesVencidas} {ordenesVencidas === 1 ? 'orden vencida' : 'órdenes vencidas'}</strong>
+              <p>Tu línea de crédito está pausada hasta que regularices tu cuenta. Podés seguir comprando de contado.</p>
+              <Link to="/estado-cuenta" className="cart-alerta-vencidas__link">Ir a reportar pago →</Link>
+            </div>
+          </div>
+        )}
+
         {creditoDisponible && (
           <div className="cart-forma-pago">
             <p className="cart-forma-pago__titulo">¿Cómo quieres pagar?</p>
@@ -481,10 +492,6 @@ if (tieneSubUsuarios && !subUsuarioId) {
             </div>
           </div>
         )}
-<PinCheckout
-  onResuelto={(id) => setSubUsuarioId(id)}
-  onDisponibilidad={(hay) => setTieneSubUsuarios(hay)}
-/>
 
         {error && <p className="carrito-error carrito-error--sidebar">{error}</p>}
 
