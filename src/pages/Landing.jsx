@@ -9,18 +9,19 @@ import './Landing.css'
   
   const urls = {
     hero: `${BASE_URL}/hero.png?width=1200&quality=80`,
-    financiamiento: `${BASE_URL}/financiamientocarrisan.png?width=800&quality=80`,
-    descuento: `${BASE_URL}/descuentoxvolumen.png?width=800&quality=80`,
-    precios: `${BASE_URL}/precioscompetitivos.png?width=800&quality=80`,
-    registrate: `${BASE_URL}/registrate.png?width=800&quality=80`,
-    pedidoenlinea: `${BASE_URL}/pedidoenlinea.png?width=800&quality=80`,
+    financiamiento: `${BASE_URL}/financiamientocarrisan.png?width=800&quality=40`,
+    descuento: `${BASE_URL}/descuentoxvolumen.png?width=800&quality=40`,
+    precios: `${BASE_URL}/precioscompetitivos.png?width=800&quality=40`,
+    registrate: `${BASE_URL}/registrate.png?width=800&quality=40`,
+    pedidoenlinea: `${BASE_URL}/pedidoenlinea.png?width=800&quality=40`,
     recibe: `${BASE_URL}/recibe.png?width=800&quality=80`,
     cadena: `${BASE_URL}/cadena.png?width=800&quality=80`,
-    deliverydc: `${BASE_URL}/deliverydc.png?width=800&quality=80`,
-    encargada: `${BASE_URL}/encargada.png?width=800&quality=80`,
-    equipomedico: `${BASE_URL}/equipomedico.png?width=800&quality=80`,
-    victor: `${BASE_URL}/victor.png?width=800&quality=80`,
-    financiamiento: `${BASE_URL}/financiamiento.png?width=800&quality=80`, 
+    deliverydc: `${BASE_URL}/deliverydc.png?width=800&quality=40`,
+    encargada: `${BASE_URL}/encargada.png?width=800&quality=40`,
+    equipomedico: `${BASE_URL}/equipomedico.png?width=800&quality=40`,
+    victor: `${BASE_URL}/victor.png?width=800&quality=60`,
+    tratohecho: `${BASE_URL}/financiamiento.png?width=800&quality=40`,
+    lineahospitalariaa: `${BASE_URL}/financiamiento.png?width=800&quality=40`,
   }
 
   const img = (path, width = 800) => {
@@ -164,14 +165,17 @@ const MAS_EXPLORAR = [
   {
     titulo: 'Línea Quirúrgica y Hospitalaria',
     texto: 'Accede a un catálogo especializado en anestesia, fluidoterapia y material médico-quirúrgico para clínicas y centros médicos.',
+    imagen: urls.lineahospitalariaa,
   },
   {
     titulo: 'Programa de Crédito B2B',
     texto: 'Obtén financiamiento a 7 días diseñado para respaldar el flujo de caja de pequeñas empresas y médicos independientes.',
+    imagen: urls.tratohecho,
   },
   {
     titulo: 'Gestion de Entregas personalizadas',
     texto: 'Atención prioritaria y logística ágil para reposición inmediata de insumos a distintas direcciones de la ciudad',
+    imagen: urls.deliverydc,
   },
 ]
 
@@ -447,7 +451,12 @@ function Landing() {
         <div className="landing-explorar__grid">
           {MAS_EXPLORAR.map((item) => (
             <div key={item.titulo} className="landing-explorar__card">
-              <ImagePlaceholder label="Imagen Servicio" className="landing-explorar__card-imagen" />
+              <img 
+                src={item.imagen}  
+                alt={item.titulo}  
+                className="landing-explorar__card-imagen"  
+                loading="lazy"
+              />
               <div className="landing-explorar__card-texto">
                 <h3>{item.titulo}</h3>
                 <p>{item.texto}</p>
