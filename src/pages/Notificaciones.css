@@ -1,140 +1,163 @@
-/* ==========================================================
-   Notificaciones — Droguería Carrisán
-   Paleta: Índigo #232B45 · Azul #1B4B8F · Teal #12A594
-           Ink #14182A · Paper #FBFAF7
-   ========================================================== */
+/* ============================================
+Notificaciones — paleta consistente con el resto de la app
+Azul #0052DC · Índigo #1A1A3A
+============================================ */
 
 .notif-page {
-  min-height: 100vh;
-  background: #FBFAF7;
-  font-family: 'Inter', sans-serif;
+  display: flex;
+  justify-content: center;
 }
 
 .notif-container {
+  width: 100%;
   max-width: 640px;
-  margin: 0 auto;
-  padding: 20px 16px 40px;
-}
-
-.notif-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 18px;
-}
-
-.notif-title {
-  font-family: 'Manrope', sans-serif;
-  font-weight: 800;
-  font-size: 1.4rem;
-  color: #14182A;
-  margin: 0;
-}
-
-.notif-marcar-todas {
-  background: none;
-  border: 1.5px solid #1B4B8F;
-  color: #1B4B8F;
-  font-weight: 700;
-  font-size: 0.78rem;
-  padding: 7px 14px;
-  border-radius: 999px;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-
-.notif-marcar-todas:hover {
-  background: #1B4B8F;
-  color: #FBFAF7;
 }
 
 .notif-error {
-  background: #FDECEC;
-  color: #B3261E;
-  border: 1px solid #F3C6C4;
-  border-radius: 10px;
-  padding: 12px 16px;
-  font-size: 0.9rem;
+  font-family: 'Inter', sans-serif;
+  color: #dc2626;
+  padding: 20px;
 }
 
-/* ---------------------------------------------------------
-   Lista + card
---------------------------------------------------------- */
-.notif-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+/* ---------- Tabs (filtro por categoría) ---------- */
+
+.notif-tabs {
+  margin-bottom: 12px;
+  overflow-x: auto;
 }
 
-.notif-card {
+/* ---------- Accordion: preferencias + leyenda ---------- */
+
+.notif-accordion {
+  border: 1px solid #e3e4e5;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.notif-accordion__trigger {
   display: flex;
-  gap: 12px;
-  background: #FFFFFF;
-  border: 1px solid #E7E5DE;
-  border-radius: 14px;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 12px 14px;
+  background: #FBFAF7;
+  border: none;
+  border-bottom: 1px solid #e3e4e5;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #1A1A3A;
+}
+
+.notif-accordion__chevron {
+  color: #74767c;
+  transition: transform 0.15s;
+}
+
+.notif-preferencias {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
   padding: 14px;
 }
 
+.notif-preferencias__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+}
+
+.notif-leyenda {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+}
+
+.notif-leyenda__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.notif-leyenda__texto {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  color: #4b4d52;
+}
+
+/* ---------- Grupos por fecha ---------- */
+
+.notif-grupo {
+  margin-bottom: 18px;
+}
+
+.notif-grupo__titulo {
+  margin: 0 0 8px 2px;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #74767c;
+}
+
+/* ---------- Lista y cards ---------- */
+
+.notif-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.notif-card {
+  position: relative;
+  display: flex;
+  gap: 12px;
+  padding: 12px 14px;
+  background: #FFFFFF;
+  border: 1px solid #e3e4e5;
+  border-radius: 12px;
+}
+
 .notif-card--no-leida {
-  background: #EEF3FB;
-  border-color: #D6E2F4;
+  background: #F0F5FF;
+  border-color: #cfe0fb;
 }
 
 .notif-card--clickeable {
   cursor: pointer;
 }
 
-.notif-card--clickeable:active {
-  background: #E4EBF6;
+.notif-card--clickeable:hover {
+  border-color: #0052DC;
 }
 
-/* ---------------------------------------------------------
-   Ícono circular por tipo
---------------------------------------------------------- */
 .notif-icon {
   flex-shrink: 0;
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.1rem;
-  font-weight: 700;
 }
 
-.notif-icon--azul {
-  background: #E4EBF6;
-  color: #1B4B8F;
+.notif-icon--sm {
+  width: 26px;
+  height: 26px;
 }
 
-.notif-icon--verde {
-  background: #E1F5EF;
-  color: #0E7C63;
-}
+.notif-icon--blue { background: #E9EFFC; color: #0052DC; }
+.notif-icon--green { background: #E6F7EC; color: #16a34a; }
+.notif-icon--purple { background: #F1EBFB; color: #7c3aed; }
+.notif-icon--orange { background: #FEF3E6; color: #ea580c; }
+.notif-icon--gray { background: #F1F1F2; color: #4b4d52; }
 
-.notif-icon--rojo {
-  background: #FDECEC;
-  color: #B3261E;
-}
-
-.notif-icon--info {
-  background: #E4EBF6;
-  color: #1B4B8F;
-  font-style: italic;
-  font-family: 'Manrope', serif;
-}
-
-.notif-icon--neutro {
-  background: #EFEEE9;
-  color: #5B6270;
-}
-
-/* ---------------------------------------------------------
-   Cuerpo de la card
---------------------------------------------------------- */
 .notif-card__body {
   flex: 1;
   min-width: 0;
@@ -144,102 +167,98 @@
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 10px;
+  gap: 8px;
 }
 
 .notif-card__titulo {
   font-family: 'Manrope', sans-serif;
   font-weight: 700;
-  font-size: 0.92rem;
-  color: #14182A;
+  font-size: 0.87rem;
+  color: #1A1A3A;
 }
 
 .notif-card__fecha {
   flex-shrink: 0;
+  font-family: 'Inter', sans-serif;
   font-size: 0.72rem;
-  color: #A9AC9F;
-  white-space: nowrap;
+  color: #74767c;
 }
 
 .notif-card__mensaje {
-  font-size: 0.85rem;
-  color: #5B6270;
-  margin: 4px 0 0;
+  margin: 3px 0 0;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+  color: #4b4d52;
   line-height: 1.4;
 }
 
 .notif-badge-nueva {
   display: inline-block;
-  margin-top: 8px;
-  padding: 2px 10px;
-  background: #1B4B8F;
-  color: #FBFAF7;
+  margin-top: 6px;
+  padding: 2px 8px;
   border-radius: 999px;
-  font-size: 0.68rem;
+  background: #0052DC;
+  color: #FFFFFF;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.66rem;
   font-weight: 700;
+  text-transform: uppercase;
 }
 
-/* ---------------------------------------------------------
-   Skeleton
---------------------------------------------------------- */
+/* ---------- Estado vacío ---------- */
+
+.notif-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 56px 20px;
+  text-align: center;
+}
+
+.notif-vacio__icon {
+  font-size: 2rem;
+  margin-bottom: 6px;
+}
+
+.notif-vacio h2 {
+  margin: 0;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1rem;
+  color: #1A1A3A;
+}
+
+.notif-vacio p {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: #74767c;
+}
+
+/* ---------- Skeleton (carga) ---------- */
+
 .notif-card--skeleton {
   align-items: center;
 }
 
 .notif-icon--skeleton {
-  background: #EFEEE9;
-  position: relative;
-  overflow: hidden;
+  background: #eef0f2;
+  animation: notif-pulso 1.4s ease-in-out infinite;
 }
 
 .skel-line {
-  position: relative;
-  overflow: hidden;
-  background: #EFEEE9;
+  height: 10px;
   border-radius: 6px;
+  background: #eef0f2;
+  animation: notif-pulso 1.4s ease-in-out infinite;
   margin-bottom: 6px;
 }
 
-.skel-line--sm { width: 30%; height: 12px; }
-.skel-line--md { width: 75%; height: 14px; }
+.skel-line--sm { width: 40%; }
+.skel-line--md { width: 75%; }
 
-.notif-icon--skeleton::after,
-.skel-line::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
-  animation: notif-shimmer 1.4s infinite;
-}
-
-@keyframes notif-shimmer {
-  from { transform: translateX(-100%); }
-  to { transform: translateX(100%); }
-}
-
-/* ---------------------------------------------------------
-   Vacío
---------------------------------------------------------- */
-.notif-vacio {
-  text-align: center;
-  padding: 60px 20px;
-}
-
-.notif-vacio__icon {
-  font-size: 2.6rem;
-  margin-bottom: 12px;
-}
-
-.notif-vacio h2 {
-  font-family: 'Manrope', sans-serif;
-  font-weight: 800;
-  font-size: 1.05rem;
-  color: #14182A;
-  margin: 0 0 6px;
-}
-
-.notif-vacio p {
-  color: #5B6270;
-  font-size: 0.85rem;
-  margin: 0;
+@keyframes notif-pulso {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }
