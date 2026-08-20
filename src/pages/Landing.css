@@ -175,7 +175,7 @@
   text-align: center;
   max-width: 640px;
   margin: 0 auto;
-  gap: 16px; /* Añade espacio consistente entre elementos */
+  gap: 16px;
 }
 
 .landing-hero__imagen {
@@ -796,7 +796,7 @@
   }
 
   .landing h1 {
-    font-size: 3.1rem;
+    font-size: 2.9rem;
   }
 
   .landing h2 {
@@ -807,17 +807,17 @@
   .landing-hero__contenido {
     flex-direction: row-reverse;
     align-items: center;
-    text-align: left;
-    max-width: 1160px;
-    gap: 60px;
+    text-align: center;
+    max-width: 1260px;
+    gap: 180px;
   }
 
   .landing-hero__contenido > *:not(.landing-hero__imagen) {
-    max-width: 480px;
+    max-width: 550px;
   }
 
   .landing-hero__imagen {
-    max-width: 460px;
+    max-width: 520px;
     margin-bottom: 0;
     flex-shrink: 0;
   }

@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import {
-  Check, ChevronDown, Play, Star, HeartHandshake,
+  Check, ChevronDown, Play, Star, HeartHandshake, Lock,
 } from 'lucide-react'
 import './Landing.css'
 
@@ -126,7 +126,7 @@ const PASOS = [
   {
     numero: 1,
     titulo: 'Crea tu Cuenta B2B',
-    texto: 'Un proceso 100% gratuito y rápido. Vincula tu farmacia, clínica o registro médico para habilitar tus precios preferenciales de distribución.',
+    texto: 'Un proceso 100% gratuito y rápido. Vincula tu farmacia, clínica o consultorio para habilitar tus precios preferenciales de distribución.',
     imagen: urls.registrate,
   },
   {
@@ -137,8 +137,8 @@ const PASOS = [
   },
   {
     numero: 3,
-    titulo: 'Recibe y Paga a los 7 Días',
-    texto: 'Despachamos de forma prioritaria directo a tu establecimiento para que utilices tu mercancía y gestiones tu pago con tu línea de crédito.',
+    titulo: 'Recibe tus insumos',
+    texto: 'Despachamos de forma prioritaria directo a tu establecimiento para que utilices tu mercancía y gestiones tu pago.',
     imagen: urls.recibe,
   },
 ]
@@ -236,12 +236,17 @@ function Landing() {
           
           <div className="landing-hero__texto">
             <h1>Respaldamos al Medico Venezolano</h1>
+            <a href="/login" className="btn-landing btn-landing--primario">Crear Cuenta   |   Iniciar Sesion</a>
             <p className="landing-hero__subtitulo">La plataforma digital de abastecimiento farmacéutico y hospitalario para clínicas, farmacias, centros quirúrgicos y especialistas.</p>
             
             <div className="landing-hero__acciones">
-              <a href="#" className="landing-link">Más información ›</a>
-              <a href="#" className="btn-landing btn-landing--primario">Crear Cuenta   |   Iniciar Sesion</a>
-              <a href="#" className="landing-link landing-link--secundario">¿Ya eres cliente?</a>
+              <a href="#como-funciona" className="landing-link">¿Cómo funciona? ›</a>
+              <a href="#" className="enlace-seguridad">
+                <Lock size={14} className="enlace-seguridad__icono" />
+                <span className="enlace-seguridad__texto">
+                  Tu información esta segura con nosotros. 
+                </span>
+              </a>
             </div>
           </div>
         </div>
@@ -392,7 +397,7 @@ function Landing() {
       {/* ================================================================ */}
       {/* 8. CÓMO FUNCIONA                                                 */}
       {/* ================================================================ */}
-      <section className="landing-como-funciona">
+      <section id="como-funciona" className="landing-como-funciona">
         <h2>¿Cómo funciona nuestro portal?</h2>
         <a href="#" className="landing-video-link">
           <span className="landing-video-link__icono"><Play size={16} /></span>
