@@ -464,7 +464,6 @@
 .landing-ayudarte__imagen {
   min-height: 220px;
   max-width: 560px;
-  border-radius: 50% / 30%;
 }
 
 .landing-ayudarte__badges {
@@ -861,6 +860,7 @@
   /* --- Seguros: imagen izq, texto der --- */
   .landing-seguros {
     flex-direction: row;
+    justify-content: center;
     align-items: center;
     width: 100vw;
     margin: 0 auto;
@@ -885,6 +885,7 @@
   .landing-envios {
     display: flex;
     flex-direction: row;
+    justify-content: center;
     align-items: center;
     width: 100vw;
     margin: 0 auto;
@@ -910,6 +911,7 @@
   .landing-ayuda-meds {
     display: flex;
     flex-direction: row;
+    justify-content: center;
     align-items: center;
     width: 100vw;
     margin: 0 auto;
@@ -934,6 +936,7 @@
   /* --- Estamos aquí para ayudarte: texto izq, imagen der --- */
   .landing-ayudarte {
     flex-direction: row;
+    justify-content: center;
     align-items: center;
     width: 100vw;
     margin: 0 auto;
