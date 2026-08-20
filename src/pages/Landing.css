@@ -230,15 +230,11 @@
 
 /* Estilo del texto y su subrayado */
 .enlace-seguridad__texto {
-  font-size: 0.95rem;
-  color: #007185; /* Azul clásico de los enlaces */
+  font-size: 0.8rem;
+  color: #1A1A3A;
   font-weight: 500;
-  
-  /* CLAVE: Creación del subrayado idéntico a la imagen */
   text-decoration: underline;
-  text-decoration-color: #007185;
-  text-decoration-thickness: 1px; /* Grosor de la línea */
-  text-underline-offset: 3px; /* Separa la línea ligeramente hacia abajo del texto */
+
 }
 
 /* Efecto hover opcional para cuando pasas el mouse */
