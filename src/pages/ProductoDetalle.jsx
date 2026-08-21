@@ -29,7 +29,6 @@ function getEstadoProducto(producto) {
   return 'normal'
 }
 
-
 function elegirCarruseles(producto, otrosActivos) {
   const pool = []
 
@@ -163,10 +162,10 @@ function ProductoDetalle() {
   const [agregado, setAgregado] = useState(false)
   const [carruseles, setCarruseles] = useState([])
   const [seccionesAbiertas, setSeccionesAbiertas] = useState({ detalles: true })
-const [suscrito, setSuscrito] = useState(false)
-const [cargandoAlerta, setCargandoAlerta] = useState(false)
-const [estadoCotizacion, setEstadoCotizacion] = useState(null) // null | 'pendiente' | 'cotizada' | 'rechazada'
-const [enviandoCotizacion, setEnviandoCotizacion] = useState(false)
+  const [suscrito, setSuscrito] = useState(false)
+  const [cargandoAlerta, setCargandoAlerta] = useState(false)
+  const [estadoCotizacion, setEstadoCotizacion] = useState(null) // null | 'pendiente' | 'cotizada' | 'rechazada'
+  const [enviandoCotizacion, setEnviandoCotizacion] = useState(false)
 
   useEffect(() => {
     cargarProducto()
@@ -183,31 +182,27 @@ const [enviandoCotizacion, setEnviandoCotizacion] = useState(false)
         api.get('/prices'),
       ])
       setProducto(resProducto.data)
+      
       const estadoInicial = getEstadoProducto(resProducto.data)
-if (estadoInicial === 'proximamente' && user) {
-  api.get(`/products/${id}/avisame`)
-    .then(({ data }) => setSuscrito(data.suscrito))
-    .catch((err) => console.error('Error al consultar alerta:', err))
-}
-if (estadoInicial === 'cotizacion' && user) {
-  api.get('/cotizaciones/mias')
-    .then(({ data }) => {
-      const propia = data.find((c) => c.producto_id === resProducto.data.id)
-      if (!propia) return
-      // 'cotizada' vencida (pasó fecha_expiracion) se trata como si no
-      // hubiera solicitud — el usuario puede pedir de nuevo
-      const vencida = propia.estado === 'cotizada' && new Date(propia.fecha_expiracion) <= new Date()
-      setEstadoCotizacion(vencida ? null : propia.estado)
-    })
-    .catch((err) => console.error('Error al consultar cotización:', err))
-}
+      
+      if (estadoInicial === 'proximamente' && user) {
+        api.get(`/products/${id}/avisame`)
+          .then(({ data }) => setSuscrito(data.suscrito))
+          .catch((err) => console.error('Error al consultar alerta:', err))
+      }
+      
       if (user) {
         try {
           const { data: misCotizaciones } = await api.get('/cotizaciones/mias')
           const activa = misCotizaciones.find(
             (c) => c.producto_id === resProducto.data.id && ['pendiente', 'cotizada'].includes(c.estado)
           )
-          setCotizacion(activa || null)
+          
+          if (activa) {
+            const vencida = activa.estado === 'cotizada' && new Date(activa.fecha_expiracion) <= new Date()
+            setEstadoCotizacion(vencida ? null : activa.estado)
+            setCotizacion(vencida ? null : activa)
+          }
         } catch (err) {
           console.error('No se pudo verificar cotización existente', err)
         }
@@ -238,54 +233,38 @@ if (estadoInicial === 'cotizacion' && user) {
     setTimeout(() => setAgregado(false), 2000)
   }
 
-async function handleToggleAlerta() {
-  if (!user) return navigate('/login')
-  setCargandoAlerta(true)
-  try {
-    if (suscrito) {
-      await api.delete(`/products/${id}/avisame`)
-      setSuscrito(false)
-    } else {
-      await api.post(`/products/${id}/avisame`)
-      setSuscrito(true)
+  async function handleToggleAlerta() {
+    if (!user) return navigate('/login')
+    setCargandoAlerta(true)
+    try {
+      if (suscrito) {
+        await api.delete(`/products/${id}/avisame`)
+        setSuscrito(false)
+      } else {
+        await api.post(`/products/${id}/avisame`)
+        setSuscrito(true)
+      }
+    } catch (err) {
+      console.error('Error al actualizar alerta:', err)
+    } finally {
+      setCargandoAlerta(false)
     }
-  } catch (err) {
-    console.error('Error al actualizar alerta:', err)
-  } finally {
-    setCargandoAlerta(false)
   }
-}
-
-async function handleSolicitarCotizacion() {
-  if (!user) return navigate('/login')
-  setEnviandoCotizacion(true)
-  try {
-    await api.post('/cotizaciones', { producto_id: producto.id })
-    setEstadoCotizacion('pendiente')
-  } catch (err) {
-    // 409 = ya tenía una solicitud activa (otra pestaña, etc.) — igual
-    // reflejamos "pendiente" en vez de dejar el botón como si nada pasó
-    if (err.response?.status === 409) {
-      setEstadoCotizacion('pendiente')
-    } else {
-      console.error('Error al solicitar cotización:', err)
-    }
-  } finally {
-    setEnviandoCotizacion(false)
-  }
-}
 
   async function handleSolicitarCotizacion() {
-    setSolicitandoCotizacion(true)
+    if (!user) return navigate('/login')
+    setEnviandoCotizacion(true)
     try {
-      const { data } = await api.post('/cotizaciones', { producto_id: producto.id })
-      setCotizacion(data)
+      await api.post('/cotizaciones', { producto_id: producto.id })
+      setEstadoCotizacion('pendiente')
     } catch (err) {
-      if (err.response?.status === 409 && err.response.data?.cotizacion) {
-        setCotizacion(err.response.data.cotizacion)
+      if (err.response?.status === 409) {
+        setEstadoCotizacion('pendiente')
+      } else {
+        console.error('Error al solicitar cotización:', err)
       }
     } finally {
-      setSolicitandoCotizacion(false)
+      setEnviandoCotizacion(false)
     }
   }
 
@@ -320,6 +299,7 @@ async function handleSolicitarCotizacion() {
     )
   }
 
+  const estado = getEstadoProducto(producto)
   const precioVes = tasaVes && producto.precio_usd != null
     ? (producto.precio_usd * tasaVes).toFixed(2)
     : null
@@ -371,84 +351,80 @@ async function handleSolicitarCotizacion() {
                 {producto.disponible ? '✓ Disponible' : 'Agotado'}
               </span>
 
-              const estado = getEstadoProducto(producto)
+              {/* Precios */}
+              <div className="detalle-precios">
+                {estado === 'normal' ? (
+                  <>
+                    <span className="detalle-precio-usd">
+                      ${Number(producto.precio_usd).toFixed(2)}
+                    </span>
+                    {precioVes && <span className="detalle-precio-ves">Bs. {precioVes}</span>}
+                  </>
+                ) : estado === 'cotizacion' ? (
+                  <span className="detalle-precio-usd detalle-precio-usd--consultar">Consultar precio</span>
+                ) : (
+                  <span className="detalle-precio-usd detalle-precio-usd--consultar">Llegará pronto</span>
+                )}
+              </div>
 
-// ---- JSX ----
+              {/* Acciones — varían según el estado del producto */}
+              {estado === 'normal' && producto.disponible && (
+                <div className="detalle-acciones">
+                  <div className="detalle-cantidad">
+                    <button onClick={() => setCantidad(c => Math.max(1, c - 1))} disabled={cantidad <= 1}>−</button>
+                    <span>{cantidad}</span>
+                    <button onClick={() => setCantidad(c => c + 1)}>+</button>
+                  </div>
+                  <button
+                    className={`detalle-btn-agregar ${agregado ? 'agregado' : ''}`}
+                    onClick={handleAgregar}
+                    disabled={!user}
+                  >
+                    {agregado ? '✓ Agregado' : 'Agregar al carrito'}
+                  </button>
+                </div>
+              )}
 
-{/* Precios */}
-<div className="detalle-precios">
-  {estado === 'normal' ? (
-    <>
-      <span className="detalle-precio-usd">
-        ${Number(producto.precio_usd).toFixed(2)}
-      </span>
-      {precioVes && <span className="detalle-precio-ves">Bs. {precioVes}</span>}
-    </>
-  ) : estado === 'cotizacion' ? (
-    <span className="detalle-precio-usd detalle-precio-usd--consultar">Consultar precio</span>
-  ) : (
-    <span className="detalle-precio-usd detalle-precio-usd--consultar">Llegará pronto</span>
-  )}
-</div>
+              {estado === 'cotizacion' && (
+                <div className="detalle-acciones">
+                  {estadoCotizacion === 'pendiente' ? (
+                    <button className="detalle-btn-agregar agregado" disabled>
+                      Solicitud enviada
+                    </button>
+                  ) : estadoCotizacion === 'cotizada' ? (
+                    <button className="detalle-btn-agregar" onClick={() => navigate('/mis-solicitudes')}>
+                      Ya tienes un precio — ver en Mis Solicitudes
+                    </button>
+                  ) : (
+                    <button
+                      className="detalle-btn-agregar"
+                      onClick={handleSolicitarCotizacion}
+                      disabled={!user || enviandoCotizacion}
+                    >
+                      {enviandoCotizacion ? 'Enviando...' : 'Solicitar cotización'}
+                    </button>
+                  )}
+                </div>
+              )}
 
-{/* Acciones — varían según el estado del producto */}
-{estado === 'normal' && producto.disponible && (
-  <div className="detalle-acciones">
-    <div className="detalle-cantidad">
-      <button onClick={() => setCantidad(c => Math.max(1, c - 1))} disabled={cantidad <= 1}>−</button>
-      <span>{cantidad}</span>
-      <button onClick={() => setCantidad(c => c + 1)}>+</button>
-    </div>
-    <button
-      className={`detalle-btn-agregar ${agregado ? 'agregado' : ''}`}
-      onClick={handleAgregar}
-      disabled={!user}
-    >
-      {agregado ? '✓ Agregado' : 'Agregar al carrito'}
-    </button>
-  </div>
-)}
+              {estado === 'proximamente' && (
+                <div className="detalle-acciones">
+                  <button
+                    className={`detalle-btn-avisame ${suscrito ? 'detalle-btn-avisame--activo' : ''}`}
+                    onClick={handleToggleAlerta}
+                    disabled={!user || cargandoAlerta}
+                  >
+                    {suscrito ? <BellOff size={16} /> : <Bell size={16} />}
+                    {suscrito ? 'Te avisaremos ✓' : 'Avísame cuando llegue'}
+                  </button>
+                </div>
+              )}
 
-{estado === 'cotizacion' && (
-  <div className="detalle-acciones">
-    {estadoCotizacion === 'pendiente' ? (
-      <button className="detalle-btn-agregar agregado" disabled>
-        Solicitud enviada
-      </button>
-    ) : estadoCotizacion === 'cotizada' ? (
-      <button className="detalle-btn-agregar" onClick={() => navigate('/mis-solicitudes')}>
-        Ya tienes un precio — ver en Mis Solicitudes
-      </button>
-    ) : (
-      <button
-        className="detalle-btn-agregar"
-        onClick={handleSolicitarCotizacion}
-        disabled={!user || enviandoCotizacion}
-      >
-        {enviandoCotizacion ? 'Enviando...' : 'Solicitar cotización'}
-      </button>
-    )}
-  </div>
-)}
-
-{estado === 'proximamente' && (
-  <div className="detalle-acciones">
-    <button
-      className={`detalle-btn-avisame ${suscrito ? 'detalle-btn-avisame--activo' : ''}`}
-      onClick={handleToggleAlerta}
-      disabled={!user || cargandoAlerta}
-    >
-      {suscrito ? <BellOff size={16} /> : <Bell size={16} />}
-      {suscrito ? 'Te avisaremos ✓' : 'Avísame cuando llegue'}
-    </button>
-  </div>
-)}
-
-{!user && (
-  <p className="detalle-login-aviso">
-    <Link to="/login">Inicia sesión</Link> para {estado === 'proximamente' ? 'suscribirte' : 'comprar'}
-  </p>
-)}
+              {!user && (
+                <p className="detalle-login-aviso">
+                  <Link to="/login">Inicia sesión</Link> para {estado === 'proximamente' ? 'suscribirte' : 'comprar'}
+                </p>
+              )}
 
               <p className="detalle-nota-precio">
                 * Los precios mostrados no incluyen IVA. Precios sujetos a cambios sin previo aviso.
