@@ -403,7 +403,6 @@ function Landing() {
       <section id="como-funciona" className="landing-como-funciona">
         <h2>¿Cómo funciona nuestro portal?</h2>
         <a href="#" className="landing-video-link">
-          <span className="landing-video-link__icono"><Play size={16} /></span>
           Conoce la plataforma de Droguería Carrisan en 1 minuto
         </a>
         

@@ -732,3 +732,113 @@
 
 .ec-btn--primario { background: var(--ec-brand); color: white; }
 .ec-btn--secundario { background: var(--ec-bg); color: var(--ec-text); }
+
+/* ============================================================
+   SUBPÁGINAS — Historial de pagos / facturas / reportes.
+   Reutilizan .ec-kpi(s), .ec-buscador, .ec-grupo-fecha, .ec-movimiento,
+   .ec-badge ya definidos arriba (mismo dashboard visual). Estas
+   reglas cubren solo lo específico de cada subpágina.
+   ============================================================ */
+
+/* Botón de descarga dentro de una fila de movimiento (Facturas) */
+.ec-movimiento__descarga {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid var(--ec-border);
+  background: var(--ec-surface);
+  color: var(--ec-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.ec-movimiento__descarga:hover {
+  background: var(--ec-brand-light);
+  color: var(--ec-brand);
+  border-color: var(--ec-brand-light);
+}
+
+/* Reportes: tarjeta con selector de rango de fechas */
+.ec-reporte-form {
+  background: var(--ec-surface);
+  border: 1px solid var(--ec-border);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.ec-reporte-form__fechas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.ec-reporte-form__campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ec-text-muted);
+}
+
+.ec-reporte-form__campo input {
+  border: 1px solid var(--ec-border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--ec-text);
+}
+
+.ec-reporte-form__generar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--ec-brand);
+  color: white;
+  border: none;
+  padding: 13px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.ec-reporte-form__generar:disabled { opacity: 0.6; cursor: default; }
+
+/* Vista previa en vivo del período seleccionado, antes de generar el PDF */
+.ec-reporte-preview {
+  margin-bottom: 16px;
+}
+
+.ec-reporte-preview__titulo {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--ec-text-muted);
+  margin: 0 0 10px 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ec-reporte-preview__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.ec-reporte-preview__item {
+  background: var(--ec-surface);
+  border: 1px solid var(--ec-border);
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}

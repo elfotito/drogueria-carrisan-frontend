@@ -990,9 +990,15 @@
 
   .landing-ayuda-meds__imagen {
     flex: 1;
+    max-width: 420px;
     min-height: 320px;
     margin-bottom: 0;
   }
+
+  .landing-envios__imagen {
+  min-height: 200px;
+  max-width: 420px;
+}
 
   .landing-ayuda-meds__texto {
     flex: 1;

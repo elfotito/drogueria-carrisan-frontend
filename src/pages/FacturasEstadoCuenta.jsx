@@ -1,25 +1,77 @@
-import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, FileText, Download } from 'lucide-react'
+import { useState, useEffect, useMemo } from 'react'
+import { Stat } from '@chakra-ui/react'
+import { FileText, Download, Search } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import api from '../api/axios'
-import './HistorialEstadoCuenta.css'
+import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
+import { NAV_ESTADO_CUENTA } from '../components/paginas-principales/NavEstadoCuenta'
+import './EstadoCuenta.css'
+
+// ---------------------------------------------------------------
+// Historial de facturas — mismo tratamiento que PagosEstadoCuenta.jsx:
+// LayoutPaginaPrincipal + clases .ec-* compartidas con EstadoCuenta.jsx.
+//
+// Nota: una factura individual no tiene "estado" propio (pagada/
+// pendiente) en el modelo de datos — la deuda se calcula a nivel de
+// cuenta completa (facturado - pagado), no factura por factura. Por
+// eso el KPI de "deuda actual" viene del resumen general de la
+// cuenta, no de contar facturas por estado — inventar un estado por
+// factura acá sería mostrar algo que el backend no respalda.
+// ---------------------------------------------------------------
 
 function formatUSD(valor) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(valor || 0)
 }
 
+function claveGrupoFecha(fecha) {
+  const hoy = new Date()
+  const d = new Date(fecha)
+  const esMismoDia = (a, b) => a.toDateString() === b.toDateString()
+  const ayer = new Date(hoy)
+  ayer.setDate(hoy.getDate() - 1)
+  if (esMismoDia(d, hoy)) return 'Hoy'
+  if (esMismoDia(d, ayer)) return 'Ayer'
+  return d.toLocaleDateString('es-VE', { day: '2-digit', month: 'long', year: 'numeric' })
+}
+
 export default function FacturasEstadoCuenta() {
   const { user } = useAuth()
-  const navigate = useNavigate()
   const [facturas, setFacturas] = useState([])
+  const [deudaActual, setDeudaActual] = useState(0)
   const [cargando, setCargando] = useState(true)
+  const [busqueda, setBusqueda] = useState('')
 
   useEffect(() => {
     api.get(`/clientes/${user.id}/estado-cuenta`)
-      .then(({ data }) => setFacturas(data.facturas || []))
+      .then(({ data }) => {
+        setFacturas(data.facturas || [])
+        setDeudaActual(data.resumen?.deuda_actual || 0)
+      })
       .finally(() => setCargando(false))
   }, [user.id])
+
+  const facturasFiltradas = useMemo(() => {
+    if (!busqueda.trim()) return facturas
+    const termino = busqueda.trim().toLowerCase()
+    return facturas.filter((f) =>
+      `${f.numero_factura}`.toLowerCase().includes(termino) || `${f.monto_facturado}`.includes(termino)
+    )
+  }, [facturas, busqueda])
+
+  const gruposPorFecha = useMemo(() => {
+    const grupos = {}
+    facturasFiltradas.forEach((f) => {
+      const clave = claveGrupoFecha(f.created_at)
+      if (!grupos[clave]) grupos[clave] = []
+      grupos[clave].push(f)
+    })
+    return grupos
+  }, [facturasFiltradas])
+
+  const kpis = useMemo(() => {
+    const total = facturas.reduce((sum, f) => sum + Number(f.monto_facturado), 0)
+    return { total, cantidad: facturas.length }
+  }, [facturas])
 
   async function exportarPDF(factura) {
     const { jsPDF } = await import('jspdf')
@@ -34,35 +86,85 @@ export default function FacturasEstadoCuenta() {
   }
 
   return (
-    <div className="hec-container">
-      <header className="hec-header">
-        <button onClick={() => navigate(-1)} className="hec-back"><ArrowLeft size={20} /></button>
-        <h1>Historial de facturas</h1>
-      </header>
+    <LayoutPaginaPrincipal
+      activo="facturas"
+      titulo="Historial de facturas"
+      subtitulo="Todas las facturas generadas para tu cuenta"
+      nav={NAV_ESTADO_CUENTA}
+    >
+      <div className="ec-dashboard">
+        {cargando ? (
+          <div className="ec-estado-cargando">
+            <p>Cargando facturas…</p>
+          </div>
+        ) : (
+          <>
+            <section className="ec-kpis">
+              <Stat.Root className="ec-kpi">
+                <Stat.Label className="ec-kpi__label">Total facturado</Stat.Label>
+                <Stat.ValueText className="ec-kpi__valor">{formatUSD(kpis.total)}</Stat.ValueText>
+              </Stat.Root>
+              <Stat.Root className="ec-kpi">
+                <Stat.Label className="ec-kpi__label">Facturas emitidas</Stat.Label>
+                <Stat.ValueText className="ec-kpi__valor">{kpis.cantidad}</Stat.ValueText>
+              </Stat.Root>
+              <Stat.Root className="ec-kpi">
+                <Stat.Label className="ec-kpi__label">Deuda actual</Stat.Label>
+                <Stat.ValueText className={`ec-kpi__valor ${deudaActual > 0 ? 'ec-kpi__valor--negativo' : ''}`}>
+                  {formatUSD(deudaActual)}
+                </Stat.ValueText>
+              </Stat.Root>
+            </section>
 
-      {cargando ? (
-        <p className="hec-cargando">Cargando…</p>
-      ) : facturas.length === 0 ? (
-        <p className="hec-vacio">Aún no tienes facturas generadas</p>
-      ) : (
-        <ul className="hec-lista">
-          {facturas.map((factura) => (
-            <li key={factura.id} className="hec-item">
-              <div className="hec-item-icono hec-item-icono--factura"><FileText size={18} /></div>
-              <div className="hec-item-info">
-                <span className="hec-item-titulo">Factura #{factura.numero_factura}</span>
-                <span className="hec-item-fecha">
-                  {new Date(factura.created_at).toLocaleDateString('es-VE', { day: '2-digit', month: 'short', year: 'numeric' })}
-                </span>
+            <section className="ec-movimientos">
+              <div className="ec-movimientos__toolbar">
+                <div className="ec-buscador">
+                  <Search size={18} />
+                  <input
+                    type="text"
+                    placeholder="Buscar por # o monto"
+                    value={busqueda}
+                    onChange={(e) => setBusqueda(e.target.value)}
+                  />
+                </div>
               </div>
-              <strong className="hec-item-monto hec-item-monto--rojo">{formatUSD(factura.monto_facturado)}</strong>
-              <button className="hec-item-descarga" onClick={() => exportarPDF(factura)} aria-label="Descargar PDF">
-                <Download size={16} />
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+
+              {Object.keys(gruposPorFecha).length === 0 ? (
+                <p className="ec-movimientos__vacio">Aún no tienes facturas generadas</p>
+              ) : (
+                Object.entries(gruposPorFecha).map(([fechaLabel, items]) => (
+                  <div key={fechaLabel} className="ec-grupo-fecha">
+                    <p className="ec-grupo-fecha__titulo">{fechaLabel}</p>
+                    <ul className="ec-movimientos__lista">
+                      {items.map((factura) => (
+                        <li key={factura.id} className="ec-movimiento">
+                          <div className="ec-movimiento__icono ec-movimiento__icono--factura">
+                            <FileText size={18} />
+                          </div>
+                          <div className="ec-movimiento__info">
+                            <span className="ec-movimiento__titulo">Factura #{factura.numero_factura}</span>
+                            <span className="ec-badge ec-badge--registrado">emitida</span>
+                          </div>
+                          <strong className="ec-movimiento__monto ec-movimiento__monto--rojo">
+                            {formatUSD(factura.monto_facturado)}
+                          </strong>
+                          <button
+                            className="ec-movimiento__descarga"
+                            onClick={(e) => { e.stopPropagation(); exportarPDF(factura) }}
+                            aria-label="Descargar PDF"
+                          >
+                            <Download size={16} />
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))
+              )}
+            </section>
+          </>
+        )}
+      </div>
+    </LayoutPaginaPrincipal>
   )
 }
