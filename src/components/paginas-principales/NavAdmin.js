@@ -1,0 +1,55 @@
+// ---------------------------------------------------------------
+// Menú de "Páginas Principales" para el módulo Admin.
+//
+// Cada item navega a una sub-ruta real bajo /admin/* (React Router),
+// igual patrón que NavEstadoCuenta.js / NavItems.js. Antes esto usaba
+// "accion" + un switch con estado local en Admin.jsx — se cambió a
+// rutas reales para que cada sección sea un link real: se puede
+// compartir, sobrevive un refresh, y el botón "atrás" del navegador
+// funciona como se espera. Ver Admin.jsx para el <Routes> anidado.
+// ---------------------------------------------------------------
+import {
+  LayoutDashboard, Package, ShoppingCart, Users, Wallet, CreditCard,
+  Tag, FileText, Inbox, MessagesSquare, DollarSign, Files,
+} from 'lucide-react'
+
+export const NAV_ADMIN = [
+  {
+    titulo: 'General',
+    items: [
+      { id: 'dashboard', to: '/admin', icono: LayoutDashboard, texto: 'Dashboard' },
+      { id: 'tasa', to: '/admin/tasa', icono: DollarSign, texto: 'Tasa de cambio' },
+    ],
+  },
+  {
+    titulo: 'Ventas',
+    items: [
+      { id: 'ordenes', to: '/admin/ordenes', icono: ShoppingCart, texto: 'Órdenes' },
+      { id: 'productos', to: '/admin/productos', icono: Package, texto: 'Productos' },
+      { id: 'descuentos', to: '/admin/descuentos', icono: Tag, texto: 'Descuentos' },
+    ],
+  },
+  {
+    titulo: 'Cobranza',
+    items: [
+      { id: 'estadoCuenta', to: '/admin/estado-cuenta', icono: Wallet, texto: 'Estado de cuenta' },
+      { id: 'pagos', to: '/admin/pagos', icono: CreditCard, texto: 'Pagos' },
+    ],
+  },
+  {
+    titulo: 'Solicitudes',
+    items: [
+      { id: 'cotizaciones', to: '/admin/cotizaciones', icono: FileText, texto: 'Cotizaciones' },
+      { id: 'requerimientos', to: '/admin/requerimientos', icono: Inbox, texto: 'Requerimientos' },
+      { id: 'documentos', to: '/admin/documentos', icono: Files, texto: 'Documentos' },
+    ],
+  },
+  {
+    titulo: 'Cuenta',
+    pie: true,
+    items: [
+      { id: 'usuarios', to: '/admin/usuarios', icono: Users, texto: 'Usuarios' },
+      { id: 'chat', to: '/admin/chat', icono: MessagesSquare, texto: 'Chat' },
+    ],
+  },
+]

@@ -73,262 +73,14 @@ body {
 }
 
 /* ============================================================
-   Admin.css — Panel administrativo de Droguería Carrisán
-   Rediseño: sistema de marca (azul #0052DC + índigo #1A1A3A),
-   inspirado en paneles B2B tipo Walmart Seller Center / Amazon
-   Seller Central. Sidebar fijo al borde real de la ventana +
-   topbar delgado en vez del header-hero anterior.
+   Wrapper de la sección activa dentro de <LayoutPaginaPrincipal>.
+   El sidebar/topbar/drawer propios que vivían acá (admin-sidebar,
+   admin-topbar, nav-item, hamburger, etc.) se eliminaron: ahora
+   Admin.jsx usa el mismo layout compartido que Mis Órdenes / Mi
+   Cuenta / Estado de Cuenta (ver Layoutpaginaprincipal.css para esos
+   estilos). Este wrapper es solo el límite de ancho del contenido.
    ============================================================ */
-
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
-
-:root {
-
-  /* --- Marca --- */
-  --blue: #0052dc;
-  --blue-600: #0043b3;   /* hover / pressed */
-  --blue-700: #003689;
-  --blue-50: #eef3fe;    /* tinte muy claro, fondos */
-  --blue-100: #dce6fd;   /* tinte claro, hover suave */
-
-  --indigo: #1a1a3a;     /* superficie oscura de marca (sidebar) */
-  --indigo-700: #24244d; /* hover sobre superficie oscura */
-  --indigo-900: #101024; /* acentos más oscuros */
-
-  --alert: #d6274b;      /* tercer color de marca — uso deliberadamente escaso */
-  --alert-tint: #fbe7ec;
-
-  /* --- Neutrales con matiz frío (coherentes con el índigo) --- */
-  --ink: #14142b;
-  --slate-700: #3f4159;
-  --slate-500: #6c6e8a;
-  --slate-300: #b9bbd1;
-  --slate-200: #dedfec;
-  --slate-100: #eeeff6;
-  --paper: #f5f6fb;
-  --surface: #ffffff;
-
-  /* --- Semántica (evitan competir con el rojo de marca) --- */
-  --good: #0e7c5e;
-  --good-tint: #e4f5ee;
-  --warn: #a2650a;
-  --warn-tint: #fbf0de;
-
-  /* --- Elevación --- */
-  --shadow-sm: 0 1px 2px rgba(16, 16, 38, 0.06);
-  --shadow: 0 2px 8px rgba(16, 16, 38, 0.08);
-  --shadow-md: 0 10px 24px rgba(16, 16, 38, 0.10);
-  --shadow-lg: 0 20px 44px rgba(16, 16, 38, 0.16);
-
-  /* --- Radio --- */
-  --radius-sm: 8px;
-  --radius: 12px;
-  --radius-lg: 18px;
-
-  /* --- Tipografía --- */
-  --font-display: 'Space Grotesk', 'Segoe UI', sans-serif;
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: var(--font-body);
-  background: var(--paper);
-  color: var(--ink);
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* Contenedor Principal */
-.admin-container {
-  min-height: 100vh;
-  background: var(--paper);
-}
-
-/* ============================================================
-   Sidebar — fija al borde real de la ventana, alto completo.
-   Ya no vive dentro de un box centrado de 1400px: por eso deja
-   de "flotar" hacia el centro en pantallas anchas y queda
-   anclada como se espera de un panel admin.
-   ============================================================ */
-.admin-sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 280px;
-  height: 100vh;
-  background: var(--indigo);
-  border-right: 1px solid var(--indigo-900);
-  display: flex;
-  flex-direction: column;
-  z-index: 100;
-}
-
-.sidebar-brand {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 1.5rem 1.25rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  flex-shrink: 0;
-  padding-top: 6rem;
-}
-
-.brand-mark {
-  flex-shrink: 0;
-  width: 38px;
-  height: 38px;
-  border-radius: 12px;
-  background: var(--blue);
-  color: white;
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 0.85rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.brand-text {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  flex: 1;
-}
-
-.brand-text strong {
-  font-family: var(--font-display);
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: white;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.brand-text span {
-  font-size: 0.68rem;
-  color: var(--slate-300);
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  margin-top: 0.15rem;
-}
-
-.close-sidebar {
-  display: none;
-  flex-shrink: 0;
-  background: none;
-  border: none;
-  font-size: 1.3rem;
-  cursor: pointer;
-  color: var(--slate-300);
-}
-
-.close-sidebar:hover {
-  color: white;
-}
-
-/* Padding real alrededor de la lista: las tabs dejan de estar
-   pegadas al borde del sidebar y respiran entre sí */
-.nav-list {
-  list-style: none;
-  padding: 1rem 0.75rem;
-  flex: 1;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  width: 100%;
-  padding: 0.75rem 1rem;
-  border: none;
-  border-radius: var(--radius-lg);
-  background: none;
-  cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
-  font-family: var(--font-body);
-  font-size: 0.9rem;
-  color: var(--slate-300);
-  text-align: left;
-}
-
-.nav-item:hover {
-  background: rgba(255, 255, 255, 0.07);
-  color: white;
-}
-
-/* Pill sólida en azul: más contraste que índigo-sobre-índigo */
-.nav-item.active {
-  background: var(--blue);
-  color: white;
-  font-weight: 600;
-  box-shadow: var(--shadow);
-}
-
-.nav-icon {
-  font-size: 1.1rem;
-  line-height: 1;
-}
-
-.nav-text {
-  flex: 1;
-}
-
-/* ============================================================
-   Columna de contenido — desplazada por el ancho del sidebar
-   ============================================================ */
-.admin-content-col {
-  margin-left: 280px;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Topbar delgado: reemplaza el header-hero anterior */
-.admin-topbar {
-  position: sticky;
-  top: 0;
-  z-index: 40;
-  height: 64px;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 0 2rem;
-  background: var(--surface);
-  border-bottom: 1px solid var(--slate-200);
-}
-
-.topbar-title {
-  font-family: var(--font-display);
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: var(--ink);
-  letter-spacing: -0.01em;
-}
-
-/* ============================================================
-   Contenido Principal — el wrapper interno mide 1120px
-   (1400 - 280 del sidebar) y se centra en el espacio restante
-   ============================================================ */
-.admin-main {
-  flex: 1;
-  padding: 2rem;
-  display: flex;
-  justify-content: center;
-}
-
-.content-wrapper {
+.admin-seccion {
   width: 100%;
   max-width: 1120px;
 }
@@ -638,87 +390,18 @@ body {
 }
 
 /* ============================================================
-   Botón de menú móvil (vive en el topbar, ya no en el header)
+   Botones de menú móvil viejos (mobile-menu-btn, hamburger,
+   sidebar-overlay) eliminados: el drawer y su botón de apertura
+   ahora vienen de <LayoutPaginaPrincipal> (ppal-topbar__menu-btn,
+   ver Layoutpaginaprincipal.css), no de este archivo.
    ============================================================ */
-.mobile-menu-btn {
-  display: none;
-  flex-shrink: 0;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.4rem;
-  margin-left: -0.4rem;
-}
-
-.hamburger {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.hamburger span {
-  display: block;
-  width: 22px;
-  height: 2.5px;
-  background: var(--ink);
-  border-radius: 2px;
-}
-
-/* Overlay del drawer */
-.sidebar-overlay {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(16, 16, 36, 0.55);
-  backdrop-filter: blur(1px);
-  z-index: 90;
-}
 
 /* ============================================================
-   Responsive — el breakpoint del proyecto es 1024px: por debajo,
-   el sidebar pasa a ser un drawer (fuera de pantalla por defecto)
-   y el BottomNav flotante ya está visible, así que el contenido
-   necesita espacio abajo para no quedar tapado.
+   Responsive — el breakpoint del proyecto es 1024px (mismo que
+   Layoutpaginaprincipal.css, que ya maneja el paso a drawer móvil
+   del sidebar/topbar de admin).
    ============================================================ */
 @media (max-width: 1023px) {
-  .admin-sidebar {
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
-    box-shadow: var(--shadow-lg);
-  }
-
-  .admin-sidebar.mobile-open {
-    transform: translateX(0);
-  }
-
-  .close-sidebar {
-    display: block;
-  }
-
-  .sidebar-overlay {
-    display: block;
-  }
-
-  .admin-content-col {
-    margin-left: 0;
-  }
-
-  .mobile-menu-btn {
-    display: block;
-  }
-
-  .admin-topbar {
-    padding: 0 1.25rem;
-  }
-
-  .admin-main {
-    padding: 1.5rem 1.25rem 100px; /* espacio para el BottomNav flotante */
-    justify-content: stretch;
-  }
-
   .tasa-actual-card {
     grid-template-columns: 1fr;
     gap: 1.5rem;
@@ -733,10 +416,6 @@ body {
 }
 
 @media (max-width: 768px) {
-  .topbar-title {
-    font-size: 0.95rem;
-  }
-
   .form-container {
     padding: 1.5rem;
   }

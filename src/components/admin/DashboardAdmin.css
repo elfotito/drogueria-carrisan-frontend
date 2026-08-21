@@ -21,7 +21,7 @@
    ============================================================ */
 .dash-kpis {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 1rem;
 }
 
@@ -56,6 +56,20 @@
   border-color: var(--slate-200);
 }
 
+/* KPI de órdenes vencidas: cuando hay al menos una, el borde se
+   pone rojo para que salte a la vista sin tener que leer el número */
+.dash-kpi--alerta {
+  border-color: var(--alert);
+}
+
+.dash-kpi--alerta:hover {
+  border-color: var(--alert);
+}
+
+.dash-kpi--alerta .dash-kpi-valor {
+  color: var(--alert);
+}
+
 .dash-kpi-icon {
   flex-shrink: 0;
   width: 44px;
@@ -71,6 +85,7 @@
 .dash-kpi-icon--good { background: var(--good-tint); }
 .dash-kpi-icon--alert { background: var(--alert-tint); }
 .dash-kpi-icon--blue { background: var(--blue-50); }
+.dash-kpi-icon--danger { background: var(--alert-tint); }
 
 .dash-kpi-info {
   display: flex;
@@ -271,6 +286,37 @@
   white-space: nowrap;
 }
 
+.dash-badge-vencida {
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  white-space: nowrap;
+  background: var(--alert-tint);
+  color: var(--alert);
+}
+
+.dash-tipo-tag {
+  align-self: flex-start;
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin-bottom: 0.15rem;
+}
+
+.dash-tipo-tag--cotizacion {
+  background: var(--blue-50);
+  color: var(--blue);
+}
+
+.dash-tipo-tag--requerimiento {
+  background: var(--warn-tint);
+  color: var(--warn);
+}
+
 .dash-orden-total {
   font-family: var(--font-display);
   font-size: 0.85rem;
@@ -338,6 +384,12 @@
 /* ============================================================
    Responsive
    ============================================================ */
+@media (max-width: 1200px) {
+  .dash-kpis {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 @media (max-width: 1024px) {
   .dash-kpis {
     grid-template-columns: repeat(2, 1fr);

@@ -10,6 +10,7 @@ import TopLoadingBar from './components/TopLoadingBar'
 import Navbar from './components/Navbar'
 import ScrollToTop from './components/ScrollToTop'
 import PrivateRoute from './components/PrivateRoute'
+import PrivateRouteSensible from './components/PrivateRouteSensible'
 import Home from './pages/Home'
 import Catalogo from './pages/Catalogo'
 import Login from './pages/Login'
@@ -75,8 +76,8 @@ function App() {
                 <Route path="/carrito" element={<PrivateRoute><Carrito /></PrivateRoute>} />
                 <Route path="/orders" element={<PrivateRoute><MisOrdenes /></PrivateRoute>} />
                 <Route path="/orders/:id" element={<PrivateRoute><OrdenDetalle /></PrivateRoute>} />
-                <Route path="/pagos" element={<PrivateRoute><Pagos /></PrivateRoute>} />
-                <Route path="/admin" element={<PrivateRoute adminOnly><Admin /></PrivateRoute>} />
+                <Route path="/pagos" element={<PrivateRouteSensible><Pagos /></PrivateRouteSensible>} />
+                <Route path="/admin/*" element={<PrivateRoute adminOnly><Admin /></PrivateRoute>} />
                 <Route path="/quienes-somos" element={<QuienesSomos />} />
                 <Route path="/faq" element={<FAQ />} />
                 <Route path="/ayuda" element={<Ayuda />} />
@@ -86,7 +87,7 @@ function App() {
                 <Route path="/notificaciones" element={<PrivateRoute><Notificaciones /></PrivateRoute>} />
                 <Route path="/terminos" element={<Terminos />} />
                 <Route path="/privacidad" element={<Privacidad />} />
-                <Route path="/estado-cuenta" element={<PrivateRoute><EstadoCuenta /></PrivateRoute>} />
+                <Route path="/estado-cuenta" element={<PrivateRouteSensible><EstadoCuenta /></PrivateRouteSensible>} />
                 <Route path="/producto/:id" element={<ProductoDetalle />} />
                 <Route path="/listas/:id" element={<PrivateRoute><ListaDetalle /></PrivateRoute>} />
                 <Route path="/menu" element={<PrivateRoute><Menu /></PrivateRoute>} />
@@ -94,10 +95,10 @@ function App() {
                 <Route path="/farmacia" element={<PrivateRoute><LineaFarmacia /></PrivateRoute>} />
                 <Route path="/hospitalaria" element={<PrivateRoute><LineaHospitalaria /></PrivateRoute>} />
                 <Route path="/direcciones" element={<PrivateRoute><Direcciones /></PrivateRoute>} />
-                <Route path="/estado-cuenta/pagos" element={<PrivateRoute><PagosEstadoCuenta /></PrivateRoute>} />
-                <Route path="/estado-cuenta/facturas" element={<PrivateRoute><FacturasEstadoCuenta /></PrivateRoute>} />
-                <Route path="/estado-cuenta/reportes" element={<PrivateRoute><ReportesEstadoCuenta /></PrivateRoute>} />
-                <Route path="/estado-cuenta/ampliacion" element={<PrivateRoute><AmpliacionEstadoCuenta /></PrivateRoute>} />
+                <Route path="/estado-cuenta/pagos" element={<PrivateRouteSensible><PagosEstadoCuenta /></PrivateRouteSensible>} />
+                <Route path="/estado-cuenta/facturas" element={<PrivateRouteSensible><FacturasEstadoCuenta /></PrivateRouteSensible>} />
+                <Route path="/estado-cuenta/reportes" element={<PrivateRouteSensible><ReportesEstadoCuenta /></PrivateRouteSensible>} />
+                <Route path="/estado-cuenta/ampliacion" element={<PrivateRouteSensible><AmpliacionEstadoCuenta /></PrivateRouteSensible>} />
 <Route path="/mis-solicitudes/cotizaciones" element={<PrivateRoute><Cotizaciones /></PrivateRoute>} />
 <Route path="/mis-solicitudes/requerimientos" element={<PrivateRoute><Requerimientos /></PrivateRoute>} />
 <Route path="/mis-solicitudes/documentos" element={<PrivateRoute><Documentos /></PrivateRoute>} />

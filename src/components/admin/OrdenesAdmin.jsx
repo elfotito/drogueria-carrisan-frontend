@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import api from '../../api/axios'
 import OrdenDetalleModal from '../OrdenDetalleModal'
+import TableroKanbanOrdenes from './TableroKanbanOrdenes'
 import './OrdenesAdmin.css'
 
 const ITEMS_POR_PAGINA = 10
@@ -32,7 +33,7 @@ function OrdenesAdmin() {
   
   // Paginación
   const [paginaActual, setPaginaActual] = useState(1)
-  const [vista, setVista] = useState('tabla') // tabla o cards
+  const [vista, setVista] = useState('kanban') // kanban, tabla o cards
 
   useEffect(() => {
     cargarOrdenes()
@@ -301,6 +302,13 @@ function OrdenesAdmin() {
         <div className="toolbar-actions">
           <div className="vista-toggle">
             <button 
+              className={`vista-btn ${vista === 'kanban' ? 'active' : ''}`}
+              onClick={() => setVista('kanban')}
+              title="Vista tablero (arrastra para cambiar estado)"
+            >
+              🗂️
+            </button>
+            <button 
               className={`vista-btn ${vista === 'tabla' ? 'active' : ''}`}
               onClick={() => setVista('tabla')}
               title="Vista tabla"
@@ -320,12 +328,22 @@ function OrdenesAdmin() {
 
       {/* Resultados */}
       <div className="resultados-info">
-        Mostrando {ordenesPaginadas.length} de {ordenesFiltradas.length} órdenes
+        Mostrando {vista === 'kanban' ? ordenesFiltradas.length : ordenesPaginadas.length} de {ordenesFiltradas.length} órdenes
         {busqueda && ` (filtradas de ${ordenes.length} totales)`}
       </div>
 
-      {/* Tabla */}
-      {vista === 'tabla' ? (
+      {/* Tablero Kanban — usa ordenesFiltradas (respeta búsqueda/fecha)
+          sin paginar: un tablero paginado rompería la vista de conjunto
+          que es justamente el punto de tenerlo. Cancelado no es columna
+          acá — cancelar sigue siendo una acción del modal de detalle. */}
+      {vista === 'kanban' ? (
+        <TableroKanbanOrdenes
+          ordenes={ordenesFiltradas}
+          estadoColores={ESTADO_COLORES}
+          onCambiarEstado={handleCambiarEstado}
+          onAbrirOrden={setOrdenSeleccionada}
+        />
+      ) : vista === 'tabla' ? (
         <div className="table-container">
           <table className="ordenes-table">
             <thead>
@@ -508,8 +526,9 @@ function OrdenesAdmin() {
         </div>
       )}
 
-      {/* Paginación */}
-      {totalPaginas > 1 && (
+      {/* Paginación — no aplica en modo kanban, que muestra todo el
+          conjunto filtrado sin cortar en páginas */}
+      {vista !== 'kanban' && totalPaginas > 1 && (
         <div className="paginacion">
           <button 
             onClick={() => setPaginaActual(1)}

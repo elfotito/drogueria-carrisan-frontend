@@ -1,9 +1,6 @@
-import { useState } from 'react'
-import { useAuth } from '../context/AuthContext'
-import { useNavigate } from 'react-router-dom'
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import DashboardAdmin from '../components/admin/DashboardAdmin'
 import TasaCambio from '../components/admin/TasaCambio'
-import api from '../api/axios'
 import OrdenesAdmin from '../components/admin/OrdenesAdmin'
 import ProductosAdmin from '../components/admin/ProductosAdmin'
 import UsuariosAdmin from '../components/admin/UsuariosAdmin'
@@ -14,138 +11,104 @@ import CotizacionesAdmin from '../components/admin/CotizacionesAdmin'
 import RequerimientosAdmin from '../components/admin/RequerimientosAdmin'
 import DocumentosAdmin from '../components/admin/DocumentosAdmin'
 import ChatAdmin from '../components/admin/ChatAdmin'
-
+import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
+import { NAV_ADMIN } from '../components/paginas-principales/NavAdmin'
 import './Admin.css'
 
+// ---------------------------------------------------------------
+// Admin — migrado a <LayoutPaginaPrincipal> (mismo patrón que
+// MisOrdenes/MiCuenta/EstadoCuenta) y ahora con sub-rutas reales de
+// React Router en vez del switch + estado local (seccionActiva) que
+// había antes. Cada sección es una URL real bajo /admin/* (ver
+// App.jsx: la ruta pasó de "/admin" exacta a "/admin/*"):
+//
+//   /admin                    → Dashboard
+//   /admin/ordenes             → Órdenes (Kanban/tabla/cards)
+//   /admin/estado-cuenta       → Estado de cuenta
+//   ...etc, ver NAV_ADMIN
+//
+// Esto significa: se puede compartir un link directo a una sección,
+// sobrevive un F5, y el botón "atrás" del navegador vuelve a la
+// sección anterior en vez de sacarte de /admin por completo.
+//
+// "activo" para resaltar el ítem de nav correcto se deriva de la URL
+// actual (useLocation) en vez de leerse de un estado — el mismo id
+// que usa NAV_ADMIN (dashboard, ordenes, etc.) se calcula acá abajo
+// comparando pathname.
+// ---------------------------------------------------------------
+
+const TITULOS_SECCION = {
+  dashboard: 'Dashboard',
+  tasa: 'Tasa de cambio',
+  ordenes: 'Órdenes',
+  productos: 'Productos',
+  descuentos: 'Descuentos',
+  estadoCuenta: 'Estado de cuenta',
+  pagos: 'Pagos',
+  cotizaciones: 'Cotizaciones',
+  requerimientos: 'Requerimientos',
+  documentos: 'Documentos',
+  usuarios: 'Usuarios',
+  chat: 'Chat',
+}
+
+// Mapea el segmento de la URL (después de /admin/) al id que ya usa
+// NAV_ADMIN para sus items — así no hay que mantener dos listas de
+// nombres de sección sincronizadas a mano.
+const SEGMENTO_A_ID = {
+  '': 'dashboard',
+  tasa: 'tasa',
+  ordenes: 'ordenes',
+  productos: 'productos',
+  descuentos: 'descuentos',
+  'estado-cuenta': 'estadoCuenta',
+  pagos: 'pagos',
+  cotizaciones: 'cotizaciones',
+  requerimientos: 'requerimientos',
+  documentos: 'documentos',
+  usuarios: 'usuarios',
+  chat: 'chat',
+}
+
 function Admin() {
+  const location = useLocation()
   const navigate = useNavigate()
-  const [seccionActiva, setSeccionActiva] = useState('dashboard')
-  const [menuMobileAbierto, setMenuMobileAbierto] = useState(false)
-  const { user } = useAuth()
-  const secciones = [
-  { id: 'tasa', nombre: '💰 Tasa de Cambio', icono: '💱' },
-  { id: 'productos', nombre: '📦 Productos', icono: '🛍️' },
-  { id: 'ordenes', nombre: '📋 Órdenes', icono: '📊' },
-  { id: 'chat', nombre: '💬 Chat', icono: '💬' },          // <-- nuevo
-  { id: 'usuarios', nombre: '👥 Usuarios', icono: '👤' },
-  { id: 'estadoCuenta', nombre: '💳 Estado de Cuenta', icono: '🏦' },
-  { id: 'descuentos', nombre: '🏷️ Descuentos', icono: '💎' },
-{ id: 'cotizaciones', nombre: '📝', icono: '🔖' },
-{ id: 'requerimientos', nombre: '📮 Requerimientos', icono: '📃' }
 
-]
-
-  const seccionActual = secciones.find(s => s.id === seccionActiva)
-
-  const getUserName = () => {
-    if (!user) return 'Usuario'
-    return user.nombre || user.email?.split('@')[0] || 'Usuario'
-  }
-
-  const getUserInitial = () => {
-    if (!user) return '?'
-    if (user.nombre) return user.nombre[0].toUpperCase()
-    if (user.email) return user.email[0].toUpperCase()
-    return '?'
-  }
-
-  const renderSeccion = () => {
-    switch(seccionActiva) {
-      case 'dashboard': return <DashboardAdmin onIrA={setSeccionActiva} />
-      case 'tasa': return <TasaCambio />
-      case 'productos': return <ProductosAdmin />
-      case 'ordenes': return <OrdenesAdmin />
-      case 'chat': return <ChatAdmin />
-      case 'usuarios': return <UsuariosAdmin />
-      case 'estadoCuenta': return <EstadoCuentaAdmin />
-      case 'pagos': return <PagosAdmin />
-      case 'descuentos': return <DescuentosPanel />
-      default: return <TasaCambio />
-case 'cotizaciones': return <CotizacionesAdmin />
-case 'requerimientos': return <RequerimientosAdmin />
-case 'documentos': return <DocumentosAdmin />
-    }
-  }
-
-  const handleVolver = () => {
-    navigate(-1)
-  }
+  const segmento = location.pathname.replace(/^\/admin\/?/, '')
+  const seccionActiva = SEGMENTO_A_ID[segmento] || 'dashboard'
 
   return (
-    <div className="admin-container">
-      {/* Sidebar — fija al borde real de la ventana, alto completo */}
-      <nav className={`admin-sidebar ${menuMobileAbierto ? 'mobile-open' : ''}`}>
-        <div className="sidebar-brand">
-          <span className="brand-mark">{getUserInitial()}</span>
-          <div className="brand-text">
-            <span className="sidebar-user__hola">Hola,</span>
-            <span className="sidebar-user__nombre">
-              {getUserName()}
-            </span>
-          </div>
-          <button
-            className="close-sidebar"
-            onClick={() => setMenuMobileAbierto(false)}
-          >
-            ✕
-          </button>
-        </div>
-        
-        
-        <ul className="nav-list">
-          <button className="btn-volver" onClick={handleVolver}>
-              <span className="btn-volver__icon">←</span>
-              <span className="btn-volver__text">Volver</span>
-          </button>
-          {secciones.map(seccion => (
-            <li key={seccion.id}>
-              <button
-                className={`nav-item ${seccionActiva === seccion.id ? 'active' : ''}`}
-                onClick={() => {
-                  setSeccionActiva(seccion.id)
-                  setMenuMobileAbierto(false)
-                }}
-              >
-                <span className="nav-icon">{seccion.icono}</span>
-                <span className="nav-text">{seccion.nombre}</span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      </nav>
-
-      {/* Overlay para móvil/tablet */}
-      {menuMobileAbierto && (
-        <div
-          className="sidebar-overlay"
-          onClick={() => setMenuMobileAbierto(false)}
-        />
-      )}
-
-      {/* Columna de contenido — desplazada por el ancho del sidebar */}
-      <div className="admin-content-col">
-        <header className="admin-topbar">
-          <button
-            className="mobile-menu-btn"
-            onClick={() => setMenuMobileAbierto(true)}
-          >
-            <span className="hamburger">
-              <span></span>
-              <span></span>
-              <span></span>
-            </span>
-          </button>
-          <h1 className="topbar-title">{seccionActual?.nombre}</h1>
-        </header>
-
-        <main className="admin-main">
-          <div className="content-wrapper">
-            {renderSeccion()}
-          </div>
-        </main>
+    <LayoutPaginaPrincipal
+      activo={seccionActiva}
+      titulo={TITULOS_SECCION[seccionActiva] || 'Admin'}
+      nav={NAV_ADMIN}
+    >
+      <div className="admin-seccion">
+        <Routes>
+          <Route index element={<DashboardAdmin onIrA={(id) => navigate(rutaDeId(id))} />} />
+          <Route path="tasa" element={<TasaCambio />} />
+          <Route path="ordenes" element={<OrdenesAdmin />} />
+          <Route path="productos" element={<ProductosAdmin />} />
+          <Route path="descuentos" element={<DescuentosPanel />} />
+          <Route path="estado-cuenta" element={<EstadoCuentaAdmin />} />
+          <Route path="pagos" element={<PagosAdmin />} />
+          <Route path="cotizaciones" element={<CotizacionesAdmin />} />
+          <Route path="requerimientos" element={<RequerimientosAdmin />} />
+          <Route path="documentos" element={<DocumentosAdmin />} />
+          <Route path="usuarios" element={<UsuariosAdmin />} />
+          <Route path="chat" element={<ChatAdmin />} />
+        </Routes>
       </div>
-    </div>
+    </LayoutPaginaPrincipal>
   )
+}
+
+// DashboardAdmin sigue usando su prop "onIrA(id)" para los accesos
+// rápidos (ver KPIs, "Ver tablero →", etc.) — acá se traduce ese id
+// a la ruta real y se navega, en vez de solo cambiar estado local.
+function rutaDeId(id) {
+  const segmento = Object.entries(SEGMENTO_A_ID).find(([, v]) => v === id)?.[0] ?? ''
+  return `/admin/${segmento}`
 }
 
 export default Admin

@@ -35,10 +35,19 @@ function tiempoRelativo(fechaISO) {
   return fecha.toLocaleDateString('es-VE', { day: '2-digit', month: 'short' })
 }
 
+const ESTADO_REPORTE_LABEL = {
+  pendiente: { label: 'Pendiente', color: '#a2650a', bg: '#fbf0de' },
+  verificado: { label: 'Verificado', color: '#0e7c5e', bg: '#e4f5ee' },
+  rechazado: { label: 'Rechazado', color: '#d6274b', bg: '#fbe7ec' },
+}
+
 function DashboardAdmin({ onIrA }) {
   const [ordenes, setOrdenes] = useState([])
   const [usuarios, setUsuarios] = useState([])
   const [clientes, setClientes] = useState([])
+  const [reportesPago, setReportesPago] = useState([])
+  const [cotizacionesPendientes, setCotizacionesPendientes] = useState([])
+  const [requerimientosPendientes, setRequerimientosPendientes] = useState([])
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
   const [ordenSeleccionada, setOrdenSeleccionada] = useState(null)
@@ -51,14 +60,24 @@ function DashboardAdmin({ onIrA }) {
     try {
       setCargando(true)
       setError('')
-      const [ordenesRes, usuariosRes, clientesRes] = await Promise.all([
+      // Las bandejas de solicitudes solo traen "pendiente" — es lo único
+      // que el dashboard necesita mostrar como acción por hacer; el
+      // histórico completo vive en sus propias secciones (Cotizaciones,
+      // Requerimientos, Pagos).
+      const [ordenesRes, usuariosRes, clientesRes, reportesRes, cotizacionesRes, requerimientosRes] = await Promise.all([
         api.get('/orders'),
         api.get('/users'),
-        api.get('/clientes/estado-cuenta')
+        api.get('/clientes/estado-cuenta'),
+        api.get('/reportes-pago', { params: { estado: 'pendiente' } }),
+        api.get('/cotizaciones', { params: { estado: 'pendiente' } }),
+        api.get('/requerimientos', { params: { estado: 'pendiente' } }),
       ])
       setOrdenes(ordenesRes.data)
       setUsuarios(usuariosRes.data)
       setClientes(clientesRes.data)
+      setReportesPago(reportesRes.data)
+      setCotizacionesPendientes(cotizacionesRes.data)
+      setRequerimientosPendientes(requerimientosRes.data)
     } catch (err) {
       setError('No se pudo cargar el resumen del panel')
       console.error(err)
@@ -77,6 +96,20 @@ function DashboardAdmin({ onIrA }) {
       console.error('Error al cambiar estado:', err)
     }
   }
+
+  // Una orden cuenta como "vencida" con el mismo criterio que ya usa
+  // EstadoCuenta.jsx del lado cliente: tiene fecha_vencimiento (solo
+  // aplica a crédito con dias_credito ya fijado), esa fecha ya pasó,
+  // y todavía no está saldada.
+  const ordenesVencidas = useMemo(() => {
+    const ahora = new Date()
+    return ordenes.filter((o) =>
+      o.fecha_vencimiento &&
+      new Date(o.fecha_vencimiento) < ahora &&
+      o.estado !== 'cancelado' &&
+      o.estado_pago !== 'verificado'
+    )
+  }, [ordenes])
 
   const kpis = useMemo(() => {
     const hoy = new Date()
@@ -124,6 +157,10 @@ function DashboardAdmin({ onIrA }) {
       .slice(0, 5)
   }, [usuarios])
 
+  const reportesPagoRecientes = useMemo(() => reportesPago.slice(0, 5), [reportesPago])
+
+  const totalSolicitudesPendientes = cotizacionesPendientes.length + requerimientosPendientes.length
+
   if (cargando) {
     return (
       <div className="loading-container">
@@ -159,6 +196,17 @@ function DashboardAdmin({ onIrA }) {
           </div>
         </button>
 
+        <button
+          className={`dash-kpi ${ordenesVencidas.length > 0 ? 'dash-kpi--alerta' : ''}`}
+          onClick={() => onIrA?.('estadoCuenta')}
+        >
+          <span className="dash-kpi-icon dash-kpi-icon--danger">⚠️</span>
+          <div className="dash-kpi-info">
+            <span className="dash-kpi-valor">{ordenesVencidas.length}</span>
+            <span className="dash-kpi-label">Órdenes vencidas</span>
+          </div>
+        </button>
+
         <div className="dash-kpi dash-kpi--static">
           <span className="dash-kpi-icon dash-kpi-icon--good">💵</span>
           <div className="dash-kpi-info">
@@ -184,11 +232,14 @@ function DashboardAdmin({ onIrA }) {
         </button>
       </div>
 
-      {/* Distribución de órdenes por estado */}
+      {/* Distribución de órdenes por estado — enlaza directo a OrdenesAdmin,
+          que es donde vive el Kanban real con drag para moverlas */}
       <div className="dash-card">
         <div className="dash-card-header">
           <h3>Órdenes por estado</h3>
-          <span className="dash-card-total">{ordenes.length} en total</span>
+          <button className="dash-ver-todas" onClick={() => onIrA?.('ordenes')}>
+            Ver tablero →
+          </button>
         </div>
         <div className="dash-distribucion">
           {distribucionEstados.map(({ estado, cantidad, color, label }) => (
@@ -222,28 +273,110 @@ function DashboardAdmin({ onIrA }) {
             <p className="dash-vacio">Todavía no hay órdenes registradas.</p>
           ) : (
             <ul className="dash-lista">
-              {ordenesRecientes.map(orden => (
-                <li key={orden.id}>
-                  <button
-                    className="dash-orden-fila"
-                    onClick={() => setOrdenSeleccionada(orden)}
-                  >
+              {ordenesRecientes.map(orden => {
+                const vencida = orden.fecha_vencimiento &&
+                  new Date(orden.fecha_vencimiento) < new Date() &&
+                  orden.estado !== 'cancelado' &&
+                  orden.estado_pago !== 'verificado'
+                return (
+                  <li key={orden.id}>
+                    <button
+                      className="dash-orden-fila"
+                      onClick={() => setOrdenSeleccionada(orden)}
+                    >
+                      <div className="dash-orden-info">
+                        <span className="dash-orden-id">#{orden.id}</span>
+                        <span className="dash-orden-cliente">{orden.users?.nombre || 'Cliente'}</span>
+                      </div>
+                      <div className="dash-orden-meta">
+                        {vencida && <span className="dash-badge-vencida">Vencida</span>}
+                        <span
+                          className="dash-estado-badge"
+                          style={{
+                            backgroundColor: ESTADO_COLORES[orden.estado]?.bg,
+                            color: ESTADO_COLORES[orden.estado]?.color
+                          }}
+                        >
+                          {ESTADO_COLORES[orden.estado]?.label || orden.estado}
+                        </span>
+                        <span className="dash-orden-total">{formatUSD(orden.total_usd)}</span>
+                      </div>
+                    </button>
+                  </li>
+                )
+              })}
+            </ul>
+          )}
+        </div>
+
+        {/* Reportes de pago recientes */}
+        <div className="dash-card">
+          <div className="dash-card-header">
+            <h3>Reportes de pago</h3>
+            <button className="dash-ver-todas" onClick={() => onIrA?.('pagos')}>
+              Ver todos →
+            </button>
+          </div>
+          {reportesPagoRecientes.length === 0 ? (
+            <p className="dash-vacio">No hay reportes pendientes de revisión.</p>
+          ) : (
+            <ul className="dash-lista">
+              {reportesPagoRecientes.map(reporte => {
+                const info = ESTADO_REPORTE_LABEL[reporte.estado] || ESTADO_REPORTE_LABEL.pendiente
+                return (
+                  <li key={reporte.id}>
+                    <button className="dash-orden-fila" onClick={() => onIrA?.('pagos')}>
+                      <div className="dash-orden-info">
+                        <span className="dash-orden-id">#{reporte.id}</span>
+                        <span className="dash-orden-cliente">{reporte.users?.nombre || 'Cliente'}</span>
+                      </div>
+                      <div className="dash-orden-meta">
+                        <span className="dash-estado-badge" style={{ backgroundColor: info.bg, color: info.color }}>
+                          {info.label}
+                        </span>
+                        <span className="dash-orden-total">{formatUSD(reporte.monto)}</span>
+                      </div>
+                    </button>
+                  </li>
+                )
+              })}
+            </ul>
+          )}
+        </div>
+      </div>
+
+      <div className="dash-columnas">
+        {/* Bandeja de solicitudes: cotizaciones + requerimientos pendientes,
+            agrupados porque conceptualmente son lo mismo — alguien pide
+            algo y el admin tiene que responder. */}
+        <div className="dash-card">
+          <div className="dash-card-header">
+            <h3>Bandeja de solicitudes</h3>
+            <span className="dash-card-total">{totalSolicitudesPendientes} pendientes</span>
+          </div>
+          {totalSolicitudesPendientes === 0 ? (
+            <p className="dash-vacio">No hay cotizaciones ni requerimientos pendientes.</p>
+          ) : (
+            <ul className="dash-lista">
+              {cotizacionesPendientes.slice(0, 3).map(c => (
+                <li key={`cot-${c.id}`}>
+                  <button className="dash-orden-fila" onClick={() => onIrA?.('cotizaciones')}>
                     <div className="dash-orden-info">
-                      <span className="dash-orden-id">#{orden.id}</span>
-                      <span className="dash-orden-cliente">{orden.users?.nombre || 'Cliente'}</span>
+                      <span className="dash-tipo-tag dash-tipo-tag--cotizacion">Cotización</span>
+                      <span className="dash-orden-cliente">{c.users?.nombre || 'Cliente'} · {c.productos?.nombre_comercial || 'Producto'}</span>
                     </div>
-                    <div className="dash-orden-meta">
-                      <span
-                        className="dash-estado-badge"
-                        style={{
-                          backgroundColor: ESTADO_COLORES[orden.estado]?.bg,
-                          color: ESTADO_COLORES[orden.estado]?.color
-                        }}
-                      >
-                        {ESTADO_COLORES[orden.estado]?.label || orden.estado}
-                      </span>
-                      <span className="dash-orden-total">{formatUSD(orden.total_usd)}</span>
+                    <span className="dash-orden-total">{tiempoRelativo(c.fecha_solicitud)}</span>
+                  </button>
+                </li>
+              ))}
+              {requerimientosPendientes.slice(0, 3).map(r => (
+                <li key={`req-${r.id}`}>
+                  <button className="dash-orden-fila" onClick={() => onIrA?.('requerimientos')}>
+                    <div className="dash-orden-info">
+                      <span className="dash-tipo-tag dash-tipo-tag--requerimiento">Requerimiento</span>
+                      <span className="dash-orden-cliente">{r.users?.nombre || 'Cliente'} · {r.requerimiento_items?.length || 0} items</span>
                     </div>
+                    <span className="dash-orden-total">{tiempoRelativo(r.fecha_solicitud)}</span>
                   </button>
                 </li>
               ))}
