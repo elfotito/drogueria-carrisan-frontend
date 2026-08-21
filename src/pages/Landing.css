@@ -22,14 +22,14 @@
   --bg-menta: #eaf5ee;
   --bg-durazno: #fdefe8;
 
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-ui);
   color: var(--color-text);
   background: var(--color-surface);
   overflow-x: hidden;
 }
 
 .landing h1 {
-  font-family: 'Manrope', 'Inter', sans-serif;
+  font-family: 'Fraunces', 'Source Serif 4', sans-serif;
   font-size: 2.2rem;
   font-weight: 800;
   line-height: 1.1;
