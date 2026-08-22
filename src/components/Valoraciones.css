@@ -1,0 +1,198 @@
+/* ============================================
+Valoraciones — misma paleta del resto de la app
+Azul #0052DC · Índigo #1A1A3A · Amarillo estrellas #f59e0b
+============================================ */
+
+.valoraciones-seccion {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid #e3e4e5;
+}
+
+.valoraciones-resumen h2 {
+  margin: 0 0 8px;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: #1A1A3A;
+}
+
+.valoraciones-resumen__cifra {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.valoraciones-estrellas {
+  display: flex;
+  gap: 2px;
+}
+
+.valoraciones-resumen__numero {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1rem;
+  color: #1A1A3A;
+}
+
+.valoraciones-resumen__total {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+  color: #74767c;
+}
+
+.valoraciones-vacio {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: #74767c;
+  margin-bottom: 16px;
+}
+
+/* ---------- Botones ---------- */
+
+.valoraciones-btn-outline {
+  padding: 9px 18px;
+  border-radius: 999px;
+  border: 1.5px solid #0052DC;
+  background: #FFFFFF;
+  color: #0052DC;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.valoraciones-btn-primario {
+  padding: 9px 18px;
+  border-radius: 999px;
+  border: none;
+  background: #0052DC;
+  color: #FFFFFF;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.valoraciones-btn-primario:disabled {
+  opacity: 0.6;
+}
+
+/* ---------- Mi valoración ---------- */
+
+.valoraciones-propia {
+  background: #F0F5FF;
+  border: 1px solid #cfe0fb;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+}
+
+.valoraciones-propia__label {
+  margin: 0 0 6px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.78rem;
+  color: #0052DC;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.valoraciones-propia__comentario {
+  margin: 8px 0 0;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: #4b4d52;
+}
+
+/* ---------- Formulario ---------- */
+
+.valoraciones-form {
+  margin-bottom: 20px;
+}
+
+.valoraciones-selector {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.valoraciones-selector button {
+  border: none;
+  background: none;
+  padding: 2px;
+  cursor: pointer;
+}
+
+.valoraciones-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1.5px solid #e3e4e5;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.87rem;
+  resize: vertical;
+  outline: none;
+}
+
+.valoraciones-form textarea:focus {
+  border-color: #0052DC;
+}
+
+.valoraciones-form__acciones {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.valoraciones-error {
+  margin: 8px 0 0;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  color: #dc2626;
+}
+
+/* ---------- Lista ---------- */
+
+.valoraciones-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.valoraciones-item {
+  padding-bottom: 14px;
+  border-bottom: 1px solid #f1f1f2;
+}
+
+.valoraciones-item__top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.valoraciones-item__nombre {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #1A1A3A;
+}
+
+.valoraciones-item__fecha {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.74rem;
+  color: #74767c;
+}
+
+.valoraciones-item__comentario {
+  margin: 6px 0 0;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: #4b4d52;
+  line-height: 1.4;
+}
