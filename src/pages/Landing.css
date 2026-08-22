@@ -328,7 +328,6 @@
   background: var(--bg-rosado);
   text-align: center;
   align-items: center;
-  align-content: center;
   flex-direction: column;
   display: flex;
 }
@@ -343,6 +342,7 @@
 .landing-ahorros__grid {
   display: flex;
   flex-direction: column;
+  display: flex; 
   gap: 16px;
   margin-bottom: 24px;
 }
@@ -383,11 +383,12 @@
 }
 
 .landing-ahorros__card-texto {
-  color: var(--color-text-muted);
-  font-size: 0.85rem;
-  margin: 0;
-  line-height: 1.4;
-  font-weight: 500;
+  color: var(--color-text-muted) !important;
+  margin: 0 !important;
+  font-size: .85rem !important;
+  font-weight: 500 !important;
+  line-height: 1.4 !important;
+  letter-spacing: normal !important;
 }
 
 /* Ajuste sutil del link para que haga match con la card */
