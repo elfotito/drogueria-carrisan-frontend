@@ -315,7 +315,7 @@ function Landing() {
                       loading="lazy"
                     />
         <div className="landing-seguros__texto">
-          <h2>Facturación fiscal y respaldo sanitario al día</h2>
+          <h2>Respaldo sanitario al día</h2>
           <p>Cumplimiento total de la normativa sanitaria venezolana, emisión de facturación clara adaptada a contribuyentes especiales y trazabilidad documentada en cada lote.</p>
           <a href="#" className="btn-landing btn-landing--primario">Ver condiciones comerciales</a>
         </div>
