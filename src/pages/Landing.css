@@ -30,7 +30,7 @@
 
 .landing h1 {
   font-family: 'Fraunces', 'Source Serif 4', sans-serif;
-  font-size: 2.2rem;
+  font-size: 4.3rem;
   font-weight: 800;
   line-height: 1.1;
   margin: 0 0 14px;
@@ -59,7 +59,7 @@
 .landing p {
   letter-spacing: -0.02em;
   font-family: 'Figtree', sans-serif;
-  font-size: 0.95rem;
+  font-size: 1.1rem;
   line-height: 1.5;
   color: var(--color-text);
   margin: 0 0 14px;

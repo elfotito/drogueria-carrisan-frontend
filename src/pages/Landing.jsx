@@ -235,7 +235,7 @@ function Landing() {
           <div className="landing-hero__texto">
             <h1>Respaldamos al Medico Venezolano</h1>
             <a href="/login" className="btn-landing btn-landing--primario">Crear Cuenta   |   Iniciar Sesion</a>
-            <p className="landing-hero__subtitulo">La plataforma digital de abastecimiento farmacéutico y hospitalario para clínicas, farmacias, centros quirúrgicos y especialistas.</p>
+            <p className="landing-hero__subtitulo">La plataforma digital de abastecimiento farmacéutico y hospitalario para clínicas, farmacias, centros quirúrgicos y medicos cirujanos.</p>
             
             <div className="landing-hero__acciones">
               <a href="#como-funciona" className="landing-link">¿Cómo funciona? ›</a>
