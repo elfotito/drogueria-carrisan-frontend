@@ -1,7 +1,17 @@
+
 :root {
-  --font-titulo: 'Fraunces', serif;       /* H1 — impacto */
-  --font-texto: 'Source Serif 4', serif;  /* subtítulos + texto largo */
-  --font-ui: 'Quicksand', sans-serif;     /* UI, botones, notificaciones */
+  /* Roles tipográficos */
+  --font-display: 'Bricolage Grotesque', sans-serif;   /* Títulos, headings */
+  --font-body: 'Source Serif 4', serif;                 /* Párrafos, descripciones */
+  --font-body-alt: 'Karla', sans-serif;                 /* Párrafos largos / formularios / notas */
+  --font-ui: 'Figtree', sans-serif;                      /* Botones, labels, KPIs, navegación */
+
+  /* Pesos sugeridos */
+  --weight-display: 600;
+  --weight-body: 400;
+  --weight-body-alt: 400;
+  --weight-ui-regular: 500;
+  --weight-ui-bold: 700;
 }
 
 body {
