@@ -106,7 +106,7 @@ function App() {
                 <Route path="/chat" element={<ChatCentro />} />
                 <Route path="/chat/orden/:ordenId" element={<ChatCentro />} />
                 <Route path="/subusuarios" element={<SubUsuarios />} />
-                <Route path="/presupuesto" element={<Presupuestos />} />
+                <Route path="/presupuesto" element={<Presupuesto />} />
               </Routes>
             </LoadingBarProvider>
           </EnvioProvider>
