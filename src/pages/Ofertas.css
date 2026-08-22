@@ -296,3 +296,47 @@
     display: none;
   }
 }
+
+/* Agregar/reemplazar en Ofertas.css — mantiene tus clases existentes
+   (ofertas-layout, ofertas-header, ofertas-banner, ofertas-vacio) y
+   agrega lo nuevo: */
+
+.ofertas-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 0 12px;
+}
+
+.ofertas-tabs {
+  overflow-x: auto;
+}
+
+/* Reemplaza tu .ofertas-chips anterior — ya no hace falta, Tabs.Root
+   trae su propio estilo base; si quieres, puedes borrar las clases
+   .ofertas-chip / .ofertas-chip--activo de tu CSS actual. */
+
+.oferta-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px 10px;
+}
+
+@media (min-width: 640px) {
+  .oferta-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 900px) {
+  .oferta-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 1200px) {
+  .oferta-grid {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 20px 16px;
+  }
+}
