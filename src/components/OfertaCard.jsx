@@ -5,13 +5,7 @@ import { useAuth } from '../context/AuthContext'
 import { useCarrito } from '../context/CartContext'
 import { getEstadoProducto } from '../utils/productoEstado'
 import './OfertaCard.css'
-
-// ---------------------------------------------------------------
-// Card de oferta estilo "solo producto" — sin bordes ni chrome de
-// card tradicional. Foto grande, botón + flotante sobre la esquina
-// de la imagen, nombre debajo, precio (con tachado si hay
-// descuento_activo) al final. Pensado para grids densos.
-// ---------------------------------------------------------------
+ 
 
 function formatUSD(valor) {
   return Number(valor).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
@@ -19,7 +13,7 @@ function formatUSD(valor) {
 
 function OfertaCard({ producto, tasaVes }) {
   const { user } = useAuth()
-  const { agregarAlCarrito } = useCarrito()
+  const { addItem } = useCart()
   const navigate = useNavigate()
   const [agregado, setAgregado] = useState(false)
 
