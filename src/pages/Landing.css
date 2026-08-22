@@ -614,16 +614,17 @@
   color: #002f36 !important;
   margin: 0 0 8px !important;
   font-family: "Karla", sans-serif !important;
-  font-size: 1.05rem !important;
+  font-size: 1.1rem !important;
   font-weight: 500 !important;
+  letter-spacing: -0.06rem;
 }
 
 .landing-como-funciona__texto {
   line-height: 1.3 !important;
   max-width: 290px !important;
-  letter-spacing: -0.02em !important;
+  letter-spacing: -0.06em !important;
   font-family: 'Figtree', sans-serif !important;
-  font-size: 1.1rem !important;
+  font-size: 0.9rem !important;
   color: var(--color-text) !important;
   margin: 0 0 14px !important;
 }
