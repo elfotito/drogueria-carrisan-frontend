@@ -1,12 +1,3 @@
-/* ==================================================================
-   LANDING — reset local + escala tipográfica propia
-   La base de font-size se fija en 16px DENTRO de .landing para no
-   depender de :root (que en index.css cambia de 16px a 18px según
-   el viewport). Todos los tamaños de texto de este archivo usan
-   `em`, relativos a esta base fija — así el texto nunca "salta" de
-   tamaño por un cambio ajeno a este componente.
-   ================================================================== */
-
 .landing,
 .landing *,
 .landing *::before,
@@ -31,62 +22,47 @@
   --bg-menta: #eaf5ee;
   --bg-durazno: #fdefe8;
 
-  font-size: 16px; /* ancla fija — ver nota arriba */
-  font-family: 'figtree', system-ui, sans-serif;
+  font-family: var(--font-ui);
   color: var(--color-text);
   background: var(--color-surface);
   overflow-x: hidden;
-  width: 100%;
-  max-width: 100vw;
 }
 
 .landing h1 {
   font-family: 'Fraunces', 'Source Serif 4', sans-serif;
-  font-size: 1.5em;
+  font-size: 2.2rem;
   font-weight: 800;
-  line-height: 1.15;
-  margin: 0 0 12px;
+  line-height: 1.1;
+  margin: 0 0 14px;
   letter-spacing: -0.01em;
-  color: #1A1A3A;
+  color:#1A1A3A;
 }
 
 .landing h2 {
   font-family: 'Source Serif 4', 'Quicksand', sans-serif;
-  font-size: 1.25em;
+  font-size: 1.7rem;
   font-weight: 800;
-  line-height: 1.2;
-  margin: 0 0 10px;
+  line-height: 1.15;
+  margin: 0 0 12px;
   color: #1A1A3A;
 }
 
 .landing h3 {
-  font-size: 1.0em;
+  font-size: 1.05rem;
   font-weight: 700;
-  margin: 0 0 6px;
-  line-height: 1.3;
+  margin: 0 0 8px;
 }
 
 .landing p {
-  font-family: 'Karla', sans-serif;
-  font-size: 0.9em;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 0.95rem;
   line-height: 1.5;
   color: var(--color-text);
-  margin: 0 0 12px;
+  margin: 0 0 14px;
 }
 
 .landing section {
-  padding: 36px 16px;
-}
-
-/* --- Blindaje universal de imágenes: nunca desbordan, nunca se
-   ven "crudas" a tamaño natural. Cada sección puede afinar
-   object-fit/altura puntualmente más abajo. --- */
-.landing img {
-  max-width: 100%;
-  width: 100%;
-  height: auto;
-  display: block;
-  max-width: 520px;
+  padding: 44px 20px;
 }
 
 /* --- Placeholder de imagen genérico --- */
@@ -104,19 +80,19 @@
   border: 1px dashed #b9bfd1;
   border-radius: 16px;
   color: #7c8296;
-  font-size: 0.75em;
+  font-size: 0.8rem;
   font-weight: 600;
   text-align: center;
-  min-height: 140px;
+  min-height: 180px;
 }
 
 /* --- Links y botones genéricos --- */
 .landing-link {
   display: inline-block;
-  color: #007185;
+  color: var(--color-accent);
   text-decoration: none;
   font-weight: 700;
-  font-size: 0.9em;
+  font-size: 0.92rem;
 }
 
 .landing-link:hover {
@@ -124,7 +100,7 @@
 }
 
 .landing-link--secundario {
-  margin-top: 12px;
+  margin-top: 14px;
 }
 
 .landing-link--claro {
@@ -136,9 +112,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 12px 22px;
-  border-radius: 10px;
-  font-size: 0.95em;
+  padding: 14px 24px;
+  border-radius: 12px;
+  font-size: 1rem;
   font-weight: 700;
   text-decoration: none;
   border: none;
@@ -149,13 +125,16 @@
 .btn-landing--primario {
   background: var(--color-warning);
   color: var(--color-brand-dark);
-  transition: all 0.2s ease;
+}
+
+.btn-landing--primario {
+  transition: all 0.3s ease; /* Hace que la iluminación sea suave y no de golpe */
 }
 
 .btn-landing--primario:hover {
-  filter: brightness(1.08);
-  box-shadow: 0 4px 12px rgba(255, 170, 45, 0.5);
-  transform: translateY(-1px);
+  filter: brightness(1.1); 
+  box-shadow: 0 4px 12px rgba(255, 170, 45, 0.6); 
+  transform: translateY(-2px); 
 }
 
 .btn-landing--solido {
@@ -173,28 +152,27 @@
   display: inline-block;
   background: var(--color-accent);
   color: #ffffff;
-  font-size: 0.65em;
+  font-size: 0.7rem;
   font-weight: 800;
   letter-spacing: 0.04em;
-  padding: 4px 10px;
+  padding: 5px 12px;
   border-radius: 8px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .landing-badge-img {
-  width: 72px;
-  height: 72px;
+  width: 90px;
+  height: 90px;
   min-height: 0;
   border-radius: 12px;
-  object-fit: cover;
 }
 
 /* ================================================================== */
-/* 1. HERO                                                             */
+/* 1. HERO - BASE                                        */
 /* ================================================================== */
 .landing-hero {
   background: var(--bg-menta);
-  padding: 36px 16px 32px;
+  padding: 44px 20px 40px;
 }
 
 .landing-hero__contenido {
@@ -202,72 +180,67 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  max-width: 560px;
+  max-width: 640px;
   margin: 0 auto;
-  gap: 14px;
+  gap: 16px;
 }
 
 .landing-hero__imagen {
   width: 100%;
-  max-width: 300px;
-  height: auto;
-  margin-bottom: 6px;
+  max-width: 360px;
+  margin-bottom: 8px;
   object-fit: contain;
 }
 
-.landing-hero__texto {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 14px;
-  width: 100%;
+.landing-hero h1 {
+  margin-bottom: 0; /* El gap del contenedor maneja el espaciado */
 }
 
-.landing-hero h1,
-.landing-hero .landing-hero__subtitulo,
-.landing-hero .landing-link,
-.landing-hero .landing-link--secundario {
-  margin-bottom: 0;
+.landing-hero .landing-hero__subtitulo {
+  margin-bottom: 0; /* El gap del contenedor maneja el espaciado */
+}
+
+.landing-hero .landing-link {
+  margin-bottom: 0; /* El gap del contenedor maneja el espaciado */
 }
 
 .landing-hero .btn-landing {
   width: 100%;
-  max-width: 320px;
-  margin-bottom: 0;
+  max-width: 340px;
+  margin-bottom: 0; /* El gap del contenedor maneja el espaciado */
 }
 
-.landing-hero__acciones {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-  width: 100%;
-  max-width: 320px;
+.landing-hero .landing-link--secundario {
+  margin-top: 0; /* El gap del contenedor maneja el espaciado */
 }
 
+/* Contenedor del enlace */
 .enlace-seguridad {
   display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  text-decoration: none;
+  align-items: center; /* Centra el candado con el texto verticalmente */
+  gap: 8px; /* Espacio entre el candado y el texto */
+  text-decoration: none; /* Quitamos el subrayado por defecto de toda la etiqueta <a> */
   cursor: pointer;
 }
 
+/* Estilo específico para el candado */
 .enlace-seguridad__icono {
-  color: #232f3e;
+  color: #232f3e; /* Un gris muy oscuro/azulado, típico de Amazon */
   flex-shrink: 0;
 }
 
+/* Estilo del texto y su subrayado */
 .enlace-seguridad__texto {
-  font-size: 0.75em;
+  font-size: 0.8rem;
   color: #1A1A3A;
   font-weight: 500;
   text-decoration: underline;
+
 }
 
+/* Efecto hover opcional para cuando pasas el mouse */
 .enlace-seguridad:hover .enlace-seguridad__texto {
-  color: #c45500;
+  color: #c45500; /* Naranja (estilo Amazon) o puedes usar un azul más oscuro */
   text-decoration-color: #c45500;
 }
 
@@ -275,8 +248,8 @@
 /* 2. BENEFICIOS                                                      */
 /* ================================================================== */
 .landing-beneficios {
-  padding: 14px 16px;
-  border-bottom: 1px solid #e0e0e0;
+  padding: 16px 0;
+  border-bottom: 1px solid #e0e0e0; /* La imagen parece tener una sutil línea gris abajo */
 }
 
 .landing-beneficios__lista {
@@ -284,32 +257,64 @@
   margin: 0;
   padding: 0;
   display: flex;
-  flex-direction: column;
-  gap: 14px;
+  flex-direction: column; /* Apilado en móviles */
+  gap: 16px;
 }
 
+/* Reemplazamos la clase 'chip' por 'item' sin fondos ni bordes */
 .landing-beneficios__item {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
+/* El círculo verde/menta sólido que envuelve al check */
 .landing-beneficios__icono {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
-  background-color: #00a699;
-  color: #ffffff;
+  width: 22px;
+  height: 22px;
+  background-color: #00a699; /* Ajusta a tu variable si tienes una igual */
+  color: #ffffff; /* El check por dentro es blanco */
   border-radius: 50%;
   flex-shrink: 0;
 }
 
 .landing-beneficios__texto {
-  font-size: 0.9em;
+  font-size: 0.95rem;
   color: #002f36;
   font-weight: 500;
+}
+
+.landing-link {
+  color: #007185;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.landing-link:hover {
+  text-decoration: underline;
+}
+
+/* Diseño de Escritorio (Desktop) */
+@media (min-width: 1024px) {
+  .landing-beneficios {
+    max-width: 1160px;
+    margin: 0 auto;
+  }
+
+  .landing-beneficios__lista {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between; /* Separa los elementos uniformemente */
+  }
+
+  /* Si quieres que el enlace quede empujado totalmente a la derecha */
+  .landing-beneficios__item--enlace {
+    margin-left: auto; 
+  }
 }
 
 /* ================================================================== */
@@ -321,8 +326,8 @@
 }
 
 .landing-ahorros__subtitulo {
-  max-width: 440px;
-  margin: 0 auto 24px;
+  max-width: 480px;
+  margin: 0 auto 28px;
   color: var(--color-text-muted);
   text-align: center !important;
 }
@@ -331,82 +336,85 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  margin-bottom: 22px;
+  margin-bottom: 24px;
 }
+
+/* --- ESTILOS DE LA CARD MODIFICADOS --- */
 
 .landing-ahorros__card {
   background: var(--color-surface);
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid #e0e0e0;
+  border-radius: 12px; /* Redondeo general de la tarjeta */
+  overflow: hidden; /* CLAVE: Corta la imagen para que respete el borde redondeado */
+  border: 1px solid #e0e0e0; /* Opcional: borde sutil como en el diseño */
   display: flex;
   flex-direction: column;
+  /* IMPORTANTE: Quitamos el padding de aquí */
 }
 
 .landing-ahorros__card-imagen {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  display: block;
-  object-fit: cover;
+  width: 100%; /* Obliga a la imagen a tocar los bordes laterales */
+  min-height: 120px;
+  display: block; /* Quita el espacio blanco "fantasma" debajo de las imágenes */
+  object-fit: cover; /* Asegura que la imagen no se deforme si cambia el tamaño */
 }
 
+/* NUEVO: Contenedor exclusivo para los textos */
 .landing-ahorros__card-content {
-  padding: 18px 20px 22px;
+  padding: 20px 24px 24px; /* Ahora el padding solo aplica aquí */
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px; /* Separación automática entre título, texto y link */
   text-align: center;
 }
 
+/* Redujimos la letra como pediste */
 .landing-ahorros__card-titulo {
-  font-size: 0.95em;
+  font-size: 1rem;
   margin: 0;
   font-weight: 700;
 }
 
 .landing-ahorros__card-texto {
   color: var(--color-text-muted);
-  font-size: 0.82em;
+  font-size: 0.85rem;
   margin: 0;
-  line-height: 1.45;
+  line-height: 1.4;
   font-weight: 500;
 }
 
+/* Ajuste sutil del link para que haga match con la card */
 .landing-ahorros__card-content .landing-link {
-  font-size: 0.82em;
-  margin-top: 2px;
+  font-size: 0.85rem;
+  margin-top: 4px;
 }
 
 .landing-ahorros__cta {
   width: 100%;
-  max-width: 320px;
+  max-width: 340px;
 }
 
 /* ================================================================== */
-/* 4. NORMATIVA Y FACTURACIÓN FISCAL                                   */
+/* 4. SEGUROS                                                          */
 /* ================================================================== */
 .landing-seguros {
   background: #e7f5f3;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
 }
 
 .landing-seguros__imagen {
-  width: 100%;
-  max-width: 480px;
-  aspect-ratio: 4 / 3;
-  object-fit: contain;
-  margin: 0 auto;
+  min-height: 220px;
+  max-width: 560px;
 }
 
 .landing-seguros .btn-landing {
   width: 100%;
-  max-width: 320px;
+  max-width: 340px;
 }
 
 /* ================================================================== */
-/* 5. LOGÍSTICA Y DESPACHOS PRIORITARIOS                               */
+/* 5. DESPÍDETE DE LAS FILAS                                           */
 /* ================================================================== */
 .landing-envios {
   background: #fcebe5;
@@ -414,83 +422,78 @@
 
 .landing-envios__media {
   position: relative;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
 .landing-envios__imagen {
-  width: 100%;
-  max-width: 480px;
-  aspect-ratio: 4 / 3;
-  object-fit: contain;
-  margin: 0 auto;
+  min-height: 200px;
+  max-width: 560px;
 }
 
 .landing-envios__notificacion {
   position: absolute;
-  bottom: 44px;
+  bottom: 55px;
   left: 50%;
   transform: translateX(-50%);
   background: #ffffff;
   border-radius: 14px;
-  padding: 10px 16px;
+  padding: 12px 18px;
   box-shadow: 0 8px 24px rgba(26, 26, 58, 0.12);
   display: flex;
   align-items: center;
   gap: 10px;
   width: calc(100% - 40px);
-  max-width: 300px;
+  max-width: 320px;
 }
 
 .landing-envios__notificacion-icono {
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   background: var(--color-accent-light);
   color: var(--color-accent);
   flex-shrink: 0;
-  padding: 4px;
+  padding: 5px;
   box-sizing: border-box;
 }
 
 .landing-envios__notificacion strong {
   display: block;
-  font-size: 0.82em;
+  font-size: 0.88rem;
 }
 
 .landing-envios__notificacion span {
-  font-size: 0.7em;
+  font-size: 0.76rem;
   color: var(--color-text-muted);
 }
 
 .landing-envios__texto {
-  padding-top: 6px;
+  padding-top: 10px;
 }
 
 .landing-envios .btn-landing {
   width: 100%;
-  max-width: 320px;
-  margin-bottom: 12px;
+  max-width: 340px;
+  margin-bottom: 14px;
 }
 
 /* ================================================================== */
-/* 6. GESTIÓN MULTIUSUARIO                                             */
+/* 6. AYUDA CON MEDICAMENTOS                                           */
 /* ================================================================== */
 .landing-ayuda-meds {
   background: #eadeec;
 }
 
 .landing-ayuda-meds__imagen {
-  width: 100%;
-  max-width: 480px;
-  aspect-ratio: 4 / 3;
-  object-fit: contain;
-  margin: 0 auto 20px;
+  min-height: 220px;
+  max-width: 560px;
+  margin-bottom: 24px;
 }
 
 .landing-ayuda-meds .btn-landing {
   width: 100%;
-  max-width: 320px;
-  margin-bottom: 18px;
+  max-width: 340px;
+  margin-bottom: 20px;
 }
 
 .landing-ayuda-meds__nota {
@@ -503,12 +506,12 @@
 .landing-ayuda-meds__nota strong {
   display: block;
   color: var(--color-text);
-  font-size: 0.85em;
+  font-size: 0.92rem;
   margin-bottom: 4px;
 }
 
 .landing-ayuda-meds__nota p {
-  font-size: 0.8em;
+  font-size: 0.85rem;
   color: var(--color-text-muted);
   margin: 0;
 }
@@ -525,30 +528,27 @@
   background: #e5eee7;
   display: flex;
   flex-direction: column-reverse;
-  gap: 20px;
+  gap: 24px;
 }
 
 .landing-ayudarte__imagen {
-  width: 100%;
-  max-width: 480px;
-  aspect-ratio: 4 / 3;
-  object-fit: contain;
-  margin: 0 auto;
+  min-height: 220px;
+  max-width: 560px;
 }
 
 .landing-ayudarte__badges {
   display: flex;
-  gap: 14px;
-  margin-top: 14px;
+  gap: 16px;
+  margin-top: 16px;
 }
 
 /* ================================================================== */
-/* 8. CÓMO FUNCIONA                                                    */
+/* 8. HOW IT WORKS                                                    */
 /* ================================================================== */
 .landing-como-funciona {
   background: #fafafc;
   text-align: center;
-  padding: 32px 16px;
+  padding: 40px 20px;
 }
 
 .landing-video-link {
@@ -558,47 +558,58 @@
   color: var(--color-accent);
   text-decoration: none;
   font-weight: 700;
-  font-size: 0.9em;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
+}
+
+.landing-video-link__icono {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .landing-como-funciona__grid {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
+/* --- ESTILOS DE LA CARD "FLOTANTE" --- */
 .landing-como-funciona__card {
+  /* ELIMINAMOS background, border y border-radius para quitar la caja */
   background: transparent;
   border: none;
-  padding: 0 8px;
+  padding: 0 10px; /* Solo un poco de padding lateral por si es móvil */
   text-align: center;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: center; /* Centra todo perfectamente */
 }
 
 .landing-como-funciona__imagen {
+  height: 160px; /* Mantiene la altura, puedes subirla si la imagen se ve muy chica */
   width: auto;
-  max-width: 100%;
-  height: 130px;
-  margin-bottom: 14px;
-  object-fit: contain;
+  margin-bottom: 16px; /* Separación controlada con el título */
+  object-fit: contain; /* Evita que la ilustración se recorte o deforme */
 }
 
+/* --- TIPOGRAFÍA MÁS PEQUEÑA Y JUNTITA --- */
 .landing-como-funciona__titulo {
-  font-size: 1em;
-  color: #002f36;
-  margin: 0 0 6px 0;
+  font-size: 1.1rem; /* Letra más pequeña */
+  color: #002f36; /* Un tono oscuro sólido para resaltar */
+  margin: 0 0 6px 0; /* Solo 6px de separación hacia abajo (el texto) */
   font-weight: 700;
 }
 
 .landing-como-funciona__texto {
-  font-size: 0.85em;
-  color: #002f36;
+  font-size: 0.9rem; /* Letra más pequeña para la descripción */
+  color: #002f36; /* Quitamos el text-muted para que se vea más nítido como en la foto 1 */
   margin: 0;
-  line-height: 1.4;
-  max-width: 280px;
+  line-height: 1.4; /* Interlineado más apretado */
+  max-width: 290px; /* CLAVE: Limita el ancho del texto para que no se estire demasiado a los lados */
 }
-
 .landing-carrusel {
   display: flex;
   overflow-x: auto;
@@ -606,8 +617,8 @@
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   gap: 0;
-  margin: 0 -16px 14px;
-  padding: 0 16px;
+  margin: 0 -20px 16px;
+  padding: 0 20px;
 }
 
 .landing-carrusel::-webkit-scrollbar {
@@ -617,14 +628,14 @@
 .landing-carrusel__item {
   flex: 0 0 100%;
   scroll-snap-align: center;
-  padding-right: 10px;
+  padding-right: 12px;
 }
 
 .landing-carrusel__dots {
   display: flex;
   justify-content: center;
   gap: 8px;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .landing-carrusel__dot {
@@ -651,11 +662,12 @@
   text-align: center;
 }
 
+
 .landing-testimonios__card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 16px;
-  padding: 20px 18px;
+  border-radius: 18px;
+  padding: 24px 20px;
   text-align: center;
 }
 
@@ -663,21 +675,21 @@
   display: flex;
   justify-content: center;
   gap: 4px;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .landing-testimonios__card p {
   font-weight: 700;
-  font-size: 0.92em;
+  font-size: 1rem;
 }
 
 .landing-testimonios__card span {
-  font-size: 0.8em;
+  font-size: 0.85rem;
   color: var(--color-text-muted);
 }
 
 /* ================================================================== */
-/* 10. MÁS POR EXPLORAR                                                */
+/* 10. MORE TO EXPLORE                                                 */
 /* ================================================================== */
 .landing-explorar {
   background: var(--bg-menta);
@@ -685,34 +697,32 @@
 
 .landing-explorar__subtitulo {
   color: var(--color-text-muted);
-  max-width: 480px;
+  max-width: 520px;
 }
 
 .landing-explorar__grid {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 20px;
 }
 
 .landing-explorar__card {
   background: var(--color-surface);
-  border-radius: 16px;
+  border-radius: 18px;
   overflow: hidden;
 }
 
 .landing-explorar__card-imagen {
-  width: 100%;
-  aspect-ratio: 16 / 10;
-  object-fit: cover;
+  min-height: 200px;
   border-radius: 0;
 }
 
 .landing-explorar__card-texto {
-  padding: 18px;
+  padding: 20px;
 }
 
 /* ================================================================== */
-/* 11. FAQ                                                             */
+/* 11. FAQ                                                              */
 /* ================================================================== */
 .landing-faq {
   background: var(--color-surface);
@@ -734,9 +744,9 @@
   gap: 12px;
   background: none;
   border: none;
-  padding: 16px 0;
+  padding: 18px 0;
   text-align: left;
-  font-size: 0.92em;
+  font-size: 0.98rem;
   font-weight: 700;
   color: var(--color-text);
   cursor: pointer;
@@ -753,16 +763,15 @@
 }
 
 .landing-faq__respuesta {
-  padding: 0 0 16px;
-  font-size: 0.85em;
+  padding: 0 0 18px;
+  font-size: 0.9rem;
   color: var(--color-text-muted);
   line-height: 1.55;
 }
 
 .landing-faq__otras {
-  margin-top: 16px;
+  margin-top: 18px;
   font-weight: 700;
-  font-size: 0.9em;
 }
 
 .landing-faq__otras a {
@@ -783,7 +792,7 @@
 }
 
 .landing-cta-final .btn-landing {
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 /* ================================================================== */
@@ -791,49 +800,48 @@
 /* ================================================================== */
 .landing-footer {
   background: var(--color-surface);
-  padding: 36px 16px 48px;
+  padding: 44px 20px 60px;
   border-top: 1px solid var(--color-border);
 }
 
 .landing-footer__logo {
-  width: 140px;
-  height: 40px;
+  width: 160px;
+  height: 44px;
   min-height: 0;
-  margin-bottom: 18px;
-  object-fit: contain;
+  margin-bottom: 20px;
 }
 
 .landing-footer__nav {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-bottom: 22px;
+  margin-bottom: 24px;
 }
 
 .landing-footer__nav a {
   color: var(--color-accent);
   text-decoration: none;
   font-weight: 700;
-  font-size: 0.9em;
+  font-size: 0.95rem;
 }
 
 .landing-footer__badges {
   display: flex;
-  gap: 14px;
-  margin-bottom: 22px;
+  gap: 16px;
+  margin-bottom: 24px;
 }
 
 .landing-footer__direccion {
   color: var(--color-text-muted);
-  font-size: 0.82em;
+  font-size: 0.88rem;
 }
 
 .landing-footer__links {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 16px;
-  font-size: 0.82em;
+  margin-bottom: 18px;
+  font-size: 0.88rem;
   color: var(--color-text-muted);
 }
 
@@ -844,185 +852,64 @@
 }
 
 .landing-footer__legal {
-  font-size: 0.72em;
+  font-size: 0.78rem;
   color: var(--color-text-muted);
-  margin-top: 18px;
+  margin-top: 20px;
 }
 
-/* ==================================================================
-   RESPONSIVE: TABLET (≥768px)
-   Breakpoint que antes no existía — sin esto, tablet heredaba
-   directamente los tamaños de móvil estirados en una pantalla
-   mucho más ancha.
-   ================================================================== */
-@media (min-width: 768px) and (max-width: 1023px) {
+/* ================================================================== */
+/* RESPONSIVE: ESCRITORIO (≥1024px)                                    */
+/* ================================================================== */
+@media (min-width: 1024px) {
   .landing section {
-    padding: 44px 40px;
+    padding: 25px 60px;
   }
 
   .landing h1 {
-    font-size: 2em;
+    font-size: 2.9rem;
   }
 
   .landing h2 {
-    font-size: 1.6em;
+    font-size: 2.1rem;
   }
 
+  /* --- Hero: texto a la izquierda, imagen a la derecha --- */
   .landing-hero__contenido {
-    max-width: 620px;
+    flex-direction: row-reverse;
+    align-items: center;
+    text-align: center;
+    max-width: 1260px;
+    gap: 180px;
+  }
+
+  .landing-hero__contenido > *:not(.landing-hero__imagen) {
+    max-width: 550px;
   }
 
   .landing-hero__imagen {
-    max-width: 380px;
+    max-width: 520px;
+    margin-bottom: 0;
+    flex-shrink: 0;
+  }
+
+  .landing-hero .btn-landing,
+  .landing-hero .landing-link {
+    width: auto;
+  }
+
+  /* --- Beneficios: chips en fila --- */
+  .landing-beneficios {
+    max-width: 1160px;
+    margin: 0 auto;
   }
 
   .landing-beneficios__lista {
     flex-direction: row;
     flex-wrap: wrap;
-    justify-content: center;
-    gap: 24px;
   }
 
-  .landing-ahorros__grid {
-    flex-direction: row;
-  }
-
-  .landing-ahorros__card {
-    flex: 1;
-  }
-
-  .landing-seguros,
-  .landing-envios,
-  .landing-ayuda-meds,
-  .landing-ayudarte {
-    flex-direction: row;
-    align-items: center;
-    gap: 40px;
-  }
-
-  .landing-ayudarte {
-    flex-direction: row-reverse;
-  }
-
-  .landing-seguros__imagen,
-  .landing-envios__media,
-  .landing-ayuda-meds__imagen,
-  .landing-ayudarte__imagen {
-    flex: 1;
-    max-width: 340px;
-    margin: 0;
-  }
-
-  .landing-seguros__texto,
-  .landing-envios__texto,
-  .landing-ayuda-meds__texto,
-  .landing-ayudarte__texto {
-    flex: 1;
-  }
-
-  .landing-seguros .btn-landing,
-  .landing-envios .btn-landing,
-  .landing-ayuda-meds .btn-landing {
-    width: auto;
-  }
-
-  .landing-como-funciona__grid,
-  .landing-testimonios__grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 24px;
-    overflow: visible;
-    margin: 0 0 20px;
-    padding: 0;
-  }
-
-  .landing-carrusel__item {
-    padding-right: 0;
-  }
-
-  .landing-carrusel__dots {
-    display: none;
-  }
-
-  .landing-explorar__grid {
-    flex-direction: row;
-  }
-
-  .landing-explorar__card {
-    flex: 1;
-  }
-
-  .landing-footer__nav {
-    flex-direction: row;
-    gap: 22px;
-  }
-}
-
-/* ==================================================================
-   RESPONSIVE: DESKTOP (≥1024px)
-   ================================================================== */
-@media (min-width: 1024px) {
-  .landing section {
-    padding: 56px 60px;
-  }
-
-  .landing h1 {
-    font-size: 2.5em;
-  }
-
-  .landing h2 {
-    font-size: 1.85em;
-  }
-
-  /* --- Hero: texto a la izquierda, imagen a la derecha --- */
-  .landing-hero {
-    padding: 56px 60px;
-  }
-
-  .landing-hero__contenido {
-    flex-direction: row-reverse;
-    align-items: center;
-    text-align: left;
-    max-width: 1160px;
-    gap: 100px;
-  }
-
-  .landing-hero__texto {
-    align-items: flex-start;
-    text-align: left;
-    max-width: 520px;
-  }
-
-  .landing-hero__imagen {
-    max-width: 460px;
-    margin-bottom: 0;
-    flex-shrink: 0;
-  }
-
-  .landing-hero__acciones {
-    align-items: flex-start;
-  }
-
-  .landing-hero .btn-landing {
-    width: auto;
-    min-width: 200px;
-  }
-
-  /* --- Beneficios: en fila --- */
-  .landing-beneficios {
-    max-width: 1160px;
-    margin: 0 auto;
-    padding: 16px 60px;
-  }
-
-  .landing-beneficios__lista {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .landing-beneficios__item--enlace {
-    margin-left: auto;
+  .landing-beneficios__chip {
+    flex: 1 1 220px;
   }
 
   /* --- Ahorros: 3 columnas --- */
@@ -1046,19 +933,19 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    max-width: 1160px;
+    width: 100vw;
     margin: 0 auto;
     gap: 60px;
   }
 
   .landing-seguros__imagen {
     flex: 1;
-    max-width: 460px;
+    min-height: 320px;
   }
 
   .landing-seguros__texto {
     flex: 1;
-    max-width: 520px;
+    max-width: 600px;
   }
 
   .landing-seguros .btn-landing {
@@ -1071,25 +958,20 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    max-width: 1160px;
+    width: 100vw;
     margin: 0 auto;
     gap: 60px;
   }
 
   .landing-envios__media {
     flex: 1;
-    max-width: 460px;
     margin-bottom: 0;
-  }
-
-  .landing-envios__imagen {
-    max-width: 100%;
   }
 
   .landing-envios__texto {
     flex: 1;
     padding-top: 0;
-    max-width: 520px;
+    max-width: 600px;
   }
 
   .landing-envios .btn-landing {
@@ -1102,7 +984,7 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    max-width: 1160px;
+    width: 100vw;
     margin: 0 auto;
     gap: 60px;
   }
@@ -1110,12 +992,18 @@
   .landing-ayuda-meds__imagen {
     flex: 1;
     max-width: 420px;
+    min-height: 320px;
     margin-bottom: 0;
   }
 
+  .landing-envios__imagen {
+  min-height: 200px;
+  max-width: 420px;
+}
+
   .landing-ayuda-meds__texto {
     flex: 1;
-    max-width: 520px;
+    max-width: 600px;
   }
 
   .landing-ayuda-meds .btn-landing {
@@ -1127,37 +1015,56 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    max-width: 1160px;
+    width: 100vw;
     margin: 0 auto;
     gap: 60px;
   }
 
   .landing-ayudarte__texto {
     flex: 1;
-    max-width: 520px;
+    max-width: 600px;
   }
 
   .landing-ayudarte__imagen {
     flex: 1;
-    max-width: 460px;
+    min-height: 320px;
+    max-width: 560px;
   }
 
-  /* --- Cómo funciona: 3 columnas --- */
+  /* --- How it works: 3 columnas --- */
   .landing-como-funciona__grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 30px;
     max-width: 1160px;
-    margin: 0 auto 24px;
-    overflow: visible;
-    padding: 0;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .landing-como-funciona__card {
     flex: 1;
   }
 
-  .landing-carrusel__item {
+  /* --- Testimonios: 4 columnas --- */
+  .landing-testimonios__grid {
+    max-width: 1160px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .landing-testimonios__card {
+    flex: 1;
+  }
+
+    .landing-carrusel {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    overflow: visible;
+    margin: 0 auto 24px;
+    padding: 0;
+    justify-items: center;
+    align-items: start;
+  }
+
+    .landing-carrusel__item {
     flex: none;
     padding-right: 0;
     width: 100%;
@@ -1167,18 +1074,7 @@
     display: none;
   }
 
-  /* --- Testimonios: 4 columnas --- */
-  .landing-testimonios__grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-    max-width: 1160px;
-    margin: 0 auto;
-    overflow: visible;
-    padding: 0;
-  }
-
-  /* --- Más por explorar: 3 columnas --- */
+  /* --- More to explore: 2 columnas --- */
   .landing-explorar__grid {
     flex-direction: row;
     max-width: 1160px;
@@ -1194,7 +1090,7 @@
 
   /* --- FAQ y footer centrados con ancho máximo --- */
   .landing-faq {
-    max-width: 860px;
+    max-width: 900px;
     margin: 0 auto;
   }
 
@@ -1205,6 +1101,42 @@
 
   .landing-footer__nav {
     flex-direction: row;
-    gap: 26px;
+    gap: 28px;
+  }
+}
+
+/* Contenedor de texto del hero */
+.landing-hero__texto {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+}
+
+/* Contenedor de acciones/botones */
+.landing-hero__acciones {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  max-width: 340px;
+}
+
+/* Ajustes para desktop */
+@media (min-width: 1024px) {
+  .landing-hero__texto {
+    align-items: flex-start;
+    text-align: left;
+  }
+  
+  .landing-hero__acciones {
+    align-items: flex-start;
+  }
+  
+  .landing-hero .btn-landing {
+    width: auto;
+    min-width: 200px;
   }
 }
