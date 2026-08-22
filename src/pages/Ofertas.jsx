@@ -1,20 +1,28 @@
 import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
+import { Tabs } from '@chakra-ui/react'
 import api from '../api/axios'
-import ProductCard from '../components/ProductCard'
+import HeroCarrusel from '../components/HeroCarrusel'
+import OfertaCard from '../components/OfertaCard'
 import ProductCardSkeleton from '../components/Productcardskeleton'
+import SeccionesCarrusel from '../components/SeccionesCarrusel'
 import BottomNav from '../components/BottomNav'
 import './Ofertas.css'
 
-// NOTA: por ahora el único criterio es "producto.descuento_activo" (ya lo
-// calcula el backend con el sistema de descuentos). Cuando definamos cómo
-// se van a curar/destacar las ofertas (manual, por línea, etc.) ajustamos
-// este filtro — la estructura visual de la página ya queda lista.
+const PRODUCTOS_POR_FILA_MOVIL = 2
+const FILAS_GRID = 8
+const LIMITE_GRID = PRODUCTOS_POR_FILA_MOVIL * FILAS_GRID // 16
+
+// 🖼️ Espacio para las imágenes del hero — reemplaza este array por las
+// tuyas cuando las tengas (o cárgalas desde un endpoint más adelante).
+const HERO_SLIDES = []
+
 function Ofertas() {
   const [productos, setProductos] = useState([])
   const [tasaVes, setTasaVes] = useState(null)
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
+  const [orden, setOrden] = useState('todas') // 'todas' | 'descuento' | 'recientes' | 'vencer'
 
   useEffect(() => {
     async function cargarDatos() {
@@ -42,11 +50,52 @@ function Ofertas() {
     [productos]
   )
 
+  const productosOrdenados = useMemo(() => {
+    const copia = [...productosEnOferta]
+    switch (orden) {
+      case 'descuento':
+        return copia.sort((a, b) => {
+          const ahorroA = (a.precio_original_usd || 0) - (a.precio_usd || 0)
+          const ahorroB = (b.precio_original_usd || 0) - (b.precio_usd || 0)
+          return ahorroB - ahorroA
+        })
+      case 'recientes':
+        return copia.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+      case 'vencer':
+        return copia
+          .filter((p) => p.descuento_activo?.fecha_fin)
+          .sort((a, b) => new Date(a.descuento_activo.fecha_fin) - new Date(b.descuento_activo.fecha_fin))
+      default:
+        return copia
+    }
+  }, [productosEnOferta, orden])
+
+  const enGrid = productosOrdenados.slice(0, LIMITE_GRID)
+  const resto = productosOrdenados.slice(LIMITE_GRID)
+
+  const seccionesResto = useMemo(() => {
+    const mapa = new Map()
+    for (const p of resto) {
+      const clave = p.laboratorio || 'Más ofertas'
+      if (!mapa.has(clave)) mapa.set(clave, [])
+      mapa.get(clave).push(p)
+    }
+    return Array.from(mapa.entries())
+      .filter(([, items]) => items.length >= 2)
+      .map(([nombre, items]) => ({
+        id: nombre,
+        titulo: nombre,
+        verTodoTo: `/catalogo?laboratorio=${encodeURIComponent(nombre)}`,
+        productos: items,
+      }))
+  }, [resto])
+
   if (error) return <p className="ofertas-estado ofertas-error">{error}</p>
 
   return (
     <div className="ofertas-layout">
-      {/* Header */}
+      <HeroCarrusel slides={HERO_SLIDES} />
+
       <header className="ofertas-header">
         <div className="header-titles">
           <h1>
@@ -58,7 +107,6 @@ function Ofertas() {
         </div>
       </header>
 
-      {/* Banner promocional */}
       <section className="ofertas-banner">
         <div className="ofertas-banner__texto">
           <span className="ofertas-banner__eyebrow">Ofertas Carrisán</span>
@@ -71,23 +119,29 @@ function Ofertas() {
         </div>
       </section>
 
-      {/* Chips rápidos (estructura — sin lógica de filtrado todavía) */}
-      <div className="ofertas-chips">
-        <button type="button" className="ofertas-chip ofertas-chip--activo">Todas</button>
-        <button type="button" className="ofertas-chip">Mayor descuento</button>
-        <button type="button" className="ofertas-chip">Recién agregadas</button>
-        <button type="button" className="ofertas-chip">Por vencer</button>
-      </div>
+      <Tabs.Root
+        value={orden}
+        onValueChange={(e) => setOrden(e.value)}
+        variant="line"
+        colorPalette="blue"
+        className="ofertas-tabs"
+      >
+        <Tabs.List>
+          <Tabs.Trigger value="todas">Todas</Tabs.Trigger>
+          <Tabs.Trigger value="descuento">Mayor descuento</Tabs.Trigger>
+          <Tabs.Trigger value="recientes">Recién agregadas</Tabs.Trigger>
+          <Tabs.Trigger value="vencer">Por vencer</Tabs.Trigger>
+        </Tabs.List>
+      </Tabs.Root>
 
-      {/* Grid de productos */}
       <main className="ofertas-main">
         {cargando ? (
-          <div className="product-grid">
-            {Array.from({ length: 8 }).map((_, i) => (
+          <div className="oferta-grid">
+            {Array.from({ length: 16 }).map((_, i) => (
               <ProductCardSkeleton key={i} />
             ))}
           </div>
-        ) : productosEnOferta.length === 0 ? (
+        ) : productosOrdenados.length === 0 ? (
           <div className="ofertas-vacio">
             <span className="ofertas-vacio__icono">🏷️</span>
             <h3>Todavía no hay ofertas activas</h3>
@@ -95,13 +149,22 @@ function Ofertas() {
             <Link to="/catalogo" className="ofertas-vacio__cta">Ir al catálogo</Link>
           </div>
         ) : (
-          <div className="product-grid">
-            {productosEnOferta.map((producto) => (
-              <ProductCard key={producto.id} producto={producto} tasaVes={tasaVes} />
+          <div className="oferta-grid">
+            {enGrid.map((producto) => (
+              <OfertaCard key={producto.id} producto={producto} tasaVes={tasaVes} />
             ))}
           </div>
         )}
       </main>
+
+      {!cargando && seccionesResto.length > 0 && (
+        <SeccionesCarrusel
+          titulo="Más ofertas por marca"
+          secciones={seccionesResto}
+          tasaVes={tasaVes}
+        />
+      )}
+
       <BottomNav />
     </div>
   )
