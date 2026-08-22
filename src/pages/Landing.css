@@ -39,7 +39,7 @@
 }
 
 .landing h2 {
-  font-family: 'Source Serif 4', 'Quicksand', sans-serif;
+  font-family: 'Source Serif 4', 'Karla', sans-serif;
   font-size: 1.7rem;
   font-weight: 800;
   line-height: 1.15;
@@ -54,7 +54,7 @@
 }
 
 .landing p {
-  font-family: 'Quicksand', sans-serif;
+  font-family: 'Figtree', sans-serif;
   font-size: 0.95rem;
   line-height: 1.5;
   color: var(--color-text);
