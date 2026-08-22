@@ -377,8 +377,10 @@
 /* Redujimos la letra como pediste */
 .landing-ahorros__card-titulo {
   font-size: 1rem;
+  font-family: "Karla", "Figtree", 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
   font-weight: 700;
+  letter-spacing: -0.03rem;
 }
 
 .landing-ahorros__card-texto {
