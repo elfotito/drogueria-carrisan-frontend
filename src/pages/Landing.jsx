@@ -159,7 +159,7 @@ const TESTIMONIOS = [
   },
   { 
     texto: 'Mi proovedor de confianza, cumplen con mis requerimientos semi-urgentes y tengo la tranquilidad que todos los medicamentos son de calidad certificada.', 
-    autor: 'Dr.  Ulises O. — Medico Anestesiólogo especialista en Terapia del Dolor,' 
+    autor: 'Dr.  Ulises O. — Medico Anestesiólogo especialista en Terapia del Dolor' 
   },
   { 
     texto: 'Son mi primera opcion para ubicar lo que necesito, si no esta disponible igual tratan de conseguirlo, recomendados al 100%.', 
@@ -445,7 +445,7 @@ function Landing() {
       {/* 9. OPINIONES DE CLIENTES                                         */}
       {/* ================================================================ */}
       <section className="landing-testimonios">
-        <h2>Lo que dicen instituciones y médicos que confían en nosotros</h2>
+        <h2>Lo que dicen los médicos que confían en nosotros</h2>
         <Carrusel
           items={TESTIMONIOS}
           claseContenedor="landing-testimonios__grid"
