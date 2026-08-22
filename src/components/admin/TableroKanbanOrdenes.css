@@ -7,6 +7,19 @@
 
 .kanban-tablero {
   display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Fila superior: 'pedido_creado' sola, ancho completo, bandeja de
+   entrada — se lee horizontal como un listado, no como columna. */
+.kanban-fila--superior {
+  display: flex;
+}
+
+/* Fila inferior: 3 columnas parejas, el trabajo en curso. */
+.kanban-fila--inferior {
+  display: flex;
   gap: 1rem;
   overflow-x: auto;
   padding-bottom: 0.75rem;
@@ -21,6 +34,30 @@
   border-radius: var(--radius-lg);
   max-height: calc(100vh - 320px);
   min-height: 240px;
+}
+
+.kanban-columna--ancha {
+  flex: 1 1 100%;
+  max-height: none;
+  min-height: 0;
+}
+
+/* Cuerpo horizontal: las tarjetas de 'pedido_creado' se acomodan en
+   fila con scroll lateral propio, en vez de apilarse verticalmente. */
+.kanban-columna__cuerpo--horizontal {
+  flex-direction: row;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0 0.6rem 0.6rem;
+}
+
+.kanban-columna__cuerpo--horizontal .kanban-tarjeta {
+  flex: 0 0 220px;
+}
+
+.kanban-columna__cuerpo--horizontal .kanban-columna__vacio {
+  padding: 1rem;
+  white-space: nowrap;
 }
 
 .kanban-columna__cabecera {
@@ -168,6 +205,79 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* --- Módulo 'entregado' — resumen, no lista tarjetas --- */
+.kanban-entregado {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--surface);
+  border: 1px dashed var(--slate-200);
+  border-radius: var(--radius-lg);
+  padding: 0.9rem 1.1rem;
+  transition: background 0.12s ease, border-color 0.12s ease;
+}
+
+.kanban-entregado--sobre {
+  background: var(--blue-50);
+  border-color: var(--blue-100);
+  border-style: solid;
+}
+
+.kanban-entregado__punto {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.kanban-entregado__texto {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.kanban-entregado__titulo {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.kanban-entregado__ayuda {
+  font-size: 0.72rem;
+  color: var(--slate-500);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.kanban-entregado__stats {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-shrink: 0;
+}
+
+.kanban-entregado__cantidad {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--slate-500);
+  background: var(--slate-100);
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+}
+
+.kanban-entregado__total {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
 /* ============================================================
    Responsive — en móvil el tablero sigue siendo horizontal con
    scroll (es lo esperado de un Kanban), solo se angostan columnas
@@ -175,5 +285,13 @@
 @media (max-width: 640px) {
   .kanban-columna {
     flex-basis: 220px;
+  }
+
+  .kanban-entregado {
+    flex-wrap: wrap;
+  }
+
+  .kanban-entregado__ayuda {
+    white-space: normal;
   }
 }

@@ -1,5 +1,9 @@
-import { useMemo } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import './OrdenDetalleModal.css'
+
+// Estados en los que ya no tiene sentido editar productos — la orden
+// está cerrada (entregada) o muerta (cancelada).
+const ESTADOS_NO_EDITABLES = ['entregado', 'cancelado']
 
 // Mismos 4 estados operativos definidos en MisOrdenes.jsx — pagado/cancelado
 // no viven acá, se gestionan en Estado de Cuenta.
@@ -31,7 +35,80 @@ function formatUSD(valor) {
   })
 }
 
-function OrdenDetalleModal({ orden, onClose, onCambiarEstado, estados, estadoColores }) {
+function OrdenDetalleModal({ orden, onClose, onCambiarEstado, estados, estadoColores, onGuardarItems }) {
+  // Estado local de edición: mapa item.id -> cantidad. Solo se activa
+  // cuando el admin toca "Editar productos" — así la vista de lectura
+  // (cliente, u otras aperturas del modal) queda intacta por defecto.
+  const [editandoItems, setEditandoItems] = useState(false)
+  const [cantidadesEditadas, setCantidadesEditadas] = useState({})
+  const [guardandoItems, setGuardandoItems] = useState(false)
+
+  const itemsOrden = orden?.items || orden?.ordenes_items || orden?.productos || []
+
+  useEffect(() => {
+    // Al cambiar de orden (o al cancelar edición) resetea el borrador.
+    setEditandoItems(false)
+    setCantidadesEditadas({})
+  }, [orden?.id])
+
+  function iniciarEdicion() {
+    const inicial = {}
+    itemsOrden.forEach((item) => { inicial[item.id] = item.cantidad ?? 1 })
+    setCantidadesEditadas(inicial)
+    setEditandoItems(true)
+  }
+
+  function cancelarEdicion() {
+    setEditandoItems(false)
+    setCantidadesEditadas({})
+  }
+
+  function cambiarCantidad(itemId, delta) {
+    setCantidadesEditadas((prev) => {
+      const actual = prev[itemId] ?? 0
+      const nueva = Math.max(0, actual + delta)
+      return { ...prev, [itemId]: nueva }
+    })
+  }
+
+  function eliminarItem(itemId) {
+    setCantidadesEditadas((prev) => ({ ...prev, [itemId]: 0 }))
+  }
+
+  const hayCambios = useMemo(() => {
+    return itemsOrden.some((item) => (cantidadesEditadas[item.id] ?? item.cantidad) !== item.cantidad)
+  }, [itemsOrden, cantidadesEditadas])
+
+  const totalEditado = useMemo(() => {
+    return itemsOrden.reduce((sum, item) => {
+      const cantidad = cantidadesEditadas[item.id] ?? item.cantidad
+      const precio = item.precio || item.precio_unitario || 0
+      return sum + cantidad * precio
+    }, 0)
+  }, [itemsOrden, cantidadesEditadas])
+
+  async function guardarCambiosItems() {
+    if (!onGuardarItems) return
+    const payload = itemsOrden
+      .filter((item) => (cantidadesEditadas[item.id] ?? item.cantidad) !== item.cantidad)
+      .map((item) => ({ id: item.id, cantidad: cantidadesEditadas[item.id] ?? item.cantidad }))
+
+    if (payload.length === 0) return
+
+    try {
+      setGuardandoItems(true)
+      await onGuardarItems(orden.id, payload)
+      setEditandoItems(false)
+      setCantidadesEditadas({})
+    } catch (err) {
+      // El padre ya muestra el error (alert/toast) — acá solo evitamos
+      // que la UI quede colgada en "guardando".
+      console.error('Error al guardar ajuste de items:', err)
+    } finally {
+      setGuardandoItems(false)
+    }
+  }
+
   const envioDetalle = useMemo(() => {
     if (!orden) return null
 
@@ -82,7 +159,7 @@ function OrdenDetalleModal({ orden, onClose, onCambiarEstado, estados, estadoCol
   if (!orden) return null
 
   const estadoConfig = getEstadoConfig(orden.estado)
-  const items = orden.items || orden.productos || []
+  const items = itemsOrden
 
   return (
     <div className="odm-overlay" onClick={onClose}>
@@ -177,37 +254,104 @@ function OrdenDetalleModal({ orden, onClose, onCambiarEstado, estados, estadoCol
 
         {/* Productos */}
         <div className="odm-section">
-          <h3 className="odm-section-title">
-            <span className="odm-section-icon">🛒</span>
-            Productos ({items.length})
-          </h3>
-          <div className="odm-items">
-            {items.map((item, index) => (
-              <div key={item.id || index} className="odm-item">
-                <div className="odm-item-media">
-                  {item.foto_url || item.producto?.foto_url ? (
-                    <img
-                      src={item.foto_url || item.producto?.foto_url}
-                      alt={item.nombre || item.producto?.nombre_comercial}
-                    />
-                  ) : (
-                    <span className="odm-item-placeholder">📦</span>
-                  )}
-                </div>
-                <div className="odm-item-body">
-                  <p className="odm-item-nombre">
-                    {item.nombre || item.producto?.nombre_comercial || 'Producto'}
-                  </p>
-                  <p className="odm-item-cantidad">
-                    {item.cantidad || 1} × ${formatUSD(item.precio || item.precio_unitario || 0)}
-                  </p>
-                </div>
-                <p className="odm-item-subtotal">
-                  ${formatUSD((item.cantidad || 1) * (item.precio || item.precio_unitario || 0))}
-                </p>
-              </div>
-            ))}
+          <div className="odm-section-header-flex">
+            <h3 className="odm-section-title">
+              <span className="odm-section-icon">🛒</span>
+              Productos ({items.length})
+            </h3>
+            {onGuardarItems && !editandoItems && !ESTADOS_NO_EDITABLES.includes(orden.estado) && (
+              <button className="odm-editar-btn" onClick={iniciarEdicion}>
+                Editar productos
+              </button>
+            )}
           </div>
+          <div className="odm-items">
+            {items.map((item, index) => {
+              const cantidadMostrada = editandoItems
+                ? (cantidadesEditadas[item.id] ?? item.cantidad ?? 1)
+                : (item.cantidad || 1)
+              const eliminado = editandoItems && cantidadMostrada === 0
+              const precioUnit = item.precio || item.precio_unitario || 0
+
+              return (
+                <div key={item.id || index} className={`odm-item ${eliminado ? 'odm-item--eliminado' : ''}`}>
+                  <div className="odm-item-media">
+                    {item.foto_url || item.producto?.foto_url ? (
+                      <img
+                        src={item.foto_url || item.producto?.foto_url}
+                        alt={item.nombre || item.producto?.nombre_comercial}
+                      />
+                    ) : (
+                      <span className="odm-item-placeholder">📦</span>
+                    )}
+                  </div>
+                  <div className="odm-item-body">
+                    <p className="odm-item-nombre">
+                      {item.nombre || item.producto?.nombre_comercial || 'Producto'}
+                    </p>
+                    {!editandoItems ? (
+                      <p className="odm-item-cantidad">
+                        {cantidadMostrada} × ${formatUSD(precioUnit)}
+                      </p>
+                    ) : (
+                      <div className="odm-item-stepper">
+                        <button
+                          type="button"
+                          className="odm-stepper-btn"
+                          onClick={() => cambiarCantidad(item.id, -1)}
+                          disabled={cantidadMostrada === 0}
+                        >
+                          −
+                        </button>
+                        <span className="odm-stepper-valor">{cantidadMostrada}</span>
+                        <button
+                          type="button"
+                          className="odm-stepper-btn"
+                          onClick={() => cambiarCantidad(item.id, 1)}
+                        >
+                          +
+                        </button>
+                        <button
+                          type="button"
+                          className="odm-item-eliminar"
+                          onClick={() => eliminarItem(item.id)}
+                          title="Quitar producto"
+                        >
+                          🗑
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                  <p className="odm-item-subtotal">
+                    {eliminado ? 'Eliminado' : `$${formatUSD(cantidadMostrada * precioUnit)}`}
+                  </p>
+                </div>
+              )
+            })}
+          </div>
+
+          {editandoItems && (
+            <div className="odm-editar-acciones">
+              <span className="odm-editar-nuevo-total">
+                Nuevo total: <strong>${formatUSD(totalEditado)}</strong>
+              </span>
+              <div className="odm-editar-botones">
+                <button className="odm-btn-cancelar" onClick={cancelarEdicion} disabled={guardandoItems}>
+                  Cancelar
+                </button>
+                <button
+                  className="odm-btn-guardar"
+                  onClick={guardarCambiosItems}
+                  disabled={!hayCambios || guardandoItems}
+                >
+                  {guardandoItems ? 'Guardando…' : 'Guardar ajustes'}
+                </button>
+              </div>
+              <p className="odm-editar-ayuda">
+                El cliente recibirá una notificación con el detalle del ajuste y el nuevo total.
+              </p>
+            </div>
+          )}
         </div>
 
         <div className="odm-divider" />

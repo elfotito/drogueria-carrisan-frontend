@@ -285,6 +285,144 @@
   flex-shrink: 0;
 }
 
+/* ---------- Edición de productos (admin) ---------- */
+.odm-section-header-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.odm-editar-btn {
+  border: 1.5px solid var(--slate-200);
+  background: var(--surface);
+  color: var(--blue);
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.odm-editar-btn:hover {
+  border-color: var(--blue);
+  background: var(--blue-50);
+}
+
+.odm-item--eliminado {
+  opacity: 0.45;
+}
+
+.odm-item-stepper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.odm-stepper-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: 1.5px solid var(--slate-200);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 0.95rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.odm-stepper-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.odm-stepper-valor {
+  min-width: 20px;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--ink);
+}
+
+.odm-item-eliminar {
+  margin-left: 6px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+
+.odm-item-eliminar:hover {
+  opacity: 1;
+}
+
+.odm-editar-acciones {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--slate-200);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.odm-editar-nuevo-total {
+  font-size: 0.85rem;
+  color: var(--slate-500);
+}
+
+.odm-editar-nuevo-total strong {
+  color: var(--ink);
+  font-family: var(--font-display);
+}
+
+.odm-editar-botones {
+  display: flex;
+  gap: 8px;
+}
+
+.odm-btn-cancelar,
+.odm-btn-guardar {
+  flex: 1;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.odm-btn-cancelar {
+  border: 1.5px solid var(--slate-200);
+  background: var(--surface);
+  color: var(--slate-500);
+}
+
+.odm-btn-guardar {
+  border: none;
+  background: var(--blue);
+  color: #fff;
+}
+
+.odm-btn-guardar:disabled,
+.odm-btn-cancelar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.odm-editar-ayuda {
+  font-size: 0.72rem;
+  color: var(--slate-500);
+  margin: 0;
+}
+
 /* ---------- Totales ---------- */
 .odm-totales {
   display: flex;

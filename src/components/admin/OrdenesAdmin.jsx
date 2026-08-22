@@ -64,6 +64,18 @@ function OrdenesAdmin() {
     }
   }
 
+  async function handleGuardarItems(ordenId, items) {
+    try {
+      const { data } = await api.patch(`/orders/${ordenId}/items`, { items })
+      setOrdenes((prev) => prev.map((o) => (o.id === ordenId ? { ...o, ...data } : o)))
+      setOrdenSeleccionada((prev) => (prev && prev.id === ordenId ? { ...prev, ...data } : prev))
+    } catch (err) {
+      alert(err.response?.data?.error || 'No se pudo ajustar los productos de la orden')
+      console.error(err)
+      throw err
+    }
+  }
+
   async function handleEliminarOrden(ordenId) {
     try {
       await api.delete(`/orders/${ordenId}`)
@@ -587,6 +599,7 @@ function OrdenesAdmin() {
         onCambiarEstado={handleCambiarEstado}
         estados={ESTADOS}
         estadoColores={ESTADO_COLORES}
+        onGuardarItems={handleGuardarItems}
       />
 
       {/* Modal confirmar eliminación */}

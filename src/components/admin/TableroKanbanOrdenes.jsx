@@ -18,9 +18,22 @@ import './TableroKanbanOrdenes.css'
 // 'cancelado' no es una columna del tablero — cancelar una orden no
 // es un paso del flujo, es una acción aparte que ya vive en el modal
 // de detalle (igual que en las otras vistas).
+//
+// Layout en 2 filas (no todas las columnas pesan igual en el flujo):
+//   Fila 1: 'pedido_creado' sola, a ancho completo — es la bandeja de
+//           entrada, se lee horizontal como un listado.
+//   Fila 2: 'procesando' | 'preparando' | 'enviado' — el trabajo en
+//           curso, 3 columnas parejas donde tiene sentido comparar.
+//   Módulo aparte: 'entregado' es zona droppable (soltar ahí SÍ marca
+//           la orden como entregada) pero no lista tarjetas — es un
+//           estado terminal y acumularlas ahí no aporta nada al
+//           admin, solo ruido. Se muestra como contador/resumen.
 // ---------------------------------------------------------------
 
-const COLUMNAS = ['pedido_creado', 'procesando', 'preparando', 'enviado', 'entregado']
+const FILA_SUPERIOR = ['pedido_creado']
+const FILA_INFERIOR = ['procesando', 'preparando', 'enviado']
+const ESTADO_TERMINAL = 'entregado'
+const COLUMNAS = [...FILA_SUPERIOR, ...FILA_INFERIOR, ESTADO_TERMINAL]
 
 function formatUSD(valor) {
   return `$${Number(valor || 0).toFixed(2)}`
@@ -64,11 +77,11 @@ function TarjetaOrden({ orden, estadoColores, onAbrir }) {
   )
 }
 
-function ColumnaKanban({ estado, label, color, ordenes, estadoColores, onAbrir }) {
+function ColumnaKanban({ estado, label, color, ordenes, estadoColores, onAbrir, ancha }) {
   const { setNodeRef, isOver } = useDroppable({ id: estado })
 
   return (
-    <div className="kanban-columna">
+    <div className={`kanban-columna ${ancha ? 'kanban-columna--ancha' : ''}`}>
       <div className="kanban-columna__cabecera">
         <span className="kanban-columna__punto" style={{ background: color }} />
         <span className="kanban-columna__titulo">{label}</span>
@@ -76,7 +89,7 @@ function ColumnaKanban({ estado, label, color, ordenes, estadoColores, onAbrir }
       </div>
       <div
         ref={setNodeRef}
-        className={`kanban-columna__cuerpo ${isOver ? 'kanban-columna__cuerpo--sobre' : ''}`}
+        className={`kanban-columna__cuerpo ${ancha ? 'kanban-columna__cuerpo--horizontal' : ''} ${isOver ? 'kanban-columna__cuerpo--sobre' : ''}`}
       >
         {ordenes.length === 0 ? (
           <p className="kanban-columna__vacio">Sin órdenes</p>
@@ -85,6 +98,25 @@ function ColumnaKanban({ estado, label, color, ordenes, estadoColores, onAbrir }
             <TarjetaOrden key={orden.id} orden={orden} estadoColores={estadoColores} onAbrir={onAbrir} />
           ))
         )}
+      </div>
+    </div>
+  )
+}
+
+function ModuloEntregado({ estado, label, color, cantidad, totalUsd, isOver, setNodeRef }) {
+  return (
+    <div
+      ref={setNodeRef}
+      className={`kanban-entregado ${isOver ? 'kanban-entregado--sobre' : ''}`}
+    >
+      <span className="kanban-entregado__punto" style={{ background: color }} />
+      <div className="kanban-entregado__texto">
+        <span className="kanban-entregado__titulo">{label}</span>
+        <span className="kanban-entregado__ayuda">Soltá una orden acá para marcarla como entregada</span>
+      </div>
+      <div className="kanban-entregado__stats">
+        <span className="kanban-entregado__cantidad">{cantidad}</span>
+        <span className="kanban-entregado__total">{formatUSD(totalUsd)}</span>
       </div>
     </div>
   )
@@ -100,7 +132,7 @@ export default function TableroKanbanOrdenes({ ordenes, estadoColores, onCambiar
   )
 
   const columnas = useMemo(() => {
-    return COLUMNAS.map((estado) => ({
+    return [...FILA_SUPERIOR, ...FILA_INFERIOR].map((estado) => ({
       estado,
       label: estadoColores[estado]?.label || estado,
       color: estadoColores[estado]?.color,
@@ -109,6 +141,22 @@ export default function TableroKanbanOrdenes({ ordenes, estadoColores, onCambiar
         .sort((a, b) => new Date(b.created_at) - new Date(a.created_at)),
     }))
   }, [ordenes, estadoColores])
+
+  const columnasPorEstado = useMemo(() => {
+    const mapa = {}
+    columnas.forEach((col) => { mapa[col.estado] = col })
+    return mapa
+  }, [columnas])
+
+  const resumenEntregado = useMemo(() => {
+    const ordenesEntregadas = ordenes.filter((o) => o.estado === ESTADO_TERMINAL)
+    return {
+      cantidad: ordenesEntregadas.length,
+      totalUsd: ordenesEntregadas.reduce((sum, o) => sum + Number(o.total_usd || 0), 0),
+    }
+  }, [ordenes])
+
+  const { setNodeRef: setNodeRefEntregado, isOver: isOverEntregado } = useDroppable({ id: ESTADO_TERMINAL })
 
   function handleDragStart(event) {
     const orden = event.active.data.current?.orden
@@ -137,17 +185,44 @@ export default function TableroKanbanOrdenes({ ordenes, estadoColores, onCambiar
       onDragEnd={handleDragEnd}
     >
       <div className="kanban-tablero">
-        {columnas.map((col) => (
-          <ColumnaKanban
-            key={col.estado}
-            estado={col.estado}
-            label={col.label}
-            color={col.color}
-            ordenes={col.ordenes}
-            estadoColores={estadoColores}
-            onAbrir={onAbrirOrden}
-          />
-        ))}
+        <div className="kanban-fila kanban-fila--superior">
+          {FILA_SUPERIOR.map((estado) => (
+            <ColumnaKanban
+              key={estado}
+              estado={estado}
+              label={columnasPorEstado[estado].label}
+              color={columnasPorEstado[estado].color}
+              ordenes={columnasPorEstado[estado].ordenes}
+              estadoColores={estadoColores}
+              onAbrir={onAbrirOrden}
+              ancha
+            />
+          ))}
+        </div>
+
+        <div className="kanban-fila kanban-fila--inferior">
+          {FILA_INFERIOR.map((estado) => (
+            <ColumnaKanban
+              key={estado}
+              estado={estado}
+              label={columnasPorEstado[estado].label}
+              color={columnasPorEstado[estado].color}
+              ordenes={columnasPorEstado[estado].ordenes}
+              estadoColores={estadoColores}
+              onAbrir={onAbrirOrden}
+            />
+          ))}
+        </div>
+
+        <ModuloEntregado
+          estado={ESTADO_TERMINAL}
+          label={estadoColores[ESTADO_TERMINAL]?.label || 'Entregado'}
+          color={estadoColores[ESTADO_TERMINAL]?.color}
+          cantidad={resumenEntregado.cantidad}
+          totalUsd={resumenEntregado.totalUsd}
+          isOver={isOverEntregado}
+          setNodeRef={setNodeRefEntregado}
+        />
       </div>
 
       <DragOverlay>
