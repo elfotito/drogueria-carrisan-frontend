@@ -25,7 +25,7 @@ function OfertaCard({ producto, tasaVes }) {
   function handleAgregar(e) {
     e.stopPropagation()
     if (!user) return navigate('/login')
-    agregarAlCarrito(producto, 1)
+    AddItem(producto, 1)
     setAgregado(true)
     setTimeout(() => setAgregado(false), 1500)
   }
