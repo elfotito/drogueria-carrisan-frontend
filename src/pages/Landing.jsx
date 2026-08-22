@@ -239,7 +239,7 @@ function Landing() {
             
             <div className="landing-hero__acciones">
               <a href="#como-funciona" className="landing-link">¿Cómo funciona? ›</a>
-              <a href="#" className="enlace-seguridad">
+              <a href="/privacidad" className="enlace-seguridad">
                 <Lock size={14} className="enlace-seguridad__icono" />
                 <span className="enlace-seguridad__texto">
                   Tu información esta segura con nosotros. 

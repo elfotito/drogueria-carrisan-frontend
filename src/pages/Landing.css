@@ -47,13 +47,17 @@
   color: #1A1A3A;
 }
 
+
+
 .landing h3 {
+  font-family: 'Source Serif 4', 'Karla', sans-serif;
   font-size: 1.05rem;
   font-weight: 700;
   margin: 0 0 8px;
 }
 
 .landing p {
+  letter-spacing: -0.02em;
   font-family: 'Figtree', sans-serif;
   font-size: 0.95rem;
   line-height: 1.5;
@@ -323,6 +327,10 @@
 .landing-ahorros {
   background: var(--bg-rosado);
   text-align: center;
+  align-items: center;
+  align-content: center;
+  flex-direction: column;
+  display: flex;
 }
 
 .landing-ahorros__subtitulo {
