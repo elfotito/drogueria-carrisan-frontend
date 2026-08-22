@@ -48,6 +48,7 @@ import Requerimientos from './pages/Requerimientos'
 import Documentos from './pages/Documentos'
 import ChatCentro from './pages/Chat'
 import SubUsuarios from'./pages/SubUsuarios'
+import SubUsuarios from'./pages/Presupuestos'
 
 
 function LoadingBarBridge() {
@@ -99,12 +100,13 @@ function App() {
                 <Route path="/estado-cuenta/facturas" element={<PrivateRouteSensible><FacturasEstadoCuenta /></PrivateRouteSensible>} />
                 <Route path="/estado-cuenta/reportes" element={<PrivateRouteSensible><ReportesEstadoCuenta /></PrivateRouteSensible>} />
                 <Route path="/estado-cuenta/ampliacion" element={<PrivateRouteSensible><AmpliacionEstadoCuenta /></PrivateRouteSensible>} />
-<Route path="/mis-solicitudes/cotizaciones" element={<PrivateRoute><Cotizaciones /></PrivateRoute>} />
-<Route path="/mis-solicitudes/requerimientos" element={<PrivateRoute><Requerimientos /></PrivateRoute>} />
-<Route path="/mis-solicitudes/documentos" element={<PrivateRoute><Documentos /></PrivateRoute>} />
-<Route path="/chat" element={<ChatCentro />} />
-<Route path="/chat/orden/:ordenId" element={<ChatCentro />} />
-<Route path="/subusuarios" element={<SubUsuarios />} />
+                <Route path="/mis-solicitudes/cotizaciones" element={<PrivateRoute><Cotizaciones /></PrivateRoute>} />
+                <Route path="/mis-solicitudes/requerimientos" element={<PrivateRoute><Requerimientos /></PrivateRoute>} />
+                <Route path="/mis-solicitudes/documentos" element={<PrivateRoute><Documentos /></PrivateRoute>} />
+                <Route path="/chat" element={<ChatCentro />} />
+                <Route path="/chat/orden/:ordenId" element={<ChatCentro />} />
+                <Route path="/subusuarios" element={<SubUsuarios />} />
+                <Route path="/presupuestos" element={<Presupuestos />} />
               </Routes>
             </LoadingBarProvider>
           </EnvioProvider>

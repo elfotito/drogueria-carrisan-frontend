@@ -18,13 +18,14 @@
 // página principal de esa sección — igual al "Browse Departments /
 // See all" de Walmart.
 // ---------------------------------------------------------------
-import { Package, Wallet, CreditCard, Settings, MapPin, Star, Bell, HelpCircle, MessageCircle, FileQuestion } from 'lucide-react'
+import { Package, Wallet, CreditCard, Settings, MapPin, Star, Bell, HelpCircle, MessageCircle, FileQuestion, ClipboardList } from 'lucide-react'
 
 export const NAV_PAGINAS_PRINCIPALES = [
   {
     titulo: 'Mi actividad',
     items: [
       { id: 'ordenes', to: '/orders', icono: Package, texto: 'Mis órdenes' },
+      { id: 'presupuesto', to: '/presupuesto', icono: ClipboardList, texto: 'Presupuesto' },
       { id: 'estado-cuenta', to: '/estado-cuenta', icono: Wallet, texto: 'Estado de cuenta' },
       { id: 'pagos', to: '/pagos', icono: CreditCard, texto: 'Pagos' },
     ],

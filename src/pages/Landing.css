@@ -32,7 +32,7 @@
   --bg-durazno: #fdefe8;
 
   font-size: 16px; /* ancla fija — ver nota arriba */
-  font-family: 'Quicksand', system-ui, sans-serif;
+  font-family: 'figtree', system-ui, sans-serif;
   color: var(--color-text);
   background: var(--color-surface);
   overflow-x: hidden;
@@ -67,7 +67,7 @@
 }
 
 .landing p {
-  font-family: 'Quicksand', sans-serif;
+  font-family: 'Karla', sans-serif;
   font-size: 0.9em;
   line-height: 1.5;
   color: var(--color-text);
@@ -86,6 +86,7 @@
   width: 100%;
   height: auto;
   display: block;
+  max-width: 520px;
 }
 
 /* --- Placeholder de imagen genérico --- */
