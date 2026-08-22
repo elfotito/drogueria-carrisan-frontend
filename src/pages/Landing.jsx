@@ -328,8 +328,8 @@ function Landing() {
         <div className="landing-envios__texto">
           <h2>Cero interrupciones en tu cadena de suministro</h2>
           <p>Entregamos tus medicamentos e insumos quirúrgicos directamente en la puerta de tu clínica o farmacia, con tiempos de respuesta prioritarios para urgencias médicas.</p>
-          <a href="#" className="btn-landing btn-landing--primario">Crear Cuenta B2B</a>
-          <a href="#" className="landing-link">¿Necesitas un despacho de emergencia?</a>
+          <a href="#" className="btn-landing btn-landing--primario">Ver condiciones para los envios</a>
+          <a href="#" className="landing-link">¿Necesitas un despacho rapido?</a>
         </div>
         <div>
         <div className="landing-envios__media">
@@ -363,14 +363,16 @@ function Landing() {
                     />
         <div className="landing-ayuda-meds__texto">
           <span className="landing-badge">NUEVO B2B</span>
-          <h2>Gestión en una sola cuenta para tu equipo</h2>
-          <p>Permite que tu farmacéutico regente, jefe de compras o departamento de administración gestionen solicitudes, aprueben órdenes y descarguen facturas desde una misma cuenta corporativa.</p>
+          <h2>Gestión en una sola cuenta para tu equipo medico</h2>
+          <p>Permite que tu farmacéutico regente, jefe de compras o departamento de administración gestionen presupuestos, aprueben órdenes y descarguen reportes desde una misma cuenta corporativa.</p>
           <a href="#" className="btn-landing btn-landing--primario">Configurar cuenta institucional</a>
           <div className="landing-ayuda-meds__nota">
             <HeartHandshake size={22} />
             <div>
               <strong>¿Gestionas una red de farmacias o grupo médico?</strong>
-              <p>Consolida el abastecimiento de múltiples sedes con atención personalizada. <a href="#">Hablar con un asesor de cuentas</a>.</p>
+              <p>Consolida el abastecimiento de múltiples sedes con atención personalizada.
+                <br /> 
+              <a href="#">Hablar con un asesor de cuentas</a>.</p>
             </div>
           </div>
         </div>
@@ -382,7 +384,7 @@ function Landing() {
       <section className="landing-ayudarte">
         <div className="landing-ayudarte__texto">
           <h2>Asesoría técnica y respaldo comercial</h2>
-          <p>Nuestro equipo de regentes farmacéuticos y especialistas B2B verifica la calidad y trazabilidad de cada despacho. ¿Necesitas un requerimiento especial para tu quirófano o farmacia? Contáctanos directamente.</p>
+          <p>Nuestro equipo cuenta con años de experiencia en el sector salud, siempre buscando verificar la calidad y trazabilidad de cada despacho. ¿Necesitas un requerimiento especial para tu quirófano? Contáctanos directamente.</p>
           <div className="landing-ayudarte__badges">
             <ImagePlaceholder label="P" className="landing-badge-img" />
             <ImagePlaceholder label="B2B" className="landing-badge-img" />

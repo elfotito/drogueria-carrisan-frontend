@@ -413,7 +413,7 @@
 
 .landing-seguros__imagen {
   min-height: 220px;
-  max-width: 560px;
+  max-width: 420px;
 }
 
 .landing-seguros .btn-landing {
@@ -498,7 +498,7 @@
 
 .landing-ayuda-meds__imagen {
   min-height: 220px;
-  max-width: 560px;
+  max-width: 480px;
   margin-bottom: 24px;
 }
 
@@ -609,19 +609,23 @@
 
 /* --- TIPOGRAFÍA MÁS PEQUEÑA Y JUNTITA --- */
 .landing-como-funciona__titulo {
-  font-size: 1.1rem; /* Letra más pequeña */
-  color: #002f36; /* Un tono oscuro sólido para resaltar */
-  margin: 0 0 6px 0; /* Solo 6px de separación hacia abajo (el texto) */
-  font-weight: 700;
+  color: #002f36 !important;
+  margin: 0 0 8px !important;
+  font-family: "Karla", sans-serif !important;
+  font-size: 1.05rem !important;
+  font-weight: 500 !important;
 }
 
 .landing-como-funciona__texto {
-  font-size: 0.9rem; /* Letra más pequeña para la descripción */
-  color: #002f36; /* Quitamos el text-muted para que se vea más nítido como en la foto 1 */
-  margin: 0;
-  line-height: 1.4; /* Interlineado más apretado */
-  max-width: 290px; /* CLAVE: Limita el ancho del texto para que no se estire demasiado a los lados */
+  line-height: 1.3 !important;
+  max-width: 290px !important;
+  letter-spacing: -0.02em !important;
+  font-family: 'Figtree', sans-serif !important;
+  font-size: 1.1rem !important;
+  color: var(--color-text) !important;
+  margin: 0 0 14px !important;
 }
+
 .landing-carrusel {
   display: flex;
   overflow-x: auto;
@@ -640,7 +644,6 @@
 .landing-carrusel__item {
   flex: 0 0 100%;
   scroll-snap-align: center;
-  padding-right: 12px;
 }
 
 .landing-carrusel__dots {
@@ -705,7 +708,12 @@
 /* ================================================================== */
 .landing-explorar {
   background: var(--bg-menta);
+  text-align: center;
+  align-items: center;
+  flex-direction: column;
+  display: flex;
 }
+
 
 .landing-explorar__subtitulo {
   color: var(--color-text-muted);
