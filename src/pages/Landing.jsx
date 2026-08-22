@@ -22,6 +22,9 @@ import './Landing.css'
     victor: `${BASE_URL}/victor.png?width=800&quality=60`,
     tratohecho: `${BASE_URL}/financiamiento.png?width=400&quality=40&format=webp`,
     lineahospitalariaa: `${BASE_URL}/lineahospitalariaa.png?width=400&quality=40&format=webp`,
+    sacs: `${BASE_URL}/sacs.png?width=400&quality=40&format=webp`,
+    farmapatria: `${BASE_URL}/farmapatria.gif?width=400&quality=40&format=webp`,
+
   }
 
   const img = (path, width = 800) => {
@@ -386,8 +389,8 @@ function Landing() {
           <h2>Asesoría técnica y respaldo comercial</h2>
           <p>Nuestro equipo cuenta con años de experiencia en el sector salud, siempre buscando verificar la calidad y trazabilidad de cada despacho. ¿Necesitas un requerimiento especial para tu quirófano? Contáctanos directamente.</p>
           <div className="landing-ayudarte__badges">
-            <ImagePlaceholder label="P" className="landing-badge-img" />
-            <ImagePlaceholder label="B2B" className="landing-badge-img" />
+            <img src={urls.sacs} alt="sacs" className="landing-badge-img" />
+            <img src={urls.farmapatria} alt="farmapatria" className="landing-badge-img" />
           </div>
         </div>
                     <img 
