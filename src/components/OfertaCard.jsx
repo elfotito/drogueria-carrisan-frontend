@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Plus, Check } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
-import { useCarrito } from '../context/CartContext'
+import { useCart } from '../context/CartContext'
 import { getEstadoProducto } from '../utils/productoEstado'
 import './OfertaCard.css'
  
@@ -25,7 +25,7 @@ function OfertaCard({ producto, tasaVes }) {
   function handleAgregar(e) {
     e.stopPropagation()
     if (!user) return navigate('/login')
-    AddItem(producto, 1)
+    addItem(producto, 1)
     setAgregado(true)
     setTimeout(() => setAgregado(false), 1500)
   }
