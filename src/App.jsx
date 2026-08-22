@@ -48,7 +48,7 @@ import Requerimientos from './pages/Requerimientos'
 import Documentos from './pages/Documentos'
 import ChatCentro from './pages/Chat'
 import SubUsuarios from'./pages/SubUsuarios'
-import SubUsuarios from'./pages/Presupuesto'
+import Presupuesto from'./pages/Presupuesto'
 
 
 function LoadingBarBridge() {
