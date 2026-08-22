@@ -164,8 +164,7 @@
 }
 
 .landing-badge-img {
-  width: 90px;
-  height: 90px;
+  height: 65px;
   min-height: 0;
   border-radius: 12px;
 }
@@ -616,13 +615,13 @@
   font-family: "Karla", sans-serif !important;
   font-size: 1.1rem !important;
   font-weight: 500 !important;
-  letter-spacing: -0.06rem;
+  letter-spacing: -0.03rem;
 }
 
 .landing-como-funciona__texto {
   line-height: 1.3 !important;
   max-width: 290px !important;
-  letter-spacing: -0.06em !important;
+  letter-spacing: -0.03em !important;
   font-family: 'Figtree', sans-serif !important;
   font-size: 0.9rem !important;
   color: var(--color-text) !important;
@@ -697,7 +696,7 @@
 }
 
 .landing-testimonios__card p {
-  font-weight: 700;
+  font-weight: 600;
   font-size: 1rem;
 }
 
@@ -1089,7 +1088,6 @@
 
     .landing-carrusel__item {
     flex: none;
-    padding-right: 0;
     width: 100%;
   }
 

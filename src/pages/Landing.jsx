@@ -146,20 +146,28 @@ const PASOS = [
 
 const TESTIMONIOS = [
   { 
-    texto: 'El crédito a 7 días transformó nuestro flujo de caja. Ahora podemos mantener los anaqueles llenos y vender el producto antes de pagar la factura.', 
-    autor: 'Dra. Elena R. — Propietaria de Farmacia' 
+    texto: 'Consigo desde medicamentos de alta rotación hasta la línea hospitalaria para mi especialidad, ¡Consiguen de todo! y siempre con despacho puntual.', 
+    autor: 'Dra. Marina A. — Medico Anestesiólogo' 
   },
   { 
-    texto: 'Consultar el inventario disponible en tiempo real y hacer pedidos a cualquier hora eliminó las esperas por cotizaciones en WhatsApp. Ganamos semanas de trabajo.', 
-    autor: 'Lic. Marcos T. — Administración de Centro Médico' 
+    texto: 'Me olvide de estar dando vueltas buscando los insumos descartables, con ellos mantengo todo en orden y llevo mis cuentas al dia con los costos. ¡Unos Genios!.', 
+    autor: 'Lic. Nathalie B. — Bioanalista' 
   },
   { 
-    texto: 'Poder pedir exactamente las ampollas y la insumos que necesito para mis cirugías sin la presión de un volumen mínimo es una ventaja enorme.', 
-    autor: 'Dr. Gustavo M. — Cirujano General' 
+    texto: 'Tienen los medicamentos que necesito para mis estudios y estan atentos de siempre tenerlos disponibles, una atencion personalizada fantastica.', 
+    autor: 'Dr. Enrique B. — Medico Cardiólogo, Internista e Intensivista' 
   },
   { 
-    texto: 'Consolidamos nuestras compras en un solo lugar. Conseguimos desde medicamentos de alta rotación hasta la línea hospitalaria, siempre con despacho puntual.', 
-    autor: 'Dra. Carmen S. — Directora de Clínica' 
+    texto: 'Mi proovedor de confianza, cumplen con mis requerimientos semi-urgentes y tengo la tranquilidad que todos los medicamentos son de calidad certificada.', 
+    autor: 'Dr.  Ulises O. — Medico Anestesiólogo especialista en Terapia del Dolor,' 
+  },
+  { 
+    texto: 'Son mi primera opcion para ubicar lo que necesito, si no esta disponible igual tratan de conseguirlo, recomendados al 100%.', 
+    autor: 'Dr. Leopoldo F. — Medico Internista especialista en ecodoppler vascular' 
+  },
+  { 
+    texto: 'Es el único proveedor que nos da certeza en compras de último momento. Sabemos que, si algo no está disponible, nos ofrecen opciones', 
+    autor: 'Dr. Daniel C. — Gastroenterólogo' 
   },
 ]
 const MAS_EXPLORAR = [
