@@ -205,6 +205,7 @@ function ImagenPlaceholder({ alto = 220, texto = 'Imagen próximamente' }) {
 // Página principal
 // ---------------------------------------------------------
 function Ayuda() {
+  const [modalKey, setModalKey] = useState(null)
   const [categoriaActiva, setCategoriaActiva] = useState('pedido')
   const [busqueda, setBusqueda] = useState('')
 
