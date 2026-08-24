@@ -4,6 +4,24 @@ import {
   Check, ChevronDown, Star, HeartHandshake, Lock,
 } from 'lucide-react'
 import './Landing.css'
+import InfoModal from './InfoModal'
+// Importaciones de los archivos de datos
+import beneficios from '../data/beneficios'
+import catalogoUnitarioIntegral from '../data/catalogoUnitarioIntegral'
+import descuentoVolumenEscala from '../data/descuentoVolumenEscala'
+import financiamiento from '../data/financiamiento'
+import preciosDirectoDistribucion from '../data/preciosDirectoDistribucion'
+import cadenaSuministrosSinInterrupciones from '../data/cadenaSuministrosSinInterrupciones'
+import gestionUnaSolaCuentaEquipo from '../data/gestionUnaSolaCuentaEquipo'
+import lineaHospitalarialInsumosQuirurgicos from '../data/lineaHospitalarialInsumosQuirurgicos'
+import logisticaAgilMultiplesDirecciones from '../data/logisticaAgilMultiplesDirecciones'
+import comoFuncionaLaPlataforma from '../data/comoFuncionaLaPlataforma'
+import ayudaData from '../data/ayudaData'
+import faqData from '../data/faqData'
+import recaudosCuentaB2B from '../data/recaudosCuentaB2B'
+import profesionesSalud from '../data/profesionesSalud'
+import tiposInstitucion from '../data/tiposInstitucion'
+import estadosCiudades from '../data/estadosCiudades'
 
 
   const BASE_URL = 'https://fqeshthtycmzgyibiurq.supabase.co/storage/v1/object/public/crsnimages'
@@ -110,18 +128,21 @@ const AHORROS = [
     texto: 'Reduce tu costo por unidad al comprar por empaque cerrado o bulto. Mientras más consolides, mejor es tu margen.',
     link: 'Ver escalas de precio',
     imagen: urls.descuento,
+    data: descuentoVolumenEscala,
   },
   {
     titulo: 'Financiamiento B2B a 7 Días',
     texto: 'Ahorra en costo de oportunidad: recibe tu inventario hoy, genera ingresos con tus pacientes y paga a los 7 días sin intereses.',
     link: 'Más información sobre el crédito',
     imagen: urls.financiamiento,
+    data: financiamiento,
   }, 
   {
     titulo: 'Precios Directos de Distribución',
     texto: 'Sin intermediarios. Accede a precios especiales de origen y ofertas semanales en líneas comerciales y hospitalarias seleccionadas.',
     link: 'Ver ofertas del mes',
     imagen: urls.precios,
+    data: preciosDirectoDistribucion,
   },
 ]
 
@@ -131,18 +152,21 @@ const PASOS = [
     titulo: 'Crea tu Cuenta B2B',
     texto: 'Un proceso 100% gratuito y rápido. Vincula tu farmacia, clínica o consultorio para habilitar tus precios preferenciales de distribución.',
     imagen: urls.registrate,
+    data: recaudosCuentaB2B,
   },
   {
     numero: 2,
     titulo: 'Arma tu Pedido en Tiempo Real',
     texto: 'Explora el catálogo comercial y hospitalario, consulta el inventario disponible al instante y genera tu orden a cualquier hora.',
     imagen: urls.pedidoenlinea,
+    data: catalogoUnitarioIntegral,
   },
   {
     numero: 3,
     titulo: 'Recibe tus insumos',
     texto: 'Despachamos de forma prioritaria directo a tu establecimiento para que utilices tu mercancía y gestiones tu pago.',
     imagen: urls.recibe,
+    data: logisticaAgilMultiplesDirecciones,
   },
 ]
 
@@ -172,21 +196,25 @@ const TESTIMONIOS = [
     autor: 'Dr. Leopoldo F. — Medico Internista especialista en ecodoppler vascular' 
   },
 ]
+
 const MAS_EXPLORAR = [
   {
     titulo: 'Línea Quirúrgica y Hospitalaria',
     texto: 'Accede a un catálogo especializado en anestesia, fluidoterapia y material médico-quirúrgico para clínicas y centros médicos.',
     imagen: urls.lineahospitalariaa,
+    data: lineaHospitalarialInsumosQuirurgicos,
   },
   {
     titulo: 'Programa de Crédito B2B',
     texto: 'Obtén financiamiento a 7 días diseñado para respaldar el flujo de caja de pequeñas empresas y médicos independientes.',
     imagen: urls.tratohecho,
+    data: financiamiento,
   },
   {
     titulo: 'Gestion de Entregas personalizadas',
     texto: 'Atención prioritaria y logística ágil para reposición inmediata de insumos a distintas direcciones de la ciudad',
     imagen: urls.deliverydc,
+    data: logisticaAgilMultiplesDirecciones,
   },
 ]
 
@@ -194,28 +222,35 @@ const FAQS = [
   {
     pregunta: '¿Qué requisitos necesito para abrir una cuenta B2B?',
     respuesta: 'Solo necesitas el RIF comercial o profesional, copia de la cédula del representante legal, y el registro o permiso sanitario correspondiente (SACS) para validar tu establecimiento.',
+    data: recaudosCuentaB2B,
   },
   { 
     pregunta: '¿Cómo puedo consultar precios y disponibilidad de inventario?', 
-    respuesta: 'Al iniciar sesión en nuestro portal, tendrás acceso inmediato a precios actualizados en tiempo real y tu pedido sera confirmado con las cantidades disponibles en cuestion de minutos' 
+    respuesta: 'Al iniciar sesión en nuestro portal, tendrás acceso inmediato a precios actualizados en tiempo real y tu pedido sera confirmado con las cantidades disponibles en cuestion de minutos',
+    data: catalogoUnitarioIntegral,
   },
   { 
     pregunta: '¿Cómo funciona el crédito a 7 días y quiénes aplican?', 
-    respuesta: 'Es una facilidad otorgada a pequeñas farmacias, clínicas y médicos registrados. Te despachamos el pedido de inmediato y dispones de 7 días continuos para liquidar tu orden' 
+    respuesta: 'Es una facilidad otorgada a pequeñas farmacias, clínicas y médicos registrados. Te despachamos el pedido de inmediato y dispones de 7 días continuos para liquidar tu orden',
+    data: financiamiento,
   },
   { 
     pregunta: '¿Existe un monto mínimo o volumen exigido para comprar?', 
-    respuesta: 'No. Nos adaptamos a tu escala operativa real: puedes solicitar desde unidades o empaques individuales hasta bultos cerrados sin penalizaciones por volumen.' 
+    respuesta: 'No. Nos adaptamos a tu escala operativa real: puedes solicitar desde unidades o empaques individuales hasta bultos cerrados sin penalizaciones por volumen.',
+    data: descuentoVolumenEscala,
   },
   { 
     pregunta: '¿A qué zonas despachan y cuáles son los tiempos de entrega?', 
-    respuesta: 'Contamos con cobertura de despacho en Valencia y ciudades aledañas. Los despachos nacionales se envian entre 24 horas a la agencia de envios de su preferencia.' 
+    respuesta: 'Contamos con cobertura de despacho en Valencia y ciudades aledañas. Los despachos nacionales se envian entre 24 horas a la agencia de envios de su preferencia.',
+    data: estadosCiudades,
   },
 ]
 
 
-function FaqItem({ pregunta, respuesta }) {
+function FaqItem({ pregunta, respuesta, data }) {
   const [abierto, setAbierto] = useState(false)
+  const [modalAbierto, setModalAbierto] = useState(false)
+  
   return (
     <div className="landing-faq__item">
       <button
@@ -228,13 +263,40 @@ function FaqItem({ pregunta, respuesta }) {
         <ChevronDown size={20} className={abierto ? 'landing-faq__chevron landing-faq__chevron--abierto' : 'landing-faq__chevron'} />
       </button>
       {abierto && respuesta && (
-        <div className="landing-faq__respuesta">{respuesta}</div>
+        <div className="landing-faq__respuesta">
+          {respuesta}
+          {data && (
+            <button
+              type="button"
+              className="landing-link"
+              onClick={() => setModalAbierto(true)}
+            >
+              Ver más información ›
+            </button>
+          )}
+        </div>
       )}
+      
+      <InfoModal
+        abierto={modalAbierto}
+        onCerrar={() => setModalAbierto(false)}
+        data={data}
+      />
     </div>
   )
 }
 
 function Landing() {
+  const [modalInfo, setModalInfo] = useState(null)
+
+  const abrirModal = (data) => {
+    setModalInfo(data)
+  }
+
+  const cerrarModal = () => {
+    setModalInfo(null)
+  }
+
   return (
     <div className="landing">
 
@@ -252,7 +314,13 @@ function Landing() {
             
             <div className="landing-hero__acciones">
               <a href="#como-funciona" className="landing-link">¿Cómo funciona? ›</a>
-              <a href="/privacidad" className="enlace-seguridad">
+              <a href="#" 
+                 className="enlace-seguridad"
+                 onClick={(e) => {
+                   e.preventDefault()
+                   abrirModal(ayudaData)
+                 }}
+              >
                 <Lock size={14} className="enlace-seguridad__icono" />
                 <span className="enlace-seguridad__texto">
                   Tu información esta segura con nosotros. 
@@ -281,7 +349,13 @@ function Landing() {
           
           
           <li className="landing-beneficios__item landing-beneficios__item--enlace">
-            <a href="#" className="landing-link">Ver todos los beneficios +</a>
+            <a href="#" 
+               className="landing-link"
+               onClick={(e) => {
+                 e.preventDefault()
+                 abrirModal(beneficios)
+               }}
+            >Ver todos los beneficios +</a>
           </li>
         </ul>
       </section>
@@ -306,17 +380,28 @@ function Landing() {
               <div className="landing-ahorros__card-content">
           <h3 className="landing-ahorros__card-titulo">{item.titulo}</h3>
           <p className="landing-ahorros__card-texto">{item.texto}</p>
-          <a href="#" className="landing-link">{item.link} ›</a>
+          <a href="#" 
+             className="landing-link"
+             onClick={(e) => {
+               e.preventDefault()
+               abrirModal(item.data)
+             }}
+          >{item.link} ›</a>
         </div>
         </div>
           ))}
         </div>
-        <a href="#" className="btn-landing btn-landing--outline landing-ahorros__cta">
+        <a href="#" 
+           className="btn-landing btn-landing--outline landing-ahorros__cta"
+           onClick={(e) => {
+             e.preventDefault()
+             abrirModal(descuentoVolumenEscala)
+           }}
+        >
           Explora nuestros descuentos
         </a>
       </section>
 
-      {/* ================================================================ */}
       {/* ================================================================ */}
       {/* 4. NORMATIVA Y FACTURACIÓN FISCAL                                */}
       {/* ================================================================ */}
@@ -330,7 +415,13 @@ function Landing() {
         <div className="landing-seguros__texto">
           <h2>Respaldo sanitario al día</h2>
           <p>Cumplimiento total de la normativa sanitaria venezolana, emisión de facturación clara adaptada a contribuyentes especiales y trazabilidad documentada en cada lote.</p>
-          <a href="#" className="btn-landing btn-landing--primario">Ver condiciones comerciales</a>
+          <a href="#" 
+             className="btn-landing btn-landing--primario"
+             onClick={(e) => {
+               e.preventDefault()
+               abrirModal(tiposInstitucion)
+             }}
+          >Ver condiciones comerciales</a>
         </div>
       </section>
 
@@ -341,8 +432,20 @@ function Landing() {
         <div className="landing-envios__texto">
           <h2>Cero interrupciones en tu cadena de suministro</h2>
           <p>Entregamos tus medicamentos e insumos quirúrgicos directamente en la puerta de tu clínica o farmacia, con tiempos de respuesta prioritarios para urgencias médicas.</p>
-          <a href="#" className="btn-landing btn-landing--primario">Ver condiciones para los envios</a>
-          <a href="#" className="landing-link">¿Necesitas un despacho rapido?</a>
+          <a href="#" 
+             className="btn-landing btn-landing--primario"
+             onClick={(e) => {
+               e.preventDefault()
+               abrirModal(cadenaSuministrosSinInterrupciones)
+             }}
+          >Ver condiciones para los envios</a>
+          <a href="#" 
+             className="landing-link"
+             onClick={(e) => {
+               e.preventDefault()
+               abrirModal(estadosCiudades)
+             }}
+          >¿Necesitas un despacho rapido?</a>
         </div>
         <div>
         <div className="landing-envios__media">
@@ -378,14 +481,25 @@ function Landing() {
           <span className="landing-badge">NUEVO B2B</span>
           <h2>Gestión en una sola cuenta para tu equipo medico</h2>
           <p>Permite que tu farmacéutico regente, jefe de compras o departamento de administración gestionen presupuestos, aprueben órdenes y descarguen reportes desde una misma cuenta corporativa.</p>
-          <a href="#" className="btn-landing btn-landing--primario">Configurar cuenta institucional</a>
+          <a href="#" 
+             className="btn-landing btn-landing--primario"
+             onClick={(e) => {
+               e.preventDefault()
+               abrirModal(gestionUnaSolaCuentaEquipo)
+             }}
+          >Configurar cuenta institucional</a>
           <div className="landing-ayuda-meds__nota">
             <HeartHandshake size={22} />
             <div>
               <strong>¿Gestionas una red de farmacias o grupo médico?</strong>
               <p>Consolida el abastecimiento de múltiples sedes con atención personalizada.
                 <br /> 
-              <a href="#">Hablar con un asesor de cuentas</a>.</p>
+              <a href="#"
+                 onClick={(e) => {
+                   e.preventDefault()
+                   abrirModal(tiposInstitucion)
+                 }}
+              >Hablar con un asesor de cuentas</a>.</p>
             </div>
           </div>
         </div>
@@ -417,7 +531,13 @@ function Landing() {
       {/* ================================================================ */}
       <section id="como-funciona" className="landing-como-funciona">
         <h2>¿Cómo funciona nuestro portal?</h2>
-        <a href="#" className="landing-video-link">
+        <a href="#" 
+           className="landing-video-link"
+           onClick={(e) => {
+             e.preventDefault()
+             abrirModal(comoFuncionaLaPlataforma)
+           }}
+        >
           Conoce la plataforma de Droguería Carrisan en 1 minuto
         </a>
         
@@ -432,6 +552,7 @@ function Landing() {
                 alt={paso.titulo}  
                 className="landing-como-funciona__imagen"  
                 loading="lazy"
+                onClick={() => abrirModal(paso.data)}
               />
               {/* Agregamos clases específicas para el título y el texto */}
               <h3 className="landing-como-funciona__titulo">{paso.numero}. {paso.titulo}</h3>
@@ -440,7 +561,13 @@ function Landing() {
           )}
         />
   
-  <a href="#" className="btn-landing btn-landing--solido">Conocer más sobre el proceso de compra</a>
+  <a href="#" 
+     className="btn-landing btn-landing--solido"
+     onClick={(e) => {
+       e.preventDefault()
+       abrirModal(comoFuncionaLaPlataforma)
+     }}
+  >Conocer más sobre el proceso de compra</a>
 </section>
 
       {/* ================================================================ */}
@@ -459,7 +586,7 @@ function Landing() {
                   <Star key={i} size={16} fill="#12A594" color="#12A594" />
                 ))}
               </div>
-              <p>“{t.texto}”</p>
+              <p>"{t.texto}"</p>
               <span>– {t.autor}</span>
             </>
           )}
@@ -484,7 +611,13 @@ function Landing() {
               <div className="landing-explorar__card-texto">
                 <h3>{item.titulo}</h3>
                 <p>{item.texto}</p>
-                <a href="#" className="landing-link">Saber más ›</a>
+                <a href="#" 
+                   className="landing-link"
+                   onClick={(e) => {
+                     e.preventDefault()
+                     abrirModal(item.data)
+                   }}
+                >Saber más ›</a>
               </div>
             </div>
           ))}
@@ -502,7 +635,12 @@ function Landing() {
           ))}
         </div>
         <p className="landing-faq__otras">
-          ¿Tienes otras dudas sobre aperturas de cuenta o líneas de crédito? Visita nuestro <a href="#">Centro de Ayuda›</a>
+          ¿Tienes otras dudas sobre aperturas de cuenta o líneas de crédito? Visita nuestro <a href="#"
+             onClick={(e) => {
+               e.preventDefault()
+               abrirModal(faqData)
+             }}
+          >Centro de Ayuda›</a>
         </p>
       </section>
 
@@ -512,7 +650,13 @@ function Landing() {
       <section className="landing-cta-final">
         <h2>Abastece tu institución con la droguería que te respalda.</h2>
         <a href="#" className="btn-landing btn-landing--primario">Crear Cuenta | Iniciar Sesión</a>
-        <a href="#" className="landing-link landing-link--claro">¿Necesitas ayuda para completar tus recaudos?</a>
+        <a href="#" 
+           className="landing-link landing-link--claro"
+           onClick={(e) => {
+             e.preventDefault()
+             abrirModal(recaudosCuentaB2B)
+           }}
+        >¿Necesitas ayuda para completar tus recaudos?</a>
       </section>
 
       {/* ================================================================ */}
@@ -522,8 +666,18 @@ function Landing() {
         <ImagePlaceholder label="Logo" className="landing-footer__logo" />
         <nav className="landing-footer__nav">
           <Link to="/landing">Inicio</Link>
-          <a href="#">Cómo funciona</a>
-          <a href="#">Formas de ahorrar</a>
+          <a href="#"
+             onClick={(e) => {
+               e.preventDefault()
+               abrirModal(comoFuncionaLaPlataforma)
+             }}
+          >Cómo funciona</a>
+          <a href="#"
+             onClick={(e) => {
+               e.preventDefault()
+               abrirModal(descuentoVolumenEscala)
+             }}
+          >Formas de ahorrar</a>
           <Link to="/ayuda">Ayuda</Link>
         </nav>
         <div className="landing-footer__badges">
@@ -538,11 +692,24 @@ function Landing() {
           <span>|</span>
           <span>Fax: pendiente</span>
         </div>
-        <a href="#" className="landing-link">Droguería Carrisán para profesionales que emiten recetas ›</a>
+        <a href="#" 
+           className="landing-link"
+           onClick={(e) => {
+             e.preventDefault()
+             abrirModal(profesionesSalud)
+           }}
+        >Droguería Carrisán para profesionales que emiten recetas ›</a>
         <p className="landing-footer__legal">
           Los nombres que aparecen en la fotografía son con fines ilustrativos.
         </p>
       </footer>
+
+      {/* Modal global */}
+      <InfoModal
+        abierto={modalInfo !== null}
+        onCerrar={cerrarModal}
+        data={modalInfo}
+      />
     </div>
   )
 }
