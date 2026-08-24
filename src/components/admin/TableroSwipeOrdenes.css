@@ -1,0 +1,106 @@
+.swipe-tablero {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.swipe-tabs {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.4rem;
+}
+
+.swipe-tabs__item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--slate-500);
+  background: var(--slate-100);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 0.4rem 0.75rem;
+}
+
+.swipe-tabs__item--activa {
+  color: var(--ink);
+  background: var(--surface);
+  border-color: var(--blue-100);
+}
+
+.swipe-tabs__punto {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.swipe-tabs__contador {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--slate-500);
+  background: var(--surface);
+  padding: 0.05rem 0.4rem;
+  border-radius: 999px;
+}
+
+.swipe-tabs__item--activa .swipe-tabs__contador {
+  background: var(--slate-100);
+}
+
+.swipe-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.swipe-lista__vacio {
+  font-size: 0.85rem;
+  color: var(--slate-300);
+  text-align: center;
+  padding: 2rem 0.5rem;
+}
+
+.swipe-fila {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius);
+}
+
+.swipe-fila__pista {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #fff;
+  border-radius: var(--radius);
+}
+
+.swipe-fila__pista--derecha { justify-content: flex-start; }
+.swipe-fila__pista--izquierda { justify-content: flex-end; }
+
+.swipe-tarjeta {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius);
+  padding: 0.6rem 0.8rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  touch-action: pan-y;
+  cursor: grab;
+}
+
+.swipe-tarjeta__id { font-family: var(--font-display); font-size: 0.78rem; font-weight: 700; color: var(--ink); flex-shrink: 0; }
+.swipe-tarjeta__cliente { font-size: 0.82rem; font-weight: 600; color: var(--slate-700); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.swipe-tarjeta__total { font-family: var(--font-display); font-size: 0.78rem; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; flex-shrink: 0; }
