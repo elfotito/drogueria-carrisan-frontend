@@ -4,6 +4,7 @@ import {
   Check, ChevronDown, Play, Star, HeartHandshake, Lock,
 } from 'lucide-react'
 import './Landing.css'
+import ModalInformativo from '../components/ModalInformativo'
 
   const BASE_URL = 'https://fqeshthtycmzgyibiurq.supabase.co/storage/v1/object/public/crsnimages'
   
@@ -26,6 +27,9 @@ import './Landing.css'
     farmapatria: `${BASE_URL}/farmapatria.gif?width=400&quality=40&format=webp`,
 
   }
+
+const [abierto, setAbierto] = useState(false)
+
 
   const img = (path, width = 800) => {
   return `${BASE_URL}/${path}?width=${width}&quality=80`
