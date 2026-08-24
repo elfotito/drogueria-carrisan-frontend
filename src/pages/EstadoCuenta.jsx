@@ -5,6 +5,7 @@ import api from '../api/axios'
 import {
   Wallet, FileText, DollarSign, Download, Loader2,
   AlertCircle, CreditCard, Search, Package, Clock, CalendarClock, History, Eye,
+  X, Upload,
 } from 'lucide-react'
 import OrdenClienteModal from '../components/OrdenClienteModal'
 import PagoClienteModal from '../components/PagoClienteModal'
@@ -62,6 +63,7 @@ export default function EstadoCuenta() {
   const [busqueda, setBusqueda] = useState('')
   const [ordenSeleccionada, setOrdenSeleccionada] = useState(null)
   const [pagoSeleccionado, setPagoSeleccionado] = useState(null)
+  const [modalPagoAbierto, setModalPagoAbierto] = useState(false)
 
   useEffect(() => {
     cargarEstadoCuenta()
@@ -83,6 +85,11 @@ export default function EstadoCuenta() {
     } finally {
       setCargando(false)
     }
+  }
+
+  async function reportarPago({ orden_ids, url_comprobante }) {
+    await api.post('/reportes-pago', { orden_ids, url_comprobante })
+    await cargarEstadoCuenta()
   }
 
   async function exportarEstadoCompletoPDF() {
@@ -132,6 +139,13 @@ export default function EstadoCuenta() {
     return grupos
   }, [historialFiltrado])
 
+  const ordenesPendientesContado = useMemo(() => {
+    if (!datos) return []
+    return (datos.ordenes_pendientes || []).filter(
+      (o) => o.forma_pago === 'contado' && ['esperando', 'rechazado'].includes(o.estado_pago)
+    )
+  }, [datos])
+
   const acciones = (
     <button className="ec-btn-exportar" onClick={exportarEstadoCompletoPDF} disabled={!datos}>
       <Download size={16} />
@@ -170,7 +184,7 @@ export default function EstadoCuenta() {
             setBusqueda={setBusqueda}
             onSeleccionarOrden={setOrdenSeleccionada}
             onSeleccionarPago={setPagoSeleccionado}
-            onReportarPago={() => navigate('/pagos')}
+            onReportarPago={() => setModalPagoAbierto(true)}
             onExportarFactura={exportarFacturaPDF}
             onExportarComprobante={exportarComprobantePago}
           />
@@ -179,7 +193,127 @@ export default function EstadoCuenta() {
 
       {ordenSeleccionada && <OrdenClienteModal orden={ordenSeleccionada} onClose={() => setOrdenSeleccionada(null)} />}
       {pagoSeleccionado && <PagoClienteModal pago={pagoSeleccionado} onClose={() => setPagoSeleccionado(null)} />}
+      
+      {modalPagoAbierto && (
+        <ModalReportarPago
+          ordenesDisponibles={ordenesPendientesContado}
+          onCerrar={() => setModalPagoAbierto(false)}
+          onEnviar={reportarPago}
+        />
+      )}
     </LayoutPaginaPrincipal>
+  )
+}
+
+// ---------------------------------------------------------------
+// Modal para reportar pago de órdenes a contado
+// ---------------------------------------------------------------
+function ModalReportarPago({ ordenesDisponibles, onCerrar, onEnviar }) {
+  const [seleccionadas, setSeleccionadas] = useState([])
+  const [comprobante, setComprobante] = useState(null)
+  const [enviando, setEnviando] = useState(false)
+  const [error, setError] = useState('')
+
+  function alternarOrden(id) {
+    setSeleccionadas((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    )
+  }
+
+  const totalSeleccionado = ordenesDisponibles
+    .filter((o) => seleccionadas.includes(o.id))
+    .reduce((sum, o) => sum + Number(o.total_usd), 0)
+
+  // TODO: conectar con el mecanismo real de subida (Supabase Storage /
+  // endpoint /upload propio) — debe devolver la URL pública del archivo.
+  async function subirComprobante(file) {
+    throw new Error('subirComprobante() no implementado todavía')
+  }
+
+  async function manejarEnvio(e) {
+    e.preventDefault()
+    if (seleccionadas.length === 0) {
+      setError('Selecciona al menos una orden a pagar')
+      return
+    }
+    if (!comprobante) {
+      setError('Adjunta el comprobante de pago')
+      return
+    }
+    setEnviando(true)
+    setError('')
+    try {
+      const url_comprobante = await subirComprobante(comprobante)
+      await onEnviar({ orden_ids: seleccionadas, url_comprobante })
+      onCerrar()
+    } catch {
+      setError('No se pudo enviar el reporte de pago. Intenta de nuevo.')
+    } finally {
+      setEnviando(false)
+    }
+  }
+
+  return (
+    <div className="modal-fondo" onClick={onCerrar}>
+      <form className="modal" onClick={(e) => e.stopPropagation()} onSubmit={manejarEnvio}>
+        <div className="modal__encabezado">
+          <h3>Reportar pago</h3>
+          <button type="button" onClick={onCerrar}><X size={20} /></button>
+        </div>
+
+        <div className="modal__cuerpo modal__cuerpo--form">
+          {ordenesDisponibles.length === 0 ? (
+            <p>No tienes órdenes a contado pendientes de pago.</p>
+          ) : (
+            <>
+              <p className="modal__label-grupo">¿Qué órdenes estás pagando?</p>
+              <ul className="modal__ordenes-lista">
+                {ordenesDisponibles.map((o) => (
+                  <li key={o.id}>
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={seleccionadas.includes(o.id)}
+                        onChange={() => alternarOrden(o.id)}
+                      />
+                      <span>Orden #{o.id} — {formatearMonto(o.total_usd)}</span>
+                    </label>
+                  </li>
+                ))}
+              </ul>
+
+              {seleccionadas.length > 0 && (
+                <p className="modal__total-seleccionado">
+                  Total a reportar: <strong>{formatearMonto(totalSeleccionado)}</strong>
+                </p>
+              )}
+
+              <label>
+                Comprobante de pago
+                <div className="modal__upload">
+                  <Upload size={16} />
+                  <span>{comprobante ? comprobante.name : 'Subir imagen o PDF'}</span>
+                  <input
+                    type="file"
+                    accept="image/*,.pdf"
+                    onChange={(e) => setComprobante(e.target.files?.[0] || null)}
+                  />
+                </div>
+              </label>
+            </>
+          )}
+
+          {error && <p className="modal__error"><AlertCircle size={14} /> {error}</p>}
+        </div>
+
+        <div className="modal__pie">
+          <button type="button" className="btn btn--secundario" onClick={onCerrar}>Cancelar</button>
+          <button type="submit" className="btn btn--primario" disabled={enviando || ordenesDisponibles.length === 0}>
+            {enviando ? 'Enviando…' : 'Enviar reporte'}
+          </button>
+        </div>
+      </form>
+    </div>
   )
 }
 
