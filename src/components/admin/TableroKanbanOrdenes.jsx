@@ -6,28 +6,18 @@ import {
 import './TableroKanbanOrdenes.css'
 
 // ---------------------------------------------------------------
-// Tablero Kanban con drag real de órdenes por estado. Vive como una
-// tercera vista dentro de OrdenesAdmin.jsx (junto a tabla/cards) — el
-// dashboard solo enlaza acá, no duplica esta pieza.
+// Tablero Kanban con drag real de órdenes por estado (DESKTOP).
+// En mobile se usa TableroSwipeOrdenes en su lugar — ver wiring
+// en OrdenesAdmin.jsx.
 //
-// Reusa exactamente el mismo endpoint que ya usaba el click-to-change
-// del modal: PATCH /orders/:id/estado vía handleCambiarEstado, que
-// viene del padre. No hay lógica de negocio nueva acá, solo la
-// interacción de arrastrar.
+// Reusa el mismo endpoint que el modal: PATCH /orders/:id/estado
+// vía handleCambiarEstado, que viene del padre.
 //
-// 'cancelado' no es una columna del tablero — cancelar una orden no
-// es un paso del flujo, es una acción aparte que ya vive en el modal
-// de detalle (igual que en las otras vistas).
+// 'cancelado' no es columna acá — es una acción aparte del modal.
 //
-// Layout en 2 filas (no todas las columnas pesan igual en el flujo):
-//   Fila 1: 'pedido_creado' sola, a ancho completo — es la bandeja de
-//           entrada, se lee horizontal como un listado.
-//   Fila 2: 'procesando' | 'preparando' | 'enviado' — el trabajo en
-//           curso, 3 columnas parejas donde tiene sentido comparar.
-//   Módulo aparte: 'entregado' es zona droppable (soltar ahí SÍ marca
-//           la orden como entregada) pero no lista tarjetas — es un
-//           estado terminal y acumularlas ahí no aporta nada al
-//           admin, solo ruido. Se muestra como contador/resumen.
+// Fila 1: 'pedido_creado' sola, ancho completo, bandeja de entrada.
+// Fila 2: 'procesando' | 'preparando' | 'enviado', trabajo en curso.
+// 'entregado' es módulo aparte (droppable, resumen, no lista tarjetas).
 // ---------------------------------------------------------------
 
 const FILA_SUPERIOR = ['pedido_creado']
@@ -39,45 +29,31 @@ function formatUSD(valor) {
   return `$${Number(valor || 0).toFixed(2)}`
 }
 
-function TarjetaOrden({ orden, estadoColores, onAbrir }) {
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+function TarjetaOrden({ orden, onAbrir }) {
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: String(orden.id),
     data: { orden },
   })
 
-  const vencida = orden.fecha_vencimiento &&
-    new Date(orden.fecha_vencimiento) < new Date() &&
-    orden.estado_pago !== 'verificado'
-
-  const style = transform
-    ? { transform: `translate3d(${transform.x}px, ${transform.y}px, 0)` }
-    : undefined
-
+  // Sin transform manual acá: cuando se usa DragOverlay, la tarjeta
+  // fuente NO debe moverse — solo se oculta. El overlay es el único
+  // que sigue el puntero. Mezclar los dos causaba el salto al agarrarla.
   return (
     <div
       ref={setNodeRef}
-      style={style}
       {...listeners}
       {...attributes}
       className={`kanban-tarjeta ${isDragging ? 'kanban-tarjeta--arrastrando' : ''}`}
       onClick={() => !isDragging && onAbrir(orden)}
     >
-      <div className="kanban-tarjeta__cabecera">
-        <span className="kanban-tarjeta__id">#{orden.id}</span>
-        {vencida && <span className="kanban-tarjeta__vencida">Vencida</span>}
-      </div>
+      <span className="kanban-tarjeta__id">#{orden.id}</span>
       <span className="kanban-tarjeta__cliente">{orden.users?.nombre || 'Cliente'}</span>
-      <div className="kanban-tarjeta__pie">
-        <span className="kanban-tarjeta__forma-pago">
-          {orden.forma_pago === 'credito' ? 'Crédito' : 'Contado'}
-        </span>
-        <span className="kanban-tarjeta__total">{formatUSD(orden.total_usd)}</span>
-      </div>
+      <span className="kanban-tarjeta__total">{formatUSD(orden.total_usd)}</span>
     </div>
   )
 }
 
-function ColumnaKanban({ estado, label, color, ordenes, estadoColores, onAbrir, ancha }) {
+function ColumnaKanban({ estado, label, color, ordenes, onAbrir, ancha }) {
   const { setNodeRef, isOver } = useDroppable({ id: estado })
 
   return (
@@ -95,7 +71,7 @@ function ColumnaKanban({ estado, label, color, ordenes, estadoColores, onAbrir, 
           <p className="kanban-columna__vacio">Sin órdenes</p>
         ) : (
           ordenes.map((orden) => (
-            <TarjetaOrden key={orden.id} orden={orden} estadoColores={estadoColores} onAbrir={onAbrir} />
+            <TarjetaOrden key={orden.id} orden={orden} onAbrir={onAbrir} />
           ))
         )}
       </div>
@@ -103,12 +79,9 @@ function ColumnaKanban({ estado, label, color, ordenes, estadoColores, onAbrir, 
   )
 }
 
-function ModuloEntregado({ estado, label, color, cantidad, totalUsd, isOver, setNodeRef }) {
+function ModuloEntregado({ label, color, cantidad, totalUsd, isOver, setNodeRef }) {
   return (
-    <div
-      ref={setNodeRef}
-      className={`kanban-entregado ${isOver ? 'kanban-entregado--sobre' : ''}`}
-    >
+    <div ref={setNodeRef} className={`kanban-entregado ${isOver ? 'kanban-entregado--sobre' : ''}`}>
       <span className="kanban-entregado__punto" style={{ background: color }} />
       <div className="kanban-entregado__texto">
         <span className="kanban-entregado__titulo">{label}</span>
@@ -127,7 +100,7 @@ export default function TableroKanbanOrdenes({ ordenes, estadoColores, onCambiar
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
-      activationConstraint: { distance: 6 }, // evita que un click simple dispare un drag
+      activationConstraint: { distance: 6 },
     })
   )
 
@@ -181,6 +154,7 @@ export default function TableroKanbanOrdenes({ ordenes, estadoColores, onCambiar
     <DndContext
       sensors={sensors}
       collisionDetection={closestCorners}
+      autoScroll={{ layoutShiftCompensation: false }}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
@@ -193,7 +167,6 @@ export default function TableroKanbanOrdenes({ ordenes, estadoColores, onCambiar
               label={columnasPorEstado[estado].label}
               color={columnasPorEstado[estado].color}
               ordenes={columnasPorEstado[estado].ordenes}
-              estadoColores={estadoColores}
               onAbrir={onAbrirOrden}
               ancha
             />
@@ -208,14 +181,12 @@ export default function TableroKanbanOrdenes({ ordenes, estadoColores, onCambiar
               label={columnasPorEstado[estado].label}
               color={columnasPorEstado[estado].color}
               ordenes={columnasPorEstado[estado].ordenes}
-              estadoColores={estadoColores}
               onAbrir={onAbrirOrden}
             />
           ))}
         </div>
 
         <ModuloEntregado
-          estado={ESTADO_TERMINAL}
           label={estadoColores[ESTADO_TERMINAL]?.label || 'Entregado'}
           color={estadoColores[ESTADO_TERMINAL]?.color}
           cantidad={resumenEntregado.cantidad}
@@ -228,16 +199,9 @@ export default function TableroKanbanOrdenes({ ordenes, estadoColores, onCambiar
       <DragOverlay>
         {ordenActiva && (
           <div className="kanban-tarjeta kanban-tarjeta--overlay">
-            <div className="kanban-tarjeta__cabecera">
-              <span className="kanban-tarjeta__id">#{ordenActiva.id}</span>
-            </div>
+            <span className="kanban-tarjeta__id">#{ordenActiva.id}</span>
             <span className="kanban-tarjeta__cliente">{ordenActiva.users?.nombre || 'Cliente'}</span>
-            <div className="kanban-tarjeta__pie">
-              <span className="kanban-tarjeta__forma-pago">
-                {ordenActiva.forma_pago === 'credito' ? 'Crédito' : 'Contado'}
-              </span>
-              <span className="kanban-tarjeta__total">{formatUSD(ordenActiva.total_usd)}</span>
-            </div>
+            <span className="kanban-tarjeta__total">{formatUSD(ordenActiva.total_usd)}</span>
           </div>
         )}
       </DragOverlay>
