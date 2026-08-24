@@ -13,7 +13,7 @@ import financiamiento from '../data/financiamiento'
 import preciosDirectoDistribucion from '../data/preciosDirectoDistribucion'
 import cadenaSuministrosSinInterrupciones from '../data/cadenaSuministrosSinInterrupciones'
 import gestionUnaSolaCuentaEquipo from '../data/gestionUnaSolaCuentaEquipo'
-import lineaHospitalarialInsumosQuirurgicos from '../data/lineaHospitalarialInsumosQuirurgicos'
+import lineaHospitalariaInsumosQuirurgicos from '../data/lineaHospitalariaInsumosQuirurgicos'
 import logisticaAgilMultiplesDirecciones from '../data/logisticaAgilMultiplesDirecciones'
 import comoFuncionaLaPlataforma from '../data/comoFuncionaLaPlataforma'
 import ayudaData from '../data/ayudaData'
@@ -202,7 +202,7 @@ const MAS_EXPLORAR = [
     titulo: 'Línea Quirúrgica y Hospitalaria',
     texto: 'Accede a un catálogo especializado en anestesia, fluidoterapia y material médico-quirúrgico para clínicas y centros médicos.',
     imagen: urls.lineahospitalariaa,
-    data: lineaHospitalarialInsumosQuirurgicos,
+    data:  lineaHospitalariaInsumosQuirurgicos,
   },
   {
     titulo: 'Programa de Crédito B2B',
