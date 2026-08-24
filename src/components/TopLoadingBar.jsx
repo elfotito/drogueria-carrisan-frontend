@@ -42,24 +42,21 @@ function TopLoadingBar() {
       height="3px"
       zIndex={1001}
       overflow="hidden"
-      bg="rgba(0,0,0,0.1)"
+      bg="rgba(0,0,0,0.08)"
       pointerEvents="none"
     >
       <Box
         height="100%"
-        width="40%"
-        borderRadius="4px"
-        bgGradient="linear(to-r, #0052dc, #12A594, #ffc220, #0052dc)"
-        backgroundSize="200% 100%"
-        animation="loadingSlide 1.1s ease-in-out infinite, loadingGradient 2s linear infinite"
+        width="100%"
+        bgGradient="linear(to-r, #0052dc, #12A594, #ffc220, #12A594, #0052dc)"
+        backgroundSize="300% 100%"
+        boxShadow="0 0 8px rgba(0,82,220,0.55)"
+        animation="loadingAurora 2.4s ease-in-out infinite"
         sx={{
-          '@keyframes loadingSlide': {
-            '0%': { transform: 'translateX(-100%)' },
-            '100%': { transform: 'translateX(350%)' },
-          },
-          '@keyframes loadingGradient': {
+          '@keyframes loadingAurora': {
             '0%': { backgroundPosition: '0% 50%' },
-            '100%': { backgroundPosition: '200% 50%' },
+            '50%': { backgroundPosition: '100% 50%' },
+            '100%': { backgroundPosition: '0% 50%' },
           },
         }}
       />

@@ -8,11 +8,13 @@ import './Auth.css'
 
 function Login() {
   const [paso, setPaso] = useState('email')
+  const [direccionSlide, setDireccionSlide] = useState('adelante') // 'adelante' | 'atras' — controla hacia dónde entra/sale el card
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [honeypot, setHoneypot] = useState('')
   const [error, setError] = useState('')
   const [cargando, setCargando] = useState(false)
+  const [mostrarCheck, setMostrarCheck] = useState(false) // true durante el breve instante de éxito antes de cambiar de paso
 
   const { login } = useAuth()
   const navigate = useNavigate()
@@ -40,7 +42,15 @@ function Login() {
     try {
       const { data } = await api.post('/auth/check-email', { email: emailLimpio })
       if (data.existe) {
-        setPaso('password')
+        // Muestra el check de éxito en el botón un instante antes de
+        // deslizar al paso de contraseña — le da a la acción una
+        // confirmación visual antes del salto de pantalla.
+        setMostrarCheck(true)
+        setDireccionSlide('adelante')
+        setTimeout(() => {
+          setPaso('password')
+          setMostrarCheck(false)
+        }, 400)
       } else {
         navigate(`/registro?email=${encodeURIComponent(emailLimpio)}`)
       }
@@ -82,7 +92,7 @@ function Login() {
         {error && <div className="auth-error">{error}</div>}
 
         {paso === 'email' ? (
-          <>
+          <div key="paso-email" className={`auth-paso auth-paso--${direccionSlide}`}>
             <h1 className="auth-title">Iniciar sesión</h1>
             <p className="auth-subtitle">
               Ingresá tu correo. Te ayudaremos a continuar con tu cuenta o crear una nueva.
@@ -117,8 +127,16 @@ function Login() {
                 />
               </div>
 
-              <button type="submit" className="auth-btn-primary" disabled={cargando}>
-                {cargando ? 'Verificando...' : 'Continuar'}
+              <button
+                type="submit"
+                className={`auth-btn-primary${mostrarCheck ? ' auth-btn-primary--exito' : ''}`}
+                disabled={cargando || mostrarCheck}
+              >
+                {mostrarCheck ? (
+                  <svg className="auth-btn-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                    <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                ) : cargando ? 'Verificando...' : 'Continuar'}
               </button>
             </form>
 
@@ -145,9 +163,9 @@ function Login() {
                 Crear cuenta
               </button>
             </div>
-          </>
+          </div>
         ) : (
-          <>
+          <div key="paso-password" className={`auth-paso auth-paso--${direccionSlide}`}>
             <h1 className="auth-title">Ingresá tu contraseña</h1>
 
             <div className="auth-email-confirmado">
@@ -156,6 +174,7 @@ function Login() {
                 type="button"
                 className="auth-link-btn"
                 onClick={() => {
+                  setDireccionSlide('atras')
                   setPaso('email')
                   setPassword('')
                   setError('')
@@ -190,7 +209,7 @@ function Login() {
                 {cargando ? 'Ingresando...' : 'Ingresar'}
               </button>
             </form>
-          </>
+          </div>
         )}
       </main>
 

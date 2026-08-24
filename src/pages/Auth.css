@@ -504,6 +504,77 @@
   flex-direction: column;
   align-items: center;
   margin-top: 1.75rem;
+  overflow: hidden; /* recorta el slide horizontal entre pasos del login */
+}
+
+/* ---------- Slide horizontal entre pasos del login ---------- */
+.auth-paso {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.auth-paso--adelante {
+  animation: authPasoEntraDerecha 0.32s ease-out;
+}
+
+.auth-paso--atras {
+  animation: authPasoEntraIzquierda 0.32s ease-out;
+}
+
+@keyframes authPasoEntraDerecha {
+  from {
+    opacity: 0;
+    transform: translateX(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes authPasoEntraIzquierda {
+  from {
+    opacity: 0;
+    transform: translateX(-28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-paso--adelante,
+  .auth-paso--atras {
+    animation: none;
+  }
+}
+
+/* ---------- Botón con check de éxito momentáneo (login, paso email) ---------- */
+.auth-btn-primary--exito {
+  background-color: #12A594 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-btn-check {
+  width: 22px;
+  height: 22px;
+  animation: authCheckPop 0.3s ease-out;
+}
+
+@keyframes authCheckPop {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 /* Logo */
@@ -807,4 +878,367 @@
   .logologin {
     height: 100px;
   }
+}
+
+/* ============================================================
+   Campos genéricos de formularios de registro (Institucional,
+   Profesional, Honorífico) — reutilizados por SelectorEstadoCiudad,
+   SubidaArchivoDrive y los formularios de cada tipo de usuario.
+   ============================================================ */
+
+.registro-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.registro-campo label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.registro-campo input,
+.registro-campo select,
+.registro-campo textarea {
+  padding: 0.7rem 0.9rem;
+  border: 1px solid #D1D5DB;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  background: #fff;
+  transition: border-color 0.15s ease;
+}
+
+.registro-campo input:focus,
+.registro-campo select:focus,
+.registro-campo textarea:focus {
+  outline: none;
+  border-color: #0052DC;
+}
+
+.registro-campo-doble {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+@media (max-width: 480px) {
+  .registro-campo-doble {
+    grid-template-columns: 1fr;
+  }
+}
+
+.registro-input--error {
+  border-color: #DC2626 !important;
+}
+
+.registro-error-texto {
+  font-size: 0.8rem;
+  color: #DC2626;
+}
+
+/* ---------- Selector de horario semanal (Institucional) ---------- */
+
+.horario-semanal {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.horario-semanal-fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #E5E7EB;
+  border-radius: 10px;
+  flex-wrap: wrap;
+}
+
+.horario-semanal-dia {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 130px;
+}
+
+.horario-semanal-dia--cerrado {
+  color: #9CA3AF;
+}
+
+.horario-semanal-switch {
+  position: relative;
+  display: inline-block;
+  width: 38px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.horario-semanal-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.horario-semanal-switch-track {
+  position: absolute;
+  inset: 0;
+  background-color: #D1D5DB;
+  border-radius: 999px;
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+}
+
+.horario-semanal-switch-track::before {
+  content: '';
+  position: absolute;
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  top: 3px;
+  background-color: #fff;
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+}
+
+.horario-semanal-switch input:checked + .horario-semanal-switch-track {
+  background-color: #0052DC;
+}
+
+.horario-semanal-switch input:checked + .horario-semanal-switch-track::before {
+  transform: translateX(16px);
+}
+
+.horario-semanal-horas {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.horario-semanal-horas select {
+  padding: 0.4rem 0.5rem;
+  border: 1px solid #D1D5DB;
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+
+.horario-semanal-separador {
+  color: #9CA3AF;
+  font-size: 0.85rem;
+}
+
+.horario-semanal-copiar {
+  border: none;
+  background: none;
+  color: #0052DC;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+}
+
+.horario-semanal-copiar:hover {
+  text-decoration: underline;
+}
+
+.horario-semanal-cerrado-texto {
+  color: #9CA3AF;
+  font-size: 0.85rem;
+}
+
+/* ---------- Subida de archivos PDF (registro) ---------- */
+
+.subida-archivo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.subida-archivo-etiqueta {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.subida-archivo-requerido {
+  color: #DC2626;
+}
+
+.subida-archivo-opcional {
+  color: #9CA3AF;
+  font-weight: 400;
+  font-size: 0.8rem;
+}
+
+.subida-archivo-dropzone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.9rem;
+  border: 2px dashed #D1D5DB;
+  border-radius: 10px;
+  cursor: pointer;
+  color: #6B7280;
+  font-size: 0.9rem;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.subida-archivo-dropzone:hover {
+  border-color: #0052DC;
+  color: #0052DC;
+}
+
+.subida-archivo-preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid #D1D5DB;
+  border-radius: 10px;
+  font-size: 0.85rem;
+}
+
+.subida-archivo-preview--ok {
+  border-color: #12A594;
+  background: #F0FDFA;
+}
+
+.subida-archivo-nombre {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.subida-archivo-check {
+  color: #12A594;
+  flex-shrink: 0;
+}
+
+.subida-archivo-quitar {
+  border: none;
+  background: none;
+  color: #DC2626;
+  font-size: 0.8rem;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* ---------- Pantalla final: éxito + notificaciones push ---------- */
+
+.auth-exito-icono {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #F0FDFA;
+  color: #12A594;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+}
+
+.auth-push-opciones {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+}
+
+.auth-push-confirmado {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  color: #12A594;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.turnstile-widget {
+  display: flex;
+  justify-content: center;
+  margin: 0.5rem 0 1rem;
+}
+
+/* ---------- RIF con prefijo fijo y teléfono con selector de código ---------- */
+
+.registro-campo-rif {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.registro-campo-rif-prefijo {
+  padding: 0.7rem 0.6rem;
+  background: #F3F4F6;
+  border: 1px solid #D1D5DB;
+  border-radius: 10px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.registro-campo-rif input {
+  flex: 1;
+}
+
+.registro-campo-telefono {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.registro-campo-telefono select {
+  width: 90px;
+  flex-shrink: 0;
+}
+
+.registro-campo-telefono input {
+  flex: 1;
+}
+
+.registro-seccion-titulo {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0.5rem 0 0.25rem;
+}
+
+.registro-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: #4B5563;
+  margin: 0.5rem 0 1rem;
+  cursor: pointer;
+}
+
+.registro-checkbox input {
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+}
+
+.registro-checkbox a {
+  color: #0052DC;
+  text-decoration: underline;
+}
+
+.auth-push-pregunta {
+  font-size: 0.9rem;
+  color: #6B7280;
+  text-align: center;
+  margin: 1.25rem 0 0.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid #E5E7EB;
+  width: 100%;
 }
