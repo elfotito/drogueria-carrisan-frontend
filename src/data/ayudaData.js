@@ -1,97 +1,268 @@
-export const CATEGORIAS_AYUDA = [
-  {
-    id: 'pedido',
-    titulo: 'Pedidos y Catálogo',
-    icono: 'pedido',
-    items: [
-      { label: 'Estado de mi Pedido', slug: 'rastrear', desc: 'Consulta el estatus de preparación y despacho en tiempo real.' },
-      { label: 'Modificar u Ordenar de Nuevo', slug: 'editar-repetir', desc: 'Duplica pedidos frecuentes o ajusta items antes del despacho.' },
-      { label: 'Líneas Especializadas y MOQ', slug: 'sustituciones', desc: 'Disponibilidad de material hospitalario y fraccionamiento sin mínimos.' },
-      { label: 'Inconsistencias o Faltantes', slug: 'faltantes', desc: 'Reporta diferencias entre la factura fiscal y la mercancía recibida.' },
+// src/data/ayudaData.js
+//
+// Contenido de cada modal de ayuda. La clave es "categoriaId/slug", igual al
+// slug que ya usa cada item dentro de `categorias` en Ayuda.jsx.
+//
+// Estructura de cada entrada:
+//   imagen  -> URL del arte corporativo (hero del modal). Déjalo en '' hasta
+//              que tengas la imagen; el modal muestra un placeholder mientras tanto.
+//   titulo  -> Nombre de la sección (h1)
+//   bloques -> Array de { categoria, texto, imagen? } -> cada uno es un h2 + texto
+//              explicativo, en el orden en que se renderizan. `imagen` es opcional,
+//              por si algún bloque necesita su propia imagen aparte del hero.
+
+const ayudaData = {
+  // ---------------------------------------------------------------
+  // Tu Pedido
+  // ---------------------------------------------------------------
+  'pedido/rastrear': {
+    imagen: '',
+    titulo: 'Da seguimiento a tu pedido',
+    bloques: [
+      {
+        categoria: 'Cuando creas tu pedido',
+        texto:
+          'Una vez que confirmas tu orden desde el carrito, puedes revisar su estado en todo momento desde la sección "Mis Órdenes". Ahí verás el número de orden, los productos, el total y la fecha en que la creaste.',
+      },
+      {
+        categoria: 'Los 5 estados de tu pedido',
+        texto:
+          'Cada estado representa en qué parte del proceso está tu orden: Pendiente (la recibimos y está en revisión), Confirmado (verificamos disponibilidad y precio), Preparando (estamos alistando tus productos), Enviado (tu pedido va en camino) y Entregado (tu pedido llegó a su destino).',
+      },
+      {
+        categoria: 'Te avisamos en cada cambio',
+        texto:
+          'Cada vez que tu pedido cambia de estado te enviamos una notificación dentro de la plataforma, visible en la campana de notificaciones, para que estés al tanto sin tener que revisar manualmente.',
+      },
     ],
   },
-  {
-    id: 'cuenta',
-    titulo: 'Cuenta y Verificación',
-    icono: 'cuenta',
-    items: [
-      { label: 'Registro y Carga de RIF / Cédula', slug: 'verificacion', desc: 'Proceso de validación fiscal para activar el botón de compra.' },
-      { label: 'Categorías de Cliente y Descuentos', slug: 'etiquetas', desc: 'Cómo se asigna tu tarifa (Mayorista, Institucional o Médico).' },
-      { label: 'Gestión de Sedes y Direcciones', slug: 'direcciones', desc: 'Añade múltiples puntos de entrega o sucursales a tu RIF.' },
+
+  'pedido/editar-cancelar': {
+    imagen: '',
+    titulo: 'Edita o cancela un pedido',
+    bloques: [
+      {
+        categoria: '¿Hasta cuándo puedo hacer cambios?',
+        texto:
+          'Puedes solicitar cambios o la cancelación de tu pedido mientras su estado sea Pendiente o Confirmado. Una vez que entra en preparación, ya no es posible modificarlo desde la plataforma.',
+      },
+      {
+        categoria: '¿Cómo lo solicito?',
+        texto:
+          'Escríbenos por el chat de esa orden o contáctanos por correo indicando el número de pedido y el cambio que necesitas. Nuestro equipo confirma el ajuste antes de continuar con el despacho.',
+      },
     ],
   },
-  {
-    id: 'credito-pagos',
-    titulo: 'Crédito y Pagos',
-    icono: 'pagos',
-    items: [
-      { label: 'Línea de Crédito a 7 Días', slug: 'linea-credito', desc: 'Condiciones, límite de crédito aprobado y fechas de corte.' },
-      { label: 'Métodos de Pago y Divisas', slug: 'metodos', desc: 'Transferencias en Bs., Pago Móvil, Zelle y depósitos en divisas.' },
-      { label: 'Comprobantes de Retención IVA / ISLR', slug: 'facturacion', desc: 'Emisión de comprobantes para Contribuyentes Especiales.' },
+
+  'pedido/sustituciones': {
+    imagen: '',
+    titulo: 'Sustituciones de productos',
+    bloques: [
+      {
+        categoria: '¿Cuándo se sustituye un producto?',
+        texto:
+          'Si un producto de tu pedido se agota entre el momento en que lo agregaste al carrito y la preparación de la orden, nuestro equipo te contacta antes de despachar para ofrecerte una alternativa equivalente.',
+      },
+      {
+        categoria: 'Tú decides',
+        texto:
+          'Ninguna sustitución se aplica sin tu aprobación. Si no aceptas la alternativa propuesta, simplemente retiramos ese producto de tu orden y ajustamos el total.',
+      },
     ],
   },
-  {
-    id: 'logistica',
-    titulo: 'Despacho y Entregas',
-    icono: 'camion',
-    items: [
-      { label: 'Zonas de Cobertura y Horarios', slug: 'cobertura', desc: 'Rutas de entrega en Valencia y envíos a nivel nacional.' },
-      { label: 'Criterio para Delivery Gratuito', slug: 'delivery-gratis', desc: 'Monto mínimo de orden para exoneración de flete.' },
-      { label: 'Recepción y Control Térmico', slug: 'cadena-frio', desc: 'Protocolos de entrega para ampollas y productos refrigerados.' },
+
+  'pedido/cancelados': {
+    imagen: '',
+    titulo: 'Pedidos cancelados',
+    bloques: [
+      {
+        categoria: 'Motivos comunes',
+        texto:
+          'Un pedido puede cancelarse por falta de disponibilidad de los productos, por datos de entrega incompletos, o porque el cliente lo solicitó directamente antes de que entrara en preparación.',
+      },
+      {
+        categoria: '¿Y mi línea de crédito?',
+        texto:
+          'Si tu pedido se cancela, el monto reservado en tu línea de crédito se libera automáticamente y queda disponible de inmediato para nuevas órdenes.',
+      },
     ],
   },
-]
 
-export const PREGUNTAS_FRECUENTES = [
-  {
-    pregunta: '¿Cómo activo mi cuenta para ver mis precios personalizados?',
-    respuesta: 'Regístrate adjuntando tu RIF y la cédula del representante legal. Nuestro equipo verificará tu documento en menos de 24 horas y te asignará la etiqueta correspondiente (Mayorista, Institucional o Médico) para desbloquear tus precios y descuentos aplicables.',
+  'pedido/retrasados': {
+    imagen: '',
+    titulo: 'Pedidos retrasados',
+    bloques: [
+      {
+        categoria: '¿Qué hacer si tu pedido no llegó a tiempo?',
+        texto:
+          'Escríbenos desde el chat de esa orden con tu número de pedido. Revisamos el estado con el equipo de despacho y te damos un tiempo estimado actualizado.',
+      },
+      {
+        categoria: 'Causas frecuentes',
+        texto:
+          'Los retrasos suelen deberse a alta demanda, disponibilidad de transporte o coordinación de la dirección de entrega. Siempre te mantenemos informado por notificaciones.',
+      },
+    ],
   },
-  {
-    pregunta: '¿Cómo funciona la línea de crédito B2B a 7 días?',
-    respuesta: 'Los clientes habituales o validados pueden realizar pedidos con financiamiento. Tienes un plazo de 7 días continuos desde la emisión de la factura para saldar el pago. Si te mantienes al día, conservas tu límite asignado y mantienes activa la opción de compra a crédito en la web.',
-  },
-  {
-    pregunta: '¿Existen mínimos de compra obligatorios (MOQ)?',
-    respuesta: 'No imponemos mínimos asfixiantes. Puedes adquirir desde ampollas o cajas individuales para consultorios hasta bultos cerrados para farmacias. Comprar por bulto o de contado otorga porcentajes de descuento adicionales automáticos.',
-  },
-  {
-    pregunta: '¿Cómo gestiono los comprobantes de retención de IVA (SENIAT)?',
-    respuesta: 'Si tu empresa es Contribuyente Especial, puedes adjuntar el comprobante de retención junto con el soporte de pago al momento de reportar la factura desde tu panel de "Estado de Cuenta".',
-  },
-  {
-    pregunta: '¿Cuál es el tiempo límite para reportar devoluciones o averías?',
-    respuesta: 'Dispones de 48 horas continuas tras la recepción del pedido para notificar productos defectuosos, inconsistencias con la factura o fallas en la cadena de frío. Todo reporte debe hacerse con la factura en mano.',
-  },
-]
 
-export const PASOS_PEDIDO_B2B = [
-  {
-    icono: 'catalogo',
-    titulo: '1. Selecciona con tu precio personalizado',
-    desc: 'Inicia sesión para ver el catálogo con los descuentos de tu etiqueta comercial aplicados.',
+  'pedido/faltantes': {
+    imagen: '',
+    titulo: 'Artículos faltantes',
+    bloques: [
+      {
+        categoria: '¿Llegó tu pedido incompleto?',
+        texto:
+          'Verifica primero el detalle de tu orden en "Mis Órdenes": ahí puedes confirmar qué productos fueron despachados. Si algo aprobado no llegó físicamente, repórtalo dentro de las 48 horas siguientes a la entrega.',
+      },
+      {
+        categoria: '¿Cómo reportarlo?',
+        texto:
+          'Usa el chat de esa orden indicando el o los productos faltantes. Verificamos con despacho y coordinamos el reenvío o el ajuste correspondiente en tu factura.',
+      },
+    ],
   },
-  {
-    icono: 'carrito',
-    titulo: '2. Elige modalidad: Contado o Crédito a 7 días',
-    desc: 'Finaliza tu orden seleccionando pronto pago o cargando el monto a tu línea de crédito disponible.',
-  },
-  {
-    icono: 'camion',
-    titulo: '3. Recepción y factura fiscal',
-    desc: 'Recibe tu mercancía en tu farmacia, clínica u hospital con su respectiva documentación legal.',
-  },
-]
 
-export const NECESIDADES_B2B = [
-  { titulo: 'Catálogo Unificado', desc: 'Medicamentos de alta rotación e insumos hospitalarios.', to: '/catalogo', boton: 'Ver productos' },
-  { titulo: 'Estado de Cuenta', desc: 'Controla tu saldo adeudado, crédito a 7 días y facturas.', to: '/estado-cuenta', boton: 'Gestionar crédito' },
-  { titulo: 'Línea Hospitalaria', desc: 'Anestesia, ampollas y material descartable quirúrgico.', to: '/hospitalaria', boton: 'Ver línea médica' },
-  { titulo: 'Mis Pedidos', desc: 'Sigue el despacho de tus órdenes activas o vuelve a pedir.', to: '/orders', boton: 'Ver historial' },
-]
+  'pedido/no-recibido': {
+    imagen: '',
+    titulo: 'Pedido no recibido',
+    bloques: [
+      {
+        categoria: 'Si tu pedido nunca llegó',
+        texto:
+          'Contáctanos de inmediato por el chat de esa orden o por correo con tu número de pedido. Revisamos el estado de despacho y coordinamos la solución más rápida, ya sea un reenvío o el ajuste en tu cuenta.',
+      },
+    ],
+  },
 
-export const ENLACES_UTILES = [
-  { label: 'Soporte Directo por Correo', desc: 'Atención prioritaria para clientes registrados.', href: 'mailto:ventas@carrisan.com', externo: true, icono: 'mail' },
-  { label: 'Ver Catálogo Completo', desc: 'Explora marcas, éticos y medicamentos comerciales.', to: '/catalogo', icono: 'catalogo' },
-  { label: 'Sobre Droguería Carrisan', desc: 'Conoce nuestro modelo de respaldo al sector salud.', to: '/quienes-somos', icono: 'faq' },
-]
+  'pedido/volver-a-pedir': {
+    imagen: '',
+    titulo: 'Volver a pedir',
+    bloques: [
+      {
+        categoria: 'Repite un pedido en segundos',
+        texto:
+          'Desde "Mis Órdenes", abre cualquier pedido anterior y usa la opción de volver a pedir para enviar esos mismos productos al carrito, con tus precios y disponibilidad actualizados.',
+      },
+    ],
+  },
+
+  // ---------------------------------------------------------------
+  // Tu Cuenta
+  // ---------------------------------------------------------------
+  'cuenta/crear-editar': {
+    imagen: '',
+    titulo: 'Crea o edita tu cuenta',
+    bloques: [
+      {
+        categoria: 'Creación de cuenta',
+        texto:
+          'El registro es gestionado por nuestro equipo comercial. Escríbenos a ventas@carrisan.com y creamos tu cuenta con los precios correspondientes a tu perfil (mayorista, distribuidor, clínica, farmacia, etc.).',
+      },
+      {
+        categoria: 'Editar tus datos',
+        texto:
+          'Desde "Datos de la cuenta" puedes actualizar tu información de contacto y de entrega. Si necesitas cambiar tu RIF o razón social, contáctanos directamente para verificarlo.',
+      },
+      {
+        categoria: 'Sub-usuarios de tu cuenta',
+        texto:
+          'Si varias personas de tu clínica o farmacia hacen pedidos, puedes crear sub-usuarios con un PIN propio desde "Datos de la cuenta", para identificar quién generó cada orden sin necesidad de cuentas separadas.',
+      },
+    ],
+  },
+
+  'cuenta/recuperar-contrasena': {
+    imagen: '',
+    titulo: 'Recupera tu contraseña',
+    bloques: [
+      {
+        categoria: '¿Olvidaste tu contraseña?',
+        texto:
+          'En la pantalla de inicio de sesión selecciona "¿Olvidaste tu contraseña?" e ingresa tu RIF o cédula registrada. Te enviaremos las instrucciones para restablecerla.',
+      },
+      {
+        categoria: '¿No te llega el correo?',
+        texto:
+          'Revisa tu carpeta de spam o promociones. Si el problema persiste, escríbenos a ventas@carrisan.com y verificamos tu cuenta manualmente.',
+      },
+    ],
+  },
+
+  'cuenta/estado-de-cuenta': {
+    imagen: '',
+    titulo: 'Estado de cuenta y línea de crédito',
+    bloques: [
+      {
+        categoria: '¿Qué es tu línea de crédito?',
+        texto:
+          'Es el monto disponible para hacer pedidos a crédito. Cada orden a crédito descuenta de esa línea, y se libera nuevamente cuando el pago es reportado y verificado.',
+      },
+      {
+        categoria: 'Facturas y pagos',
+        texto:
+          'En "Estado de cuenta" puedes ver tus órdenes pendientes, reportar un pago y descargar tus facturas, cada una con la tasa de cambio congelada del momento en que se generó.',
+      },
+      {
+        categoria: '¿Necesitas más línea de crédito?',
+        texto:
+          'Si tu historial de compra lo respalda, puedes solicitar una ampliación de tu línea de crédito directamente desde "Estado de cuenta".',
+      },
+    ],
+  },
+
+  // ---------------------------------------------------------------
+  // Pagos
+  // ---------------------------------------------------------------
+  'pagos/metodos': {
+    imagen: '',
+    titulo: 'Métodos de pago aceptados',
+    bloques: [
+      {
+        categoria: 'Transferencia y pago móvil',
+        texto:
+          'Aceptamos transferencia bancaria y pago móvil. Los datos de pago se envían junto con la confirmación de tu orden, y una vez que pagas, reportas el pago desde la plataforma.',
+      },
+      {
+        categoria: 'Compra a crédito',
+        texto:
+          'Si tu cuenta tiene línea de crédito activa, puedes generar tu pedido sin pagar de inmediato; el monto se descuenta de tu línea hasta que se procese el pago correspondiente.',
+      },
+    ],
+  },
+
+  'pagos/facturas': {
+    imagen: '',
+    titulo: 'Comprobantes y facturas',
+    bloques: [
+      {
+        categoria: '¿Cuándo se genera tu factura?',
+        texto:
+          'La factura se genera automáticamente cuando verificamos tu reporte de pago. Incluye las órdenes cubiertas, la tasa de cambio usada y el monto en dólares.',
+      },
+      {
+        categoria: '¿Dónde la encuentro?',
+        texto:
+          'Puedes consultarla y descargarla desde "Estado de cuenta", en la sección de facturas. También puedes solicitar la entrega física si la necesitas.',
+      },
+    ],
+  },
+
+  'pagos/problemas': {
+    imagen: '',
+    titulo: 'Problemas con un pago',
+    bloques: [
+      {
+        categoria: 'Reportaste tu pago y no se refleja',
+        texto:
+          'Los pagos reportados quedan en estado "pendiente de verificación" hasta que nuestro equipo confirma el ingreso. Este proceso puede tomar hasta un día hábil.',
+      },
+      {
+        categoria: '¿Cómo lo resolvemos?',
+        texto:
+          'Si pasado ese tiempo tu pago sigue sin verificarse, escríbenos por el chat o a ventas@carrisan.com con el comprobante y el número de orden asociado.',
+      },
+    ],
+  },
+}
+
+export default ayudaData
