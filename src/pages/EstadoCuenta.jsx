@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import api from '../api/axios'
 import {
   Wallet, FileText, DollarSign, Download, Loader2,
-  AlertCircle, CreditCard, Search, Package, Clock, CalendarClock, History,
+  AlertCircle, CreditCard, Search, Package, Clock, CalendarClock, History, Eye,
 } from 'lucide-react'
 import OrdenClienteModal from '../components/OrdenClienteModal'
 import PagoClienteModal from '../components/PagoClienteModal'
@@ -27,12 +27,12 @@ import generarComprobantePagoPDF from '../utils/generarComprobantePagoPDF'
 // ver nota de "Próximamente" más abajo.
 // ---------------------------------------------------------------
 
-async function exportarFacturaPDF(factura) {
-  await generarFacturaPDF({ factura, cliente: datos.cliente })
+async function exportarFacturaPDF(factura, cliente) {
+  await generarFacturaPDF({ factura, cliente })
 }
 
-async function exportarComprobantePago(pago) {
-  await generarComprobantePagoPDF({ pago, cliente: datos.cliente })
+async function exportarComprobantePago(pago, cliente) {
+  await generarComprobantePagoPDF({ pago, cliente })
 }
 
 function formatearMonto(valor) {
@@ -97,12 +97,6 @@ export default function EstadoCuenta() {
     doc.text(`Disponible: ${formatearMonto(datos.resumen.saldo)}`, 14, 56)
     doc.save('estado-de-cuenta.pdf')
   }
-
-  // "Reportar pago" ya no abre un modal propio acá — /pagos es la
-  // página real con el flujo completo (subida de comprobante a
-  // Drive, POST /reportes-pago). El modal que había antes posteaba a
-  // /clientes/:id/pagos/reportar, un endpoint que nunca existió en
-  // el backend — código huérfano que quedó de una iteración anterior.
 
   const historial = useMemo(() => {
     if (!datos) return []
@@ -177,6 +171,8 @@ export default function EstadoCuenta() {
             onSeleccionarOrden={setOrdenSeleccionada}
             onSeleccionarPago={setPagoSeleccionado}
             onReportarPago={() => navigate('/pagos')}
+            onExportarFactura={exportarFacturaPDF}
+            onExportarComprobante={exportarComprobantePago}
           />
         )}
       </div>
@@ -194,8 +190,9 @@ export default function EstadoCuenta() {
 function ContenidoDashboard({
   datos, comparativa, gruposPorFecha, filtro, setFiltro, busqueda, setBusqueda,
   onSeleccionarOrden, onSeleccionarPago, onReportarPago,
+  onExportarFactura, onExportarComprobante,
 }) {
-  const { resumen } = datos
+  const { resumen, cliente } = datos
   const tieneCredito = resumen.linea_credito > 0
   const porcentajeUsado = tieneCredito
     ? Math.min((resumen.deuda_actual / resumen.linea_credito) * 100, 100)
@@ -250,11 +247,7 @@ function ContenidoDashboard({
         </div>
       </section>
 
-      {/* Vencimientos: ya no son placeholders — cada orden a crédito
-          trae su propia fecha_vencimiento (created_at + dias_credito
-          del cliente, congelada al crearse). "Próximo corte" como
-          concepto de ciclo fijo no existe; en su lugar mostramos la
-          próxima orden por vencer y cuántas ya están vencidas. */}
+      {/* Vencimientos */}
       <section className="ec-proximamente">
         <div className="ec-proximamente__card">
           <div className="ec-proximamente__icono"><CalendarClock size={18} /></div>
@@ -286,9 +279,7 @@ function ContenidoDashboard({
 
       {comparativa && <ComparativaMensual comparativa={comparativa} />}
 
-      {/* Accesos rápidos — "Reportar pago" manda a /pagos, el flujo
-          real con subida de comprobante; acá solo enlazamos, no
-          duplicamos ese formulario. */}
+      {/* Accesos rápidos */}
       <section className="ec-accesos">
         <button className="ec-acceso" onClick={onReportarPago}>
           <div className="ec-acceso__icono"><DollarSign size={20} /></div>
@@ -369,6 +360,27 @@ function ContenidoDashboard({
                     <strong className={`ec-movimiento__monto ${mov.tipo === 'pago' ? 'ec-movimiento__monto--verde' : 'ec-movimiento__monto--rojo'}`}>
                       {mov.tipo === 'pago' ? '+' : '-'}{formatearMonto(mov.monto_facturado || mov.monto || mov.total_usd)}
                     </strong>
+                    
+                    <div className="movimiento__acciones" onClick={(e) => e.stopPropagation()}>
+                      {mov.tipo === 'factura' ? (
+                        <>
+                          <button title="Ver orden" onClick={() => onSeleccionarOrden(mov)}>
+                            <Eye size={16} />
+                          </button>
+                          <button title="Exportar PDF" onClick={() => onExportarFactura(mov, cliente)}>
+                            <Download size={16} />
+                          </button>
+                        </>
+                      ) : mov.tipo === 'pago' ? (
+                        <button title="Exportar comprobante" onClick={() => onExportarComprobante(mov, cliente)}>
+                          <Download size={16} />
+                        </button>
+                      ) : (
+                        <button title="Ver orden" onClick={() => onSeleccionarOrden(mov)}>
+                          <Eye size={16} />
+                        </button>
+                      )}
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -503,11 +515,3 @@ function ComparativaMensual({ comparativa }) {
     </section>
   )
 }
-
-// El modal de reportar pago que vivía acá (con su propio formulario
-// de monto/referencia/método/comprobante) se eliminó: posteaba a
-// /clientes/:id/pagos/reportar, un endpoint que nunca existió en el
-// backend. El flujo real de reportar un pago vive en /pagos (con
-// subida de comprobante a Drive vía POST /reportes-pago) — "Reportar
-// pago" en esta página ahora navega directo ahí en vez de duplicar
-// ese formulario acá.
