@@ -50,7 +50,7 @@ import ChatCentro from './pages/Chat'
 import SubUsuarios from'./pages/SubUsuarios'
 import Presupuesto from'./pages/Presupuesto'
 import AyudaModal from '../components/AyudaModal'
-import generarReporteEstadoCuentaPDF from '../utils/generarReporteEstadoCuentaPDF'
+
 
 function LoadingBarBridge() {
   const bar = useLoadingBar()
