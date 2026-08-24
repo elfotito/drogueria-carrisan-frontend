@@ -4,7 +4,7 @@ import {
   Check, ChevronDown, Play, Star, HeartHandshake, Lock,
 } from 'lucide-react'
 import './Landing.css'
-import ModalInformativo from '../components/ModalInformativo'
+
 
   const BASE_URL = 'https://fqeshthtycmzgyibiurq.supabase.co/storage/v1/object/public/crsnimages'
   
@@ -166,8 +166,8 @@ const TESTIMONIOS = [
     autor: 'Dr.  Ulises O. — Medico Anestesiólogo especialista en Terapia del Dolor' 
   },
   { 
-    texto: 'Son mi primera opcion para ubicar lo que necesito, si no esta disponible igual tratan de conseguirlo, recomendados al 100%.', 
-    autor: 'Dr. Egidio C. — Medico Internista especialista en ecodoppler vascular' 
+    texto: '', 
+    autor: 'Dr. Egidio C. — Medico Especialista en Traumatología y Ortopedia' 
   },
   { 
     texto: 'Son mi primera opcion para ubicar lo que necesito, si no esta disponible igual tratan de conseguirlo, recomendados al 100%.', 

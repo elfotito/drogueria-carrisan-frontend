@@ -49,7 +49,6 @@ import Documentos from './pages/Documentos'
 import ChatCentro from './pages/Chat'
 import SubUsuarios from'./pages/SubUsuarios'
 import Presupuesto from'./pages/Presupuesto'
-import AyudaModal from '../components/AyudaModal'
 
 
 function LoadingBarBridge() {
