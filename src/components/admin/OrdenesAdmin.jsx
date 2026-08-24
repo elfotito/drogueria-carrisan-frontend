@@ -1,11 +1,12 @@
 import { useState, useEffect, useMemo } from 'react'
 import api from '../../api/axios'
 import OrdenDetalleModal from '../OrdenDetalleModal'
+import { useEsMobile } from '../../hooks/useEsMobile'
 import TableroKanbanOrdenes from './TableroKanbanOrdenes'
+import TableroSwipeOrdenes from './TableroSwipeOrdenes'
 import './OrdenesAdmin.css'
 
 const ITEMS_POR_PAGINA = 10
-
 const ESTADOS = ['pedido_creado', 'procesando', 'preparando', 'enviado', 'entregado', 'cancelado']
 
 const ESTADO_COLORES = {
@@ -23,17 +24,19 @@ function OrdenesAdmin() {
   const [error, setError] = useState('')
   const [ordenSeleccionada, setOrdenSeleccionada] = useState(null)
   const [ordenAEliminar, setOrdenAEliminar] = useState(null)
-  
+
   // Filtros
   const [busqueda, setBusqueda] = useState('')
   const [filtroEstado, setFiltroEstado] = useState('todos')
   const [filtroFecha, setFiltroFecha] = useState('todas') // todas, hoy, semana, mes
   const [ordenarPor, setOrdenarPor] = useState('fecha')
   const [ordenDireccion, setOrdenDireccion] = useState('desc')
-  
+
   // Paginación
   const [paginaActual, setPaginaActual] = useState(1)
-  const [vista, setVista] = useState('kanban') // kanban, tabla o cards
+  const [vista, setVista] = useState('tabla') // tabla, cards o kanban
+
+  const esMobile = useEsMobile()
 
   useEffect(() => {
     cargarOrdenes()
@@ -64,18 +67,6 @@ function OrdenesAdmin() {
     }
   }
 
-  async function handleGuardarItems(ordenId, items) {
-    try {
-      const { data } = await api.patch(`/orders/${ordenId}/items`, { items })
-      setOrdenes((prev) => prev.map((o) => (o.id === ordenId ? { ...o, ...data } : o)))
-      setOrdenSeleccionada((prev) => (prev && prev.id === ordenId ? { ...prev, ...data } : prev))
-    } catch (err) {
-      alert(err.response?.data?.error || 'No se pudo ajustar los productos de la orden')
-      console.error(err)
-      throw err
-    }
-  }
-
   async function handleEliminarOrden(ordenId) {
     try {
       await api.delete(`/orders/${ordenId}`)
@@ -98,7 +89,7 @@ function OrdenesAdmin() {
       new Date(o.created_at).toLocaleString('es-VE'),
       o.items?.length || 0
     ])
-    
+
     const csv = [headers, ...rows].map(row => row.join(',')).join('\n')
     const blob = new Blob([csv], { type: 'text/csv' })
     const url = window.URL.createObjectURL(blob)
@@ -167,7 +158,7 @@ function OrdenesAdmin() {
           valorA = new Date(a.created_at).getTime()
           valorB = new Date(b.created_at).getTime()
       }
-      
+
       if (valorA < valorB) return ordenDireccion === 'asc' ? -1 : 1
       if (valorA > valorB) return ordenDireccion === 'asc' ? 1 : -1
       return 0
@@ -202,7 +193,7 @@ function OrdenesAdmin() {
     const pendientes = ordenes.filter(o => o.estado === 'pendiente').length
     const finalizadas = ordenes.filter(o => ['finalizado', 'entregado'].includes(o.estado)).length
     const totalUSD = ordenes.reduce((sum, o) => sum + Number(o.total_usd), 0)
-    
+
     return { total, pendientes, finalizadas, totalUSD }
   }, [ordenes])
 
@@ -286,8 +277,8 @@ function OrdenesAdmin() {
             />
           </div>
 
-          <select 
-            value={filtroEstado} 
+          <select
+            value={filtroEstado}
             onChange={(e) => setFiltroEstado(e.target.value)}
             className="filter-select"
           >
@@ -299,8 +290,8 @@ function OrdenesAdmin() {
             ))}
           </select>
 
-          <select 
-            value={filtroFecha} 
+          <select
+            value={filtroFecha}
             onChange={(e) => setFiltroFecha(e.target.value)}
             className="filter-select"
           >
@@ -313,26 +304,26 @@ function OrdenesAdmin() {
 
         <div className="toolbar-actions">
           <div className="vista-toggle">
-            <button 
-              className={`vista-btn ${vista === 'kanban' ? 'active' : ''}`}
-              onClick={() => setVista('kanban')}
-              title="Vista tablero (arrastra para cambiar estado)"
-            >
-              🗂️
-            </button>
-            <button 
+            <button
               className={`vista-btn ${vista === 'tabla' ? 'active' : ''}`}
               onClick={() => setVista('tabla')}
               title="Vista tabla"
             >
               📋
             </button>
-            <button 
+            <button
               className={`vista-btn ${vista === 'cards' ? 'active' : ''}`}
               onClick={() => setVista('cards')}
               title="Vista cards"
             >
               🎴
+            </button>
+            <button
+              className={`vista-btn ${vista === 'kanban' ? 'active' : ''}`}
+              onClick={() => setVista('kanban')}
+              title="Vista kanban"
+            >
+              🗂️
             </button>
           </div>
         </div>
@@ -340,22 +331,12 @@ function OrdenesAdmin() {
 
       {/* Resultados */}
       <div className="resultados-info">
-        Mostrando {vista === 'kanban' ? ordenesFiltradas.length : ordenesPaginadas.length} de {ordenesFiltradas.length} órdenes
+        Mostrando {ordenesPaginadas.length} de {ordenesFiltradas.length} órdenes
         {busqueda && ` (filtradas de ${ordenes.length} totales)`}
       </div>
 
-      {/* Tablero Kanban — usa ordenesFiltradas (respeta búsqueda/fecha)
-          sin paginar: un tablero paginado rompería la vista de conjunto
-          que es justamente el punto de tenerlo. Cancelado no es columna
-          acá — cancelar sigue siendo una acción del modal de detalle. */}
-      {vista === 'kanban' ? (
-        <TableroKanbanOrdenes
-          ordenes={ordenesFiltradas}
-          estadoColores={ESTADO_COLORES}
-          onCambiarEstado={handleCambiarEstado}
-          onAbrirOrden={setOrdenSeleccionada}
-        />
-      ) : vista === 'tabla' ? (
+      {/* Tabla / Cards / Kanban */}
+      {vista === 'tabla' ? (
         <div className="table-container">
           <table className="ordenes-table">
             <thead>
@@ -442,16 +423,16 @@ function OrdenesAdmin() {
                     </td>
                     <td>
                       <div className="acciones-cell">
-                        <button 
+                        <button
                           onClick={() => setOrdenSeleccionada(orden)}
-                          className="btn-icon" 
+                          className="btn-icon"
                           title="Ver detalle"
                         >
                           👁️
                         </button>
-                        <button 
+                        <button
                           onClick={() => setOrdenAEliminar(orden)}
-                          className="btn-icon btn-danger" 
+                          className="btn-icon btn-danger"
                           title="Eliminar"
                         >
                           🗑️
@@ -464,8 +445,7 @@ function OrdenesAdmin() {
             </tbody>
           </table>
         </div>
-      ) : (
-        /* Vista Cards */
+      ) : vista === 'cards' ? (
         <div className="cards-grid">
           {ordenesPaginadas.length === 0 ? (
             <div className="empty-state">
@@ -477,7 +457,7 @@ function OrdenesAdmin() {
               <div key={orden.id} className={`orden-card estado-${orden.estado}`}>
                 <div className="card-header">
                   <span className="orden-id">#{orden.id}</span>
-                  <span 
+                  <span
                     className="estado-badge"
                     style={{
                       backgroundColor: ESTADO_COLORES[orden.estado]?.bg,
@@ -487,6 +467,7 @@ function OrdenesAdmin() {
                     {ESTADO_COLORES[orden.estado]?.label || orden.estado}
                   </span>
                 </div>
+
                 <div className="card-body">
                   <div className="cliente-info">
                     <span className="cliente-icon">👤</span>
@@ -495,6 +476,7 @@ function OrdenesAdmin() {
                       <div className="cliente-email">{orden.users?.email || ''}</div>
                     </div>
                   </div>
+
                   <div className="card-detalles">
                     <div className="detalle-item">
                       <span>📦 Items:</span>
@@ -509,6 +491,7 @@ function OrdenesAdmin() {
                       <strong>{new Date(orden.created_at).toLocaleDateString('es-VE')}</strong>
                     </div>
                   </div>
+
                   <select
                     value={orden.estado}
                     onChange={(e) => handleCambiarEstado(orden.id, e.target.value)}
@@ -521,11 +504,12 @@ function OrdenesAdmin() {
                     ))}
                   </select>
                 </div>
+
                 <div className="card-acciones">
                   <button onClick={() => setOrdenSeleccionada(orden)}>
                     👁️ Ver detalle
                   </button>
-                  <button 
+                  <button
                     onClick={() => setOrdenAEliminar(orden)}
                     className="btn-eliminar-card"
                   >
@@ -536,31 +520,46 @@ function OrdenesAdmin() {
             ))
           )}
         </div>
+      ) : (
+        esMobile ? (
+          <TableroSwipeOrdenes
+            ordenes={ordenesFiltradas}
+            estadoColores={ESTADO_COLORES}
+            onCambiarEstado={handleCambiarEstado}
+            onAbrirOrden={setOrdenSeleccionada}
+          />
+        ) : (
+          <TableroKanbanOrdenes
+            ordenes={ordenesFiltradas}
+            estadoColores={ESTADO_COLORES}
+            onCambiarEstado={handleCambiarEstado}
+            onAbrirOrden={setOrdenSeleccionada}
+          />
+        )
       )}
 
-      {/* Paginación — no aplica en modo kanban, que muestra todo el
-          conjunto filtrado sin cortar en páginas */}
+      {/* Paginación */}
       {vista !== 'kanban' && totalPaginas > 1 && (
         <div className="paginacion">
-          <button 
+          <button
             onClick={() => setPaginaActual(1)}
             disabled={paginaActual === 1}
             className="btn-pagina"
           >
             ⏮️
           </button>
-          <button 
+          <button
             onClick={() => setPaginaActual(p => Math.max(1, p - 1))}
             disabled={paginaActual === 1}
             className="btn-pagina"
           >
             ◀️
           </button>
-          
+
           {Array.from({ length: totalPaginas }, (_, i) => i + 1)
-            .filter(p => 
-              p === 1 || 
-              p === totalPaginas || 
+            .filter(p =>
+              p === 1 ||
+              p === totalPaginas ||
               Math.abs(p - paginaActual) <= 2
             )
             .map((p, i, arr) => (
@@ -574,15 +573,15 @@ function OrdenesAdmin() {
                 </button>
               </span>
             ))}
-          
-          <button 
+
+          <button
             onClick={() => setPaginaActual(p => Math.min(totalPaginas, p + 1))}
             disabled={paginaActual === totalPaginas}
             className="btn-pagina"
           >
             ▶️
           </button>
-          <button 
+          <button
             onClick={() => setPaginaActual(totalPaginas)}
             disabled={paginaActual === totalPaginas}
             className="btn-pagina"
@@ -599,7 +598,6 @@ function OrdenesAdmin() {
         onCambiarEstado={handleCambiarEstado}
         estados={ESTADOS}
         estadoColores={ESTADO_COLORES}
-        onGuardarItems={handleGuardarItems}
       />
 
       {/* Modal confirmar eliminación */}
@@ -610,13 +608,13 @@ function OrdenesAdmin() {
             <p>¿Estás seguro de eliminar la orden <strong>#{ordenAEliminar.id}</strong>?</p>
             <p className="warning-text">Esta acción no se puede deshacer.</p>
             <div className="modal-acciones">
-              <button 
+              <button
                 onClick={() => setOrdenAEliminar(null)}
                 className="btn-cancelar"
               >
                 Cancelar
               </button>
-              <button 
+              <button
                 onClick={() => handleEliminarOrden(ordenAEliminar.id)}
                 className="btn-eliminar"
               >
