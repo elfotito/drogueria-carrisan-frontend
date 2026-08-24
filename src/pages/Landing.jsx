@@ -542,6 +542,7 @@ function Landing() {
         </p>
       </footer>
     </div>
+<AyudaModal data={modalKey ? ayudaData[modalKey] : null} onClose={() => setModalKey(null)} />
   )
 }
 
