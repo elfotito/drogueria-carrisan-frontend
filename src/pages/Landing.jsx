@@ -19,9 +19,6 @@ import comoFuncionaLaPlataforma from '../data/comoFuncionaLaPlataforma'
 import ayudaData from '../data/ayudaData'
 import faqData from '../data/faqData'
 import recaudosCuentaB2B from '../data/recaudosCuentaB2B'
-import profesionesSalud from '../data/profesionesSalud'
-import tiposInstitucion from '../data/tiposInstitucion'
-import estadosCiudades from '../data/estadosCiudades'
 
 
   const BASE_URL = 'https://fqeshthtycmzgyibiurq.supabase.co/storage/v1/object/public/crsnimages'
@@ -242,7 +239,7 @@ const FAQS = [
   { 
     pregunta: '¿A qué zonas despachan y cuáles son los tiempos de entrega?', 
     respuesta: 'Contamos con cobertura de despacho en Valencia y ciudades aledañas. Los despachos nacionales se envian entre 24 horas a la agencia de envios de su preferencia.',
-    data: estadosCiudades,
+    data: logisticaAgilMultiplesDirecciones,
   },
 ]
 
@@ -443,7 +440,7 @@ function Landing() {
              className="landing-link"
              onClick={(e) => {
                e.preventDefault()
-               abrirModal(estadosCiudades)
+               abrirModal(logisticaAgilMultiplesDirecciones)
              }}
           >¿Necesitas un despacho rapido?</a>
         </div>
