@@ -6,6 +6,8 @@ import api from '../api/axios'
 import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
 import { NAV_ESTADO_CUENTA } from '../components/paginas-principales/NavEstadoCuenta'
 import './EstadoCuenta.css'
+import generarReporteEstadoCuentaPDF from '../utils/generarReporteEstadoCuentaPDF'
+
 
 // ---------------------------------------------------------------
 // Reportes — genera un PDF del estado de cuenta en un rango de
@@ -56,83 +58,26 @@ export default function ReportesEstadoCuenta() {
   }, [datos, desde, hasta])
 
   async function generarReporte() {
-    if (!datos) return
-    setGenerando(true)
-    setError('')
-    try {
-      const { jsPDF } = await import('jspdf')
-      const doc = new jsPDF()
-      let y = 20
-
-      doc.setFontSize(16)
-      doc.text('Droguería Carrisan', 14, y)
-      y += 8
-      doc.setFontSize(11)
-      doc.text('Estado de Cuenta', 14, y)
-      y += 8
-      doc.setFontSize(9)
-      doc.text(`Cliente: ${datos.cliente?.nombre || ''}`, 14, y)
-      y += 6
-      doc.text(`Período: ${desde} al ${hasta}`, 14, y)
-      y += 12
-
-      doc.setFontSize(11)
-      doc.text('Resumen', 14, y)
-      y += 6
-      doc.setFontSize(9)
-      doc.text(`Línea de crédito: ${formatUSD(datos.resumen.linea_credito)}`, 14, y)
-      y += 5
-      doc.text(`Deuda actual: ${formatUSD(datos.resumen.deuda_actual)}`, 14, y)
-      y += 5
-      doc.text(`Disponible: ${formatUSD(datos.resumen.saldo)}`, 14, y)
-      y += 12
-
-      if (preview.ordenes.length > 0) {
-        doc.setFontSize(11)
-        doc.text('Órdenes pendientes en el período', 14, y)
-        y += 6
-        doc.setFontSize(9)
-        preview.ordenes.forEach((o) => {
-          doc.text(`Orden #${o.id} — ${formatUSD(o.total_usd)} — ${o.created_at.split('T')[0]}`, 14, y)
-          y += 5
-          if (y > 280) { doc.addPage(); y = 20 }
-        })
-        y += 6
-      }
-
-      if (preview.facturas.length > 0) {
-        doc.setFontSize(11)
-        doc.text('Facturas', 14, y)
-        y += 6
-        doc.setFontSize(9)
-        preview.facturas.forEach((f) => {
-          doc.text(`Factura #${f.numero_factura} — ${formatUSD(f.monto_facturado)} — ${f.created_at.split('T')[0]}`, 14, y)
-          y += 5
-          if (y > 280) { doc.addPage(); y = 20 }
-        })
-        y += 6
-      }
-
-      if (preview.pagos.length > 0) {
-        doc.setFontSize(11)
-        doc.text('Pagos', 14, y)
-        y += 6
-        doc.setFontSize(9)
-        preview.pagos.forEach((p) => {
-          doc.text(`Pago #${p.id} — ${formatUSD(p.monto)} — ${p.created_at.split('T')[0]}`, 14, y)
-          y += 5
-          if (y > 280) { doc.addPage(); y = 20 }
-        })
-      }
-
-      doc.save(`estado-cuenta-${desde}-a-${hasta}.pdf`)
-    } catch (err) {
-      setError('No se pudo generar el reporte')
-      console.error(err)
-    } finally {
-      setGenerando(false)
-    }
+  if (!datos) return
+  setGenerando(true)
+  setError('')
+  try {
+    await generarReporteEstadoCuentaPDF({
+      cliente: datos.cliente,
+      resumen: datos.resumen,
+      facturas: preview.facturas,
+      pagos: preview.pagos,
+      ordenes: preview.ordenes,
+      desde,
+      hasta,
+    })
+  } catch (err) {
+    setError('No se pudo generar el reporte')
+    console.error(err)
+  } finally {
+    setGenerando(false)
   }
+}
 
   return (
     <LayoutPaginaPrincipal
