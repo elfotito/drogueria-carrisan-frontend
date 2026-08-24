@@ -28,8 +28,6 @@ import './Landing.css'
 
   }
 
-const [abierto, setAbierto] = useState(false)
-
 
   const img = (path, width = 800) => {
   return `${BASE_URL}/${path}?width=${width}&quality=80`
@@ -166,7 +164,7 @@ const TESTIMONIOS = [
     autor: 'Dr.  Ulises O. — Medico Anestesiólogo especialista en Terapia del Dolor' 
   },
   { 
-    texto: '', 
+    texto: 'Lo mas importante de nuestra labor es el tiempo, ya no me preocupo en buscar hasta debajo de las piedras, estos jovenes consiguen lo que necesito, siempre.', 
     autor: 'Dr. Egidio C. — Medico Especialista en Traumatología y Ortopedia' 
   },
   { 
