@@ -11,6 +11,8 @@ import PagoClienteModal from '../components/PagoClienteModal'
 import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
 import { NAV_ESTADO_CUENTA } from '../components/paginas-principales/NavEstadoCuenta'
 import './EstadoCuenta.css'
+import generarFacturaPDF from '../utils/generarFacturaPDF'
+import generarComprobantePagoPDF from '../utils/generarComprobantePagoPDF'
 
 // ---------------------------------------------------------------
 // Estado de Cuenta — ahora migrada a <LayoutPaginaPrincipal> (mismo
@@ -24,6 +26,14 @@ import './EstadoCuenta.css'
 // corte / órdenes por vencer) que quedan reservados a propósito —
 // ver nota de "Próximamente" más abajo.
 // ---------------------------------------------------------------
+
+async function exportarFacturaPDF(factura) {
+  await generarFacturaPDF({ factura, cliente: datos.cliente })
+}
+
+async function exportarComprobantePago(pago) {
+  await generarComprobantePagoPDF({ pago, cliente: datos.cliente })
+}
 
 function formatearMonto(valor) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(valor || 0)
