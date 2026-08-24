@@ -154,7 +154,7 @@ const TESTIMONIOS = [
     autor: 'Lic. Nathalie B. — Bioanalista' 
   },
   { 
-    texto: 'Tienen los medicamentos que necesito para mis estudios y estan atentos de siempre tenerlos disponibles, una atencion personalizada fantastica.', 
+    texto: 'Tienen los medicamentos que necesito para mis estudios y estan atentos siempre de tenerlos disponibles, una atencion personalizada fantastica.', 
     autor: 'Dr. Enrique B. — Medico Cardiólogo, Internista e Intensivista' 
   },
   { 
@@ -163,11 +163,11 @@ const TESTIMONIOS = [
   },
   { 
     texto: 'Son mi primera opcion para ubicar lo que necesito, si no esta disponible igual tratan de conseguirlo, recomendados al 100%.', 
-    autor: 'Dr. Leopoldo F. — Medico Internista especialista en ecodoppler vascular' 
+    autor: 'Dr. Egidio C. — Medico Internista especialista en ecodoppler vascular' 
   },
   { 
-    texto: 'Es el único proveedor que nos da certeza en compras de último momento. Sabemos que, si algo no está disponible, nos ofrecen opciones', 
-    autor: 'Dr. Daniel C. — Gastroenterólogo' 
+    texto: 'Son mi primera opcion para ubicar lo que necesito, si no esta disponible igual tratan de conseguirlo, recomendados al 100%.', 
+    autor: 'Dr. Leopoldo F. — Medico Internista especialista en ecodoppler vascular' 
   },
 ]
 const MAS_EXPLORAR = [
@@ -542,7 +542,6 @@ function Landing() {
         </p>
       </footer>
     </div>
-<AyudaModal data={modalKey ? ayudaData[modalKey] : null} onClose={() => setModalKey(null)} />
   )
 }
 
