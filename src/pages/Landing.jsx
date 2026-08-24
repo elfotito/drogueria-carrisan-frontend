@@ -4,7 +4,7 @@ import {
   Check, ChevronDown, Star, HeartHandshake, Lock,
 } from 'lucide-react'
 import './Landing.css'
-import InfoModal from './InfoModal'
+import InfoModal from '../components/InfoModal'
 // Importaciones de los archivos de datos
 import beneficios from '../data/beneficios'
 import catalogoUnitarioIntegral from '../data/catalogoUnitarioIntegral'
