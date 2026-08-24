@@ -9,7 +9,7 @@ import api from '../api/axios'
 import BuscadorMovil from './BuscadorMovil'
 import './Navbar.css'
 
-const RUTAS_SIN_NAVBAR = ['/login', '/registro', '/recuperar']
+const RUTAS_SIN_NAVBAR = ['/login', '/registro', '/recuperar', '/registro/institucional', '/registro/profesional', '/registro/honorifico']
 
 // Rutas donde SÍ debe verse la flecha "atrás" en móvil
 const RUTAS_CON_BACK_MOVIL_PREFIXES = [
