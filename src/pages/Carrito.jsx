@@ -377,7 +377,6 @@ function Carrito() {
         })),
         tipo_envio: tipoEnvio,
         direccion_envio_id: direccionSeleccionada?.id || null,
-        costo_delivery: costoEnvio,
         agencia_envio: agenciaSeleccionada || null,
         forma_pago: formaPago,
       }

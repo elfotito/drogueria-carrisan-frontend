@@ -2,6 +2,7 @@ import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import DashboardAdmin from '../components/admin/DashboardAdmin'
 import TasaCambio from '../components/admin/TasaCambio'
 import OrdenesAdmin from '../components/admin/OrdenesAdmin'
+import NuevaOrdenRapida from '../components/admin/NuevaOrdenRapida'
 import ProductosAdmin from '../components/admin/ProductosAdmin'
 import UsuariosAdmin from '../components/admin/UsuariosAdmin'
 import EstadoCuentaAdmin from '../components/admin/EstadoCuentaAdmin'
@@ -41,6 +42,7 @@ const TITULOS_SECCION = {
   dashboard: 'Dashboard',
   tasa: 'Tasa de cambio',
   ordenes: 'Órdenes',
+  nuevaOrden: 'Nueva orden rápida',
   productos: 'Productos',
   descuentos: 'Descuentos',
   estadoCuenta: 'Estado de cuenta',
@@ -59,6 +61,7 @@ const SEGMENTO_A_ID = {
   '': 'dashboard',
   tasa: 'tasa',
   ordenes: 'ordenes',
+  'nueva-orden': 'nuevaOrden',
   productos: 'productos',
   descuentos: 'descuentos',
   'estado-cuenta': 'estadoCuenta',
@@ -88,6 +91,7 @@ function Admin() {
           <Route index element={<DashboardAdmin onIrA={(id) => navigate(rutaDeId(id))} />} />
           <Route path="tasa" element={<TasaCambio />} />
           <Route path="ordenes" element={<OrdenesAdmin />} />
+          <Route path="nueva-orden" element={<NuevaOrdenRapida />} />
           <Route path="productos" element={<ProductosAdmin />} />
           <Route path="descuentos" element={<DescuentosPanel />} />
           <Route path="estado-cuenta" element={<EstadoCuentaAdmin />} />

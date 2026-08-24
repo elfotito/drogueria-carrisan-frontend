@@ -1,0 +1,381 @@
+.nor-page,
+.nor-page *,
+.nor-page *::before,
+.nor-page *::after {
+  box-sizing: border-box;
+}
+
+.nor-page {
+  --nor-brand: #0052DC;
+  --nor-brand-dark: #1A1A3A;
+  --nor-accent: #12A594;
+  --nor-danger: #dc2626;
+  --nor-bg: #FBFAF7;
+  --nor-surface: #ffffff;
+  --nor-border: #e7e6e0;
+  --nor-text: #1A1A3A;
+  --nor-text-muted: #6b6b7a;
+
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: var(--nor-text);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 720px;
+}
+
+.nor-page h2 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.nor-aviso {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #eaf0ff;
+  color: var(--nor-brand);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.85rem;
+}
+
+/* --- Selección de cliente --- */
+.nor-clientes {
+  background: var(--nor-surface);
+  border: 1px solid var(--nor-border);
+  border-radius: 14px;
+  padding: 18px;
+}
+
+.nor-clientes__lista {
+  margin-top: 12px;
+  max-height: 360px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nor-clientes__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 8px;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.nor-clientes__item:hover {
+  background: var(--nor-bg);
+}
+
+.nor-clientes__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--nor-brand-dark);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.nor-clientes__info {
+  display: flex;
+  flex-direction: column;
+}
+
+.nor-clientes__nombre {
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.nor-clientes__email {
+  font-size: 0.78rem;
+  color: var(--nor-text-muted);
+}
+
+.nor-cliente-activo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  color: var(--nor-text-muted);
+}
+
+.nor-cliente-activo strong {
+  color: var(--nor-text);
+}
+
+.nor-cliente-activo button {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: var(--nor-brand);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* --- Buscador (mismo patrón que Presupuesto.css) --- */
+.nor-buscador {
+  position: relative;
+}
+
+.nor-buscador__input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--nor-surface);
+  border: 1.5px solid var(--nor-border);
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: var(--nor-text-muted);
+}
+
+.nor-buscador__input-wrap:focus-within {
+  border-color: var(--nor-brand);
+}
+
+.nor-buscador__input-wrap input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 0.92rem;
+  color: var(--nor-text);
+}
+
+.nor-buscador__resultados {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: var(--nor-surface);
+  border: 1px solid var(--nor-border);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(26, 26, 58, 0.12);
+  z-index: 20;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.nor-buscador__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 14px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--nor-border);
+  cursor: pointer;
+  text-align: left;
+}
+
+.nor-buscador__item:last-child {
+  border-bottom: none;
+}
+
+.nor-buscador__item:hover {
+  background: var(--nor-bg);
+}
+
+.nor-buscador__nombre {
+  flex: 1;
+  font-size: 0.86rem;
+  font-weight: 600;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nor-buscador__precio {
+  font-size: 0.82rem;
+  color: var(--nor-text-muted);
+  flex-shrink: 0;
+}
+
+.nor-buscador__item svg {
+  color: var(--nor-brand);
+  flex-shrink: 0;
+}
+
+/* --- Filas de la orden --- */
+.nor-filas {
+  background: var(--nor-surface);
+  border: 1px solid var(--nor-border);
+  border-radius: 14px;
+  padding: 8px 18px;
+}
+
+.nor-fila {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--nor-border);
+  flex-wrap: wrap;
+}
+
+.nor-fila:last-child {
+  border-bottom: none;
+}
+
+.nor-fila__info {
+  flex: 1;
+  min-width: 140px;
+}
+
+.nor-fila__nombre {
+  margin: 0;
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.nor-fila__precio {
+  margin: 2px 0 0;
+  font-size: 0.78rem;
+  color: var(--nor-text-muted);
+}
+
+.nor-fila__stepper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--nor-border);
+  border-radius: 999px;
+  padding: 4px 10px;
+}
+
+.nor-fila__stepper button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: none;
+  background: var(--nor-bg);
+  cursor: pointer;
+  color: var(--nor-text);
+}
+
+.nor-fila__stepper span {
+  font-size: 0.85rem;
+  font-weight: 700;
+  min-width: 16px;
+  text-align: center;
+}
+
+.nor-fila__subtotal {
+  font-size: 0.88rem;
+  font-weight: 700;
+  min-width: 70px;
+  text-align: right;
+}
+
+.nor-fila__quitar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: none;
+  color: var(--nor-text-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.nor-fila__quitar:hover {
+  color: var(--nor-danger);
+}
+
+/* --- Footer: forma de pago + total + crear --- */
+.nor-footer {
+  background: var(--nor-surface);
+  border: 1px solid var(--nor-border);
+  border-radius: 14px;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.nor-footer__pago {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--nor-text-muted);
+}
+
+.nor-footer__pago select {
+  border: 1px solid var(--nor-border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 0.85rem;
+  color: var(--nor-text);
+  background: var(--nor-surface);
+}
+
+.nor-footer__total {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 1rem;
+  font-weight: 800;
+  margin-left: auto;
+}
+
+.nor-footer__total span:first-child {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--nor-text-muted);
+}
+
+.nor-footer__crear-btn {
+  padding: 12px 22px;
+  border-radius: 999px;
+  border: none;
+  background: var(--nor-brand);
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+}
+
+.nor-footer__crear-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.nor-mensaje {
+  padding: 16px;
+  font-size: 0.85rem;
+  color: var(--nor-text-muted);
+  text-align: center;
+}
+
+.nor-mensaje--grande {
+  padding: 36px 16px;
+}
+
+@media (min-width: 640px) {
+  .nor-footer__crear-btn {
+    width: auto;
+  }
+}

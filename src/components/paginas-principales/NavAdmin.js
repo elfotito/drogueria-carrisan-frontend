@@ -10,7 +10,7 @@
 // ---------------------------------------------------------------
 import {
   LayoutDashboard, Package, ShoppingCart, Users, Wallet, CreditCard,
-  Tag, FileText, Inbox, MessagesSquare, DollarSign, Files,
+  Tag, FileText, Inbox, MessagesSquare, DollarSign, Files, ReceiptText,
 } from 'lucide-react'
 
 export const NAV_ADMIN = [
@@ -25,6 +25,7 @@ export const NAV_ADMIN = [
     titulo: 'Ventas',
     items: [
       { id: 'ordenes', to: '/admin/ordenes', icono: ShoppingCart, texto: 'Órdenes' },
+      { id: 'nuevaOrden', to: '/admin/nueva-orden', icono: ReceiptText, texto: 'Nueva orden rápida' },
       { id: 'productos', to: '/admin/productos', icono: Package, texto: 'Productos' },
       { id: 'descuentos', to: '/admin/descuentos', icono: Tag, texto: 'Descuentos' },
     ],
