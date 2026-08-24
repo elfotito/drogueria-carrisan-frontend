@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import {
-  Check, ChevronDown, Play, Star, HeartHandshake, Lock,
+  Check, ChevronDown, Star, HeartHandshake, Lock,
 } from 'lucide-react'
 import './Landing.css'
 
