@@ -416,7 +416,7 @@ function Landing() {
              className="btn-landing btn-landing--primario"
              onClick={(e) => {
                e.preventDefault()
-               abrirModal(tiposInstitucion)
+               abrirModal(recaudosCuentaB2B)
              }}
           >Ver condiciones comerciales</a>
         </div>
@@ -494,7 +494,7 @@ function Landing() {
               <a href="#"
                  onClick={(e) => {
                    e.preventDefault()
-                   abrirModal(tiposInstitucion)
+                   abrirModal(gestionUnaSolaCuentaEquipo)
                  }}
               >Hablar con un asesor de cuentas</a>.</p>
             </div>
