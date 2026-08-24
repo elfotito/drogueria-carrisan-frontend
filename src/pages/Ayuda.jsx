@@ -311,13 +311,20 @@ function Ayuda() {
             ) : (
               <div className="ayuda-lista">
                 {categoria.items.map((item) => (
-                  <Link key={item.slug} to={`/ayuda/${categoria.id}/${item.slug}`} className="ayuda-fila">
-                    <span className="ayuda-fila__icono-circulo">{ICONOS[categoria.icono]}</span>
-                    <span className="ayuda-fila__texto">
-                      <span className="ayuda-fila__titulo">{item.label}</span>
-                      <span className="ayuda-fila__desc">{item.desc}</span>
-                    </span>
-                    <span className="ayuda-fila__chevron">{ICONOS.chevron}</span>
+  <button
+    key={item.slug}
+    type="button"
+    className="ayuda-fila"
+    onClick={() => setModalKey(`${categoria.id}/${item.slug}`)}
+  >
+    <span className="ayuda-fila__icono-circulo">{ICONOS[categoria.icono]}</span>
+    <span className="ayuda-fila__texto">
+      <span className="ayuda-fila__titulo">{item.label}</span>
+      <span className="ayuda-fila__desc">{item.desc}</span>
+    </span>
+    <span className="ayuda-fila__chevron">{ICONOS.chevron}</span>
+  </button>
+))}
                   </Link>
                 ))}
               </div>
