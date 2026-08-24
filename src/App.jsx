@@ -15,6 +15,10 @@ import Home from './pages/Home'
 import Catalogo from './pages/Catalogo'
 import Login from './pages/Login'
 import Registro from './pages/RegistroConTipo'
+import RegistroPasoFinal from './pages/RegistroPasoFinal'
+import RegistroInstitucional from './pages/RegistroInstitucional'
+import RegistroProfesional from './pages/RegistroProfesional'
+import RegistroHonorifico from './pages/RegistroHonorifico'
 import Carrito from './pages/Carrito'
 import MisOrdenes from './pages/MisOrdenes'
 import Admin from './pages/Admin'
@@ -74,6 +78,10 @@ function App() {
                 <Route path="/catalogo" element={<Catalogo />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/registro" element={<Registro />} />
+                <Route path="/registro/finalizar" element={<RegistroPasoFinal />} />
+                <Route path="/registro/institucional" element={<RegistroInstitucional />} />
+                <Route path="/registro/profesional" element={<RegistroProfesional />} />
+                <Route path="/registro/honorifico" element={<RegistroHonorifico />} />
                 <Route path="/carrito" element={<PrivateRoute><Carrito /></PrivateRoute>} />
                 <Route path="/orders" element={<PrivateRoute><MisOrdenes /></PrivateRoute>} />
                 <Route path="/orders/:id" element={<PrivateRoute><OrdenDetalle /></PrivateRoute>} />
