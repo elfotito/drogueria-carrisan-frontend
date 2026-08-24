@@ -685,7 +685,7 @@ function Landing() {
           <ImagePlaceholder label="Badge 2" className="landing-badge-img" />
         </div>
         <p className="landing-footer__direccion">
-          Droguería Carrisán · Dirección pendiente de definir
+          Droguería Carrisan, C.A. · Av Urdaneta (99) Qta Mirabal, Local 04C, Valencia 2001, Carabobo, Venezuela
         </p>
         <div className="landing-footer__links">
           <Link to="/contacto">Ayuda</Link>
@@ -698,7 +698,7 @@ function Landing() {
              e.preventDefault()
              abrirModal(profesionesSalud)
            }}
-        >Droguería Carrisán para profesionales que emiten recetas ›</a>
+        >Droguería Carrisan respaldando la labor del Medico Venezolano 🇻🇪❤️ ›</a>
         <p className="landing-footer__legal">
           Los nombres que aparecen en la fotografía son con fines ilustrativos.
         </p>
