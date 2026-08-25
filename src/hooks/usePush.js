@@ -16,18 +16,18 @@ if (!PUSH_ENABLED) {
   console.error('🚨  VITE_VAPID_PUBLIC_KEY no está definida. Las notificaciones push están deshabilitadas.')
 }
 
+function esperarServiceWorker(timeout = 5000) {
+  return Promise.race([
+    navigator.serviceWorker.ready,
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Service Worker no se registró a tiempo')), timeout)
+    ),
+  ])
+}
+
 /**
  * Hook para gestionar notificaciones push (suscribir / desuscribir).
  * Detecta automáticamente el estado actual al montar.
- *
- * Devuelve:
- *  - soportado: boolean — si el navegador puede recibir push
- *  - suscrito: boolean | null — true si hay suscripción activa, null = cargando
- *  - permiso: 'granted' | 'denied' | 'default' | null
- *  - pidiendoPermiso: boolean — true mientras se procesa
- *  - error: string
- *  - activar(): pide permiso y suscribe
- *  - desactivar(): elimina la suscripción
  */
 export function usePush() {
   const soportado = 'serviceWorker' in navigator && 'PushManager' in window && PUSH_ENABLED
@@ -47,7 +47,7 @@ export function usePush() {
 
     async function detectarEstado() {
       try {
-        const reg = await navigator.serviceWorker.ready
+        const reg = await esperarServiceWorker(5000)
         const sub = await reg.pushManager.getSubscription()
         if (!cancelled) {
           setSuscrito(!!sub)
@@ -75,7 +75,7 @@ export function usePush() {
     setError('')
 
     try {
-      const registro = await navigator.serviceWorker.ready
+      const registro = await esperarServiceWorker(5000)
       const permisoActual = await Notification.requestPermission()
 
       if (permisoActual !== 'granted') {
@@ -100,7 +100,14 @@ export function usePush() {
       setPermiso('granted')
     } catch (err) {
       console.error('Error al activar notificaciones push:', err)
-      setError('No se pudo activar las notificaciones. Podés intentarlo después desde Ajustes.')
+      const msg = err?.response?.data?.error
+      if (msg) {
+        setError(msg)
+      } else if (err.message?.includes('Service Worker')) {
+        setError('El service worker no está listo. Recargá la página e intentá de nuevo.')
+      } else {
+        setError('No se pudo activar las notificaciones. Recargá la página e intentá de nuevo.')
+      }
       setSuscrito(false)
     } finally {
       setPidiendoPermiso(false)
@@ -112,7 +119,7 @@ export function usePush() {
     setError('')
 
     try {
-      const registro = await navigator.serviceWorker.ready
+      const registro = await esperarServiceWorker(5000)
       const sub = await registro.pushManager.getSubscription()
 
       if (sub) {
