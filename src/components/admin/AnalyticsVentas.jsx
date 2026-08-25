@@ -23,7 +23,7 @@ import {
   CartesianGrid,
   Tooltip
 } from 'recharts';
-import { exportToExcel, exportToPdf } from '../utils/exportUtils';
+import { exportToExcel, exportToPdf } from '../../utils/exportUtils';
 
 const AZUL = '#0052DC';
 const INDIGO = '#1A1A3A';
