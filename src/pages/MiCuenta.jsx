@@ -11,6 +11,7 @@ import {
   MessageCircle, ShieldCheck, Wallet, Bell, LogOut, Settings, X, Lock, Scale,
 } from 'lucide-react'
 import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
+import BannerOnboarding from '../components/BannerOnboarding'
 import { NAV_CUENTA } from '../components/paginas-principales/navCuenta'
 import './MiCuenta.css'
 import '../components/HojaInferior.jsx'
@@ -590,6 +591,8 @@ function MiCuenta() {
             <AlertCircle size={16} /> {error}
           </div>
         )}
+
+        <BannerOnboarding />
 
         {cargando ? (
           <div className="mi-cuenta__cargando">
