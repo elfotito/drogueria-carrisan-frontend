@@ -4,10 +4,22 @@ import api from '../api/axios';
 
 const AuthContext = createContext();
 
+function isTokenValid(token) {
+  if (!token) return false;
+  try {
+    const decoded = jwtDecode(token);
+    const expiraEn = decoded.exp * 1000;
+    return expiraEn > Date.now();
+  } catch (e) {
+    return false;
+  }
+}
+
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState(localStorage.getItem('token'));
+  const [token, setToken] = useState(() => localStorage.getItem('token'));
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [tokenExpirado, setTokenExpirado] = useState(false);
 
   useEffect(() => {
     if (token) {
@@ -16,12 +28,8 @@ export function AuthProvider({ children }) {
         const yaVencio = decoded.exp * 1000 < Date.now();
 
         if (yaVencio) {
-          localStorage.removeItem('token');
-          localStorage.removeItem('user'); // También limpiar user
-          setToken(null);
-          setUser(null);
+          setTokenExpirado(true);
         } else {
-          // Intentar obtener el usuario completo del localStorage
           const savedUser = localStorage.getItem('user');
           if (savedUser) {
             try {
@@ -34,13 +42,11 @@ export function AuthProvider({ children }) {
           } else {
             setUser(decoded);
           }
+          setTokenExpirado(false);
         }
       } catch (err) {
         console.error('Token inválido:', err);
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        setToken(null);
-        setUser(null);
+        setTokenExpirado(true);
       }
     }
     setLoading(false);
@@ -48,17 +54,17 @@ export function AuthProvider({ children }) {
 
   async function login(email, password) {
     const { data } = await api.post('/auth/login', { email, password });
-    
-    console.log('Respuesta del login:', data); // Para debug
-    
+
+    console.log('Respuesta del login:', data);
+
     localStorage.setItem('token', data.token);
-    
-    // Guardar el usuario COMPLETO (incluye nombre)
     localStorage.setItem('user', JSON.stringify(data.user));
-    
+
     setToken(data.token);
-    setUser(data.user); // Setear directamente el usuario completo
-    
+    setUser(data.user);
+
+    setTokenExpirado(false);
+
     return data.user;
   }
 
@@ -67,9 +73,24 @@ export function AuthProvider({ children }) {
     localStorage.removeItem('user');
     setToken(null);
     setUser(null);
+    setTokenExpirado(false);
   }
 
-  const value = { user, token, login, logout, loading };
+  async function refreshTokenIfNeeded() {
+    if (token && !isTokenValid(token)) {
+      setTokenExpirado(true);
+      logout();
+      if (!window.location.pathname.startsWith('/login') && !window.location.pathname.startsWith('/')) {
+        window.location.href = '/login?expirado=1';
+      }
+    }
+  }
+
+  useEffect(() => {
+    refreshTokenIfNeeded();
+  }, [token]);
+
+  const value = { user, token, login, logout, refreshTokenIfNeeded, loading, tokenExpirado };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
