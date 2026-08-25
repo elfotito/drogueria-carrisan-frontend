@@ -30,7 +30,8 @@
     "react-leaflet": "^5.0.0",
     "react-map-free": "^1.0.1",
     "react-router-dom": "^7.18.2",
-    "recharts": "^3.10.1"
+    "recharts": "^3.10.1",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@chakra-ui/cli": "^3.36.1",
