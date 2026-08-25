@@ -1,8 +1,6 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import api from '../api/axios'
 
-// Convierte la clave VAPID pública (base64 URL-safe) al formato Uint8Array
-// que exige la Push API del navegador.
 function convertirClaveVapid(claveBase64) {
   if (!claveBase64) return null
   const padding = '='.repeat((4 - (claveBase64.length % 4)) % 4)
@@ -19,31 +17,57 @@ if (!PUSH_ENABLED) {
 }
 
 /**
- * Hook para pedir permiso de notificaciones push y suscribir al usuario.
- * Requiere que el usuario ya tenga sesión (llama a /push/subscribe, que
- * exige JWT) — por eso en el registro se usa DESPUÉS de crear la cuenta
- * y loguear, no antes.
+ * Hook para gestionar notificaciones push (suscribir / desuscribir).
+ * Detecta automáticamente el estado actual al montar.
  *
  * Devuelve:
- *  - soportado: si el navegador soporta Push API + Service Worker Y la VAPID key está configurada
- *  - estado: 'no_preguntado' | 'concedido' | 'denegado' | 'no_soportado' | 'pospuesto'
- *  - pidiendoPermiso: true mientras se procesa
- *  - pedirPermiso(): dispara el prompt nativo del navegador
+ *  - soportado: boolean — si el navegador puede recibir push
+ *  - suscrito: boolean | null — true si hay suscripción activa, null = cargando
+ *  - permiso: 'granted' | 'denied' | 'default' | null
+ *  - pidiendoPermiso: boolean — true mientras se procesa
+ *  - error: string
+ *  - activar(): pide permiso y suscribe
+ *  - desactivar(): elimina la suscripción
  */
 export function usePush() {
   const soportado = 'serviceWorker' in navigator && 'PushManager' in window && PUSH_ENABLED
-  const [estado, setEstado] = useState('no_preguntado')
+  const [suscrito, setSuscrito] = useState(null)
+  const [permiso, setPermiso] = useState(null)
   const [pidiendoPermiso, setPidiendoPermiso] = useState(false)
   const [error, setError] = useState('')
 
-  const pedirPermiso = useCallback(async () => {
+  useEffect(() => {
     if (!soportado) {
-      if (!PUSH_ENABLED) {
-        setEstado('no_soportado')
-        setError('Las notificaciones push no están configuradas en el servidor.')
-      } else {
-        setEstado('no_soportado')
+      setSuscrito(false)
+      setPermiso(Notification?.permission || 'default')
+      return
+    }
+
+    let cancelled = false
+
+    async function detectarEstado() {
+      try {
+        const reg = await navigator.serviceWorker.ready
+        const sub = await reg.pushManager.getSubscription()
+        if (!cancelled) {
+          setSuscrito(!!sub)
+          setPermiso(Notification.permission)
+        }
+      } catch {
+        if (!cancelled) {
+          setSuscrito(false)
+          setPermiso('default')
+        }
       }
+    }
+
+    detectarEstado()
+    return () => { cancelled = true }
+  }, [soportado])
+
+  const activar = useCallback(async () => {
+    if (!soportado) {
+      setError('Las notificaciones push no están disponibles en este navegador.')
       return
     }
 
@@ -51,20 +75,17 @@ export function usePush() {
     setError('')
 
     try {
-      // El Service Worker ya fue registrado en App.jsx (registro centralizado).
-      // Si por alguna razón no está listo, esperamos a que lo esté.
       const registro = await navigator.serviceWorker.ready
+      const permisoActual = await Notification.requestPermission()
 
-      const permiso = await Notification.requestPermission()
-
-      if (permiso !== 'granted') {
-        setEstado('denegado')
+      if (permisoActual !== 'granted') {
+        setPermiso(permisoActual)
+        setSuscrito(false)
         return
       }
 
       const claveVapid = convertirClaveVapid(VAPID_KEY)
       if (!claveVapid) {
-        setEstado('denegado')
         setError('Error de configuración de notificaciones.')
         return
       }
@@ -75,15 +96,39 @@ export function usePush() {
       })
 
       await api.post('/push/subscribe', suscripcion.toJSON())
-      setEstado('concedido')
+      setSuscrito(true)
+      setPermiso('granted')
     } catch (err) {
       console.error('Error al activar notificaciones push:', err)
       setError('No se pudo activar las notificaciones. Podés intentarlo después desde Ajustes.')
-      setEstado('denegado')
+      setSuscrito(false)
     } finally {
       setPidiendoPermiso(false)
     }
   }, [soportado])
 
-  return { soportado, estado, pidiendoPermiso, error, pedirPermiso }
+  const desactivar = useCallback(async () => {
+    setPidiendoPermiso(true)
+    setError('')
+
+    try {
+      const registro = await navigator.serviceWorker.ready
+      const sub = await registro.pushManager.getSubscription()
+
+      if (sub) {
+        const endpoint = sub.endpoint
+        await sub.unsubscribe()
+        await api.delete('/push/subscribe', { data: { endpoint } })
+      }
+
+      setSuscrito(false)
+    } catch (err) {
+      console.error('Error al desactivar notificaciones push:', err)
+      setError('No se pudo desactivar las notificaciones.')
+    } finally {
+      setPidiendoPermiso(false)
+    }
+  }, [])
+
+  return { soportado, suscrito, permiso, pidiendoPermiso, error, activar, desactivar }
 }

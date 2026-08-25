@@ -5,6 +5,7 @@ import { Progress, Switch } from '@chakra-ui/react'
 import api from '../api/axios'
 import { useAuth } from '../context/AuthContext'
 import { useFavoritos } from '../context/FavoritosContext'
+import { usePush } from '../hooks/usePush'
 import {
   Package, ChevronRight, ChevronDown, Loader2, AlertCircle,
   MessageCircle, ShieldCheck, Wallet, Bell, LogOut, Settings, X, Lock, Scale,
@@ -152,24 +153,66 @@ function ContenidoModalCuenta({ user, inicial, onCerrar, onCambiarCuenta, onCerr
 }
 
 // ---------------------------------------------------------
-// Contenido de "Permisos y notificaciones" — todo texto/placeholder
-// por ahora, no hay configuraciones reales conectadas todavía.
+// Contenido de "Permisos y notificaciones" — conectado al hook
+// usePush para activar/desactivar notificaciones del navegador.
 // ---------------------------------------------------------
 function ContenidoModalPermisos() {
+  const { soportado, suscrito, permiso, pidiendoPermiso, error, activar, desactivar } = usePush()
+
+  const permisoBloqueado = permiso === 'denied'
+
+  function handleToggle() {
+    if (pidiendoPermiso || permisoBloqueado) return
+    if (suscrito) {
+      desactivar()
+    } else {
+      activar()
+    }
+  }
+
   return (
     <>
       <div className="modal-permisos__fila">
         <div className="modal-permisos__fila-texto">
           <span className="modal-permisos__fila-titulo">Avisos y notificaciones</span>
-          <span className="modal-permisos__fila-descripcion">Activar o desactivar los avisos de tu cuenta</span>
+          <span className="modal-permisos__fila-descripcion">
+            {!soportado
+              ? 'Tu navegador no soporta notificaciones push'
+              : permisoBloqueado
+                ? 'Las notificaciones están bloqueadas en la configuración del navegador'
+                : suscrito
+                  ? 'Recibís avisos push de tu cuenta'
+                  : 'Activá para recibir avisos importantes de tu cuenta'}
+          </span>
         </div>
-        <Switch.Root checked={false} disabled size="md">
+        <Switch.Root
+          checked={!!suscrito}
+          disabled={!soportado || permisoBloqueado || pidiendoPermiso}
+          size="md"
+          onCheckedChange={handleToggle}
+        >
           <Switch.HiddenInput />
           <Switch.Control>
             <Switch.Thumb />
           </Switch.Control>
         </Switch.Root>
       </div>
+
+      {pidiendoPermiso && (
+        <div className="modal-permisos__fila">
+          <Loader2 size={15} className="mi-cuenta__spinner" />
+          <span className="modal-permisos__fila-descripcion" style={{ marginLeft: 8 }}>
+            {suscrito ? 'Desactivando…' : 'Activando notificaciones…'}
+          </span>
+        </div>
+      )}
+
+      {error && (
+        <div className="modal-permisos__fila" style={{ color: '#dc2626' }}>
+          <AlertCircle size={15} />
+          <span className="modal-permisos__fila-descripcion" style={{ marginLeft: 8 }}>{error}</span>
+        </div>
+      )}
 
       <div className="modal-permisos__fila">
         <div className="modal-permisos__fila-icono">
