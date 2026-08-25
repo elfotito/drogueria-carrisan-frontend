@@ -26,11 +26,12 @@
   color: var(--color-text);
   background: var(--color-surface);
   overflow-x: hidden;
+  max-width: 100vw;
 }
 
 .landing h1 {
   font-family: 'Fraunces', 'Source Serif 4', sans-serif;
-  font-size: 4.3rem;
+  font-size: clamp(1.8rem, 5vw, 4.3rem);
   font-weight: 800;
   line-height: 1.1;
   margin: 0 0 14px;
@@ -40,7 +41,7 @@
 
 .landing h2 {
   font-family: 'Source Serif 4', 'Karla', sans-serif;
-  font-size: 1.7rem;
+  font-size: clamp(1.3rem, 3.5vw, 1.7rem);
   font-weight: 800;
   line-height: 1.15;
   margin: 0 0 12px;
@@ -188,8 +189,8 @@
 }
 
 .landing-hero__imagen {
-  width: 100%;
-  max-width: 360px;
+  width: 65%;
+  max-width: 260px;
   margin-bottom: 8px;
   object-fit: contain;
 }
@@ -402,6 +403,18 @@
   max-width: 340px;
 }
 
+/* --- Imágenes de secciones: evitar overflow en móvil --- */
+.landing-seguros__imagen,
+.landing-envios__imagen,
+.landing-ayuda-meds__imagen,
+.landing-ayudarte__imagen {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  min-height: 0;
+  object-fit: cover;
+}
+
 /* ================================================================== */
 /* 4. SEGUROS                                                          */
 /* ================================================================== */
@@ -410,6 +423,7 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
+  overflow: hidden;
 }
 
 .landing-seguros__imagen {
@@ -427,6 +441,7 @@
 /* ================================================================== */
 .landing-envios {
   background: #fcebe5;
+  overflow: hidden;
 }
 
 .landing-envios__media {
@@ -435,13 +450,16 @@
 }
 
 .landing-envios__imagen {
-  min-height: 200px;
-  max-width: 560px;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  min-height: 0;
+  object-fit: cover;
 }
 
 .landing-envios__notificacion {
   position: absolute;
-  bottom: 55px;
+  bottom: 12px;
   left: 50%;
   transform: translateX(-50%);
   background: #ffffff;
@@ -451,7 +469,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  width: calc(100% - 40px);
+  width: calc(100% - 32px);
   max-width: 320px;
 }
 
@@ -495,12 +513,16 @@
 /* ================================================================== */
 .landing-ayuda-meds {
   background: #eadeec;
+  overflow: hidden;
 }
 
 .landing-ayuda-meds__imagen {
-  min-height: 220px;
-  max-width: 480px;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  min-height: 0;
   margin-bottom: 24px;
+  object-fit: cover;
 }
 
 .landing-ayuda-meds .btn-landing {
@@ -542,11 +564,15 @@
   display: flex;
   flex-direction: column-reverse;
   gap: 24px;
+  overflow: hidden;
 }
 
 .landing-ayudarte__imagen {
-  min-height: 220px;
-  max-width: 560px;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  min-height: 0;
+  object-fit: cover;
 }
 
 .landing-ayudarte__badges {
@@ -856,6 +882,9 @@
 .landing-footer__direccion {
   color: var(--color-text-muted);
   font-size: 0.88rem;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
 }
 
 .landing-footer__links {
@@ -877,6 +906,59 @@
   font-size: 0.78rem;
   color: var(--color-text-muted);
   margin-top: 20px;
+}
+
+/* ================================================================== */
+/* RESPONSIVE: TABLET (≥768px) - Solo escala de tamaños                */
+/* ================================================================== */
+@media (min-width: 768px) {
+  .landing h1 {
+    font-size: clamp(2.2rem, 4vw, 3.2rem);
+  }
+
+  .landing h2 {
+    font-size: clamp(1.4rem, 3vw, 1.9rem);
+  }
+
+  .landing p {
+    font-size: 1.05rem;
+  }
+
+  .landing-hero__imagen {
+    max-width: 300px;
+  }
+
+  .landing-hero__acciones {
+    flex-direction: row;
+    max-width: 100%;
+    gap: 24px;
+  }
+
+  .landing-beneficios__lista {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .landing-ahorros__grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .landing-ahorros__card {
+    flex: 1 1 calc(50% - 10px);
+  }
+
+  .landing-explorar__grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .landing-explorar__card {
+    flex: 1 1 calc(50% - 10px);
+  }
 }
 
 /* ================================================================== */
@@ -955,14 +1037,15 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    width: 100vw;
+    max-width: 1200px;
     margin: 0 auto;
     gap: 60px;
+    overflow: hidden;
   }
 
   .landing-seguros__imagen {
     flex: 1;
-    min-height: 320px;
+    min-height: 0;
   }
 
   .landing-seguros__texto {
@@ -980,9 +1063,10 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    width: 100vw;
+    max-width: 1200px;
     margin: 0 auto;
     gap: 60px;
+    overflow: hidden;
   }
 
   .landing-envios__media {
@@ -1006,20 +1090,21 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    width: 100vw;
+    max-width: 1200px;
     margin: 0 auto;
     gap: 60px;
+    overflow: hidden;
   }
 
   .landing-ayuda-meds__imagen {
     flex: 1;
     max-width: 420px;
-    min-height: 320px;
+    min-height: 0;
     margin-bottom: 0;
   }
 
   .landing-envios__imagen {
-  min-height: 200px;
+  min-height: 0;
   max-width: 420px;
 }
 
@@ -1037,9 +1122,10 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    width: 100vw;
+    max-width: 1200px;
     margin: 0 auto;
     gap: 60px;
+    overflow: hidden;
   }
 
   .landing-ayudarte__texto {
@@ -1049,7 +1135,7 @@
 
   .landing-ayudarte__imagen {
     flex: 1;
-    min-height: 320px;
+    min-height: 0;
     max-width: 560px;
   }
 
