@@ -62,12 +62,27 @@ function LoadingBarBridge() {
   return <TopLoadingBar />
 }
 
+// Registro centralizado del Service Worker para push notifications.
+// Se ejecuta una sola vez al montar la app, evitando registros duplicados
+// que ocurrían cuando cada hook usePush llamaba a register() individualmente.
+function ServiceWorkerRegistrar() {
+  useEffect(() => {
+    if ('serviceWorker' in navigator && import.meta.env.VITE_VAPID_PUBLIC_KEY) {
+      navigator.serviceWorker.register('/sw.js').catch(err => {
+        console.error('Error registrando Service Worker:', err)
+      })
+    }
+  }, [])
+  return null
+}
+
 function App() {
   return (
     <AuthProvider>
       <CartProvider>
         <FavoritosProvider>
           <EnvioProvider>
+            <ServiceWorkerRegistrar />
             <ScrollToTop />
             <LoadingBarProvider>
               <Navbar />
