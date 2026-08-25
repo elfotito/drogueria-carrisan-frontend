@@ -23,9 +23,11 @@ import {
   CartesianGrid,
   Tooltip
 } from 'recharts';
+import { exportToExcel, exportToPdf } from '../utils/exportUtils';
 
 const AZUL = '#0052DC';
 const INDIGO = '#1A1A3A';
+
 
 const agrupacionesCollection = createListCollection({
   items: [
@@ -81,12 +83,16 @@ export default function AnalyticsVentas() {
     cargarDatos();
   }, [cargarDatos]);
 
-  const serieParaGrafico = datos?.serie.map(p => ({
-    ...p,
-    etiqueta: agrupacion === 'mes'
-      ? p.periodo
-      : new Date(p.periodo + 'T00:00:00').toLocaleDateString('es-VE', { day: '2-digit', month: 'short' })
-  })) || [];
+const COLUMNAS_VENTAS = [
+  { header: 'Período', key: 'periodo' },
+  { header: 'Total vendido', key: 'total' },
+  { header: 'Órdenes', key: 'cantidad_ordenes' }
+];
+
+  const filasParaExportar = datos?.serie.map(p => ({
+  ...p,
+  total: formatoUsd(p.total)
+})) || [];
 
   return (
     <Box p={{ base: 4, md: 8 }}>
@@ -132,6 +138,14 @@ export default function AnalyticsVentas() {
 
       {!cargando && !error && datos && (
         <>
+<Flex justify="flex-end" gap={2} mb={4}>
+  <Button size="sm" variant="outline" onClick={() => exportToExcel(filasParaExportar, COLUMNAS_VENTAS, 'ventas-por-periodo')}>
+    Exportar Excel
+  </Button>
+  <Button size="sm" variant="outline" onClick={() => exportToPdf(filasParaExportar, COLUMNAS_VENTAS, 'ventas-por-periodo', 'Ventas por período')}>
+    Exportar PDF
+  </Button>
+</Flex>
           <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} gap={4} mb={8}>
             <Stat.Root borderWidth="1px" borderRadius="lg" p={4}>
               <StatLabel>Total vendido</StatLabel>
