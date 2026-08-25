@@ -12,6 +12,7 @@ import CotizacionesAdmin from '../components/admin/CotizacionesAdmin'
 import RequerimientosAdmin from '../components/admin/RequerimientosAdmin'
 import DocumentosAdmin from '../components/admin/DocumentosAdmin'
 import ChatAdmin from '../components/admin/ChatAdmin'
+import PromocionesAdmin from '../components/admin/PromocionesAdmin'
 import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
 import { NAV_ADMIN } from '../components/paginas-principales/NavAdmin'
 import './Admin.css'
@@ -52,6 +53,7 @@ const TITULOS_SECCION = {
   documentos: 'Documentos',
   usuarios: 'Usuarios',
   chat: 'Chat',
+  promociones: 'Promociones',
 }
 
 // Mapea el segmento de la URL (después de /admin/) al id que ya usa
@@ -71,6 +73,7 @@ const SEGMENTO_A_ID = {
   documentos: 'documentos',
   usuarios: 'usuarios',
   chat: 'chat',
+  promociones: 'promociones',
 }
 
 function Admin() {
@@ -101,6 +104,7 @@ function Admin() {
           <Route path="documentos" element={<DocumentosAdmin />} />
           <Route path="usuarios" element={<UsuariosAdmin />} />
           <Route path="chat" element={<ChatAdmin />} />
+          <Route path="promociones" element={<PromocionesAdmin />} />
         </Routes>
       </div>
     </LayoutPaginaPrincipal>

@@ -161,7 +161,7 @@
 
   .bottom-nav__campana {
     position: absolute;
-    top: -14px;
+    top: -20px;
     right: 22px;
     z-index: 101; /* por encima del dock */
     width: 38px;
@@ -208,7 +208,7 @@
 
   .bottom-nav__campana-badge {
     position: absolute;
-    top: -3px;
+    top: -5px;
     right: -3px;
     min-width: 16px;
     height: 16px;
@@ -293,7 +293,7 @@
   .bottom-nav__campana {
     width: 42px;
     height: 42px;
-    top: -16px;
+    top: -22px;
     right: 28px;
   }
 

@@ -10,7 +10,7 @@
 // ---------------------------------------------------------------
 import {
   LayoutDashboard, Package, ShoppingCart, Users, Wallet, CreditCard,
-  Tag, FileText, Inbox, MessagesSquare, DollarSign, Files, ReceiptText,
+  Tag, FileText, Inbox, MessagesSquare, DollarSign, Files, ReceiptText, Megaphone,
 } from 'lucide-react'
 
 export const NAV_ADMIN = [
@@ -28,6 +28,7 @@ export const NAV_ADMIN = [
       { id: 'nuevaOrden', to: '/admin/nueva-orden', icono: ReceiptText, texto: 'Nueva orden rápida' },
       { id: 'productos', to: '/admin/productos', icono: Package, texto: 'Productos' },
       { id: 'descuentos', to: '/admin/descuentos', icono: Tag, texto: 'Descuentos' },
+      { id: 'promociones', to: '/admin/promociones', icono: Megaphone, texto: 'Promociones' },
     ],
   },
   {
