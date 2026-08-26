@@ -1,0 +1,92 @@
+/* ── AdBanner: banner promocional full-width ── */
+.ad-banner {
+  width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  margin: 6px 0 10px;
+}
+
+.ad-banner__link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Imagen real */
+.ad-banner__img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  border-radius: 14px;
+}
+
+/* Placeholder */
+.ad-banner__placeholder {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 22px 24px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #f0f4ff 0%, #e8f4f0 100%);
+  min-height: 90px;
+}
+
+.ad-banner__placeholder--oferta {
+  background: linear-gradient(135deg, #fff1f1 0%, #ffe8e8 100%);
+}
+
+.ad-banner__placeholder--nuevo {
+  background: linear-gradient(135deg, #e8f8f5 0%, #d1f5ef 100%);
+}
+
+.ad-banner__icono {
+  font-size: 2rem;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 12px;
+}
+
+.ad-banner__textos {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ad-banner__titulo {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #1A1A3A;
+  margin: 0;
+}
+
+.ad-banner__subtitulo {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  color: rgba(20, 24, 42, 0.55);
+  margin: 0;
+}
+
+/* Desktop */
+@media (min-width: 769px) {
+  .ad-banner__placeholder {
+    padding: 28px 36px;
+    min-height: 100px;
+  }
+
+  .ad-banner__icono {
+    font-size: 2.4rem;
+    width: 56px;
+    height: 56px;
+  }
+
+  .ad-banner__titulo {
+    font-size: 1.15rem;
+  }
+}

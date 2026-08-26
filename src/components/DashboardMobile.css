@@ -138,6 +138,43 @@
   height: 92px;
 }
 
+/* ---------- Ads: par de cards lado a lado ---------- */
+.dashboard__ads-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 6px 0 10px;
+}
+
+/* ---------- Sentinel invisible (trigger del infinite scroll) ---------- */
+.dashboard__sentinel {
+  width: 100%;
+  height: 1px;
+  pointer-events: none;
+}
+
+/* ---------- Bloques dinámicos (cargados al scrollear) ---------- */
+.dashboard__bloque-dinamico {
+  animation: dashboard-fadein 0.4s ease both;
+}
+
+@keyframes dashboard-fadein {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- Footer wrapper ---------- */
+.dashboard__footer-wrapper {
+  margin-top: 20px;
+  border-top: 1px solid rgba(35, 43, 69, 0.08);
+}
+
 /* ---------- Tablet ancho (grid): el dock sigue visible hasta 1023px ---------- */
 @media (min-width: 769px) {
   .dashboard {
@@ -148,6 +185,9 @@
     grid-template-columns: repeat(4, 1fr);
   }
 
+  .dashboard__ads-pair {
+    gap: 16px;
+  }
 }
 
 /* ---------- Desktop real: acá el bottom nav ya no se muestra ---------- */
@@ -162,5 +202,9 @@
   .dashboard {
     max-width: 1400px;
     padding: 32px 24px 0;
+  }
+
+  .dashboard__footer-wrapper {
+    margin-top: 32px;
   }
 }

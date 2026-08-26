@@ -1037,7 +1037,6 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    max-width: 1200px;
     margin: 0 auto;
     gap: 60px;
     overflow: hidden;
@@ -1060,10 +1059,9 @@
   /* --- Envíos: media izq, texto der --- */
   .landing-envios {
     display: flex;
-    flex-direction: row;
+    flex-direction: column-reverse;
     justify-content: center;
     align-items: center;
-    max-width: 1200px;
     margin: 0 auto;
     gap: 60px;
     overflow: hidden;
@@ -1090,7 +1088,6 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    max-width: 1200px;
     margin: 0 auto;
     gap: 60px;
     overflow: hidden;
@@ -1122,7 +1119,6 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    max-width: 1200px;
     margin: 0 auto;
     gap: 60px;
     overflow: hidden;
