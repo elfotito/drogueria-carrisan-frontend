@@ -41,7 +41,7 @@ import LineaHospitalaria from './pages/LineaHospitalaria'
 import OrdenDetalle from './pages/OrdenDetalle'
 import Direcciones from './pages/Direcciones'
 import Pagos from './pages/Pagos'
-import Landing from './pages/Landing'
+import RootRedirect from './components/RootRedirect'
 import { Toaster } from './components/ui/toaster'
 import PagosEstadoCuenta from './pages/PagosEstadoCuenta'
 import FacturasEstadoCuenta from './pages/FacturasEstadoCuenta'
@@ -74,7 +74,7 @@ function App() {
               <LoadingBarBridge />
               <Toaster />
               <Routes>
-                <Route path="/" element={<Landing />} />
+                <Route path="/" element={<RootRedirect />} />
                 <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
                 <Route path="/catalogo" element={<Catalogo />} />
                 <Route path="/login" element={<Login />} />
