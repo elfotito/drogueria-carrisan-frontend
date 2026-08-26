@@ -53,6 +53,7 @@ import Documentos from './pages/Documentos'
 import ChatCentro from './pages/Chat'
 import SubUsuarios from'./pages/SubUsuarios'
 import Presupuesto from'./pages/Presupuesto'
+import Mantenimiento from './pages/Mantenimiento'
 import AnalyticsVentas from './components/admin/AnalyticsVentas'
 
 
@@ -97,6 +98,7 @@ function App() {
                 <Route path="/notificaciones" element={<PrivateRoute><Notificaciones /></PrivateRoute>} />
                 <Route path="/terminos" element={<Terminos />} />
                 <Route path="/privacidad" element={<Privacidad />} />
+                <Route path="/mantenimiento" element={<Mantenimiento />} />
                 <Route path="/estado-cuenta" element={<PrivateRouteSensible><EstadoCuenta /></PrivateRouteSensible>} />
                 <Route path="/producto/:id" element={<ProductoDetalle />} />
                 <Route path="/listas/:id" element={<PrivateRoute><ListaDetalle /></PrivateRoute>} />
