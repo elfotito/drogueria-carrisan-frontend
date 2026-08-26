@@ -959,6 +959,9 @@
   .landing-explorar__card {
     flex: 1 1 calc(50% - 10px);
   }
+    .landing-envios {
+    flex-direction: column-reverse;
+  }
 }
 
 /* ================================================================== */
@@ -1059,7 +1062,7 @@
   /* --- Envíos: media izq, texto der --- */
   .landing-envios {
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
     margin: 0 auto;
