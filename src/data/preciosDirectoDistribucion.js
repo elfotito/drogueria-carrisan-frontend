@@ -1,6 +1,9 @@
 // src/data/preciosDirectosDistribucion.js
 const preciosDirectosInfo = {
+  etiqueta: 'Precios',
+  etiquetaIcono: 'TrendingUp',
   titulo: 'Precios directos de distribución',
+  subtitulo: 'Comprando directo del distribuidor, sin intermediarios que encarezcan el producto.',
   tipo: 'secciones',
   contenido: [
     {

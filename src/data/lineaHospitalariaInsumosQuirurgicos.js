@@ -1,6 +1,8 @@
-// src/data/lineaHospitalariaInsumosQuirurgicos.js
 const lineaHospitalariaInfo = {
+  etiqueta: 'Hospitalaria',
+  etiquetaIcono: 'Stethoscope',
   titulo: 'Línea hospitalaria e insumos quirúrgicos',
+  subtitulo: 'Cobertura clínica y hospitalaria, con trazabilidad de lote y asesoría especializada.',
   tipo: 'secciones',
   contenido: [
     {

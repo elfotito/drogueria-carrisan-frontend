@@ -1,6 +1,9 @@
 // src/data/descuentoVolumenEscala.js
 const descuentoVolumenEscalaInfo = {
+  etiqueta: 'Ahorros',
+  etiquetaIcono: 'Percent',
   titulo: 'Descuento por volumen y escala',
+  subtitulo: 'Mientras más grande tu pedido, mejor el precio por unidad — sin trámites adicionales.',
   tipo: 'secciones',
   contenido: [
     {

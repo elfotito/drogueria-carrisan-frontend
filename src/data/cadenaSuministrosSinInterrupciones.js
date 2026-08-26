@@ -1,6 +1,9 @@
 // src/data/cadenaSuministroSinInterrupciones.js
 const cadenaSuministroInfo = {
+  etiqueta: 'Logística',
+  etiquetaIcono: 'Boxes',
   titulo: 'Cadena de suministro con 0 interrupciones',
+  subtitulo: 'Inventario real, múltiples proveedores y reposición anticipada para que nunca te quedes sin stock.',
   tipo: 'secciones',
   contenido: [
     {

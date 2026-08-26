@@ -1,7 +1,10 @@
-// src/data/logisticaAgilMultiplesDirecciones.js
 const logisticaAgilInfo = {
+  etiqueta: 'Entregas',
+  etiquetaIcono: 'Truck',
   titulo: 'Logística ágil para reposición a distintas direcciones',
+  subtitulo: 'Despacha a distintas sedes, con seguimiento independiente por cada dirección.',
   tipo: 'secciones',
+  // ...resto igual
   contenido: [
     {
       subtitulo: 'Varias direcciones de entrega',
