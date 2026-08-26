@@ -123,7 +123,7 @@ function TasaCambio() {
       
       // Actualizar automáticamente en el backend
       try {
-        await api.patch('/prices/tasa-cambio', { usd_a_ves: Number(parseFloat(tasa.valor).toFixed(2)) })
+        await api.patch('/prices/tasa-cambio', { usd_a_ves: Number(parseFloat(tasa.valor).toFixed(4)) })
         
         // Guardar que ya actualizamos hoy
         const ahoraVzla = obtenerHoraVenezuela(new Date())
@@ -131,7 +131,7 @@ function TasaCambio() {
         
         setMensaje({ 
           tipo: 'exito', 
-          texto: `✅ Tasa actualizada automáticamente: ${tasa.valor.toFixed(2)} Bs/USD (Fuente: ${tasa.fuente})` 
+          texto: `✅ Tasa actualizada automáticamente: ${tasa.valor.toFixed(4)} Bs/USD (Fuente: ${tasa.fuente})` 
         })
         
         await cargarTasa()
@@ -332,7 +332,7 @@ function TasaCambio() {
             <span className="label">Tasa Actual</span>
             <span className="valor">
               {tasaActual 
-                ? `${Number(tasaActual.usd_a_ves).toFixed(2)} Bs/USD` 
+                ? `${Number(tasaActual.usd_a_ves).toFixed(4)} Bs/USD` 
                 : 'No disponible'}
             </span>
           </div>
@@ -369,7 +369,7 @@ function TasaCambio() {
           ) : tasaReferencia ? (
             <div className="referencia-info">
               <div className="referencia-valor">
-                {Number(tasaReferencia.valor).toFixed(2)} Bs/USD
+                {Number(tasaReferencia.valor).toFixed(4)} Bs/USD
               </div>
               <div className="referencia-fuente">
                 Fuente: {tasaReferencia.fuente}
@@ -415,9 +415,9 @@ function TasaCambio() {
               <input
                 id="nuevaTasa"
                 type="number"
-                step="0.01"
+                step="0.0001"
                 min="0"
-                placeholder="0.00"
+                placeholder="0.0000"
                 value={nuevaTasa}
                 onChange={(e) => setNuevaTasa(e.target.value)}
                 required
