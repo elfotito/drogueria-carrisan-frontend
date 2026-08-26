@@ -456,3 +456,34 @@
     display: none;
   }
 }
+
+/* ============================================
+   IMAGE UPLOAD
+   ============================================ */
+
+.upload-area {
+  border: 2px dashed #ccc;
+  border-radius: var(--radius, 8px);
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.upload-area:hover {
+  border-color: var(--primary, #4caf50);
+  background: rgba(76, 175, 80, 0.03);
+}
+
+.upload-label {
+  display: block;
+  padding: 1.5rem;
+  cursor: pointer;
+  color: #888;
+}
+
+.upload-preview {
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: var(--radius, 8px);
+  object-fit: cover;
+}

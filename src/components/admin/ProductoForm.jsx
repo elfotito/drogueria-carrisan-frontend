@@ -25,6 +25,9 @@ function ProductoForm({ producto, marcas, onClose, onGuardado }) {
   const [guardando, setGuardando] = useState(false)
   const [error, setError] = useState('')
   const [errores, setErrores] = useState({})
+  const [imagenFile, setImagenFile] = useState(null)
+  const [subiendoImagen, setSubiendoImagen] = useState(false)
+  const [previewLocal, setPreviewLocal] = useState(null)
 
   function validarFormulario() {
     const nuevosErrores = {}
@@ -63,22 +66,35 @@ function ProductoForm({ producto, marcas, onClose, onGuardado }) {
 
     setGuardando(true)
 
-    const payload = {
-      nombre_comercial: nombreComercial,
-      descripcion,
-      marca_id: marcaId,
-      precio_usd: Number(precioUsd),
-      foto_url: fotoUrl,
-      laboratorio,
-      pais_origen: paisOrigen,
-      molecula,
-      linea: linea || null,
-      forma: forma || null,
-      disponible,
-      ...(esEdicion && { activo }),
-    }
-
     try {
+      let urlFinal = fotoUrl
+
+      if (imagenFile) {
+        setSubiendoImagen(true)
+        const formData = new FormData()
+        formData.append('imagen', imagenFile)
+        const { data } = await api.post('/images/upload', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        })
+        urlFinal = data.url
+        setSubiendoImagen(false)
+      }
+
+      const payload = {
+        nombre_comercial: nombreComercial,
+        descripcion,
+        marca_id: marcaId,
+        precio_usd: Number(precioUsd),
+        foto_url: urlFinal,
+        laboratorio,
+        pais_origen: paisOrigen,
+        molecula,
+        linea: linea || null,
+        forma: forma || null,
+        disponible,
+        ...(esEdicion && { activo }),
+      }
+
       if (esEdicion) {
         await api.patch(`/products/${producto.id}`, payload)
       } else {
@@ -89,6 +105,7 @@ function ProductoForm({ producto, marcas, onClose, onGuardado }) {
       setError(err.response?.data?.error || 'Error al guardar el producto')
     } finally {
       setGuardando(false)
+      setSubiendoImagen(false)
     }
   }
 
@@ -224,23 +241,44 @@ function ProductoForm({ producto, marcas, onClose, onGuardado }) {
               </div>
 
               <div className="form-group">
-                <label>URL de la Imagen</label>
+                <label>Imagen del Producto</label>
+                
+                <div className="upload-area">
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp,image/gif,image/avif"
+                    onChange={(e) => {
+                      const file = e.target.files[0]
+                      if (file) {
+                        setImagenFile(file)
+                        setPreviewLocal(URL.createObjectURL(file))
+                      }
+                    }}
+                    id="imagen-upload"
+                    style={{ display: 'none' }}
+                  />
+                  <label htmlFor="imagen-upload" className="upload-label">
+                    {previewLocal || fotoUrl ? (
+                      <img src={previewLocal || fotoUrl} alt="Preview" className="upload-preview" />
+                    ) : (
+                      <span>📷 Click para subir imagen</span>
+                    )}
+                  </label>
+                </div>
+
                 <input 
                   value={fotoUrl} 
                   onChange={(e) => {
                     setFotoUrl(e.target.value)
+                    setImagenFile(null)
+                    setPreviewLocal(null)
                     setErrores({...errores, fotoUrl: ''})
                   }}
                   className={errores.fotoUrl ? 'error' : ''}
-                  placeholder="https://ejemplo.com/imagen.jpg"
+                  placeholder="O pega una URL de imagen"
+                  style={{ marginTop: '8px' }}
                 />
                 {errores.fotoUrl && <span className="error-text">{errores.fotoUrl}</span>}
-                
-                {fotoUrl && isValidUrl(fotoUrl) && (
-                  <div className="imagen-preview">
-                    <img src={fotoUrl} alt="Preview" />
-                  </div>
-                )}
               </div>
             </div>
           )}
@@ -329,7 +367,7 @@ function ProductoForm({ producto, marcas, onClose, onGuardado }) {
                 {guardando ? (
                   <>
                     <span className="spinner-small"></span>
-                    Guardando...
+                    {subiendoImagen ? 'Subiendo imagen...' : 'Guardando...'}
                   </>
                 ) : (
                   esEdicion ? '💾 Guardar Cambios' : '✨ Crear Producto'
