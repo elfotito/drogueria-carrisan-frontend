@@ -12,12 +12,28 @@ export function EnvioProvider({ children }) {
   const [direccionSeleccionada, setDireccionSeleccionada] = useState(null);
   const [agenciaSeleccionada, setAgenciaSeleccionada] = useState('');
   const [loading, setLoading] = useState(false);
+  const [tarifas, setTarifas] = useState([]);
 
-  // Calcular costo del delivery según el usuario
-  const getCostoDelivery = useCallback(() => {
+  // Cargar tarifas de delivery al montar
+  useEffect(() => {
+    api.get('/delivery-tarifas/activas')
+      .then(({ data }) => setTarifas(data || []))
+      .catch(() => setTarifas([]));
+  }, []);
+
+  // Calcular costo del delivery según la ciudad de la dirección seleccionada
+  const getCostoDelivery = useCallback((ciudad) => {
     if (!user) return 8.00;
-    return user.delivery_gratis ? 0 : 8.00;
-  }, [user]);
+    if (user.delivery_gratis) return 0;
+    if (ciudad) {
+      const tarifa = tarifas.find(t => t.ciudad === ciudad);
+      if (tarifa) return tarifa.costo;
+    }
+    return tarifas.length > 0 ? tarifas[0].costo : 8.00;
+  }, [user, tarifas]);
+
+  // Costo basado en la dirección seleccionada actualmente
+  const costoEnvioActual = getCostoDelivery(direccionSeleccionada?.ciudad);
 
   // Opciones de envío
   const opcionesEnvio = [
@@ -38,8 +54,8 @@ export function EnvioProvider({ children }) {
       titulo: 'Delivery en Moto',
       descripcion: 'Entrega en tu dirección dentro de la ciudad',
       icono: '🛵',
-      costo: getCostoDelivery(),
-      textoCosto: getCostoDelivery() === 0 ? '¡Gratis para ti!' : '$8.00',
+      costo: costoEnvioActual,
+      textoCosto: costoEnvioActual === 0 ? '¡Gratis para ti!' : `$${costoEnvioActual.toFixed(2)}`,
       requiereDireccion: true,
       requiereAgencia: false,
       tipoDireccion: 'delivery'
@@ -157,7 +173,8 @@ export function EnvioProvider({ children }) {
     cargarDirecciones,
     guardarDireccion,
     eliminarDireccion,
-    costoEnvio: opcionActual?.costo || 0
+    costoEnvio: costoEnvioActual,
+    tarifas
   };
 
   return (

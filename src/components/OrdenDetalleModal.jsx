@@ -124,12 +124,12 @@ function OrdenDetalleModal({ orden, onClose, onCambiarEstado, estados, estadoCol
     }
 
     if (orden.tipo_envio === 'delivery') {
-      const esGratis = orden.usuario?.delivery_gratis || orden.costo_delivery === 0
+      const esGratis = orden.usuario?.delivery_gratis || orden.costo_envio_usd === 0
       return {
         icono: '🛵',
         tipo: 'Delivery',
-        costo: esGratis ? '¡Gratis!' : `$${formatUSD(orden.costo_delivery || 8)}`,
-        direccion: orden.direccion_envio_texto || null,
+        costo: esGratis ? '¡Gratis!' : `$${formatUSD(orden.costo_envio_usd || 8)}`,
+        direccion: orden.direcciones_envio?.direccion || null,
         agencia: null,
         color: '#D97706'
       }
@@ -140,7 +140,7 @@ function OrdenDetalleModal({ orden, onClose, onCambiarEstado, estados, estadoCol
         icono: '🚚',
         tipo: 'Envío Nacional',
         costo: 'Pago en destino',
-        direccion: orden.direccion_envio_texto || null,
+        direccion: orden.direcciones_envio?.direccion || null,
         agencia: orden.agencia_envio || null,
         color: '#0052DC'
       }
@@ -360,12 +360,12 @@ function OrdenDetalleModal({ orden, onClose, onCambiarEstado, estados, estadoCol
         <div className="odm-totales">
           <div className="odm-total-row">
             <span>Subtotal</span>
-            <span>${formatUSD(orden.total_usd)}</span>
+            <span>${formatUSD(orden.total_usd - (orden.costo_envio_usd || 0))}</span>
           </div>
-          {orden.costo_delivery > 0 && (
+          {orden.costo_envio_usd > 0 && (
             <div className="odm-total-row">
               <span>Envío</span>
-              <span>${formatUSD(orden.costo_delivery)}</span>
+              <span>${formatUSD(orden.costo_envio_usd)}</span>
             </div>
           )}
           <div className="odm-total-final">

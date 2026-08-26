@@ -16,9 +16,9 @@ import gestionUnaSolaCuentaEquipo from '../data/gestionUnaSolaCuentaEquipo'
 import lineaHospitalariaInsumosQuirurgicos from '../data/lineaHospitalariaInsumosQuirurgicos'
 import logisticaAgilMultiplesDirecciones from '../data/logisticaAgilMultiplesDirecciones'
 import comoFuncionaLaPlataforma from '../data/comoFuncionaLaPlataforma'
-import ayudaData from '../data/ayudaData'
-import faqData from '../data/faqData'
 import recaudosCuentaB2B from '../data/recaudosCuentaB2B'
+import seguridadInformacion from '../data/seguridadInformacion'
+import respaldoMedicoVenezolano from '../data/respaldoMedicoVenezolano'
 
 
   const BASE_URL = 'https://fqeshthtycmzgyibiurq.supabase.co/storage/v1/object/public/crsnimages'
@@ -314,7 +314,7 @@ function Landing() {
                  className="enlace-seguridad"
                  onClick={(e) => {
                    e.preventDefault()
-                   abrirModal(ayudaData)
+                   abrirModal(seguridadInformacion)
                  }}
               >
                 <Lock size={14} className="enlace-seguridad__icono" />
@@ -631,12 +631,7 @@ function Landing() {
           ))}
         </div>
         <p className="landing-faq__otras">
-          ¿Tienes otras dudas sobre aperturas de cuenta o líneas de crédito? Visita nuestro <a href="#"
-             onClick={(e) => {
-               e.preventDefault()
-               abrirModal(faqData)
-             }}
-          >Centro de Ayuda›</a>
+          ¿Tienes otras dudas sobre aperturas de cuenta o líneas de crédito? Visita nuestro <Link to="/ayuda" className="landing-link">Centro de Ayuda›</Link>
         </p>
       </section>
 
@@ -692,7 +687,7 @@ function Landing() {
            className="landing-link"
            onClick={(e) => {
              e.preventDefault()
-             abrirModal(profesionesSalud)
+             abrirModal(respaldoMedicoVenezolano)
            }}
         >Droguería Carrisan respaldando la labor del Medico Venezolano 🇻🇪❤️ ›</a>
         <p className="landing-footer__legal">

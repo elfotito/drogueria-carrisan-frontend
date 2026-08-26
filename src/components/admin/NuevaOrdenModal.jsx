@@ -180,7 +180,6 @@ function NuevaOrdenModal({ usuarioId, nombreUsuario, isOpen, onClose, onCreada }
         usuario_id: cliente.id,
         items: filas.map((f) => ({ producto_id: f.producto_id, cantidad: f.cantidad })),
         forma_pago: formaPago,
-        costo_envio_usd: envio,
       })
       toaster.create({ title: 'Orden creada', type: 'success' })
       onCreada?.()

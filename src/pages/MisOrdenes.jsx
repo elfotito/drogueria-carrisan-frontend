@@ -79,16 +79,16 @@ function OrdenCard({ orden, esAdmin, onVerDetalle }) {
       case 'delivery':
         return {
           Icono: Truck,
-          texto: orden.usuario?.delivery_gratis
+          texto: orden.users?.delivery_gratis
             ? 'Delivery (¡Gratis!)'
-            : `Delivery (+$${orden.costo_delivery?.toFixed(2) || '8.00'})`,
+            : `Delivery (+$${orden.costo_envio_usd?.toFixed(2) || '8.00'})`,
         }
       case 'envio_nacional':
         return { Icono: Boxes, texto: `Envío Nac. (${orden.agencia_envio || 'N/A'})` }
       default:
         return { Icono: Package, texto: 'Sin especificar' }
     }
-  }, [orden.tipo_envio, orden.costo_delivery, orden.agencia_envio, orden.usuario?.delivery_gratis])
+  }, [orden.tipo_envio, orden.costo_envio_usd, orden.agencia_envio, orden.users?.delivery_gratis])
 
   return (
     <div className="mo-card">

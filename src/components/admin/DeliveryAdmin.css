@@ -1,0 +1,472 @@
+/* ============================================
+   DELIVERY ADMIN
+   ============================================ */
+
+.delivery-admin {
+  max-width: 1200px;
+}
+
+/* Error */
+.delivery-error {
+  background: #fef2f2;
+  color: #b91c1c;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
+/* KPIs */
+.delivery-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.delivery-kpi {
+  background: var(--surface);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.kpi-valor {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--blue);
+  line-height: 1.2;
+}
+
+.kpi-label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--slate-500);
+  margin-top: 0.25rem;
+}
+
+/* Secciones */
+.delivery-seccion {
+  background: var(--surface);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.seccion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.seccion-titulo {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 1rem;
+}
+
+.seccion-header .seccion-titulo {
+  margin-bottom: 0;
+}
+
+/* Formulario tarifa */
+.tarifa-form {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.tarifa-input {
+  padding: 0.625rem 0.875rem;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-family: var(--font-body);
+  flex: 1;
+  min-width: 160px;
+}
+
+.tarifa-input:focus {
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(0, 82, 220, 0.12);
+}
+
+.tarifa-input-costo {
+  max-width: 140px;
+  flex: 0;
+}
+
+/* Tabla tarifas */
+.tarifa-table-wrap {
+  overflow-x: auto;
+}
+
+.tarifa-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.tarifa-table th {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  background: var(--paper);
+  color: var(--slate-700);
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-bottom: 1px solid var(--slate-200);
+}
+
+.tarifa-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--slate-100);
+  vertical-align: middle;
+}
+
+.tarifa-ciudad {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.tarifa-costo {
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-sm);
+  transition: background 0.15s;
+}
+
+.tarifa-costo:hover {
+  background: var(--slate-100);
+}
+
+.tarifa-inactiva {
+  opacity: 0.5;
+}
+
+.tarifa-vacia {
+  text-align: center;
+  color: var(--slate-500);
+  padding: 2rem 1rem;
+}
+
+/* Edición inline */
+.tarifa-edit-row {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.tarifa-input-costo-inline {
+  width: 100px;
+  padding: 0.375rem 0.5rem;
+  border: 1px solid var(--blue);
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-family: var(--font-body);
+}
+
+.tarifa-input-costo-inline:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 82, 220, 0.12);
+}
+
+.btn-guardar {
+  background: var(--good);
+  color: white;
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-guardar:hover {
+  opacity: 0.85;
+}
+
+.btn-cancelar {
+  background: var(--slate-100);
+  color: var(--slate-700);
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-cancelar:hover {
+  background: var(--slate-200);
+}
+
+/* Toggle activo/inactivo */
+.tarifa-toggle {
+  border: none;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tarifa-toggle.activo {
+  background: var(--good-tint);
+  color: var(--good);
+}
+
+.tarifa-toggle.inactivo {
+  background: var(--slate-100);
+  color: var(--slate-500);
+}
+
+.tarifa-toggle:hover {
+  opacity: 0.85;
+}
+
+.btn-eliminar-small {
+  background: none;
+  border: 1px solid var(--slate-200);
+  color: var(--slate-500);
+  padding: 0.3rem 0.625rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-eliminar-small:hover {
+  border-color: var(--alert);
+  color: var(--alert);
+  background: var(--alert-tint);
+}
+
+/* Botones */
+.btn-agregar {
+  background: var(--blue);
+  color: white;
+  border: none;
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-agregar:hover {
+  background: var(--blue-600);
+}
+
+.btn-agregar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-refrescar {
+  background: var(--surface);
+  color: var(--slate-700);
+  border: 1px solid var(--slate-200);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-refrescar:hover {
+  border-color: var(--blue);
+  color: var(--blue);
+}
+
+/* Cola de envíos */
+.delivery-vacio {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--slate-500);
+}
+
+.vacio-icono {
+  font-size: 2.5rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.orden-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.orden-card {
+  background: var(--paper);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  transition: border-color 0.15s;
+}
+
+.orden-card.pendiente {
+  border-left: 4px solid var(--warn);
+}
+
+.orden-card.enviado {
+  border-left: 4px solid var(--good);
+  opacity: 0.75;
+}
+
+.orden-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.625rem;
+}
+
+.orden-id {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--ink);
+}
+
+.orden-fecha {
+  font-size: 0.8rem;
+  color: var(--slate-500);
+}
+
+.orden-badge {
+  margin-left: auto;
+  padding: 0.2rem 0.625rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.orden-badge.enviado {
+  background: var(--good-tint);
+  color: var(--good);
+}
+
+.orden-card-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 1rem;
+  align-items: start;
+}
+
+@media (max-width: 640px) {
+  .orden-card-body {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+}
+
+.orden-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.orden-cliente {
+  font-weight: 600;
+  color: var(--ink);
+  font-size: 0.9rem;
+}
+
+.orden-email {
+  font-size: 0.8rem;
+  color: var(--slate-500);
+}
+
+.orden-direccion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.direccion-ciudad {
+  font-weight: 600;
+  color: var(--blue);
+  font-size: 0.85rem;
+}
+
+.direccion-texto {
+  font-size: 0.8rem;
+  color: var(--slate-700);
+  line-height: 1.4;
+}
+
+.orden-costos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  text-align: right;
+}
+
+.costo-items {
+  font-size: 0.8rem;
+  color: var(--slate-500);
+}
+
+.costo-total {
+  font-weight: 600;
+  color: var(--ink);
+  font-size: 0.9rem;
+}
+
+.costo-envio {
+  font-size: 0.8rem;
+  color: var(--warn);
+}
+
+.orden-card-footer {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--slate-200);
+}
+
+.btn-enviar {
+  background: var(--good);
+  color: white;
+  border: none;
+  padding: 0.5rem 1.25rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-enviar:hover {
+  opacity: 0.85;
+}
+
+/* Loading */
+.cargando {
+  text-align: center;
+  padding: 3rem;
+  color: var(--slate-500);
+}

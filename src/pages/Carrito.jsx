@@ -100,7 +100,7 @@ function DireccionSelector({
     try {
       await onAgregar({
         ...nuevaDireccion,
-        estado: tipo === 'delivery' ? 'Distrito Capital' : nuevaDireccion.estado,
+        estado: tipo === 'delivery' ? 'Carabobo' : nuevaDireccion.estado,
         tipo_direccion: tipo
       })
       setPaso(2)
@@ -111,7 +111,7 @@ function DireccionSelector({
           nombre: '',
           direccion: '',
           ciudad: '',
-          estado: tipo === 'delivery' ? 'Distrito Capital' : '',
+          estado: tipo === 'delivery' ? 'Carabobo' : '',
           telefono_contacto: '',
           referencia: '',
           agencia_preferida: ''
@@ -221,7 +221,7 @@ function DireccionSelector({
                       </div>
                       <div className="direccion-input-group">
                         <label>Estado</label>
-                        <input type="text" value="Distrito Capital" disabled className="direccion-input-disabled" />
+                        <input type="text" value="Carabobo" disabled className="direccion-input-disabled" />
                       </div>
                     </div>
                   ) : (

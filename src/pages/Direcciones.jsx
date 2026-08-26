@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import api from '../api/axios'
 import './Direcciones.css'
 
-const CIUDADES_DELIVERY = ['Valencia', 'Naguanagua', 'San Diego', 'Guacara']
+const CIUDADES_DELIVERY = ['Valencia', 'Naguanagua', 'San Diego', 'Guacara', 'Los Guayos']
 const ESTADO_DELIVERY = 'Carabobo'
 const AGENCIAS_ENVIO = ['MRW', 'Domesa', 'Tealca', 'Zoom', 'Servientrega', 'Otro']
 

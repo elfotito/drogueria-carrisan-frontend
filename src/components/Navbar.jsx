@@ -219,8 +219,8 @@ function Navbar() {
 
   // Cargar direcciones guardadas del usuario al montar
   useEffect(() => {
-    if (user) cargarDirecciones()
-  }, [user])
+    if (user && tipoEnvio && tipoEnvio !== 'retiro') cargarDirecciones(tipoEnvio)
+  }, [user, tipoEnvio])
 
   // Cargar notificaciones no leídas
   useEffect(() => {
@@ -768,7 +768,7 @@ function PanelEnvio({
         >
           <div className="envio-circle">🛵</div>
           <span className="envio-label">Delivery</span>
-          <span className="envio-costo">Calculado</span>
+          <span className="envio-costo">{user?.delivery_gratis ? 'Gratis' : '$8.00'}</span>
         </button>
         <button
           className={`envio-type-btn ${tipoEnvio === 'envio_nacional' ? 'active' : ''}`}
