@@ -25,7 +25,7 @@ function RegistroPasoFinal() {
   const navigate = useNavigate()
   const location = useLocation()
   const { login } = useAuth()
-  const { soportado: pushSoportado, estado: estadoPush, pidiendoPermiso, pedirPermiso } = usePush()
+  const { soportado: pushSoportado, permiso: permisoPush, pidiendoPermiso, activar: activarPush } = usePush()
 
   const datosRegistro = location.state
 
@@ -140,7 +140,7 @@ function RegistroPasoFinal() {
             <button className="auth-btn-primary" onClick={terminarSinPush}>
               Ir a la tienda
             </button>
-          ) : estadoPush === 'concedido' ? (
+          ) : permisoPush === 'granted' ? (
             <>
               <p className="auth-push-confirmado">
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="3">
@@ -154,7 +154,7 @@ function RegistroPasoFinal() {
             </>
           ) : (
             <div className="auth-push-opciones">
-              <button className="auth-btn-primary" onClick={pedirPermiso} disabled={pidiendoPermiso}>
+              <button className="auth-btn-primary" onClick={activarPush} disabled={pidiendoPermiso}>
                 {pidiendoPermiso ? 'Activando...' : 'Sí, activar notificaciones'}
               </button>
               <button type="button" className="auth-link-btn" onClick={terminarSinPush}>
