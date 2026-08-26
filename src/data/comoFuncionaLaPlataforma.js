@@ -1,6 +1,9 @@
 // src/data/comoFuncionaLaPlataforma.js
 const comoFuncionaInfo = {
+  etiqueta: 'Plataforma',
+  etiquetaIcono: 'Layers',
   titulo: '¿Cómo funciona la plataforma?',
+  subtitulo: 'Del catálogo a tu puerta — así es el recorrido completo de un pedido, paso a paso.',
   tipo: 'pasos',
   contenido: [
     {

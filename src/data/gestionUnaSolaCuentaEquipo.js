@@ -1,6 +1,9 @@
 // src/data/gestionUnaSolaCuentaEquipo.js
 const gestionEquipoInfo = {
+  etiqueta: 'Tu equipo',
+  etiquetaIcono: 'Users',
   titulo: 'Gestión en una sola cuenta para tu equipo',
+  subtitulo: 'Todo tu equipo puede generar pedidos, mientras tú mantienes el control desde una sola cuenta.',
   tipo: 'lista',
   contenido: [
     {

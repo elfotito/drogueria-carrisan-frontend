@@ -1,6 +1,9 @@
 // src/data/recaudosCuentaB2B.js
 const recaudosB2BInfo = {
+  etiqueta: 'Cuenta B2B',
+  etiquetaIcono: 'FileText',
   titulo: 'Recaudos para abrir una cuenta B2B',
+  subtitulo: 'Antes de activar tu línea de crédito, necesitamos estos datos básicos de tu negocio.',
   tipo: 'checklist',
   contenido: [
     'RIF de la empresa o cédula del comprador',

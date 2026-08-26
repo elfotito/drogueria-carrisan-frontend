@@ -169,14 +169,33 @@ function InfoModal({ abierto, titulo, data, onCerrar, children }) {
         aria-label={tituloFinal}
         onClick={(e) => e.stopPropagation()}
       >
-        <button type="button" className="info-modal__cerrar" onClick={onCerrar} aria-label="Cerrar">
+                <button type="button" className="info-modal__cerrar" onClick={onCerrar} aria-label="Cerrar">
           <X size={18} strokeWidth={2.4} />
         </button>
 
-        {tituloFinal && <h2 className="info-modal__titulo">{tituloFinal}</h2>}
+        <div className="info-modal__header">
+          {data?.etiqueta && (
+            <span className="info-modal__etiqueta">
+              {data.etiquetaIcono && <Icono nombre={data.etiquetaIcono} size={13} />}
+              {data.etiqueta}
+            </span>
+          )}
+          {tituloFinal && <h2 className="info-modal__titulo">{tituloFinal}</h2>}
+          {data?.subtitulo && <p className="info-modal__subtitulo">{data.subtitulo}</p>}
+        </div>
+
+        <div className="info-modal__divisor" />
 
         <div className="info-modal__cuerpo">
           {data ? <RenderContenido data={data} /> : children}
+        </div>
+
+        <div className="info-modal__divisor" />
+
+        <div className="info-modal__pie">
+          <button type="button" className="info-modal__boton-entendido" onClick={onCerrar}>
+            Entendido
+          </button>
         </div>
       </div>
     </div>

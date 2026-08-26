@@ -645,8 +645,8 @@ function Landing() {
       {/* ================================================================ */}
       <section className="landing-cta-final">
         <h2>Abastece tu institución con la droguería que te respalda.</h2>
-        <a href="#" className="btn-landing btn-landing--primario">Crear Cuenta | Iniciar Sesión</a>
-        <a href="#" 
+        <a href="#" className="btn-landing btn-landing--primario">Crear Cuenta B2B</a>
+        <a href="/registro" 
            className="landing-link landing-link--claro"
            onClick={(e) => {
              e.preventDefault()

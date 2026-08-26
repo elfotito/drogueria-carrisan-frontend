@@ -22,7 +22,7 @@ registerRoute(
 )
 
 registerRoute(
-  ({ url }) => url.pathname.startsWith('/'),
+  ({ url }) => url.hostname !== self.location.hostname,
   new NetworkFirst({
     cacheName: 'api-cache',
     networkTimeoutSeconds: 3,
