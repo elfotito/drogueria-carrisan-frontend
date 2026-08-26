@@ -1,6 +1,34 @@
 import { precacheAndRoute } from 'workbox-precaching'
+import { registerRoute } from 'workbox-routing'
+import { CacheFirst, NetworkFirst } from 'workbox-strategies'
+import { ExpirationPlugin } from 'workbox-expiration'
 
 precacheAndRoute(self.__WB_MANIFEST)
+
+registerRoute(
+  ({ url }) => url.hostname.endsWith('.supabase.co') && url.pathname.includes('/storage/'),
+  new CacheFirst({
+    cacheName: 'supabase-storage',
+    plugins: [new ExpirationPlugin({ maxEntries: 60, maxAgeSeconds: 30 * 24 * 60 * 60 })],
+  })
+)
+
+registerRoute(
+  ({ url }) => /^fonts\.(googleapis|gstatic)\.com$/.test(url.hostname),
+  new CacheFirst({
+    cacheName: 'google-fonts',
+    plugins: [new ExpirationPlugin({ maxEntries: 20, maxAgeSeconds: 365 * 24 * 60 * 60 })],
+  })
+)
+
+registerRoute(
+  ({ url }) => url.pathname.startsWith('/'),
+  new NetworkFirst({
+    cacheName: 'api-cache',
+    networkTimeoutSeconds: 3,
+    plugins: [new ExpirationPlugin({ maxEntries: 50, maxAgeSeconds: 5 * 60 })],
+  })
+)
 
 self.addEventListener('push', (event) => {
   let datos = { titulo: 'Droguería Carrisan', mensaje: 'Tenés una notificación nueva', url: '/' }

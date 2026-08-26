@@ -11,36 +11,10 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
-      workbox: {
+      strategies: 'injectManifest',
+      injectManifest: {
         globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
         maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
-        runtimeCaching: [
-          {
-            urlPattern: /^https:\/\/.*\.supabase\.co\/storage\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'supabase-storage',
-              expiration: { maxEntries: 60, maxAgeSeconds: 30 * 24 * 60 * 60 },
-            },
-          },
-          {
-            urlPattern: /^https:\/\/fonts\.(?:googleapis|gstatic)\.com\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'google-fonts',
-              expiration: { maxEntries: 20, maxAgeSeconds: 365 * 24 * 60 * 60 },
-            },
-          },
-          {
-            urlPattern: ({ url }) => url.pathname.startsWith('/'),
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'api-cache',
-              expiration: { maxEntries: 50, maxAgeSeconds: 5 * 60 },
-              networkTimeoutSeconds: 3,
-            },
-          },
-        ],
       },
       srcDir: 'src',
       filename: 'sw.js',
