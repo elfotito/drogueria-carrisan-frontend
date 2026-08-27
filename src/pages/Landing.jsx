@@ -640,9 +640,9 @@ function Landing() {
       {/* ================================================================ */}
       <section className="landing-cta-final">
         <h2>Abastece tu institución con la droguería que te respalda.</h2>
-        <a href="#" className="btn-landing btn-landing--primario">Crear Cuenta B2B</a>
+        <a href="/login" className="btn-landing btn-landing--primario">Crear Cuenta B2B</a>
         <a href="/registro" 
-           className="landing-link landing-link--claro"
+           style={{ color: '#ffffff', textDecoration: 'underline' }}
            onClick={(e) => {
              e.preventDefault()
              abrirModal(recaudosCuentaB2B)
@@ -650,7 +650,7 @@ function Landing() {
         >¿Necesitas ayuda para completar tus recaudos?</a>
       </section>
 
-      {/* ================================================================== */}
+{/* ================================================================== */}
 {/* 13. FOOTER - ESTILO AMAZON                                         */}
 {/* ================================================================== */}
 
