@@ -1,7 +1,8 @@
 :root {
   --text: #6b6375;
   --text-h: #08060d;
-  --bg: #fff;
+  --bg: #ffffff;
+  --paper: #ffffff;
   --border: #e5e4e7;
   --code-bg: #f4f3ec;
   --accent: #aa3bff;
@@ -61,8 +62,8 @@ body {
 
 #root {
   width: 100%;
-  max-width: 100%;
-  margin: 0;
+  max-width: 1600px;
+  margin: 0 auto;
   text-align: left;
   min-height: 100svh;
   display: flex;

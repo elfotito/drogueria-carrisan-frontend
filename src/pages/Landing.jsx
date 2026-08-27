@@ -650,50 +650,246 @@ function Landing() {
         >¿Necesitas ayuda para completar tus recaudos?</a>
       </section>
 
-      {/* ================================================================ */}
-      {/* 13. FOOTER                                                       */}
-      {/* ================================================================ */}
-      <footer className="landing-footer">
-        <ImagePlaceholder label="Logo" className="landing-footer__logo" />
-        <nav className="landing-footer__nav">
-          <Link to="/landing">Inicio</Link>
-          <a href="#"
-             onClick={(e) => {
-               e.preventDefault()
-               abrirModal(comoFuncionaLaPlataforma)
-             }}
-          >Cómo funciona</a>
-          <a href="#"
-             onClick={(e) => {
-               e.preventDefault()
-               abrirModal(descuentoVolumenEscala)
-             }}
-          >Formas de ahorrar</a>
-          <Link to="/ayuda">Ayuda</Link>
-        </nav>
+      {/* ================================================================== */}
+{/* 13. FOOTER - ESTILO AMAZON                                         */}
+{/* ================================================================== */}
+
+<footer className="landing-footer">
+
+  {/* ================================================================ */}
+  {/* PARTE SUPERIOR - FONDO BLANCO                                    */}
+  {/* ================================================================ */}
+  <div className="landing-footer__top">
+
+    <div className="landing-footer__container">
+
+      {/* CABECERA */}
+      <div className="landing-footer__header">
+
+        <div className="landing-footer__brand-area">
+
+          <ImagePlaceholder
+            label="Logo"
+            className="landing-footer__logo"
+          />
+
+          <nav className="landing-footer__nav">
+
+            <Link to="/landing">
+              Inicio
+            </Link>
+
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault()
+                abrirModal(comoFuncionaLaPlataforma)
+              }}
+            >
+              Cómo funciona
+            </a>
+
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault()
+                abrirModal(descuentoVolumenEscala)
+              }}
+            >
+              Formas de ahorrar
+            </a>
+
+            <Link to="/ayuda">
+              Ayuda
+            </Link>
+
+          </nav>
+
+        </div>
+
+        {/* BADGES */}
         <div className="landing-footer__badges">
-          <ImagePlaceholder label="Badge 1" className="landing-badge-img" />
-          <ImagePlaceholder label="Badge 2" className="landing-badge-img" />
+
+          <ImagePlaceholder
+            label="Badge 1"
+            className="landing-badge-img"
+          />
+
+          <ImagePlaceholder
+            label="Badge 2"
+            className="landing-badge-img"
+          />
+
         </div>
+
+      </div>
+
+
+      {/* LÍNEA */}
+      <div className="landing-footer__divider" />
+
+
+      {/* INFORMACIÓN */}
+      <div className="landing-footer__info">
+
         <p className="landing-footer__direccion">
-          Droguería Carrisan, C.A. · Av Urdaneta (99) Qta Mirabal, Local 04C, Valencia 2001, Carabobo, Venezuela
+
+          Droguería Carrisan, C.A. · Av. Urdaneta (99) Qta. Mirabal,
+          Local 04C, Valencia 2001, Carabobo, Venezuela
+
         </p>
-        <div className="landing-footer__links">
-          <Link to="/contacto">Ayuda</Link>
-          <span>|</span>
-          <span>Fax: pendiente</span>
-        </div>
-        <a href="#" 
-           className="landing-link"
-           onClick={(e) => {
-             e.preventDefault()
-             abrirModal(respaldoMedicoVenezolano)
-           }}
-        >Droguería Carrisan respaldando la labor del Medico Venezolano 🇻🇪❤️ ›</a>
-        <p className="landing-footer__legal">
+
+
+        <Link
+          to="/ayuda"
+          className="landing-footer__info-link"
+        >
+          Ayuda
+        </Link>
+
+
+        <span className="landing-footer__separator">
+          |
+        </span>
+
+
+        <span className="landing-footer__fax">
+          Fax: pendiente
+        </span>
+
+
+        <a
+          href="#"
+          className="landing-footer__prescriber"
+          onClick={(e) => {
+            e.preventDefault()
+            abrirModal(respaldoMedicoVenezolano)
+          }}
+        >
+          Droguería Carrisan respaldando la labor del Médico Venezolano 🇻🇪❤️
+          <span>›</span>
+        </a>
+
+      </div>
+
+
+      {/* DISCLAIMER */}
+      <div className="landing-footer__legal">
+
+        <p>
           Los nombres que aparecen en la fotografía son con fines ilustrativos.
         </p>
-      </footer>
+
+        <p>
+          <strong>
+            *LAS DROGUERÍAS NO REALIZAN VENTA DIRECTA AL PÚBLICO.
+          </strong>{" "}
+          De conformidad con la normativa sanitaria vigente en la República
+          Bolivariana de Venezuela, las droguerías son establecimientos
+          destinados a la distribución y comercialización de medicamentos al
+          mayor dentro de la cadena de suministro farmacéutico. Sus operaciones
+          están dirigidas a establecimientos e instituciones legalmente
+          autorizados para la adquisición y dispensación de medicamentos, tales
+          como farmacias, clínicas, hospitales y demás instituciones
+          dispensadoras de salud. No está permitida la dispensación o venta de
+          medicamentos directamente al consumidor final desde una droguería.
+          La dispensación al público corresponde a los establecimientos
+          farmacéuticos autorizados, de acuerdo con las disposiciones legales y
+          sanitarias aplicables.
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  {/* ================================================================ */}
+  {/* VOLVER ARRIBA                                                    */}
+  {/* ================================================================ */}
+
+  <button
+    type="button"
+    className="landing-footer__back-top"
+    onClick={() => window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    })}
+  >
+    Volver arriba
+  </button>
+
+
+  {/* ================================================================ */}
+  {/* PARTE INFERIOR OSCURA                                             */}
+  {/* ================================================================ */}
+
+  <div className="landing-footer__bottom">
+
+    <div className="landing-footer__bottom-container">
+
+      <nav className="landing-footer__bottom-nav">
+
+        <Link to="/cuenta">
+          Tu cuenta
+        </Link>
+
+        <Link to="/pedidos">
+          Tus pedidos
+        </Link>
+
+        <Link to="/ayuda">
+          Ayuda
+        </Link>
+
+        <span>
+          ¿Ya eres cliente?{" "}
+          <Link to="/login">
+            Iniciar sesión
+          </Link>
+        </span>
+
+      </nav>
+
+
+      {/* LOGO INFERIOR */}
+      <div className="landing-footer__bottom-logo">
+        <ImagePlaceholder
+          label="Logo inferior"
+          className="landing-footer__bottom-logo-img"
+        />
+      </div>
+      {/* ENLACES LEGALES */}
+      <div className="landing-footer__legal-links">
+
+        <Link to="/terminos">
+          Términos de uso
+        </Link>
+
+        <Link to="/privacidad">
+          Política de privacidad
+        </Link>
+
+        <Link to="/no-discriminacion">
+          Aviso de no discriminación
+        </Link>
+
+      </div>
+
+
+      {/* COPYRIGHT */}
+      <div className="landing-footer__copyright">
+
+        © 2026 Droguería Carrisan, C.A. · Todos los derechos reservados
+
+      </div>
+
+    </div>
+
+  </div>
+
+</footer>
 
       {/* Modal global */}
       <InfoModal

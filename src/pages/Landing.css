@@ -846,68 +846,526 @@
 }
 
 /* ================================================================== */
-/* 13. FOOTER                                                          */
+/* 13. FOOTER - ESTILO AMAZON                                         */
 /* ================================================================== */
+
 .landing-footer {
-  background: var(--color-surface);
-  padding: 44px 20px 60px;
-  border-top: 1px solid var(--color-border);
+  width: 100%;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none;
+  background: #ffffff;
+  color: #1a1a3a;
 }
 
-.landing-footer__logo {
-  width: 160px;
-  height: 44px;
-  min-height: 0;
-  margin-bottom: 20px;
+
+/* ================================================================== */
+/* PARTE SUPERIOR BLANCA                                              */
+/* ================================================================== */
+
+.landing-footer__top {
+  width: 100%;
+  background: #ffffff;
 }
+
+.landing-footer__container {
+  width: min(100%, 1100px);
+  margin: 0 auto;
+  padding: 36px 24px 30px;
+}
+
+
+/* ================================================================== */
+/* CABECERA                                                            */
+/* ================================================================== */
+
+.landing-footer__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 40px;
+}
+
+
+/* LOGO + NAV */
+
+.landing-footer__brand-area {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+
+.landing-footer__logo {
+  width: 190px;
+  height: 48px;
+  min-height: 0;
+  margin: 0 0 18px;
+  border: none;
+  border-radius: 0;
+}
+
+
+/* NAV SUPERIOR */
 
 .landing-footer__nav {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 24px;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 26px;
+  margin: 0;
 }
 
+
 .landing-footer__nav a {
-  color: var(--color-accent);
+  color: #007185;
   text-decoration: none;
+  font-family: var(--font-ui);
+  font-size: 0.92rem;
   font-weight: 700;
-  font-size: 0.95rem;
+  line-height: 1.2;
+  white-space: nowrap;
 }
+
+
+.landing-footer__nav a:hover {
+  color: #c45500;
+  text-decoration: underline;
+}
+
+
+/* ================================================================== */
+/* BADGES                                                             */
+/* ================================================================== */
 
 .landing-footer__badges {
   display: flex;
-  gap: 16px;
-  margin-bottom: 24px;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: 18px;
+  margin: 0;
+  flex-shrink: 0;
 }
 
-.landing-footer__direccion {
-  color: var(--color-text-muted);
-  font-size: 0.88rem;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  white-space: normal;
-}
 
-.landing-footer__links {
+.landing-badge-img {
+  width: 86px;
+  height: 86px;
+  min-height: 0;
+
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 18px;
-  font-size: 0.88rem;
-  color: var(--color-text-muted);
+  justify-content: center;
+
+  border: none;
+  border-radius: 0;
+
+  font-size: 0.65rem;
 }
 
-.landing-footer__links a {
-  color: var(--color-accent);
+
+/* ================================================================== */
+/* DIVISOR                                                            */
+/* ================================================================== */
+
+.landing-footer__divider {
+  width: 100%;
+  height: 1px;
+  background: #d5d9d9;
+  margin: 28px 0 26px;
+}
+
+
+/* ================================================================== */
+/* INFORMACIÓN                                                        */
+/* ================================================================== */
+
+.landing-footer__info {
+  display: grid;
+  grid-template-columns: minmax(0, 1.9fr) auto auto auto minmax(0, 1.2fr);
+  align-items: center;
+
+  column-gap: 24px;
+
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  line-height: 1.4;
+
+  color: #37475a;
+}
+
+
+.landing-footer__direccion {
+  margin: 0;
+  color: #37475a;
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+
+.landing-footer__info-link {
+  color: #007185;
   text-decoration: none;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+
+.landing-footer__info-link:hover {
+  text-decoration: underline;
+}
+
+
+.landing-footer__separator {
+  color: #d5d9d9;
+}
+
+
+.landing-footer__fax {
+  color: #37475a;
+  white-space: nowrap;
+}
+
+
+.landing-footer__prescriber {
+  color: #007185;
+  text-decoration: none;
+  font-weight: 700;
+  text-align: right;
+  line-height: 1.35;
+}
+
+
+.landing-footer__prescriber span {
+  font-size: 1rem;
+  margin-left: 4px;
+}
+
+
+.landing-footer__prescriber:hover {
+  color: #c45500;
+  text-decoration: underline;
+}
+
+
+/* ================================================================== */
+/* DISCLAIMER LEGAL                                                   */
+/* ================================================================== */
+
+.landing-footer__legal {
+  margin-top: 30px;
+}
+
+
+.landing-footer__legal p {
+  margin: 0 0 13px;
+
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.70rem;
+  line-height: 1.35;
+
+  letter-spacing: normal;
+  color: #111111;
+}
+
+
+.landing-footer__legal p:first-child {
   font-weight: 700;
 }
 
-.landing-footer__legal {
-  font-size: 0.78rem;
-  color: var(--color-text-muted);
-  margin-top: 20px;
+
+.landing-footer__legal strong {
+  font-weight: 800;
+}
+
+
+/* ================================================================== */
+/* BARRA VOLVER ARRIBA                                                */
+/* ================================================================== */
+
+.landing-footer__back-top {
+  width: 100%;
+  height: 50px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 0;
+
+  background: #37475a;
+  color: #ffffff;
+
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease;
+}
+
+
+.landing-footer__back-top:hover {
+  background: #48596d;
+}
+
+
+/* ================================================================== */
+/* PARTE INFERIOR OSCURA                                               */
+/* ================================================================== */
+
+.landing-footer__bottom {
+  width: 100%;
+  background: #232f3e;
+  color: #ffffff;
+}
+
+
+.landing-footer__bottom-container {
+  width: min(100%, 1100px);
+  margin: 0 auto;
+  padding: 38px 24px 22px;
+}
+
+
+/* ================================================================== */
+/* NAV INFERIOR                                                       */
+/* ================================================================== */
+
+.landing-footer__bottom-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 52px;
+
+  margin-bottom: 40px;
+}
+
+
+.landing-footer__bottom-nav a,
+.landing-footer__bottom-nav span {
+  color: #ffffff;
+
+  font-family: var(--font-ui);
+  font-size: 0.88rem;
+
+  text-decoration: none;
+}
+
+
+.landing-footer__bottom-nav a:hover {
+  text-decoration: underline;
+}
+
+
+/* ================================================================== */
+/* LOGO INFERIOR                                                      */
+/* ================================================================== */
+
+.landing-footer__bottom-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 24px;
+}
+
+
+.landing-footer__bottom-logo-img {
+  width: 120px;
+  height: 38px;
+
+  min-height: 0;
+
+  border: none;
+  border-radius: 0;
+
+  background: transparent;
+
+  color: #ffffff;
+}
+
+
+/* ================================================================== */
+/* ENLACES LEGALES                                                    */
+/* ================================================================== */
+
+.landing-footer__legal-links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 18px;
+
+  margin-bottom: 8px;
+}
+
+
+.landing-footer__legal-links a {
+  color: #dddddd;
+
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+
+  text-decoration: none;
+}
+
+
+.landing-footer__legal-links a:hover {
+  text-decoration: underline;
+}
+
+
+/* ================================================================== */
+/* COPYRIGHT                                                          */
+/* ================================================================== */
+
+.landing-footer__copyright {
+  text-align: center;
+
+  color: #dddddd;
+
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+
+  line-height: 1.4;
+}
+
+
+/* ================================================================== */
+/* RESPONSIVE                                                         */
+/* ================================================================== */
+
+@media (max-width: 767px) {
+
+  .landing-footer__container {
+    padding: 30px 18px 24px;
+  }
+
+
+  .landing-footer__header {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+
+  .landing-footer__brand-area {
+    width: 100%;
+  }
+
+
+  .landing-footer__logo {
+    width: 165px;
+    height: 42px;
+  }
+
+
+  .landing-footer__nav {
+    gap: 14px 20px;
+  }
+
+
+  .landing-footer__nav a {
+    font-size: 0.85rem;
+  }
+
+
+  .landing-footer__badges {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+
+  .landing-badge-img {
+    width: 72px;
+    height: 72px;
+  }
+
+
+  .landing-footer__info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    gap: 12px;
+
+    font-size: 0.76rem;
+  }
+
+
+  .landing-footer__direccion {
+    width: 100%;
+  }
+
+
+  .landing-footer__separator {
+    display: none;
+  }
+
+
+  .landing-footer__prescriber {
+    text-align: left;
+  }
+
+
+  .landing-footer__legal {
+    margin-top: 24px;
+  }
+
+
+  .landing-footer__legal p {
+    font-size: 0.67rem;
+    line-height: 1.4;
+  }
+
+
+  .landing-footer__bottom-container {
+    padding: 30px 18px 20px;
+  }
+
+
+  .landing-footer__bottom-nav {
+    flex-direction: column;
+    gap: 18px;
+
+    margin-bottom: 32px;
+  }
+
+
+  .landing-footer__legal-links {
+    gap: 10px 16px;
+  }
+
+}
+
+
+
+@media (min-width: 768px) and (max-width: 1023px) {
+
+  .landing-footer__info {
+    grid-template-columns: 1fr 1fr;
+
+    row-gap: 14px;
+  }
+
+
+  .landing-footer__direccion {
+    grid-column: 1 / -1;
+  }
+
+
+  .landing-footer__prescriber {
+    text-align: left;
+  }
+
 }
 
 /* ================================================================== */
@@ -1196,22 +1654,6 @@
     flex-direction: column;
   }
 
-  /* --- FAQ y footer centrados con ancho máximo --- */
-  .landing-faq {
-    max-width: 900px;
-    margin: 0 auto;
-  }
-
-  .landing-footer {
-    max-width: 1160px;
-    margin: 0 auto;
-  }
-
-  .landing-footer__nav {
-    flex-direction: row;
-    gap: 28px;
-  }
-}
 
 /* Contenedor de texto del hero */
 .landing-hero__texto {
@@ -1247,4 +1689,5 @@
     width: auto;
     min-width: 200px;
   }
+}
 }

@@ -27,7 +27,7 @@
   --slate-300: #b9bbd1;
   --slate-200: #dedfec;
   --slate-100: #eeeff6;
-  --paper: #f5f6fb;
+  /* --paper se define globalmente en index.css */
   --surface: #ffffff;
 
   /* --- Semántica (evitan competir con el rojo de marca) --- */
