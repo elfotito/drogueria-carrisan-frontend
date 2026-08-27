@@ -506,8 +506,8 @@ body {
 .cart-badge {
   position: absolute;
   font-family: 'Inter', sans-serif; 
-  top: -8px; 
-  right: -8px; 
+  top: -16px; 
+  right: -6px; 
   background: var(--wm-yellow); 
   color: black;
   font-size: 11px; 
