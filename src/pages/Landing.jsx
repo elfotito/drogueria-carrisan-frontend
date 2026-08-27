@@ -690,6 +690,9 @@ function Landing() {
             <Link to="/ayuda">
               Ayuda
             </Link>
+                    <span className="landing-footer__fax">
+          Whatsapp: +58 (414) 5949532 
+        </span>
           </nav>
         </div>
         {/* BADGES */}
@@ -703,7 +706,18 @@ function Landing() {
             className="landing-badge-img"
           />
         </div>
-        <a
+        
+      </div>
+      {/* LÍNEA */}
+      <div className="landing-footer__divider" />
+      {/* INFORMACIÓN */}
+      <div className="landing-footer__info">
+        <p className="landing-footer__direccion">
+          Droguería Carrisan, C.A. · Av. Urdaneta (99) Qta. Mirabal,
+          Local 04C, Valencia 2001, Carabobo, Venezuela
+        </p>
+        
+              <a
           href="#"
           className="landing-footer__prescriber"
           onClick={(e) => {
@@ -714,27 +728,6 @@ function Landing() {
           Droguería Carrisan respaldando la labor del Médico Venezolano 🇻🇪❤️
           <span>›</span>
         </a>
-      </div>
-      {/* LÍNEA */}
-      <div className="landing-footer__divider" />
-      {/* INFORMACIÓN */}
-      <div className="landing-footer__info">
-        <p className="landing-footer__direccion">
-          Droguería Carrisan, C.A. · Av. Urdaneta (99) Qta. Mirabal,
-          Local 04C, Valencia 2001, Carabobo, Venezuela
-        </p>
-        <Link
-          to="/ayuda"
-          className="landing-footer__info-link"
-        >
-          Ayuda
-        </Link>
-        <span className="landing-footer__separator">
-          |
-        </span>
-        <span className="landing-footer__fax">
-          Whatsapp: +58 (414) 5949532 
-        </span>
       </div>
       {/* DISCLAIMER */}
       <div className="landing-footer__legal">
