@@ -1,5 +1,5 @@
 .pc-caja {
-  background: #FBFAF7;
+  background: var(--paper);
   border: 1px solid #e3e4e5;
   border-radius: 12px;
   padding: 16px;

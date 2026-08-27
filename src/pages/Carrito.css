@@ -3,7 +3,9 @@
 
 .carrito-page {
   min-height: 100vh;
-  background: #FBFAF7;
+  background: var(--paper);
+  max-width: 1600px;
+  margin: 0 auto;
   padding-bottom: 96px; /* espacio para bottombar sticky */
   font-family: 'Inter', sans-serif;
 }

@@ -4,7 +4,7 @@ Azul #0052DC · Índigo #1A1A3A
 ============================================ */
 
 .su-intro {
-  background: #FBFAF7;
+  background: var(--paper);
   border: 1px solid #e3e4e5;
   border-radius: 12px;
   padding: 14px 16px;

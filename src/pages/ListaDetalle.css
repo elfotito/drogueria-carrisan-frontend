@@ -6,7 +6,7 @@
 
 .lista-detalle {
   min-height: 100vh;
-  background: #FBFAF7;
+  background: var(--paper);
   font-family: 'Inter', sans-serif;
   max-width: 900px;
   margin: 0 auto;

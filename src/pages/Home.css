@@ -5,7 +5,7 @@
    ============================================ */
 
 .home {
-  background: #FBFAF7;
+  background: var(--paper);
 }
 
 .home-eyebrow {

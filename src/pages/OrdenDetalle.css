@@ -4,7 +4,7 @@
    ============================================ */
 
 .od-page {
-  background: #FBFAF7;
+  background: var(--paper);
   min-height: 100vh;
   padding: 20px 16px 100px;
 }

@@ -1,6 +1,8 @@
 .pagos-page {
   min-height: 100vh;
-  background: #FBFAF7;
+  background: var(--paper);
+  max-width: 1600px;
+  margin: 0 auto;
   padding: 20px 16px 40px;
 }
 

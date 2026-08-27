@@ -720,6 +720,18 @@ function Landing() {
             className="landing-badge-img"
           />
 
+          <a
+          href="#"
+          className="landing-footer__prescriber"
+          onClick={(e) => {
+            e.preventDefault()
+            abrirModal(respaldoMedicoVenezolano)
+          }}
+        >
+          Droguería Carrisan respaldando la labor del Médico Venezolano 🇻🇪❤️
+          <span>›</span>
+        </a>
+
         </div>
 
       </div>
@@ -754,21 +766,9 @@ function Landing() {
 
 
         <span className="landing-footer__fax">
-          Fax: pendiente
+          Whatsapp: +58 (414) 5949532 
         </span>
 
-
-        <a
-          href="#"
-          className="landing-footer__prescriber"
-          onClick={(e) => {
-            e.preventDefault()
-            abrirModal(respaldoMedicoVenezolano)
-          }}
-        >
-          Droguería Carrisan respaldando la labor del Médico Venezolano 🇻🇪❤️
-          <span>›</span>
-        </a>
 
       </div>
 

@@ -14,7 +14,7 @@
   height: 100vh;
   width: 82%;
   max-width: 320px;
-  background: #FBFAF7;
+  background: var(--paper);
   box-shadow: 4px 0 24px rgba(20, 24, 42, 0.18);
   transform: translateX(-100%);
   transition: transform 0.25s ease;

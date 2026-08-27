@@ -28,7 +28,7 @@
   --ppal-brand-dark: #1A1A3A;
   --ppal-brand-light: #eaf0ff;
   --ppal-accent: #12A594;
-  --ppal-bg: #FBFAF7;
+  --ppal-bg: var(--paper);
   --ppal-surface: #ffffff;
   --ppal-border: #e7e6e0;
   --ppal-text: #1A1A3A;

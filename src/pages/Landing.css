@@ -1096,7 +1096,7 @@
   border: none;
   border-radius: 0;
 
-  background: #37475a;
+  background: #1a1a3a;
   color: #ffffff;
 
   font-family: var(--font-ui);
@@ -1121,7 +1121,7 @@
 
 .landing-footer__bottom {
   width: 100%;
-  background: #232f3e;
+  background: #0052DC;
   color: #ffffff;
 }
 

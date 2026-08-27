@@ -5,8 +5,10 @@
    ============================================ */
 
 .faq-page {
-  background: #FBFAF7;
+  background: var(--paper);
   min-height: 100vh;
+  max-width: 1600px;
+  margin: 0 auto;
   padding-bottom: 40px;
 }
 

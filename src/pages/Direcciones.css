@@ -6,7 +6,7 @@
 
 .direcciones-page {
   min-height: 100vh;
-  background: #FBFAF7;
+  background: var(--paper);
   font-family: 'Inter', sans-serif;
 }
 
