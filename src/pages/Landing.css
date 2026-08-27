@@ -947,16 +947,21 @@
 
 .landing-footer__badges {
   display: flex;
-  align-items: flex-start;
-  justify-content: flex-end;
-  gap: 18px;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
   margin: 0;
   flex-shrink: 0;
 }
 
+.landing-footer__badges-imgs {
+  display: flex;
+  gap: 18px;
+}
+
 
 .landing-badge-img {
-  width: 86px;
+  border-radius: 12px;
   height: 86px;
   min-height: 0;
 
@@ -1288,7 +1293,7 @@
 
   .landing-footer__badges {
     width: 100%;
-    justify-content: flex-start;
+    align-items: flex-start;
   }
 
 

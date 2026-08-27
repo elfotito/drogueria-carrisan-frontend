@@ -779,7 +779,7 @@ function Landing() {
         <Link to="/cuenta">
           Tu cuenta
         </Link>
-        <Link to="/pedidos">
+        <Link to="/ordenes">
           Tus pedidos
         </Link>
         <Link to="/ayuda">
