@@ -3,6 +3,67 @@ Notificaciones — paleta consistente con el resto de la app
 Azul #0052DC · Índigo #1A1A3A
 ============================================ */
 
+/* ---------- Botón "Marcar todas leídas" ---------- */
+
+.notif-marcar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid #e3e4e5;
+  border-radius: 10px;
+  background: #fff;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #4b4d52;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+
+.notif-marcar-btn:hover:not(:disabled) {
+  border-color: #0052DC;
+  color: #0052DC;
+  background: #F0F5FF;
+}
+
+.notif-marcar-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.notif-marcar-btn__texto {
+  display: inline;
+}
+
+.notif-marcar-btn__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: #0052DC;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* En móvil: solo icono + badge, sin texto */
+@media (max-width: 640px) {
+  .notif-marcar-btn__texto {
+    display: none;
+  }
+
+  .notif-marcar-btn {
+    padding: 8px 10px;
+  }
+}
+
 /* ---------- Layout general ---------- */
 
 .notif-page {
@@ -312,10 +373,10 @@ Azul #0052DC · Índigo #1A1A3A
     display: flex;
     flex-direction: column;
     gap: 2px;
-    width: 200px;
+    width: 240px;
     flex-shrink: 0;
     position: sticky;
-    top: 100px;
+    top: 140px;
     background: #fff;
     border: 1px solid #e3e4e5;
     border-radius: 12px;

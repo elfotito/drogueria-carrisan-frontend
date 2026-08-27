@@ -1,14 +1,11 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
-  Menu,
-  Portal,
   Accordion,
   Badge,
-  IconButton,
   Text,
 } from '@chakra-ui/react'
-import { MoreVertical, ChevronDown, Filter } from 'lucide-react'
+import { ChevronDown, Filter, CheckCheck } from 'lucide-react'
 import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
 import { NAV_NOTIFICACIONES } from '../components/paginas-principales/NavNotificaciones'
 import api from '../api/axios'
@@ -210,22 +207,17 @@ function Notificaciones() {
       titulo="Notificaciones"
       nav={navConfig}
       acciones={
-        <Menu.Root>
-          <Menu.Trigger asChild>
-            <IconButton variant="ghost" aria-label="Opciones" size="sm">
-              <MoreVertical size={18} />
-            </IconButton>
-          </Menu.Trigger>
-          <Portal>
-            <Menu.Positioner>
-              <Menu.Content>
-                <Menu.Item value="marcar-todas" onSelect={marcarTodasLeidas} disabled={noLeidas === 0}>
-                  Marcar todas leídas {noLeidas > 0 && `(${noLeidas})`}
-                </Menu.Item>
-              </Menu.Content>
-            </Menu.Positioner>
-          </Portal>
-        </Menu.Root>
+        <button
+          className="notif-marcar-btn"
+          onClick={marcarTodasLeidas}
+          disabled={noLeidas === 0}
+        >
+          <CheckCheck size={16} />
+          <span className="notif-marcar-btn__texto">Marcar todas leídas</span>
+          {noLeidas > 0 && (
+            <span className="notif-marcar-btn__badge">{noLeidas}</span>
+          )}
+        </button>
       }
     >
       <div className="notif-page">
