@@ -225,7 +225,7 @@ function TasaCambio() {
     setGuardando(true)
 
     try {
-      await api.patch('/prices/tasa-cambio', { usd_a_ves: Number(nuevaTasa) })
+      await api.patch('/prices/tasa-cambio', { usd_a_ves: Number(Number(nuevaTasa).toFixed(4)) })
       
       // Guardar que ya actualizamos (para no sobreescribir con automática)
       const ahoraVzla = obtenerHoraVenezuela(new Date())

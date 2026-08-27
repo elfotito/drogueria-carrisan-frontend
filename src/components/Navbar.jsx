@@ -105,7 +105,7 @@ const SERVICIOS = [
 
 function Navbar() {
   const { user, logout } = useAuth()
-  const { items } = useCart()
+  const { items, total } = useCart()
   const cantidadItems = items?.reduce((acc, item) => acc + item.cantidad, 0) || 0
   const {
     tipoEnvio,
@@ -567,7 +567,7 @@ function Navbar() {
                 fontWeight: "bold" 
               }}>{cantidadItems}</span>
             </div>
-            <span className="cart-price" style={{ fontSize: "12px" }}>$0.00</span>
+            <span className="cart-price" style={{ fontSize: "12px" }}>${total?.toFixed(2) || '0.00'}</span>
           </Link>
         </div>
 
