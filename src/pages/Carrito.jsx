@@ -4,6 +4,7 @@ import api from '../api/axios'
 import { useCart } from '../context/CartContext'
 import { useEnvio } from '../context/EnvioContext'
 import { useAuth } from '../context/AuthContext'
+import HomeCarrusel from '../components/HomeCarrusel'
 import './Carrito.css'
 
 function formatUSD(valor) {
@@ -308,6 +309,9 @@ function Carrito() {
   const [enviando, setEnviando] = useState(false)
   const [error, setError] = useState('')
   const [envioExpandido, setEnvioExpandido] = useState(false)
+  const [ofertas, setOfertas] = useState([])
+  const [productosRecientes, setProductosRecientes] = useState([])
+  const [cargandoCarruseles, setCargandoCarruseles] = useState(true)
   
   const navigate = useNavigate()
 
@@ -340,6 +344,19 @@ function Carrito() {
       setEnvioExpandido(true)
     }
   }, [tipoEnvio, direccionSeleccionada, opcionesEnvio])
+
+  // Cargar productos para los carruseles
+  useEffect(() => {
+    api
+      .get('/products')
+      .then((res) => {
+        const activos = res.data.filter((p) => p.activo)
+        setOfertas(activos.filter((p) => p.descuento_activo).slice(0, 12))
+        setProductosRecientes(activos.slice(0, 12))
+      })
+      .catch(() => {})
+      .finally(() => setCargandoCarruseles(false))
+  }, [])
 
   // 🆕 Cerrar panel SOLO cuando se selecciona una dirección (no al cambiar tipo de envío)
     const handleCambiarTipoEnvio = (tipo) => {
@@ -521,27 +538,8 @@ function Carrito() {
           </div>
         </div>
 
-        {/* Métodos de pago */}
-        <div className="cart-payment-methods">
-          <p className="cart-payment-methods__titulo">Métodos de pago aceptados</p>
-          <div className="cart-payment-methods__icons">
-            <span className="cart-payment-methods__icon">VISA</span>
-            <span className="cart-payment-methods__icon">MC</span>
-            <span className="cart-payment-methods__icon">AMEX</span>
-            <span className="cart-payment-methods__icon">ZELLE</span>
-            <span className="cart-payment-methods__icon">BS</span>
-          </div>
-        </div>
-
         {/* Beneficios */}
         <div className="cart-benefits">
-          <div className="cart-benefits__item">
-            <span className="cart-benefits__icon">✓</span>
-            <div className="cart-benefits__text">
-              <strong>Devolución gratis</strong>
-              Si no es lo que necesitás, devolvés sin costo dentro de 30 días.
-            </div>
-          </div>
           <div className="cart-benefits__item">
             <span className="cart-benefits__icon">🚚</span>
             <div className="cart-benefits__text">
@@ -653,49 +651,22 @@ function Carrito() {
             </section>
 
             {/* Carruseles de productos */}
-            <section className="cart-carousel-section">
-              <h2 className="cart-carousel-section__titulo">Ofertas del día</h2>
-              <div className="cart-carousel">
-                {[
-                  { id: 1, nombre: 'Paracetamol 500mg x 20 tabletas', precio: '$3.50', img: '💊' },
-                  { id: 2, nombre: 'Ibuprofeno 400mg x 30 cápsulas', precio: '$5.20', img: '💊' },
-                  { id: 3, nombre: 'Amoxicilina 250mg/5ml suspensión', precio: '$8.90', img: '🧪' },
-                  { id: 4, nombre: 'Jarabe para la tos 120ml', precio: '$6.40', img: '🍯' },
-                  { id: 5, nombre: 'Vitamina C 1g x 30 comprimidos', precio: '$4.10', img: '🍊' },
-                  { id: 6, nombre: 'Omeprazol 20mg x 28 cápsulas', precio: '$7.80', img: '💊' },
-                ].map((item) => (
-                  <div key={item.id} className="cart-carousel__card">
-                    <div className="cart-carousel__img" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem' }}>
-                      {item.img}
-                    </div>
-                    <p className="cart-carousel__nombre">{item.nombre}</p>
-                    <span className="cart-carousel__precio">{item.precio}</span>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            <section className="cart-carousel-section">
-              <h2 className="cart-carousel-section__titulo">Los más vendidos</h2>
-              <div className="cart-carousel">
-                {[
-                  { id: 7, nombre: 'Dipirona 500mg x 10 tabletas', precio: '$2.30', img: '💊' },
-                  { id: 8, nombre: 'Antiséptico bucal 250ml', precio: '$4.70', img: '🧴' },
-                  { id: 9, nombre: 'Gasas estériles x 10 unidades', precio: '$3.10', img: '🩹' },
-                  { id: 10, nombre: 'Alcohol gel 250ml', precio: '$2.90', img: '🧼' },
-                  { id: 11, nombre: 'Mascarilla quirúrgica x 50', precio: '$9.50', img: '😷' },
-                  { id: 12, nombre: 'Guantes de látex M x 100', precio: '$12.00', img: '🧤' },
-                ].map((item) => (
-                  <div key={item.id} className="cart-carousel__card">
-                    <div className="cart-carousel__img" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem' }}>
-                      {item.img}
-                    </div>
-                    <p className="cart-carousel__nombre">{item.nombre}</p>
-                    <span className="cart-carousel__precio">{item.precio}</span>
-                  </div>
-                ))}
-              </div>
-            </section>
+            <HomeCarrusel
+              titulo="Ofertas del día"
+              subtitulo="Descuentos especiales por tiempo limitado"
+              productos={ofertas}
+              tasaVes={tasaVes}
+              cargando={cargandoCarruseles}
+              verTodoTo="/catalogo"
+            />
+            <HomeCarrusel
+              titulo="Los más recientes"
+              subtitulo="Conocé los últimos productos del catálogo"
+              productos={productosRecientes}
+              tasaVes={tasaVes}
+              cargando={cargandoCarruseles}
+              verTodoTo="/catalogo"
+            />
           </div>
 
           {/* Columna derecha: Resumen sticky */}
