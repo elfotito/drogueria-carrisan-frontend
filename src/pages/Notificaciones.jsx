@@ -12,7 +12,7 @@ import api from '../api/axios'
 import {
   CATEGORIAS,
   ORDEN_CATEGORIAS,
-  DESCRIPCION_CATEGORIAS,
+  DESCRIPCION_CATEGORIA,
   getCategoriaDeTipo,
   getConfigTipo,
 } from '../utils/notificacionesCatalogo'
