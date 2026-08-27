@@ -208,7 +208,7 @@ function ImagenPlaceholder({ alto = 220, texto = 'Imagen próximamente' }) {
 // ---------------------------------------------------------
 function Ayuda() {
   const [modalKey, setModalKey] = useState(null)
-  const [categoriaActiva, setCategoriaActiva] = useState('pedido')
+  const [categoriaActiva, setCategoriaActiva] = useState('faq')
   const [busqueda, setBusqueda] = useState('')
 
   const categoria = categorias.find((c) => c.id === categoriaActiva)

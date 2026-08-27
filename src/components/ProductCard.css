@@ -46,9 +46,9 @@
 
 .pcard__badge-descuento-pill {
   display: inline-block;
-  border: 1px solid #D64550;
-  color: #D64550;
-  background: #FDECEE;
+  border: 1px solid #12A594; /* Teal */
+  color: #0d7e70;
+  background: rgba(18, 165, 148, 0.12);
   font-size: 0.68rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -56,6 +56,12 @@
   padding: 4px 10px;
   border-radius: 999px;
   line-height: 1.2;
+}
+
+.pcard__badge-descuento-pill--fuerte {
+  border: none;
+  color: #FFFFFF;
+  background: linear-gradient(135deg, #0052DC 0%, #1A1A3A 100%);
 }
 
 /* ---------- Media (imagen + badge de descuento + favorito) ---------- */
@@ -79,20 +85,33 @@
 }
 
 /* Badge de descuento montado sobre la imagen — visible en desktop.
-   En mobile se oculta y se usa la pastilla de arriba (.pcard__badge-descuento-pill). */
+   En mobile se oculta y se usa la pastilla de arriba (.pcard__badge-descuento-pill).
+   Dos variantes: --chip (descuento normal, discreto) y --fuerte (destacado, ribbon). */
 .pcard__badge-descuento {
   position: absolute;
   top: 8px;
   left: 8px;
   z-index: 2;
-  background: #D64550; /* rojo de urgencia */
-  color: #FFFFFF;
   font-weight: 700;
   font-size: 0.65rem;
   text-transform: uppercase;
   letter-spacing: 0.03em;
+  line-height: 1.2;
+}
+
+.pcard__badge-descuento--chip {
+  border: 1px solid #12A594; /* Teal */
+  color: #0d7e70;
+  background: rgba(18, 165, 148, 0.12);
   padding: 4px 8px;
-  border-radius: 4px;
+  border-radius: 6px;
+}
+
+.pcard__badge-descuento--fuerte {
+  color: #FFFFFF;
+  background: linear-gradient(135deg, #0052DC 0%, #1A1A3A 100%);
+  padding: 5px 10px 5px 8px;
+  clip-path: polygon(0 0, 100% 0, 92% 100%, 0% 100%);
 }
 
 .pcard__fav {
@@ -106,7 +125,6 @@
   border: none;
   background: rgba(255, 255, 255, 0.9);
   color: #14182A;
-  font-size: 1.1rem;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -119,7 +137,17 @@
 }
 
 .pcard__fav--activo {
-  color: #D64550;
+  color: #12A594; /* Teal — consistente con la paleta, no rojo genérico */
+}
+
+.pcard__fav--pop {
+  animation: pcard-fav-pop 0.26s ease;
+}
+
+@keyframes pcard-fav-pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.3); }
+  100% { transform: scale(1); }
 }
 
 /* ---------- Patrocinado ---------- */
@@ -343,29 +371,37 @@
   text-align: center;
 }
 
-/* ---------- Confirmación "Agregado al carrito" ---------- */
-.pcard__confirmacion {
+/* ---------- Toast: "Agregado al carrito" / favoritos ----------
+   Vive anclado arriba de la card puntual (no global), y cae de
+   arriba hacia abajo antes de desvanecerse. */
+.pcard__toast {
   position: absolute;
   left: 14px;
   right: 14px;
-  bottom: 14px;
-  background: #12A594; /* Teal */
+  top: 14px;
+  z-index: 3;
   color: #FFFFFF;
   font-size: 0.78rem;
   font-weight: 700;
   text-align: center;
   padding: 8px 10px;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(18, 165, 148, 0.35);
-  animation: pcard-confirmacion 1.8s ease forwards;
+  background: #12A594; /* Teal — default (carrito) */
+  box-shadow: 0 4px 12px rgba(20, 24, 42, 0.18);
+  animation: pcard-toast 1.8s ease forwards;
   pointer-events: none;
 }
 
-@keyframes pcard-confirmacion {
-  0% { opacity: 0; transform: translateY(6px); }
+@keyframes pcard-toast {
+  0% { opacity: 0; transform: translateY(-14px); }
   12% { opacity: 1; transform: translateY(0); }
   82% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-4px); }
+  100% { opacity: 0; transform: translateY(-6px); }
+}
+
+.pcard__toast--favorito-on,
+.pcard__toast--favorito-off {
+  background: #0052DC; /* Azul */
 }
 
 .pcard__body {
@@ -483,9 +519,83 @@
     font-size: 0.72rem;
   }
 
-  .pcard__confirmacion {
+  .pcard__toast {
     left: 12px;
     right: 12px;
-    bottom: 12px;
+    top: 12px;
+  }
+}
+
+/* ============================================
+   Variante horizontal — compacta, para carruseles
+   (menos información: sin marca, sin delivery,
+   sin "agregar a lista", un solo botón "Agregar").
+   Ancho fijo pensado para scroll horizontal.
+   ============================================ */
+.pcard--horizontal {
+  flex-direction: column;
+  width: 150px;
+  min-width: 150px;
+  padding: 10px;
+  gap: 0;
+}
+
+.pcard--horizontal .pcard__media {
+  aspect-ratio: 1 / 1;
+  margin-bottom: 8px;
+}
+
+.pcard__body--horizontal {
+  gap: 4px;
+}
+
+.pcard__nombre--horizontal {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #14182A;
+  margin: 0;
+  line-height: 1.25;
+  cursor: pointer;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.pcard--horizontal .pcard__precios {
+  margin-bottom: 6px;
+}
+
+.pcard--horizontal .pcard__precio-ahora,
+.pcard--horizontal .pcard__precio-normal {
+  font-size: 0.92rem;
+}
+
+.pcard--horizontal .pcard__precio-original {
+  font-size: 0.72rem;
+}
+
+.pcard__btn-agregar--horizontal {
+  width: 100%;
+  font-size: 0.76rem;
+  padding: 7px 10px;
+}
+
+.pcard--horizontal .pcard__contador {
+  width: 100%;
+}
+
+.pcard--horizontal .pcard__toast {
+  left: 8px;
+  right: 8px;
+  top: 8px;
+  font-size: 0.66rem;
+  padding: 6px 8px;
+}
+
+@media (max-width: 768px) {
+  .pcard--horizontal {
+    width: 128px;
+    min-width: 128px;
   }
 }

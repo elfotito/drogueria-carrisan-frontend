@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Heart } from 'lucide-react'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
 import { useFavoritos } from '../context/FavoritosContext'
@@ -40,7 +41,7 @@ function obtenerMensajeRetiro() {
   return antesDelCorte ? 'Retiro en tienda hasta las 4:30 pm' : 'Retiro en tienda disponible mañana'
 }
 
-function ProductCard({ producto, tasaVes }) {
+function ProductCard({ producto, tasaVes, variante = 'vertical' }) {
   const { items: cartItems, addItem, removeItem, updateCantidad } = useCart()
   const { user } = useAuth()
   const { esFavorito, toggleFavorito } = useFavoritos()
@@ -48,10 +49,22 @@ function ProductCard({ producto, tasaVes }) {
 
   const [mostrarModal, setMostrarModal] = useState(false)
   const [mostrarContador, setMostrarContador] = useState(false)
-  const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false)
+  // toast: { tipo: 'carrito' | 'favorito-on' | 'favorito-off', key: number }
+  // key fuerza remount para reiniciar la animación en clicks consecutivos
+  const [toast, setToast] = useState(null)
+  const [favoritoPop, setFavoritoPop] = useState(false)
 
   const confirmTimerRef = useRef(null)
   const hideConfirmTimerRef = useRef(null)
+  const favoritoPopTimerRef = useRef(null)
+  const toastKeyRef = useRef(0)
+
+  function dispararToast(tipo) {
+    clearTimeout(hideConfirmTimerRef.current)
+    toastKeyRef.current += 1
+    setToast({ tipo, key: toastKeyRef.current })
+    hideConfirmTimerRef.current = setTimeout(() => setToast(null), 1800)
+  }
 
   const precioVes = tasaVes && producto.precio_usd != null
     ? (producto.precio_usd * tasaVes).toFixed(2)
@@ -73,11 +86,8 @@ function ProductCard({ producto, tasaVes }) {
     setMostrarContador(true)
 
     clearTimeout(confirmTimerRef.current)
-    clearTimeout(hideConfirmTimerRef.current)
-
     confirmTimerRef.current = setTimeout(() => {
-      setMostrarConfirmacion(true)
-      hideConfirmTimerRef.current = setTimeout(() => setMostrarConfirmacion(false), 1800)
+      dispararToast('carrito')
     }, 500)
   }
 
@@ -91,7 +101,7 @@ function ProductCard({ producto, tasaVes }) {
     if (cantidad <= 1) {
       removeItem(producto.id)
       setMostrarContador(false)
-      setMostrarConfirmacion(false)
+      setToast(null)
       clearTimeout(confirmTimerRef.current)
       clearTimeout(hideConfirmTimerRef.current)
     } else {
@@ -105,16 +115,115 @@ function ProductCard({ producto, tasaVes }) {
       navigate('/login')
       return
     }
+    const estabaFavorito = favorito
     toggleFavorito(producto)
+    dispararToast(estabaFavorito ? 'favorito-off' : 'favorito-on')
+
+    clearTimeout(favoritoPopTimerRef.current)
+    setFavoritoPop(true)
+    favoritoPopTimerRef.current = setTimeout(() => setFavoritoPop(false), 260)
   }
 
   useEffect(() => {
     return () => {
       clearTimeout(confirmTimerRef.current)
       clearTimeout(hideConfirmTimerRef.current)
+      clearTimeout(favoritoPopTimerRef.current)
     }
   }, [])
 
+  const mensajeToast = {
+    'carrito': '✓ Agregado al carrito',
+    'favorito-on': '♥ Agregado a favoritos',
+    'favorito-off': 'Quitado de favoritos',
+  }
+
+  // ---------- Variante horizontal (compacta, para carruseles) ----------
+  if (variante === 'horizontal') {
+    return (
+      <>
+        <div className="pcard pcard--horizontal">
+          <div
+            className="pcard__media"
+            onClick={() => navigate(`/producto/${producto.id}`)}
+          >
+            {etiquetaDescuento && (
+              <span className="pcard__badge-descuento pcard__badge-descuento--chip">{etiquetaDescuento}</span>
+            )}
+
+            <button
+              type="button"
+              className={`pcard__fav ${favorito ? 'pcard__fav--activo' : ''} ${favoritoPop ? 'pcard__fav--pop' : ''}`}
+              onClick={handleFavorito}
+              aria-label={favorito ? 'Quitar de favoritos' : 'Agregar a favoritos'}
+            >
+              <Heart size={16} fill={favorito ? 'currentColor' : 'none'} strokeWidth={2} />
+            </button>
+
+            <img
+              src={producto.foto_url || '/placeholder.png'}
+              alt={producto.nombre_comercial}
+              className="pcard__image"
+              loading="lazy"
+            />
+          </div>
+
+          <div className="pcard__body pcard__body--horizontal">
+            <h3
+              className="pcard__nombre pcard__nombre--horizontal"
+              onClick={() => navigate(`/producto/${producto.id}`)}
+            >
+              {producto.nombre_comercial}
+            </h3>
+
+            <div className="pcard__precios">
+              {tieneDescuento ? (
+                <>
+                  <span className="pcard__precio-ahora">
+                    <span className="pcard__precio-simbolo">$</span><span className="pcard__precio-numero">{formatUSD(producto.precio_usd)}</span>
+                  </span>
+                  <span className="pcard__precio-original">
+                    ${formatUSD(producto.precio_original_usd)}
+                  </span>
+                </>
+              ) : (
+                <span className="pcard__precio-normal">
+                  <span className="pcard__precio-simbolo">$</span><span className="pcard__precio-numero">{formatUSD(producto.precio_usd)}</span>
+                </span>
+              )}
+            </div>
+
+            {(mostrarContador || cantidad > 0) ? (
+              <div className="pcard__contador">
+                <button className="contador-btn" onClick={handleRestar} aria-label="Quitar uno">−</button>
+                <span className="contador-cantidad">{cantidad}</span>
+                <button className="contador-btn" onClick={handleSumar} aria-label="Agregar uno">+</button>
+              </div>
+            ) : (
+              <button className="pcard__btn-agregar pcard__btn-agregar--horizontal" onClick={handleAgregar}>
+                + Agregar
+              </button>
+            )}
+          </div>
+
+          {toast && (
+            <div key={toast.key} className={`pcard__toast pcard__toast--${toast.tipo}`} role="status">
+              {mensajeToast[toast.tipo]}
+            </div>
+          )}
+        </div>
+
+        {mostrarModal && (
+          <AgregarAItemsModal
+            producto={producto}
+            onClose={() => setMostrarModal(false)}
+          />
+        )}
+      </>
+    )
+  }
+
+  // ---------- Variante vertical (default — catálogo/grid, diseño Walmart) ----------
   return (
     <>
       <div className="pcard">
@@ -129,7 +238,9 @@ function ProductCard({ producto, tasaVes }) {
             de .pcard__media, sin ningún cambio. */}
         {etiquetaDescuento && (
           <div className="pcard__top-badge pcard__top-badge--descuento-mobile">
-            <span className="pcard__badge-descuento-pill">{etiquetaDescuento}</span>
+            <span className={`pcard__badge-descuento-pill ${etiquetaDescuento === 'Super Oferta' ? 'pcard__badge-descuento-pill--fuerte' : ''}`}>
+              {etiquetaDescuento}
+            </span>
           </div>
         )}
 
@@ -139,16 +250,18 @@ function ProductCard({ producto, tasaVes }) {
           onClick={() => navigate(`/producto/${producto.id}`)}
         >
           {etiquetaDescuento && (
-            <span className="pcard__badge-descuento">{etiquetaDescuento}</span>
+            <span className={`pcard__badge-descuento ${etiquetaDescuento === 'Super Oferta' ? 'pcard__badge-descuento--fuerte' : 'pcard__badge-descuento--chip'}`}>
+              {etiquetaDescuento}
+            </span>
           )}
 
           <button
             type="button"
-            className={`pcard__fav ${favorito ? 'pcard__fav--activo' : ''}`}
+            className={`pcard__fav ${favorito ? 'pcard__fav--activo' : ''} ${favoritoPop ? 'pcard__fav--pop' : ''}`}
             onClick={handleFavorito}
             aria-label={favorito ? 'Quitar de favoritos' : 'Agregar a favoritos'}
           >
-            {favorito ? '♥' : '♡'}
+            <Heart size={16} fill={favorito ? 'currentColor' : 'none'} strokeWidth={2} />
           </button>
 
           <img
@@ -241,12 +354,13 @@ function ProductCard({ producto, tasaVes }) {
             <p className="pcard__delivery-pickup">{obtenerMensajeRetiro()}</p>
           </div>
 
-          {mostrarConfirmacion && (
-            <div className="pcard__confirmacion" role="status">
-              ✓ Agregado al carrito
-            </div>
-          )}
         </div>
+
+        {toast && (
+          <div key={toast.key} className={`pcard__toast pcard__toast--${toast.tipo}`} role="status">
+            {mensajeToast[toast.tipo]}
+          </div>
+        )}
       </div>
 
       {mostrarModal && (

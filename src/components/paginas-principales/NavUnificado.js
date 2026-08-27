@@ -68,7 +68,7 @@ export const NAV_UNIFICADO = [
     tipo: 'submenu',
     verTodoTo: '/ayuda',
     items: [
-      { id: 'faq', to: '/ayuda#faq', icono: FileQuestion, texto: 'Preguntas frecuentes' },
+      { id: 'faq', to: '/ayuda', icono: FileQuestion, texto: 'Preguntas frecuentes' },
       { id: 'ayuda', to: '/ayuda', icono: HelpCircle, texto: 'Cómo usar la plataforma' },
       { id: 'contacto', to: '/contacto', icono: MessageCircle, texto: 'Contacto' },
     ],
