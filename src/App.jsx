@@ -23,7 +23,6 @@ import Carrito from './pages/Carrito'
 import MisOrdenes from './pages/MisOrdenes'
 import Admin from './pages/Admin'
 import QuienesSomos from './pages/QuienesSomos'
-import FAQ from './pages/FAQ'
 import Ayuda from './pages/Ayuda'
 import Contacto from './pages/Contacto'
 import MiCuenta from './pages/MiCuenta'
@@ -90,7 +89,6 @@ function App() {
                 <Route path="/pagos" element={<PrivateRouteSensible><Pagos /></PrivateRouteSensible>} />
                 <Route path="/admin/*" element={<PrivateRoute adminOnly><Admin /></PrivateRoute>} />
                 <Route path="/quienes-somos" element={<QuienesSomos />} />
-                <Route path="/faq" element={<FAQ />} />
                 <Route path="/ayuda" element={<Ayuda />} />
                 <Route path="/contacto" element={<Contacto />} />
                 <Route path="/cuenta" element={<PrivateRoute><MiCuenta /></PrivateRoute>} />

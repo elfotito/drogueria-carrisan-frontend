@@ -6,7 +6,7 @@
 // (ir a órdenes, al chat, a la cuenta) más un grupo "pie" de ayuda.
 // ---------------------------------------------------------------
 
-import { Bell, Package, MessageCircle, Settings, MessageCircleQuestion, SlidersHorizontal } from 'lucide-react'
+import { Bell, Package, MessageCircle, Settings, MessageCircleQuestion, SlidersHorizontal, FileQuestion } from 'lucide-react'
 import {
   CATEGORIAS,
   ORDEN_CATEGORIAS,
@@ -44,6 +44,7 @@ export function NAV_NOTIFICACIONES({ silenciadas = [], onToggleSilenciar }) {
       titulo: 'Ayuda',
       pie: true,
       items: [
+        { id: 'faq-noti', to: '/ayuda', icono: FileQuestion, texto: 'Preguntas frecuentes' },
         { id: 'contacto', to: '/contacto', icono: MessageCircleQuestion, texto: 'Contacto directo' },
       ],
     },

@@ -106,7 +106,7 @@ function MenuDrawer({ isOpen, onClose, user, onLogout }) {
           <NavLink to="/quienes-somos" className={linkClase} onClick={onClose}>
             Quiénes Somos
           </NavLink>
-          <NavLink to="/faq" className={linkClase} onClick={onClose}>
+          <NavLink to="/ayuda" className={linkClase} onClick={onClose}>
             Preguntas Frecuentes
           </NavLink>
           <NavLink to="/ayuda" className={linkClase} onClick={onClose}>

@@ -132,7 +132,7 @@ const GRID_CUENTA = [
 // Estas dos secciones son un punto de partida — se amplían cuando existan
 // las páginas de historial, devoluciones, etc.
 const LISTA_SOPORTE = [
-  { to: '/faq', icono: 'faq', titulo: 'Preguntas Frecuentes', descripcion: 'Resuelve dudas sobre pedidos, pagos y entregas.' },
+  { to: '/ayuda', icono: 'faq', titulo: 'Preguntas Frecuentes', descripcion: 'Resuelve dudas sobre pedidos, pagos y entregas.' },
   { to: '/contacto', icono: 'contacto', titulo: 'Contáctanos', descripcion: 'Habla directo con nuestro equipo comercial.' },
   { to: '/quienes-somos', icono: 'quienesSomos', titulo: 'Quiénes Somos', descripcion: 'Conoce la trayectoria de Droguería Carrisán.' },
 ]

@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import InfoModal from '../components/InfoModal'
+import ayudaData from '../data/ayudaData'
 import './Ayuda.css'
 
 // ---------------------------------------------------------
@@ -288,7 +290,10 @@ function Ayuda() {
                           key={item.slug}
                           type="button"
                           className="ayuda-fila"
-                          onClick={() => setModalKey(`item/${item.slug}`)}
+                          onClick={() => {
+                            const cat = categorias.find((c) => c.items?.some((it) => it.slug === item.slug))
+                            setModalKey(`${cat.id}/${item.slug}`)
+                          }}
                         >
                           <span className="ayuda-fila__icono-circulo">{ICONOS.pedido}</span>
                           <span className="ayuda-fila__texto">
@@ -400,13 +405,20 @@ function Ayuda() {
           </div>
         </section>
 
-        {/* Banner de contacto final */}
-        <div className="ayuda-banner">
-          <h2 className="ayuda-banner__titulo">¿No encontraste lo que buscabas?</h2>
-          <a href="mailto:ventas@carrisan.com" className="ayuda-banner__cta">Escríbenos</a>
+        {/* Banner de contacto final — mismo patrón que Ayuda */}
+        <div className="faq-banner">
+          <h2 className="faq-banner__titulo">¿No encontraste tu respuesta?</h2>
+          <div className="faq-banner__acciones">
+            <a href="mailto:dcarrisan@gmail.com" className="faq-banner__cta">Escríbenos un correo</a>
+          </div>
         </div>
       </div>
 
+      <InfoModal
+        abierto={modalKey !== null}
+        onCerrar={() => setModalKey(null)}
+        data={modalKey ? ayudaData[modalKey] : null}
+      />
     </div>
   )
 }

@@ -793,3 +793,52 @@
     padding: 0 1rem;
   }
 }
+
+.faq-banner {
+  background: linear-gradient(135deg, #1A1A3A, #0052DC);
+  border-radius: 16px;
+  padding: 32px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.faq-banner__titulo {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: #FFFFFF;
+  margin: 0;
+}
+
+.faq-banner__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+.faq-banner__cta {
+  background: #FFFFFF;
+  color: #0052DC;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 12px 28px;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: transform 0.15s ease;
+}
+
+.faq-banner__cta:hover {
+  transform: translateY(-1px);
+}
+
+.faq-banner__cta--secundario {
+  background: transparent;
+  color: #FFFFFF;
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+}
