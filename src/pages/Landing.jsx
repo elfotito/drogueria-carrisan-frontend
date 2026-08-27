@@ -655,30 +655,20 @@ function Landing() {
 {/* ================================================================== */}
 
 <footer className="landing-footer">
-
-  {/* ================================================================ */}
-  {/* PARTE SUPERIOR - FONDO BLANCO                                    */}
-  {/* ================================================================ */}
+  {/* PARTE SUPERIOR - FONDO BLANCO */}
   <div className="landing-footer__top">
-
     <div className="landing-footer__container">
-
       {/* CABECERA */}
       <div className="landing-footer__header">
-
         <div className="landing-footer__brand-area">
-
           <ImagePlaceholder
             label="Logo"
             className="landing-footer__logo"
           />
-
           <nav className="landing-footer__nav">
-
             <Link to="/landing">
               Inicio
             </Link>
-
             <a
               href="#"
               onClick={(e) => {
@@ -688,7 +678,6 @@ function Landing() {
             >
               Cómo funciona
             </a>
-
             <a
               href="#"
               onClick={(e) => {
@@ -698,29 +687,23 @@ function Landing() {
             >
               Formas de ahorrar
             </a>
-
             <Link to="/ayuda">
               Ayuda
             </Link>
-
           </nav>
-
         </div>
-
         {/* BADGES */}
         <div className="landing-footer__badges">
-
           <ImagePlaceholder
             label="Badge 1"
             className="landing-badge-img"
           />
-
           <ImagePlaceholder
             label="Badge 2"
             className="landing-badge-img"
           />
-
-          <a
+        </div>
+        <a
           href="#"
           className="landing-footer__prescriber"
           onClick={(e) => {
@@ -731,55 +714,33 @@ function Landing() {
           Droguería Carrisan respaldando la labor del Médico Venezolano 🇻🇪❤️
           <span>›</span>
         </a>
-
-        </div>
-
       </div>
-
-
       {/* LÍNEA */}
       <div className="landing-footer__divider" />
-
-
       {/* INFORMACIÓN */}
       <div className="landing-footer__info">
-
         <p className="landing-footer__direccion">
-
           Droguería Carrisan, C.A. · Av. Urdaneta (99) Qta. Mirabal,
           Local 04C, Valencia 2001, Carabobo, Venezuela
-
         </p>
-
-
         <Link
           to="/ayuda"
           className="landing-footer__info-link"
         >
           Ayuda
         </Link>
-
-
         <span className="landing-footer__separator">
           |
         </span>
-
-
         <span className="landing-footer__fax">
           Whatsapp: +58 (414) 5949532 
         </span>
-
-
       </div>
-
-
       {/* DISCLAIMER */}
       <div className="landing-footer__legal">
-
         <p>
           Los nombres que aparecen en la fotografía son con fines ilustrativos.
         </p>
-
         <p>
           <strong>
             *LAS DROGUERÍAS NO REALIZAN VENTA DIRECTA AL PÚBLICO.
@@ -797,18 +758,10 @@ function Landing() {
           farmacéuticos autorizados, de acuerdo con las disposiciones legales y
           sanitarias aplicables.
         </p>
-
       </div>
-
     </div>
-
   </div>
-
-
-  {/* ================================================================ */}
-  {/* VOLVER ARRIBA                                                    */}
-  {/* ================================================================ */}
-
+  {/* VOLVER ARRIBA */}
   <button
     type="button"
     className="landing-footer__back-top"
@@ -819,40 +772,26 @@ function Landing() {
   >
     Volver arriba
   </button>
-
-
-  {/* ================================================================ */}
-  {/* PARTE INFERIOR OSCURA                                             */}
-  {/* ================================================================ */}
-
+  {/* PARTE INFERIOR OSCURA */}
   <div className="landing-footer__bottom">
-
     <div className="landing-footer__bottom-container">
-
       <nav className="landing-footer__bottom-nav">
-
         <Link to="/cuenta">
           Tu cuenta
         </Link>
-
         <Link to="/pedidos">
           Tus pedidos
         </Link>
-
         <Link to="/ayuda">
           Ayuda
         </Link>
-
         <span>
           ¿Ya eres cliente?{" "}
           <Link to="/login">
             Iniciar sesión
           </Link>
         </span>
-
       </nav>
-
-
       {/* LOGO INFERIOR */}
       <div className="landing-footer__bottom-logo">
         <ImagePlaceholder
@@ -862,33 +801,22 @@ function Landing() {
       </div>
       {/* ENLACES LEGALES */}
       <div className="landing-footer__legal-links">
-
         <Link to="/terminos">
           Términos de uso
         </Link>
-
         <Link to="/privacidad">
           Política de privacidad
         </Link>
-
         <Link to="/no-discriminacion">
           Aviso de no discriminación
         </Link>
-
       </div>
-
-
       {/* COPYRIGHT */}
       <div className="landing-footer__copyright">
-
         © 2026 Droguería Carrisan, C.A. · Todos los derechos reservados
-
       </div>
-
     </div>
-
   </div>
-
 </footer>
 
       {/* Modal global */}
