@@ -33,8 +33,8 @@ function SubidaArchivoDrive({ tipoDocumento, etiqueta, obligatorio = false, onSu
       setError('Solo se aceptan archivos PDF')
       return
     }
-    if (file.size > 10 * 1024 * 1024) {
-      setError('El archivo supera el tamaño máximo de 10MB')
+    if (file.size > 2 * 1024 * 1024) {
+      setError('El archivo supera el tamaño máximo de 2MB')
       return
     }
 
