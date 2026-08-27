@@ -1175,17 +1175,16 @@
 }
 
 .carrito-page {
-  background: #f5f5f5; /* Fondo gris claro para contraste */
+  background: #ffffff;
   min-height: 100vh;
 }
 
 .carrito-container {
-  padding: 32px 32px; /* 🆕 Más padding */
+  padding: 32px 32px;
 }
 
 .delivery-card,
-.cart-lines,
-.cart-promociones {
+.cart-lines {
   background: white;
   border-radius: 12px;
   padding: 24px;
@@ -1301,6 +1300,231 @@
 
 .cart-resumen-seguridad p {
   margin: 4px 0 0;
+}
+
+/* ---------------------------------------------------------
+   Cupón de descuento
+--------------------------------------------------------- */
+.cart-cupon {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.cart-cupon__titulo {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 10px;
+}
+
+.cart-cupon__row {
+  display: flex;
+  gap: 8px;
+}
+
+.cart-cupon__input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.cart-cupon__input:focus {
+  border-color: #0071dc;
+}
+
+.cart-cupon__btn {
+  padding: 10px 16px;
+  background: transparent;
+  border: 1.5px solid #1a1a1a;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: #1a1a1a;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+
+.cart-cupon__btn:hover {
+  background: #1a1a1a;
+  color: #fff;
+}
+
+/* ---------------------------------------------------------
+   Métodos de pago aceptados
+--------------------------------------------------------- */
+.cart-payment-methods {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.cart-payment-methods__titulo {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 10px;
+}
+
+.cart-payment-methods__icons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.cart-payment-methods__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 30px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: #555;
+  background: #fafafa;
+}
+
+/* ---------------------------------------------------------
+   Garantías / Beneficios
+--------------------------------------------------------- */
+.cart-benefits {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.cart-benefits__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.cart-benefits__item:last-child {
+  margin-bottom: 0;
+}
+
+.cart-benefits__icon {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #E4F7F4;
+  color: #12A594;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+}
+
+.cart-benefits__text {
+  font-size: 0.8rem;
+  color: #555;
+  line-height: 1.4;
+}
+
+.cart-benefits__text strong {
+  color: #1a1a1a;
+  display: block;
+  font-size: 0.82rem;
+}
+
+/* ---------------------------------------------------------
+   Carruseles de productos (abajo del carrito)
+--------------------------------------------------------- */
+.cart-carousel-section {
+  margin-top: 40px;
+}
+
+.cart-carousel-section__titulo {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: #14182A;
+  margin: 0 0 16px;
+}
+
+.cart-carousel {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 8px;
+}
+
+.cart-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.cart-carousel__card {
+  flex: 0 0 200px;
+  scroll-snap-align: start;
+  background: #fff;
+  border: 1px solid #e7e5de;
+  border-radius: 12px;
+  padding: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 0.15s;
+}
+
+.cart-carousel__card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.cart-carousel__img {
+  width: 100%;
+  height: 120px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: #f7f6f1;
+  margin-bottom: 10px;
+}
+
+.cart-carousel__nombre {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #14182A;
+  margin: 0 0 4px;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cart-carousel__precio {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #12A594;
+}
+
+.cart-carousel__precio-old {
+  font-size: 0.72rem;
+  color: #999;
+  text-decoration: line-through;
+  margin-left: 6px;
+  font-weight: 400;
+}
+
+@media (max-width: 768px) {
+  .cart-carousel__card {
+    flex: 0 0 160px;
+  }
+
+  .cart-carousel__img {
+    height: 100px;
+  }
 }
 
 /* Espacio para promociones */
