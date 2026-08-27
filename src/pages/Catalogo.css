@@ -222,9 +222,9 @@
 }
 
 .catalogo-filtros {
-  flex: 0 0 240px;
+  flex: 0 0 300px;
   position: sticky;
-  top: 100px;
+  top: 136px;
   background: #FFFFFF;
   padding-right: 12px;
   max-height: calc(100vh - 120px);
