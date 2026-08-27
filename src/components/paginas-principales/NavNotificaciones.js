@@ -6,23 +6,46 @@
 // (ir a órdenes, al chat, a la cuenta) más un grupo "pie" de ayuda.
 // ---------------------------------------------------------------
 
-import { Bell, Package, MessageCircle, Settings, MessageCircleQuestion } from 'lucide-react'
+import { Bell, Package, MessageCircle, Settings, MessageCircleQuestion, SlidersHorizontal } from 'lucide-react'
+import {
+  CATEGORIAS,
+  ORDEN_CATEGORIAS,
+} from '../../utils/notificacionesCatalogo'
 
-export const NAV_NOTIFICACIONES = [
-  {
-    titulo: 'Notificaciones',
-    items: [
-      { id: 'notificaciones', to: '/notificaciones', icono: Bell, texto: 'Todas' },
-      { id: 'ordenes', to: '/orders', icono: Package, texto: 'Mis órdenes' },
-      { id: 'chat', to: '/chat', icono: MessageCircle, texto: 'Centro de Comunicaciones' },
-      { id: 'cuenta', to: '/cuenta', icono: Settings, texto: 'Datos de la cuenta' },
-    ],
-  },
-  {
-    titulo: 'Ayuda',
-    pie: true,
-    items: [
-      { id: 'contacto', to: '/contacto', icono: MessageCircleQuestion, texto: 'Contacto directo' },
-    ],
-  },
-]
+export function NAV_NOTIFICACIONES({ silenciadas = [], onToggleSilenciar }) {
+  return [
+    {
+      titulo: 'Notificaciones',
+      items: [
+        { id: 'notificaciones', to: '/notificaciones', icono: Bell, texto: 'Todas' },
+        { id: 'ordenes', to: '/orders', icono: Package, texto: 'Mis órdenes' },
+        { id: 'chat', to: '/chat', icono: MessageCircle, texto: 'Centro de Comunicaciones' },
+        { id: 'cuenta', to: '/cuenta', icono: Settings, texto: 'Datos de la cuenta' },
+      ],
+    },
+    {
+      titulo: 'Preferencias',
+      tipo: 'submenu',
+      icono: SlidersHorizontal,
+      items: ORDEN_CATEGORIAS.map((catId) => {
+        const cat = CATEGORIAS[catId]
+        return {
+          id: `pref-${catId}`,
+          accion: `toggle-preferencia-${catId}`,
+          icono: cat.icono,
+          texto: cat.nombre,
+          silenciada: silenciadas.includes(catId),
+          color: cat.color,
+          onToggle: () => onToggleSilenciar?.(catId, !silenciadas.includes(catId)),
+        }
+      }),
+    },
+    {
+      titulo: 'Ayuda',
+      pie: true,
+      items: [
+        { id: 'contacto', to: '/contacto', icono: MessageCircleQuestion, texto: 'Contacto directo' },
+      ],
+    },
+  ]
+}

@@ -3,14 +3,18 @@ Notificaciones — paleta consistente con el resto de la app
 Azul #0052DC · Índigo #1A1A3A
 ============================================ */
 
+/* ---------- Layout general ---------- */
+
 .notif-page {
   display: flex;
-  justify-content: center;
+  gap: 24px;
+  align-items: flex-start;
 }
 
 .notif-container {
-  width: 100%;
-  max-width: 640px;
+  flex: 1;
+  min-width: 0;
+  max-width: 680px;
 }
 
 .notif-error {
@@ -19,14 +23,63 @@ Azul #0052DC · Índigo #1A1A3A
   padding: 20px;
 }
 
-/* ---------- Tabs (filtro por categoría) ---------- */
+/* ---------- Sidebar de filtros (desktop) ---------- */
 
-.notif-tabs {
-  margin-bottom: 12px;
-  overflow-x: auto;
+.notif-sidebar {
+  display: none;
 }
 
-/* ---------- Accordion: preferencias + leyenda ---------- */
+/* ---------- Tabs móviles ---------- */
+
+.notif-tabs-mobile {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  margin-bottom: 16px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.notif-tabs-mobile::-webkit-scrollbar {
+  display: none;
+}
+
+.notif-tabs-mobile__btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  padding: 7px 12px;
+  border: 1px solid #e3e4e5;
+  border-radius: 999px;
+  background: #fff;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #4b4d52;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+
+.notif-tabs-mobile__btn:hover {
+  border-color: #c5c7ca;
+  background: #f9f9fa;
+}
+
+.notif-tabs-mobile__btn--active {
+  background: #0052DC;
+  border-color: #0052DC;
+  color: #fff;
+}
+
+.notif-tabs-mobile__btn--active:hover {
+  background: #0043b3;
+  border-color: #0043b3;
+}
+
+/* ---------- Accordion: leyenda ---------- */
 
 .notif-accordion {
   border: 1px solid #e3e4e5;
@@ -54,21 +107,6 @@ Azul #0052DC · Índigo #1A1A3A
 .notif-accordion__chevron {
   color: #74767c;
   transition: transform 0.15s;
-}
-
-.notif-preferencias {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  padding: 14px;
-}
-
-.notif-preferencias__item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.85rem;
 }
 
 .notif-leyenda {
@@ -157,6 +195,9 @@ Azul #0052DC · Índigo #1A1A3A
 .notif-icon--purple { background: #F1EBFB; color: #7c3aed; }
 .notif-icon--orange { background: #FEF3E6; color: #ea580c; }
 .notif-icon--gray { background: #F1F1F2; color: #4b4d52; }
+.notif-icon--teal { background: #E0F5F1; color: #0d9488; }
+.notif-icon--cyan { background: #E0F4FE; color: #0891b2; }
+.notif-icon--red { background: #FEE2E2; color: #dc2626; }
 
 .notif-card__body {
   flex: 1;
@@ -261,4 +302,80 @@ Azul #0052DC · Índigo #1A1A3A
 @keyframes notif-pulso {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
+}
+
+/* ============================================
+   DESKTOP (≥1024px): sidebar de filtros
+   ============================================ */
+@media (min-width: 1024px) {
+  .notif-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: 200px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 100px;
+    background: #fff;
+    border: 1px solid #e3e4e5;
+    border-radius: 12px;
+    padding: 12px 8px;
+  }
+
+  .notif-sidebar__header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #74767c;
+    border-bottom: 1px solid #e3e4e5;
+    margin-bottom: 4px;
+  }
+
+  .notif-sidebar__btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 8px 10px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: #4b4d52;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.12s;
+  }
+
+  .notif-sidebar__btn:hover {
+    background: #f5f5f6;
+    color: #1A1A3A;
+  }
+
+  .notif-sidebar__btn--active {
+    background: #E9EFFC;
+    color: #0052DC;
+    font-weight: 600;
+  }
+
+  .notif-sidebar__btn--active:hover {
+    background: #d6e2fa;
+  }
+
+  /* Ocultar tabs móviles en desktop */
+  .notif-tabs-mobile {
+    display: none;
+  }
+
+  .notif-container {
+    max-width: 720px;
+  }
 }

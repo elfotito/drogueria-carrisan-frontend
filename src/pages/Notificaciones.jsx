@@ -1,16 +1,14 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
-  Tabs,
   Menu,
   Portal,
-  Switch,
   Accordion,
   Badge,
   IconButton,
   Text,
 } from '@chakra-ui/react'
-import { MoreVertical, ChevronDown } from 'lucide-react'
+import { MoreVertical, ChevronDown, Filter } from 'lucide-react'
 import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
 import { NAV_NOTIFICACIONES } from '../components/paginas-principales/NavNotificaciones'
 import api from '../api/axios'
@@ -198,17 +196,19 @@ function Notificaciones() {
 
   if (error) {
     return (
-      <LayoutPaginaPrincipal titulo="Notificaciones" nav={NAV_NOTIFICACIONES}>
+      <LayoutPaginaPrincipal titulo="Notificaciones" nav={NAV_NOTIFICACIONES({ silenciadas, onToggleSilenciar: toggleSilenciar })}>
         <p className="notif-error">{error}</p>
       </LayoutPaginaPrincipal>
     )
   }
 
+  const navConfig = NAV_NOTIFICACIONES({ silenciadas, onToggleSilenciar: toggleSilenciar })
+
   return (
     <LayoutPaginaPrincipal
       activo="notificaciones"
       titulo="Notificaciones"
-      nav={NAV_NOTIFICACIONES}
+      nav={navConfig}
       acciones={
         <Menu.Root>
           <Menu.Trigger asChild>
@@ -229,72 +229,73 @@ function Notificaciones() {
       }
     >
       <div className="notif-page">
-        <div className="notif-container">
-          {/* Filtro por categoría */}
-          <Tabs.Root
-            value={filtro}
-            onValueChange={(e) => setFiltro(e.value)}
-            variant="line"
-            colorPalette="blue"
-            className="notif-tabs"
+        {/* Sidebar de filtros (desktop) */}
+        <aside className="notif-sidebar">
+          <div className="notif-sidebar__header">
+            <Filter size={15} />
+            <span>Filtrar por</span>
+          </div>
+          <button
+            className={`notif-sidebar__btn ${filtro === 'todas' ? 'notif-sidebar__btn--active' : ''}`}
+            onClick={() => setFiltro('todas')}
           >
-            <Tabs.List>
-              <Tabs.Trigger value="todas">
-                Todas
-                {conteosPorCategoria.todas > 0 && (
-                  <Badge ml="1" size="sm" variant="subtle">
-                    {conteosPorCategoria.todas}
-                  </Badge>
+            <span>Todas</span>
+            {conteosPorCategoria.todas > 0 && (
+              <Badge size="sm" variant="subtle">{conteosPorCategoria.todas}</Badge>
+            )}
+          </button>
+          {ORDEN_CATEGORIAS.map((catId) => {
+            const cat = CATEGORIAS[catId]
+            const Icono = cat.icono
+            return (
+              <button
+                key={catId}
+                className={`notif-sidebar__btn ${filtro === catId ? 'notif-sidebar__btn--active' : ''}`}
+                onClick={() => setFiltro(catId)}
+              >
+                <span className={`notif-icon notif-icon--${cat.color} notif-icon--sm`}>
+                  <Icono size={14} />
+                </span>
+                <span>{cat.nombre}</span>
+                {conteosPorCategoria[catId] > 0 && (
+                  <Badge size="sm" variant="subtle" colorPalette={cat.color}>{conteosPorCategoria[catId]}</Badge>
                 )}
-              </Tabs.Trigger>
-              {ORDEN_CATEGORIAS.map((catId) => {
-                const cat = CATEGORIAS[catId]
-                return (
-                  <Tabs.Trigger key={catId} value={catId}>
-                    {cat.nombre}
-                    {conteosPorCategoria[catId] > 0 && (
-                      <Badge ml="1" size="sm" variant="subtle" colorPalette={cat.color}>
-                        {conteosPorCategoria[catId]}
-                      </Badge>
-                    )}
-                  </Tabs.Trigger>
-                )
-              })}
-            </Tabs.List>
-          </Tabs.Root>
+              </button>
+            )
+          })}
+        </aside>
 
-          {/* Preferencias: silenciar categorías */}
+        <div className="notif-container">
+          {/* Tabs móviles (solo visible en móvil via CSS) */}
+          <div className="notif-tabs-mobile">
+            <button
+              className={`notif-tabs-mobile__btn ${filtro === 'todas' ? 'notif-tabs-mobile__btn--active' : ''}`}
+              onClick={() => setFiltro('todas')}
+            >
+              Todas
+              {conteosPorCategoria.todas > 0 && (
+                <Badge ml="1" size="sm" variant="subtle">{conteosPorCategoria.todas}</Badge>
+              )}
+            </button>
+            {ORDEN_CATEGORIAS.map((catId) => {
+              const cat = CATEGORIAS[catId]
+              return (
+                <button
+                  key={catId}
+                  className={`notif-tabs-mobile__btn ${filtro === catId ? 'notif-tabs-mobile__btn--active' : ''}`}
+                  onClick={() => setFiltro(catId)}
+                >
+                  {cat.nombre}
+                  {conteosPorCategoria[catId] > 0 && (
+                    <Badge ml="1" size="sm" variant="subtle" colorPalette={cat.color}>{conteosPorCategoria[catId]}</Badge>
+                  )}
+                </button>
+              )
+            })}
+          </div>
+
+          {/* Leyenda */}
           <Accordion.Root collapsible className="notif-accordion">
-            <Accordion.Item value="preferencias">
-              <Accordion.ItemTrigger className="notif-accordion__trigger">
-                <Text>Preferencias de notificación</Text>
-                <ChevronDown size={16} className="notif-accordion__chevron" />
-              </Accordion.ItemTrigger>
-              <Accordion.ItemContent>
-                <Accordion.ItemBody className="notif-preferencias">
-                  {ORDEN_CATEGORIAS.map((catId) => {
-                    const cat = CATEGORIAS[catId]
-                    return (
-                      <Switch.Root
-                        key={catId}
-                        checked={!silenciadas.includes(catId)}
-                        onCheckedChange={(e) => toggleSilenciar(catId, !e.checked)}
-                        colorPalette={cat.color}
-                        className="notif-preferencias__item"
-                      >
-                        <Switch.HiddenInput />
-                        <Switch.Control>
-                          <Switch.Thumb />
-                        </Switch.Control>
-                        <Switch.Label>{cat.nombre}</Switch.Label>
-                      </Switch.Root>
-                    )
-                  })}
-                </Accordion.ItemBody>
-              </Accordion.ItemContent>
-            </Accordion.Item>
-
-            {/* Leyenda: qué significa cada tipo */}
             <Accordion.Item value="leyenda">
               <Accordion.ItemTrigger className="notif-accordion__trigger">
                 <Text>¿Qué significa cada notificación?</Text>
@@ -303,11 +304,11 @@ function Notificaciones() {
               <Accordion.ItemContent>
                 <Accordion.ItemBody className="notif-leyenda">
                   {Object.entries(DESCRIPCION_TIPO).map(([tipo, descripcion]) => {
-                    const cat = getConfigTipo(tipo)
-                    const Icono = cat.icono
+                    const config = getConfigTipo(tipo)
+                    const Icono = config.icono
                     return (
                       <div key={tipo} className="notif-leyenda__item">
-                        <span className={`notif-icon notif-icon--${cat.color} notif-icon--sm`}>
+                        <span className={`notif-icon notif-icon--${config.color} notif-icon--sm`}>
                           <Icono size={14} />
                         </span>
                         <span className="notif-leyenda__texto">{descripcion}</span>

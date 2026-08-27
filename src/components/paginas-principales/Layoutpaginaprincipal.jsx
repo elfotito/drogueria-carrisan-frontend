@@ -90,6 +90,7 @@ function ContenidoNav({ nav, activo, titulo, esAdmin, onNavigate, onAccion }) {
 
   if (grupoAbierto) {
     const items = grupoAbierto.items.filter((item) => !esAdmin || !item.soloCliente)
+    const esPreferencias = items.some((item) => item.accion?.startsWith('toggle-preferencia-'))
 
     return (
       <nav className="ppal-nav" aria-label={`Submenú ${grupoAbierto.titulo}`}>
@@ -107,9 +108,33 @@ function ContenidoNav({ nav, activo, titulo, esAdmin, onNavigate, onAccion }) {
           )}
         </div>
 
-        {items.map((item) => (
-          <ItemNav key={item.id} item={item} activo={activo} onNavigate={onNavigate} onAccion={onAccion} variante="sublink" />
-        ))}
+        {esPreferencias ? (
+          <div className="ppal-nav__preferencias">
+            {items.map((item) => {
+              const Icono = item.icono
+              return (
+                <div key={item.id} className="ppal-nav__pref-item">
+                  <span className={`ppal-nav__pref-icono notif-icon--${item.color}`}>
+                    <Icono size={16} />
+                  </span>
+                  <span className="ppal-nav__pref-texto">{item.texto}</span>
+                  <button
+                    type="button"
+                    className={`ppal-nav__pref-toggle ${item.silenciada ? '' : 'ppal-nav__pref-toggle--on'}`}
+                    onClick={() => item.onToggle?.()}
+                    aria-label={`${item.silenciada ? 'Activar' : 'Desactivar'} notificaciones de ${item.texto}`}
+                  >
+                    <span className="ppal-nav__pref-toggle-thumb" />
+                  </button>
+                </div>
+              )
+            })}
+          </div>
+        ) : (
+          items.map((item) => (
+            <ItemNav key={item.id} item={item} activo={activo} onNavigate={onNavigate} onAccion={onAccion} variante="sublink" />
+          ))
+        )}
       </nav>
     )
   }

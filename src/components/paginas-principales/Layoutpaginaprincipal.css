@@ -430,6 +430,78 @@
 }
 
 /* -----------------------------------------------------------------
+   Preferencias de notificación (submenu con toggles)
+   ----------------------------------------------------------------- */
+.ppal-nav__preferencias {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ppal-nav__pref-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  transition: background 0.15s;
+}
+
+.ppal-nav__pref-item:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.ppal-nav__pref-icono {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ppal-nav__pref-texto {
+  flex: 1;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--ppal-text);
+}
+
+.ppal-nav__pref-toggle {
+  position: relative;
+  width: 38px;
+  height: 22px;
+  border: none;
+  border-radius: 11px;
+  background: #d1d5db;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.ppal-nav__pref-toggle--on {
+  background: #12A594;
+}
+
+.ppal-nav__pref-toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s;
+}
+
+.ppal-nav__pref-toggle--on .ppal-nav__pref-toggle-thumb {
+  transform: translateX(16px);
+}
+
+/* -----------------------------------------------------------------
    Panel del drawer — oculto por defecto (fuera de la pantalla),
    solo se muestra/anima en móvil-tablet (<1024px)
    ----------------------------------------------------------------- */
