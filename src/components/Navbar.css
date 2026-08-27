@@ -506,8 +506,8 @@ body {
 .cart-badge {
   position: absolute;
   font-family: 'Inter', sans-serif; 
-  top: -16px; 
-  right: -6px; 
+  top: -8px; 
+  right: -8px; 
   background: var(--wm-yellow); 
   color: black;
   font-size: 11px; 
@@ -629,8 +629,8 @@ body {
 
 .bell-badge {
   position: absolute;
-  top: 2px;
-  right: 2px;
+  top: -16px;
+  right: -8px;
   background: #12A594;
   color: white;
   font-family: 'Inter', sans-serif;
