@@ -295,7 +295,7 @@ function Notificaciones() {
               </Accordion.ItemTrigger>
               <Accordion.ItemContent>
                 <Accordion.ItemBody className="notif-leyenda">
-                  {Object.entries(DESCRIPCION_CATEGORIAS).map(([tipo, descripcion]) => {
+                  {Object.entries(DESCRIPCION_CATEGORIA).map(([tipo, descripcion]) => {
                     const config = getConfigTipo(tipo)
                     const Icono = config.icono
                     return (
