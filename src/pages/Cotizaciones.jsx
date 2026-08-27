@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import api from '../api/axios'
 import { useCart } from '../context/CartContext'
 import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
-import { NAV_COTIZACIONES } from '../components/paginas-principales/NavCotizaciones'
+import { NAV_UNIFICADO } from '../components/paginas-principales/NavUnificado'
 import './Cotizaciones.css'
 
 function formatUSD(valor) {
@@ -105,7 +105,7 @@ function Cotizaciones() {
   }
 
   return (
-  <LayoutPaginaPrincipal activo="cotizaciones" titulo="Cotizaciones" nav={NAV_COTIZACIONES}>
+  <LayoutPaginaPrincipal activo="cotizaciones" titulo="Cotizaciones" nav={NAV_UNIFICADO}>
     <div className="cot-page">
       {cargando ? (
         <div className="cot-loading">Cargando tus cotizaciones...</div>

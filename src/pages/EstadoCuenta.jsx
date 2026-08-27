@@ -10,7 +10,7 @@ import {
 import OrdenClienteModal from '../components/OrdenClienteModal'
 import PagoClienteModal from '../components/PagoClienteModal'
 import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
-import { NAV_ESTADO_CUENTA } from '../components/paginas-principales/NavEstadoCuenta'
+import { NAV_UNIFICADO } from '../components/paginas-principales/NavUnificado'
 import './EstadoCuenta.css'
 import generarFacturaPDF from '../utils/generarFacturaPDF'
 import generarComprobantePagoPDF from '../utils/generarComprobantePagoPDF'
@@ -158,7 +158,7 @@ export default function EstadoCuenta() {
       activo="estado-cuenta"
       titulo="Estado de cuenta"
       subtitulo="Tu línea de crédito y movimientos en un vistazo"
-      nav={NAV_ESTADO_CUENTA}
+      nav={NAV_UNIFICADO}
       acciones={acciones}
     >
       <div className="ec-dashboard">

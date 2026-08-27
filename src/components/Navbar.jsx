@@ -322,7 +322,7 @@ function Navbar() {
           {/* Flecha atrás + Pin de envío (SOLO MÓVIL) */}
           <div className="navbar__mobile-pickup mobile-only" ref={mobilePanelRef}>
             {mostrarBackMovil && (
-              <button className="mobile-back-btn" aria-label="Volver" onClick={() => navigate(-1)}>
+              <button className="mobile-back-btn" aria-label="Volver" onClick={() => navigate('/home')}>
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <line x1="19" y1="12" x2="5" y2="12"></line>
     <polyline points="12 19 5 12 12 5"></polyline>

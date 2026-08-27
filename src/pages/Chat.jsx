@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Send, MessageCircle, Package, ArrowLeft } from 'lucide-react'
 import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
-import { NAV_CHAT } from '../components/paginas-principales/NavChat'
+import { NAV_UNIFICADO } from '../components/paginas-principales/NavUnificado'
 import { useAuth } from '../context/AuthContext'
 import api from '../api/axios'
 import './Chat.css'
@@ -191,7 +191,7 @@ function ChatCentro() {
   })
 
   return (
-    <LayoutPaginaPrincipal activo="chat" titulo="Centro de Comunicaciones" nav={NAV_CHAT}>
+    <LayoutPaginaPrincipal activo="chat" titulo="Centro de Comunicaciones" nav={NAV_UNIFICADO}>
       <div className="chat-page">
         {/* Lista de conversaciones */}
         <aside className={`chat-lista ${vistaMovil === 'chat' ? 'chat-lista--oculta-movil' : ''}`}>

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import api from '../api/axios'
 import { useCart } from '../context/CartContext'
 import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
-import { NAV_COTIZACIONES } from '../components/paginas-principales/NavCotizaciones'
+import { NAV_UNIFICADO } from '../components/paginas-principales/NavUnificado'
 import { Plus, Trash2 } from 'lucide-react'
 import './Requerimientos.css'
 
@@ -187,7 +187,7 @@ function Requerimientos() {
     <LayoutPaginaPrincipal
       activo="requerimientos"
       titulo="Requerimientos"
-      nav={NAV_COTIZACIONES}
+      nav={NAV_UNIFICADO}
       acciones={
         !mostrarForm && (
           <button className="req-nueva-btn" onClick={() => setMostrarForm(true)}>

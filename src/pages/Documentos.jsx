@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import api from '../api/axios'
 import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
-import { NAV_COTIZACIONES } from '../components/paginas-principales/NavCotizaciones'
+import { NAV_UNIFICADO } from '../components/paginas-principales/NavUnificado'
 import { Download } from 'lucide-react'
 import './Documentos.css'
 
@@ -139,7 +139,7 @@ function Documentos() {
   }
 
   return (
-    <LayoutPaginaPrincipal activo="documentos" titulo="Documentos" nav={NAV_COTIZACIONES}>
+    <LayoutPaginaPrincipal activo="documentos" titulo="Documentos" nav={NAV_UNIFICADO}>
       <div className="doc-page">
         <div className="doc-tipos">
           {TIPOS.map((tipo) => (

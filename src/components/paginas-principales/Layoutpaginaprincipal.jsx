@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { Menu, X, ChevronRight, ChevronLeft, LogOut } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
-import { NAV_PAGINAS_PRINCIPALES } from './Navpaginasprincipales'
+import { NAV_UNIFICADO } from './NavUnificado'
+import InstalarAppBtn from '../InstalarAppBtn'
 import './Layoutpaginaprincipal.css'
 
 // ---------------------------------------------------------------
@@ -189,7 +190,7 @@ function ContenidoNav({ nav, activo, titulo, esAdmin, onNavigate, onAccion }) {
   )
 }
 
-function LayoutPaginaPrincipal({ activo, titulo, subtitulo, acciones, nav = NAV_PAGINAS_PRINCIPALES, onAccion, children }) {
+function LayoutPaginaPrincipal({ activo, titulo, subtitulo, acciones, nav = NAV_UNIFICADO, onAccion, children }) {
   const { user, logout } = useAuth()
   const [drawerAbierto, setDrawerAbierto] = useState(false)
   // Se incrementa cada vez que el drawer se cierra, para forzar que
@@ -251,10 +252,13 @@ function LayoutPaginaPrincipal({ activo, titulo, subtitulo, acciones, nav = NAV_
         </div>
 
         {!user?.es_admin && (
-          <button type="button" className="ppal-drawer-panel__logout" onClick={logout}>
-            <LogOut size={16} />
-            Cerrar sesión
-          </button>
+          <>
+            <InstalarAppBtn />
+            <button type="button" className="ppal-drawer-panel__logout" onClick={logout}>
+              <LogOut size={16} />
+              Cerrar sesión
+            </button>
+          </>
         )}
       </aside>
 
@@ -291,6 +295,7 @@ function LayoutPaginaPrincipal({ activo, titulo, subtitulo, acciones, nav = NAV_
                   </div>
                 </div>
                 <ContenidoNav nav={nav} activo={activo} titulo={titulo} esAdmin={user?.es_admin} onAccion={onAccion} />
+                {!user?.es_admin && <InstalarAppBtn />}
               </div>
             </aside>
 

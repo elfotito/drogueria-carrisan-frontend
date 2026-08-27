@@ -5,7 +5,7 @@ import {
 import api from '../api/axios'
 import { useCart } from '../context/CartContext'
 import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
-import { NAV_PAGINAS_PRINCIPALES } from '../components/paginas-principales/Navpaginasprincipales'
+import { NAV_UNIFICADO } from '../components/paginas-principales/NavUnificado'
 import './Presupuesto.css'
 
 function formatUSD(valor) {
@@ -391,7 +391,7 @@ function Presupuesto() {
       activo="presupuesto"
       titulo="Presupuesto"
       subtitulo="Arma tu listado y genera un presupuesto con precio fijo por 24 horas"
-      nav={NAV_PAGINAS_PRINCIPALES}
+      nav={NAV_UNIFICADO}
     >
       <div className="pres-page">
         <div className="pres-buscador">

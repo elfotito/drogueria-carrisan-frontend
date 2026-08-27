@@ -5,7 +5,7 @@ import api from '../api/axios'
 import { useCart } from '../context/CartContext'
 import { useFavoritos } from '../context/FavoritosContext'
 import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
-import { NAV_ITEMS } from '../components/paginas-principales/NavItems'
+import { NAV_UNIFICADO } from '../components/paginas-principales/NavUnificado'
 import './MisItems.css'
 
 // Sugerencias de listas rápidas. Solo crea la lista con este nombre;
@@ -848,7 +848,7 @@ function MisItems() {
       activo={tabActivo}
       titulo="Mis Items"
       subtitulo="Tus favoritos, listas y compras frecuentes"
-      nav={NAV_ITEMS}
+      nav={NAV_UNIFICADO}
       onAccion={manejarAccionNav}
     >
       <div className="misitems-page">

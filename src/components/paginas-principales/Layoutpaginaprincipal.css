@@ -722,3 +722,184 @@
     overflow: hidden;
   }
 }
+
+/* -----------------------------------------------------------------
+   Botón "Instalar app" en el sidebar / drawer
+   ----------------------------------------------------------------- */
+.ppal-nav__instalar-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: calc(100% - 28px);
+  margin: 8px 14px 0;
+  padding: 10px 12px;
+  border: 1px dashed var(--ppal-brand);
+  border-radius: 10px;
+  background: var(--ppal-brand-light);
+  color: var(--ppal-brand);
+  font-family: 'Manrope', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.ppal-nav__instalar-btn:hover {
+  background: var(--ppal-brand);
+  color: #fff;
+}
+
+.ppal-nav__instalar-btn:active {
+  transform: scale(0.98);
+}
+
+/* -----------------------------------------------------------------
+   Modal "Instalar app" (iPhone / desktop)
+   ----------------------------------------------------------------- */
+.instalar-modal__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(26, 26, 58, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  padding: 16px;
+  animation: instalar-fade-in 0.2s ease;
+}
+
+@keyframes instalar-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.instalar-modal {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  background: #fff;
+  border-radius: 18px;
+  padding: 28px 24px 24px;
+  box-shadow: 0 12px 40px rgba(26, 26, 58, 0.25);
+  animation: instalar-slide-up 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes instalar-slide-up {
+  from { opacity: 0; transform: translateY(24px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.instalar-modal__cerrar {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #999;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.instalar-modal__cerrar:hover {
+  background: #f3f4f6;
+  color: #333;
+}
+
+.instalar-modal__icono {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.instalar-modal__icono img {
+  border-radius: 14px;
+}
+
+.instalar-modal__titulo {
+  margin: 0 0 6px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1a1a3a;
+  text-align: center;
+}
+
+.instalar-modal__subtitulo {
+  margin: 0 0 20px;
+  font-size: 0.88rem;
+  color: #6b7280;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.instalar-modal__pasos {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.instalar-modal__paso {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.instalar-modal__paso-numero {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--ppal-brand-light, #e8f0fe);
+  color: var(--ppal-brand, #0052dc);
+  font-size: 0.82rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.instalar-modal__paso-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.instalar-modal__paso-texto strong {
+  font-size: 0.9rem;
+  color: #1a1a3a;
+}
+
+.instalar-modal__paso-texto span {
+  font-size: 0.82rem;
+  color: #6b7280;
+}
+
+.instalar-modal__btn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  background: var(--ppal-brand, #0052dc);
+  color: #fff;
+  font-family: 'Manrope', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.instalar-modal__btn:hover {
+  background: #0041b3;
+}

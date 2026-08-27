@@ -4,7 +4,7 @@ import { FileText, Download, Search } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import api from '../api/axios'
 import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
-import { NAV_ESTADO_CUENTA } from '../components/paginas-principales/NavEstadoCuenta'
+import { NAV_UNIFICADO } from '../components/paginas-principales/NavUnificado'
 import './EstadoCuenta.css'
 
 // ---------------------------------------------------------------
@@ -90,7 +90,7 @@ export default function FacturasEstadoCuenta() {
       activo="facturas"
       titulo="Historial de facturas"
       subtitulo="Todas las facturas generadas para tu cuenta"
-      nav={NAV_ESTADO_CUENTA}
+      nav={NAV_UNIFICADO}
     >
       <div className="ec-dashboard">
         {cargando ? (

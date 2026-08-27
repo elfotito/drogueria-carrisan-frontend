@@ -4,7 +4,7 @@ import { FileDown, AlertCircle } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import api from '../api/axios'
 import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
-import { NAV_ESTADO_CUENTA } from '../components/paginas-principales/NavEstadoCuenta'
+import { NAV_UNIFICADO } from '../components/paginas-principales/NavUnificado'
 import './EstadoCuenta.css'
 import generarReporteEstadoCuentaPDF from '../utils/generarReporteEstadoCuentaPDF'
 
@@ -84,7 +84,7 @@ export default function ReportesEstadoCuenta() {
       activo="reportes"
       titulo="Reportes"
       subtitulo="Generá un PDF de tu estado de cuenta por período"
-      nav={NAV_ESTADO_CUENTA}
+      nav={NAV_UNIFICADO}
     >
       <div className="ec-dashboard">
         {cargando ? (

@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext'
 import api from '../api/axios'
 import PagoClienteModal from '../components/PagoClienteModal'
 import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
-import { NAV_ESTADO_CUENTA } from '../components/paginas-principales/NavEstadoCuenta'
+import { NAV_UNIFICADO } from '../components/paginas-principales/NavUnificado'
 import './EstadoCuenta.css'
 
 // ---------------------------------------------------------------
@@ -78,7 +78,7 @@ export default function PagosEstadoCuenta() {
       activo="pagos"
       titulo="Historial de pagos"
       subtitulo="Todos los pagos que reportaste, en un solo lugar"
-      nav={NAV_ESTADO_CUENTA}
+      nav={NAV_UNIFICADO}
     >
       <div className="ec-dashboard">
         {cargando ? (

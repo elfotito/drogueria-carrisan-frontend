@@ -13,7 +13,7 @@ import {
 } from 'lucide-react'
 import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
 import BannerOnboarding from '../components/BannerOnboarding'
-import { NAV_CUENTA } from '../components/paginas-principales/navCuenta'
+import { NAV_UNIFICADO } from '../components/paginas-principales/NavUnificado'
 import './MiCuenta.css'
 import '../components/HojaInferior.jsx'
 
@@ -560,7 +560,7 @@ function MiCuenta() {
   }
 
   return (
-    <LayoutPaginaPrincipal activo="cuenta" titulo="Mi Cuenta" subtitulo="Un vistazo general a tu cuenta" nav={NAV_CUENTA}>
+    <LayoutPaginaPrincipal activo="cuenta" titulo="Mi Cuenta" subtitulo="Un vistazo general a tu cuenta" nav={NAV_UNIFICADO}>
       <div className="mi-cuenta">
         <header className="mi-cuenta__header">
           <div className="mi-cuenta__header-info">
