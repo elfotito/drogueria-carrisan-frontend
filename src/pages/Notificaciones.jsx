@@ -12,7 +12,7 @@ import api from '../api/axios'
 import {
   CATEGORIAS,
   ORDEN_CATEGORIAS,
-  DESCRIPCION_TIPO,
+  DESCRIPCION_CATEGORIAS,
   getCategoriaDeTipo,
   getConfigTipo,
 } from '../utils/notificacionesCatalogo'
@@ -295,7 +295,7 @@ function Notificaciones() {
               </Accordion.ItemTrigger>
               <Accordion.ItemContent>
                 <Accordion.ItemBody className="notif-leyenda">
-                  {Object.entries(DESCRIPCION_TIPO).map(([tipo, descripcion]) => {
+                  {Object.entries(DESCRIPCION_CATEGORIAS).map(([tipo, descripcion]) => {
                     const config = getConfigTipo(tipo)
                     const Icono = config.icono
                     return (
