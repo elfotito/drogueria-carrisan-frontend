@@ -744,6 +744,7 @@ function PanelEnvio({
   setDireccionSeleccionada,
   guardarDireccion,
 }) {
+  const { user } = useAuth()
   const [modalAbierto, setModalAbierto] = useState(false)
 
   return (
