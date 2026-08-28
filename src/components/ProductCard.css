@@ -64,7 +64,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
   overflow: hidden;
   margin-bottom: 12px;
 }
@@ -214,10 +213,7 @@
   overflow: hidden;
 }
 
-.pcard__nombre:hover {
-  color: #1B4B8F;
-  text-decoration: underline;
-}
+
 
 .pcard__marca {
   font-size: 0.75rem;
