@@ -233,11 +233,11 @@ function ProductCard({ producto, tasaVes, variante = 'vertical' }) {
           </div>
         )}
 
-        {/* Versión "arriba de la tarjeta" — solo visible en mobile (ver CSS).
-            En escritorio se sigue mostrando montada sobre la imagen, dentro
-            de .pcard__media, sin ningún cambio. */}
+        {/* Badge de descuento ARRIBA de la foto (todos los tamaños).
+            Así el toast (top: 14px) cae sobre esta etiqueta y no tapa
+            la foto. */}
         {etiquetaDescuento && (
-          <div className="pcard__top-badge pcard__top-badge--descuento-mobile">
+          <div className="pcard__top-badge pcard__top-badge--descuento">
             <span className={`pcard__badge-descuento-pill ${etiquetaDescuento === 'Super Oferta' ? 'pcard__badge-descuento-pill--fuerte' : ''}`}>
               {etiquetaDescuento}
             </span>
@@ -249,12 +249,6 @@ function ProductCard({ producto, tasaVes, variante = 'vertical' }) {
           className="pcard__media"
           onClick={() => navigate(`/producto/${producto.id}`)}
         >
-          {etiquetaDescuento && (
-            <span className={`pcard__badge-descuento ${etiquetaDescuento === 'Super Oferta' ? 'pcard__badge-descuento--fuerte' : 'pcard__badge-descuento--chip'}`}>
-              {etiquetaDescuento}
-            </span>
-          )}
-
           <button
             type="button"
             className={`pcard__fav ${favorito ? 'pcard__fav--activo' : ''} ${favoritoPop ? 'pcard__fav--pop' : ''}`}

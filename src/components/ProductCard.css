@@ -29,11 +29,11 @@
   line-height: 1.2;
 }
 
-/* Versión del badge de descuento como pastilla arriba de la tarjeta.
-   Oculta por defecto (desktop sigue viéndolo montado sobre la imagen);
-   se activa solo en mobile — ver media query al final. */
-.pcard__top-badge--descuento-mobile {
-  display: none;
+/* Versión del badge de descuento como pastilla arriba de la foto.
+   Visible en todos los tamaños: así el toast cae sobre esta etiqueta
+   y no tapa la foto. */
+.pcard__top-badge--descuento {
+  display: block;
 }
 
 .pcard__badge-descuento-pill {
@@ -424,12 +424,10 @@
     margin-bottom: 8px;
   }
 
-  /* Descuento: se muestra como pastilla arriba (no montado sobre la imagen) */
-  .pcard__badge-descuento {
-    display: none;
-  }
-  .pcard__top-badge--descuento-mobile {
-    display: block;
+  /* Descuento: queda como pastilla arriba de la foto en todos los tamaños */
+  .pcard__top-badge--descuento {
+    flex: 0 0 100%;
+    margin-bottom: 8px;
   }
 
   /* Columna izquierda: imagen — un poco más angosta que la mitad de la tarjeta */
