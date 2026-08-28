@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Heart } from 'lucide-react'
-import { useCart } from '../context/CartContext'
-import { useAuth } from '../context/AuthContext'
-import { useFavoritos } from '../context/FavoritosContext'
+import { useCart } from '../../context/CartContext'
+import { useAuth } from '../../context/AuthContext'
+import { useFavoritos } from '../../context/FavoritosContext'
 import AgregarAItemsModal from '../AgregarAItemsModal'
 import './ProductoCard.css'
 

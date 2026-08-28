@@ -36,6 +36,7 @@ import {
   Trash2,
   ChevronLeft,
   ChevronRight,
+  KeyRound,
 } from 'lucide-react'
 import api from '../../api/axios'
 import UsuarioForm from './UsuarioForm'
@@ -170,6 +171,20 @@ function UsuariosAdmin() {
       setUsuarios((prev) => prev.map((u) => (u.id === usuario.id ? { ...u, activo: !u.activo } : u)))
     } catch (err) {
       toaster.create({ title: 'No se pudo cambiar el estado', type: 'error' })
+      console.error(err)
+    }
+  }
+
+  async function handleSolicitarReinicio(usuario) {
+    try {
+      await api.post(`/users/${usuario.id}/solicitar-reinicio`)
+      toaster.create({
+        title: 'Reinicio autorizado',
+        description: `${usuario.nombre || usuario.email} ya puede cambiar su contraseña en /recuperar`,
+        type: 'success',
+      })
+    } catch (err) {
+      toaster.create({ title: 'No se pudo autorizar el reinicio', type: 'error' })
       console.error(err)
     }
   }
@@ -381,6 +396,9 @@ function UsuariosAdmin() {
                               </Menu.Item>
                               <Menu.Item value="descuento" onClick={() => setUsuarioDescuento(usuario)}>
                                 <Percent size={14} style={{ marginRight: 8 }} /> Descuento
+                              </Menu.Item>
+                              <Menu.Item value="reinicio-clave" onClick={() => handleSolicitarReinicio(usuario)}>
+                                <KeyRound size={14} style={{ marginRight: 8 }} /> Autorizar reinicio de clave
                               </Menu.Item>
                               <Menu.Item value="eliminar" color="red.500" onClick={() => setUsuarioAEliminar(usuario)}>
                                 <Trash2 size={14} style={{ marginRight: 8 }} /> Eliminar

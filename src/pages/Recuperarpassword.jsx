@@ -5,7 +5,6 @@ import './Auth.css'
 
 function RecuperarPassword() {
   const [email, setEmail] = useState('')
-  const [rifCedula, setRifCedula] = useState('')
   const [password, setPassword] = useState('')
   const [confirmarPassword, setConfirmarPassword] = useState('')
   const [honeypot, setHoneypot] = useState('')
@@ -36,14 +35,14 @@ function RecuperarPassword() {
     try {
       await api.post('/auth/reset-password', {
         email,
-        rif_cedula: rifCedula,
         password,
       })
       setExito(true)
     } catch (err) {
-      // Mensaje genérico a propósito -- no decimos si falló el correo o el
-      // RIF/cédula, para no darle pistas a quien intenta adivinar datos ajenos.
-      setError(err.response?.data?.error || 'Los datos no coinciden')
+      // Mensaje genérico a propósito — no decimos si falló el email o si
+      // el reinicio no está autorizado, para no darle pistas a quien
+      // intenta adivinar datos ajenos.
+      setError(err.response?.data?.error || 'No se pudo procesar la solicitud')
     } finally {
       setCargando(false)
     }
@@ -72,8 +71,9 @@ function RecuperarPassword() {
           <>
             <h1>Recuperar acceso</h1>
             <p className="auth-subtitulo">
-              Confirmá tu correo y tu RIF o cédula registrados, y elegí una
-              nueva contraseña.
+              Ingresá tu correo electrónico y la nueva contraseña que
+              deseas usar. El administrador debe autorizar el reinicio
+              primero.
             </p>
 
             {error && <div className="auth-error">{error}</div>}
@@ -86,17 +86,6 @@ function RecuperarPassword() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   autoComplete="email"
-                  required
-                />
-              </label>
-
-              <label className="auth-field">
-                RIF o cédula
-                <input
-                  type="text"
-                  value={rifCedula}
-                  onChange={(e) => setRifCedula(e.target.value)}
-                  placeholder="Ej: V-12345678"
                   required
                 />
               </label>

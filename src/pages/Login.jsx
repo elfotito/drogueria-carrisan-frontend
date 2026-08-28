@@ -222,6 +222,7 @@ function Login() {
             <Link to="/contacto">Soporte</Link>
           </div>
           © 2026 Drogueria Carrisan, C.A. Todos los derechos reservados. 
+          <span className="auth-footer-rif">RIF J-40068410-2</span>
         </div>
         <span className="auth-footer-rif">RIF J-40068410-2</span>
       </footer>

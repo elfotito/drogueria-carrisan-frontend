@@ -14,6 +14,7 @@ import PrivateRouteSensible from './components/PrivateRouteSensible'
 import Home from './pages/Home'
 import Catalogo from './pages/Catalogo'
 import Login from './pages/Login'
+import RecuperarPassword from './pages/Recuperarpassword'
 import Registro from './pages/RegistroConTipo'
 import RegistroPasoFinal from './pages/RegistroPasoFinal'
 import RegistroInstitucional from './pages/RegistroInstitucional'
@@ -78,6 +79,7 @@ function App() {
                 <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
                 <Route path="/catalogo" element={<Catalogo />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/recuperar" element={<RecuperarPassword />} />
                 <Route path="/registro" element={<Registro />} />
                 <Route path="/registro/finalizar" element={<RegistroPasoFinal />} />
                 <Route path="/registro/institucional" element={<RegistroInstitucional />} />
