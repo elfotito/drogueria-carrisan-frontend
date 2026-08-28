@@ -4,8 +4,8 @@ import { Heart } from 'lucide-react'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
 import { useFavoritos } from '../context/FavoritosContext'
-import AgregarAItemsModal from './AgregarAItemsModal'
-import './ProductCard.css'
+import AgregarAItemsModal from '../AgregarAItemsModal'
+import './ProductoCard.css'
 
 function formatUSD(valor) {
   if (valor == null) return '—'
