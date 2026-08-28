@@ -235,14 +235,16 @@ function ProductCard({ producto, tasaVes, variante = 'vertical' }) {
 
         {/* Badge de descuento ARRIBA de la foto (todos los tamaños).
             Así el toast (top: 14px) cae sobre esta etiqueta y no tapa
-            la foto. */}
-        {etiquetaDescuento && (
-          <div className="pcard__top-badge pcard__top-badge--descuento">
+            la foto. El contenedor reserva SIEMPRE el mismo alto (con
+            la pastilla en blanco si no hay descuento) para que todas
+            las tarjetas queden parejas. */}
+        <div className="pcard__top-badge pcard__top-badge--descuento">
+          {etiquetaDescuento && (
             <span className={`pcard__badge-descuento-pill ${etiquetaDescuento === 'Super Oferta' ? 'pcard__badge-descuento-pill--fuerte' : ''}`}>
               {etiquetaDescuento}
             </span>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Bloque 1: Media */}
         <div
