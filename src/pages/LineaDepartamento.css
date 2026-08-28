@@ -155,15 +155,21 @@
   min-width: 0;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1200px) {
   .linea-grid {
     grid-template-columns: repeat(4, 1fr);
   }
 }
 
-@media (min-width: 768px) and (max-width: 1023px) {
+@media (min-width: 900px) and (max-width: 1199px) {
   .linea-grid {
     grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 769px) and (max-width: 899px) {
+  .linea-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
