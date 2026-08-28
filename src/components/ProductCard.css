@@ -5,20 +5,12 @@
 .pcard {
   position: relative;
   background: #FFFFFF;
-  border: 1px solid #e3e4e5;
-  border-radius: 12px;
-  padding: 14px;
   display: flex;
   flex-direction: column;
   height: 100%;
-  font-family: 'Inter', sans-serif;
-  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  font-family: 'Figtree', 'Inter', sans-serif;
 }
 
-.pcard:hover {
-  border-color: #c7cbd6;
-  box-shadow: 0 4px 16px rgba(20, 24, 42, 0.08);
-}
 
 /* ---------- Badge social (arriba de TODO, nunca sobre la imagen) ---------- */
 .pcard__top-badge {
@@ -72,7 +64,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #FBFAF7; /* Paper */
   border-radius: 8px;
   overflow: hidden;
   margin-bottom: 12px;

@@ -16,7 +16,6 @@ import Catalogo from './pages/Catalogo'
 import Login from './pages/Login'
 import RecuperarPassword from './pages/Recuperarpassword'
 import Registro from './pages/RegistroConTipo'
-import RegistroPasoFinal from './pages/RegistroPasoFinal'
 import RegistroInstitucional from './pages/RegistroInstitucional'
 import RegistroProfesional from './pages/RegistroProfesional'
 import RegistroHonorifico from './pages/RegistroHonorifico'
@@ -81,7 +80,7 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/recuperar" element={<RecuperarPassword />} />
                 <Route path="/registro" element={<Registro />} />
-                <Route path="/registro/finalizar" element={<RegistroPasoFinal />} />
+                <Route path="/registro/finalizar" element={<Registro />} />
                 <Route path="/registro/institucional" element={<RegistroInstitucional />} />
                 <Route path="/registro/profesional" element={<RegistroProfesional />} />
                 <Route path="/registro/honorifico" element={<RegistroHonorifico />} />

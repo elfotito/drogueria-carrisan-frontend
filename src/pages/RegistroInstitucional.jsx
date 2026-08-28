@@ -3,6 +3,8 @@ import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import SelectorEstadoCiudad from '../components/registro/SelectorEstadoCiudad'
 import SelectorHorarioSemanal from '../components/registro/SelectorHorarioSemanal'
 import SubidaArchivoDrive from '../components/registro/SubidaArchivoDrive'
+import Stepper from '../components/registro/Stepper'
+import TurnstileWidget from '../components/registro/TurnstileWidget'
 import { TIPOS_INSTITUCION } from '../data/tiposInstitucion'
 import {
   validarEmail,
@@ -11,20 +13,21 @@ import {
   validarDireccion,
   validarNombreInstitucion
 } from '../utils/validadores'
+import { useAuth } from '../context/AuthContext'
+import api from '../api/axios'
 import logo from '../assets/minilogo color sin fondo.png'
 import './Auth.css'
 
-/**
- * Formulario de registro del Usuario Institucional. Al enviar, arma el
- * payload { email, tipo_usuario, estado, ciudad, telefono, perfil } y
- * navega a /registro/finalizar (paso compartido de contraseña + push),
- * que es quien hace el submit real a POST /auth/register.
- */
 const CODIGOS_TELEFONO = ['414', '424', '412', '422', '416', '426']
+const PASOS = ['Datos', 'Documentos', 'Confirmación']
 
 function RegistroInstitucional() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
+  const { login } = useAuth()
+
+  const [paso, setPaso] = useState(0)
+  const [direccionPaso, setDireccionPaso] = useState('adelante')
 
   const [form, setForm] = useState({
     email: searchParams.get('email') || '',
@@ -47,13 +50,31 @@ function RegistroInstitucional() {
   const [permisoSanitarioUrl, setPermisoSanitarioUrl] = useState('')
   const [registroMercantilUrl, setRegistroMercantilUrl] = useState('')
   const [aceptaTerminos, setAceptaTerminos] = useState(false)
+  const [notifSistema, setNotifSistema] = useState(true)
+  const [notifPromociones, setNotifPromociones] = useState(true)
+  const [password, setPassword] = useState('')
+  const [confirmarPassword, setConfirmarPassword] = useState('')
+  const [turnstileToken, setTurnstileToken] = useState('')
   const [errores, setErrores] = useState({})
+  const [errorGeneral, setErrorGeneral] = useState('')
+  const [cargando, setCargando] = useState(false)
+  const [registroCompleto, setRegistroCompleto] = useState(false)
 
   function actualizarCampo(campo, valor) {
     setForm((prev) => ({ ...prev, [campo]: valor }))
   }
 
-  function validar() {
+  function avanzarPaso() {
+    setDireccionPaso('adelante')
+    setPaso((prev) => prev + 1)
+  }
+
+  function retrocederPaso() {
+    setDireccionPaso('atras')
+    setPaso((prev) => prev - 1)
+  }
+
+  function validarPaso0() {
     const nuevosErrores = {}
 
     if (!validarEmail(form.email)) nuevosErrores.email = 'Ingresa un correo válido'
@@ -66,7 +87,6 @@ function RegistroInstitucional() {
     const rifCheck = validarRifInstitucion(form.rifDigitos)
     if (!rifCheck.valido) nuevosErrores.rif = rifCheck.error
 
-    if (!rifArchivoUrl) nuevosErrores.rif_archivo = 'Debes subir el RIF en PDF'
     if (!form.estado) nuevosErrores.estado = 'Selecciona un estado'
     if (!form.ciudad) nuevosErrores.ciudad = 'Selecciona una ciudad'
 
@@ -82,31 +102,62 @@ function RegistroInstitucional() {
     const telRepCheck = validarTelefonoVenezuela(form.telRepCodigo, form.telRepDigitos)
     if (!telRepCheck.valido) nuevosErrores.telefono_representante = telRepCheck.error
 
-    if (!aceptaTerminos) nuevosErrores.terminos = 'Debes aceptar los términos para continuar'
-
     setErrores(nuevosErrores)
     return Object.keys(nuevosErrores).length === 0
   }
 
-  function handleSubmit(e) {
-    e.preventDefault()
-    if (!validar()) {
-      // Lleva la vista al primer error para que no quede "perdido" más abajo del formulario.
+  function validarPaso1() {
+    const nuevosErrores = {}
+    if (!rifArchivoUrl) nuevosErrores.rif_archivo = 'Debes subir el RIF en PDF'
+    setErrores(nuevosErrores)
+    return Object.keys(nuevosErrores).length === 0
+  }
+
+  function validarPaso2() {
+    const nuevosErrores = {}
+    if (!aceptaTerminos) nuevosErrores.terminos = 'Debes aceptar los términos para continuar'
+    if (password.length < 8) nuevosErrores.password = 'La contraseña debe tener al menos 8 caracteres'
+    if (password !== confirmarPassword) nuevosErrores.confirmarPassword = 'Las contraseñas no coinciden'
+    if (!turnstileToken) nuevosErrores.turnstile = 'Completa la verificación de seguridad'
+    setErrores(nuevosErrores)
+    return Object.keys(nuevosErrores).length === 0
+  }
+
+  function handleSiguiente() {
+    let valido = false
+    if (paso === 0) valido = validarPaso0()
+    else if (paso === 1) valido = validarPaso1()
+    else if (paso === 2) valido = validarPaso2()
+
+    if (!valido) {
       document.querySelector('.registro-input--error, [aria-invalid="true"]')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
       return
     }
 
-    const { rifFormateado } = validarRifInstitucion(form.rifDigitos)
-    const { telefonoFormateado: telInstFormateado } = validarTelefonoVenezuela(form.telInstCodigo, form.telInstDigitos)
-    const { telefonoFormateado: telRepFormateado } = validarTelefonoVenezuela(form.telRepCodigo, form.telRepDigitos)
+    if (paso < 2) {
+      avanzarPaso()
+    } else {
+      handleSubmit()
+    }
+  }
 
-    navigate('/registro/finalizar', {
-      state: {
+  async function handleSubmit() {
+    setErrorGeneral('')
+    setCargando(true)
+    try {
+      const { rifFormateado } = validarRifInstitucion(form.rifDigitos)
+      const { telefonoFormateado: telInstFormateado } = validarTelefonoVenezuela(form.telInstCodigo, form.telInstDigitos)
+      const { telefonoFormateado: telRepFormateado } = validarTelefonoVenezuela(form.telRepCodigo, form.telRepDigitos)
+
+      await api.post('/auth/register', {
         email: form.email.trim().toLowerCase(),
+        password,
         tipo_usuario: 'institucional',
         estado: form.estado,
         ciudad: form.ciudad,
         telefono: telInstFormateado,
+        notificaciones_sistema: notifSistema,
+        notificaciones_promociones: notifPromociones,
         perfil: {
           razon_social: form.razon_social.trim(),
           nombre_comercial: form.nombre_comercial || null,
@@ -121,9 +172,38 @@ function RegistroInstitucional() {
           horario_recepcion: horarioRecepcion,
           nombre_representante: form.nombre_representante.trim(),
           telefono_representante: telRepFormateado
-        }
-      }
-    })
+        },
+        turnstileToken,
+      })
+
+      await login(form.email.trim().toLowerCase(), password)
+      setRegistroCompleto(true)
+    } catch (err) {
+      setErrorGeneral(err.response?.data?.error || 'No se pudo completar el registro. Intenta de nuevo.')
+    } finally {
+      setCargando(false)
+    }
+  }
+
+  if (registroCompleto) {
+    return (
+      <div className="auth-page">
+        <main className="auth-container">
+          <div className="auth-exito-icono">
+            <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+          <h1 className="auth-title">¡Registro exitoso!</h1>
+          <p className="auth-subtitle">
+            Tu cuenta fue creada con éxito. Ya podés explorar el catálogo cuando quieras.
+          </p>
+          <button className="auth-btn-primary" onClick={() => navigate('/')}>
+            Ir a la tienda
+          </button>
+        </main>
+      </div>
+    )
   }
 
   return (
@@ -136,211 +216,322 @@ function RegistroInstitucional() {
         <h1 className="auth-title">Registro Institucional</h1>
         <p className="auth-subtitle">Clínicas, farmacias, centros quirúrgicos y demás instituciones de salud</p>
 
-        <form onSubmit={handleSubmit} className="auth-form">
-          <div className="registro-campo">
-            <label htmlFor="email">Correo electrónico (para iniciar sesión)</label>
-            <input
-              id="email"
-              type="email"
-              value={form.email}
-              onChange={(e) => actualizarCampo('email', e.target.value)}
-              className={errores.email ? 'registro-input--error' : ''}
-            />
-            {errores.email && <span className="registro-error-texto">{errores.email}</span>}
-          </div>
+        <Stepper pasos={PASOS} pasoActual={paso} />
 
-          <div className="registro-campo">
-            <label htmlFor="razon_social">Razón social</label>
-            <input
-              id="razon_social"
-              value={form.razon_social}
-              onChange={(e) => actualizarCampo('razon_social', e.target.value)}
-              className={errores.razon_social ? 'registro-input--error' : ''}
-            />
-            {errores.razon_social && <span className="registro-error-texto">{errores.razon_social}</span>}
-          </div>
-
-          <div className="registro-campo">
-            <label htmlFor="nombre_comercial">Nombre comercial (opcional)</label>
-            <input
-              id="nombre_comercial"
-              value={form.nombre_comercial}
-              onChange={(e) => actualizarCampo('nombre_comercial', e.target.value)}
-            />
-          </div>
-
-          <div className="registro-campo">
-            <label htmlFor="tipo_institucion">Tipo de institución</label>
-            <select
-              id="tipo_institucion"
-              value={form.tipo_institucion}
-              onChange={(e) => actualizarCampo('tipo_institucion', e.target.value)}
-              className={errores.tipo_institucion ? 'registro-input--error' : ''}
-            >
-              <option value="">Selecciona un tipo</option>
-              {TIPOS_INSTITUCION.map((t) => (
-                <option key={t.value} value={t.value}>{t.label}</option>
-              ))}
-            </select>
-            {errores.tipo_institucion && <span className="registro-error-texto">{errores.tipo_institucion}</span>}
-          </div>
-
-          <div className="registro-campo">
-            <label htmlFor="rif">RIF</label>
-            <div className="registro-campo-rif">
-              <span className="registro-campo-rif-prefijo">J-</span>
-              <input
-                id="rif"
-                inputMode="numeric"
-                maxLength={9}
-                placeholder="123456789"
-                value={form.rifDigitos}
-                onChange={(e) => actualizarCampo('rifDigitos', e.target.value.replace(/\D/g, ''))}
-                className={errores.rif ? 'registro-input--error' : ''}
-              />
-            </div>
-            {errores.rif && <span className="registro-error-texto">{errores.rif}</span>}
-          </div>
-
-          <SelectorEstadoCiudad
-            estado={form.estado}
-            ciudad={form.ciudad}
-            onChangeEstado={(v) => actualizarCampo('estado', v)}
-            onChangeCiudad={(v) => actualizarCampo('ciudad', v)}
-            errorEstado={errores.estado}
-            errorCiudad={errores.ciudad}
-          />
-
-          <div className="registro-campo">
-            <label htmlFor="direccion_fiscal">Dirección fiscal</label>
-            <textarea
-              id="direccion_fiscal"
-              rows={2}
-              value={form.direccion_fiscal}
-              onChange={(e) => actualizarCampo('direccion_fiscal', e.target.value)}
-              className={errores.direccion_fiscal ? 'registro-input--error' : ''}
-            />
-            {errores.direccion_fiscal && <span className="registro-error-texto">{errores.direccion_fiscal}</span>}
-          </div>
-
-          <div className="registro-campo-doble">
-            <div className="registro-campo">
-              <label htmlFor="telefono_institucional">Teléfono institucional</label>
-              <div className="registro-campo-telefono">
-                <select
-                  value={form.telInstCodigo}
-                  onChange={(e) => actualizarCampo('telInstCodigo', e.target.value)}
-                  aria-label="Código de teléfono institucional"
-                >
-                  {CODIGOS_TELEFONO.map((c) => (
-                    <option key={c} value={c}>0{c}</option>
-                  ))}
-                </select>
+        <div className={`registro-paso-contenedor ${direccionPaso === 'atras' ? 'registro-paso-contenedor--atras' : ''}`} key={paso}>
+          {paso === 0 && (
+            <>
+              <div className="registro-campo">
+                <label htmlFor="email">Correo electrónico (para iniciar sesión)</label>
                 <input
-                  inputMode="numeric"
-                  maxLength={7}
-                  placeholder="1234567"
-                  value={form.telInstDigitos}
-                  onChange={(e) => actualizarCampo('telInstDigitos', e.target.value.replace(/\D/g, ''))}
-                  className={errores.telefono_institucional ? 'registro-input--error' : ''}
+                  id="email"
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => actualizarCampo('email', e.target.value)}
+                  className={errores.email ? 'registro-input--error' : ''}
+                />
+                {errores.email && <span className="registro-error-texto">{errores.email}</span>}
+              </div>
+
+              <div className="registro-campo">
+                <label htmlFor="razon_social">Razón social</label>
+                <input
+                  id="razon_social"
+                  value={form.razon_social}
+                  onChange={(e) => actualizarCampo('razon_social', e.target.value)}
+                  className={errores.razon_social ? 'registro-input--error' : ''}
+                />
+                {errores.razon_social && <span className="registro-error-texto">{errores.razon_social}</span>}
+              </div>
+
+              <div className="registro-campo">
+                <label htmlFor="nombre_comercial">Nombre comercial (opcional)</label>
+                <input
+                  id="nombre_comercial"
+                  value={form.nombre_comercial}
+                  onChange={(e) => actualizarCampo('nombre_comercial', e.target.value)}
                 />
               </div>
-              {errores.telefono_institucional && <span className="registro-error-texto">{errores.telefono_institucional}</span>}
-            </div>
-            <div className="registro-campo">
-              <label htmlFor="correo_institucional">Correo institucional</label>
-              <input
-                id="correo_institucional"
-                type="email"
-                value={form.correo_institucional}
-                onChange={(e) => actualizarCampo('correo_institucional', e.target.value)}
-                className={errores.correo_institucional ? 'registro-input--error' : ''}
-              />
-              {errores.correo_institucional && <span className="registro-error-texto">{errores.correo_institucional}</span>}
-            </div>
-          </div>
 
-          <div className="registro-campo">
-            <label>Horario de recepción de pedidos</label>
-            <SelectorHorarioSemanal value={horarioRecepcion} onChange={setHorarioRecepcion} />
-          </div>
-
-          <div className="registro-campo-doble">
-            <div className="registro-campo">
-              <label htmlFor="nombre_representante">Nombre del representante</label>
-              <input
-                id="nombre_representante"
-                value={form.nombre_representante}
-                onChange={(e) => actualizarCampo('nombre_representante', e.target.value)}
-                className={errores.nombre_representante ? 'registro-input--error' : ''}
-              />
-              {errores.nombre_representante && <span className="registro-error-texto">{errores.nombre_representante}</span>}
-            </div>
-            <div className="registro-campo">
-              <label htmlFor="telefono_representante">Teléfono del representante</label>
-              <div className="registro-campo-telefono">
+              <div className="registro-campo">
+                <label htmlFor="tipo_institucion">Tipo de institución</label>
                 <select
-                  value={form.telRepCodigo}
-                  onChange={(e) => actualizarCampo('telRepCodigo', e.target.value)}
-                  aria-label="Código de teléfono del representante"
+                  id="tipo_institucion"
+                  value={form.tipo_institucion}
+                  onChange={(e) => actualizarCampo('tipo_institucion', e.target.value)}
+                  className={errores.tipo_institucion ? 'registro-input--error' : ''}
                 >
-                  {CODIGOS_TELEFONO.map((c) => (
-                    <option key={c} value={c}>0{c}</option>
+                  <option value="">Selecciona un tipo</option>
+                  {TIPOS_INSTITUCION.map((t) => (
+                    <option key={t.value} value={t.value}>{t.label}</option>
                   ))}
                 </select>
-                <input
-                  inputMode="numeric"
-                  maxLength={7}
-                  placeholder="1234567"
-                  value={form.telRepDigitos}
-                  onChange={(e) => actualizarCampo('telRepDigitos', e.target.value.replace(/\D/g, ''))}
-                  className={errores.telefono_representante ? 'registro-input--error' : ''}
-                />
+                {errores.tipo_institucion && <span className="registro-error-texto">{errores.tipo_institucion}</span>}
               </div>
-              {errores.telefono_representante && <span className="registro-error-texto">{errores.telefono_representante}</span>}
-            </div>
-          </div>
 
-          <h3 className="registro-seccion-titulo">Requisitos</h3>
+              <div className="registro-campo">
+                <label htmlFor="rif">RIF</label>
+                <div className="registro-campo-rif">
+                  <span className="registro-campo-rif-prefijo">J-</span>
+                  <input
+                    id="rif"
+                    inputMode="numeric"
+                    maxLength={9}
+                    placeholder="123456789"
+                    value={form.rifDigitos}
+                    onChange={(e) => actualizarCampo('rifDigitos', e.target.value.replace(/\D/g, ''))}
+                    className={errores.rif ? 'registro-input--error' : ''}
+                  />
+                </div>
+                {errores.rif && <span className="registro-error-texto">{errores.rif}</span>}
+              </div>
 
-          <SubidaArchivoDrive
-            tipoDocumento="rif"
-            etiqueta="RIF"
-            obligatorio
-            onSubida={setRifArchivoUrl}
-            onQuitar={() => setRifArchivoUrl('')}
-          />
-          {errores.rif_archivo && <span className="registro-error-texto">{errores.rif_archivo}</span>}
+              <SelectorEstadoCiudad
+                estado={form.estado}
+                ciudad={form.ciudad}
+                onChangeEstado={(v) => actualizarCampo('estado', v)}
+                onChangeCiudad={(v) => actualizarCampo('ciudad', v)}
+                errorEstado={errores.estado}
+                errorCiudad={errores.ciudad}
+              />
 
-          <SubidaArchivoDrive
-            tipoDocumento="permiso_sanitario"
-            etiqueta="Permiso sanitario"
-            onSubida={setPermisoSanitarioUrl}
-            onQuitar={() => setPermisoSanitarioUrl('')}
-          />
+              <div className="registro-campo">
+                <label htmlFor="direccion_fiscal">Dirección fiscal</label>
+                <textarea
+                  id="direccion_fiscal"
+                  rows={2}
+                  value={form.direccion_fiscal}
+                  onChange={(e) => actualizarCampo('direccion_fiscal', e.target.value)}
+                  className={errores.direccion_fiscal ? 'registro-input--error' : ''}
+                />
+                {errores.direccion_fiscal && <span className="registro-error-texto">{errores.direccion_fiscal}</span>}
+              </div>
 
-          <SubidaArchivoDrive
-            tipoDocumento="registro_mercantil"
-            etiqueta="Registro mercantil"
-            onSubida={setRegistroMercantilUrl}
-            onQuitar={() => setRegistroMercantilUrl('')}
-          />
+              <div className="registro-campo-doble">
+                <div className="registro-campo">
+                  <label htmlFor="telefono_institucional">Teléfono institucional</label>
+                  <div className="registro-campo-telefono">
+                    <select
+                      value={form.telInstCodigo}
+                      onChange={(e) => actualizarCampo('telInstCodigo', e.target.value)}
+                      aria-label="Código de teléfono institucional"
+                    >
+                      {CODIGOS_TELEFONO.map((c) => (
+                        <option key={c} value={c}>0{c}</option>
+                      ))}
+                    </select>
+                    <input
+                      inputMode="numeric"
+                      maxLength={7}
+                      placeholder="1234567"
+                      value={form.telInstDigitos}
+                      onChange={(e) => actualizarCampo('telInstDigitos', e.target.value.replace(/\D/g, ''))}
+                      className={errores.telefono_institucional ? 'registro-input--error' : ''}
+                    />
+                  </div>
+                  {errores.telefono_institucional && <span className="registro-error-texto">{errores.telefono_institucional}</span>}
+                </div>
+                <div className="registro-campo">
+                  <label htmlFor="correo_institucional">Correo institucional</label>
+                  <input
+                    id="correo_institucional"
+                    type="email"
+                    value={form.correo_institucional}
+                    onChange={(e) => actualizarCampo('correo_institucional', e.target.value)}
+                    className={errores.correo_institucional ? 'registro-input--error' : ''}
+                  />
+                  {errores.correo_institucional && <span className="registro-error-texto">{errores.correo_institucional}</span>}
+                </div>
+              </div>
 
-          <label className="registro-checkbox">
-            <input
-              type="checkbox"
-              checked={aceptaTerminos}
-              onChange={(e) => setAceptaTerminos(e.target.checked)}
-            />
-            <span>
-              Acepto el <Link to="/contrato">contrato</Link>, la <Link to="/privacidad">política de privacidad</Link> y
-              los <Link to="/terminos">términos de uso</Link>
-            </span>
-          </label>
-          {errores.terminos && <span className="registro-error-texto">{errores.terminos}</span>}
+              <div className="registro-campo">
+                <label>Horario de recepción de pedidos</label>
+                <SelectorHorarioSemanal value={horarioRecepcion} onChange={setHorarioRecepcion} />
+              </div>
 
-          <button type="submit" className="auth-btn-primary">Continuar</button>
-        </form>
+              <div className="registro-campo-doble">
+                <div className="registro-campo">
+                  <label htmlFor="nombre_representante">Nombre del representante</label>
+                  <input
+                    id="nombre_representante"
+                    value={form.nombre_representante}
+                    onChange={(e) => actualizarCampo('nombre_representante', e.target.value)}
+                    className={errores.nombre_representante ? 'registro-input--error' : ''}
+                  />
+                  {errores.nombre_representante && <span className="registro-error-texto">{errores.nombre_representante}</span>}
+                </div>
+                <div className="registro-campo">
+                  <label htmlFor="telefono_representante">Teléfono del representante</label>
+                  <div className="registro-campo-telefono">
+                    <select
+                      value={form.telRepCodigo}
+                      onChange={(e) => actualizarCampo('telRepCodigo', e.target.value)}
+                      aria-label="Código de teléfono del representante"
+                    >
+                      {CODIGOS_TELEFONO.map((c) => (
+                        <option key={c} value={c}>0{c}</option>
+                      ))}
+                    </select>
+                    <input
+                      inputMode="numeric"
+                      maxLength={7}
+                      placeholder="1234567"
+                      value={form.telRepDigitos}
+                      onChange={(e) => actualizarCampo('telRepDigitos', e.target.value.replace(/\D/g, ''))}
+                      className={errores.telefono_representante ? 'registro-input--error' : ''}
+                    />
+                  </div>
+                  {errores.telefono_representante && <span className="registro-error-texto">{errores.telefono_representante}</span>}
+                </div>
+              </div>
+            </>
+          )}
+
+          {paso === 1 && (
+            <>
+              <h3 className="registro-seccion-titulo-paso">Documentos requeridos</h3>
+
+              <SubidaArchivoDrive
+                tipoDocumento="rif"
+                etiqueta="RIF"
+                obligatorio
+                onSubida={setRifArchivoUrl}
+                onQuitar={() => setRifArchivoUrl('')}
+              />
+              {errores.rif_archivo && <span className="registro-error-texto">{errores.rif_archivo}</span>}
+
+              <SubidaArchivoDrive
+                tipoDocumento="permiso_sanitario"
+                etiqueta="Permiso sanitario"
+                onSubida={setPermisoSanitarioUrl}
+                onQuitar={() => setPermisoSanitarioUrl('')}
+              />
+
+              <SubidaArchivoDrive
+                tipoDocumento="registro_mercantil"
+                etiqueta="Registro mercantil"
+                onSubida={setRegistroMercantilUrl}
+                onQuitar={() => setRegistroMercantilUrl('')}
+              />
+            </>
+          )}
+
+          {paso === 2 && (
+            <>
+              <div className="registro-notificaciones">
+                <div className="registro-notif-grupo">
+                  <label>¿Desea recibir notificaciones del sistema?</label>
+                  <div className="registro-notif-opciones">
+                    <label>
+                      <input
+                        type="radio"
+                        name="notifSistema"
+                        checked={notifSistema === true}
+                        onChange={() => setNotifSistema(true)}
+                      />
+                      Sí
+                    </label>
+                    <label>
+                      <input
+                        type="radio"
+                        name="notifSistema"
+                        checked={notifSistema === false}
+                        onChange={() => setNotifSistema(false)}
+                      />
+                      No
+                    </label>
+                  </div>
+                </div>
+
+                <div className="registro-notif-grupo">
+                  <label>¿Desea recibir notificaciones de promociones?</label>
+                  <div className="registro-notif-opciones">
+                    <label>
+                      <input
+                        type="radio"
+                        name="notifPromociones"
+                        checked={notifPromociones === true}
+                        onChange={() => setNotifPromociones(true)}
+                      />
+                      Sí
+                    </label>
+                    <label>
+                      <input
+                        type="radio"
+                        name="notifPromociones"
+                        checked={notifPromociones === false}
+                        onChange={() => setNotifPromociones(false)}
+                      />
+                      No
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <label className="registro-checkbox">
+                <input
+                  type="checkbox"
+                  checked={aceptaTerminos}
+                  onChange={(e) => setAceptaTerminos(e.target.checked)}
+                />
+                <span>
+                  Acepto el <Link to="/contrato">contrato</Link>, la <Link to="/privacidad">política de privacidad</Link> y
+                  los <Link to="/terminos">términos de uso</Link>
+                </span>
+              </label>
+              {errores.terminos && <span className="registro-error-texto">{errores.terminos}</span>}
+
+              <div className="registro-campo">
+                <label htmlFor="password">Contraseña</label>
+                <input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Mínimo 8 caracteres"
+                  autoComplete="new-password"
+                  className={errores.password ? 'registro-input--error' : ''}
+                />
+                {errores.password && <span className="registro-error-texto">{errores.password}</span>}
+              </div>
+
+              <div className="registro-campo">
+                <label htmlFor="confirmar-password">Confirmar contraseña</label>
+                <input
+                  id="confirmar-password"
+                  type="password"
+                  value={confirmarPassword}
+                  onChange={(e) => setConfirmarPassword(e.target.value)}
+                  placeholder="Repetí tu contraseña"
+                  autoComplete="new-password"
+                  className={errores.confirmarPassword ? 'registro-input--error' : ''}
+                />
+                {errores.confirmarPassword && <span className="registro-error-texto">{errores.confirmarPassword}</span>}
+              </div>
+
+              <TurnstileWidget onVerificado={setTurnstileToken} onExpirado={() => setTurnstileToken('')} />
+              {errores.turnstile && <span className="registro-error-texto">{errores.turnstile}</span>}
+
+              {errorGeneral && <p className="auth-error">{errorGeneral}</p>}
+            </>
+          )}
+        </div>
+
+        <div className="registro-nav-botones">
+          {paso > 0 && (
+            <button type="button" className="registro-btn-atras" onClick={retrocederPaso}>
+              Anterior
+            </button>
+          )}
+          <button
+            type="button"
+            className="registro-btn-siguiente"
+            onClick={handleSiguiente}
+            disabled={cargando}
+          >
+            {paso === 2 ? (cargando ? 'Creando cuenta...' : 'Crear cuenta') : 'Siguiente'}
+          </button>
+        </div>
       </main>
     </div>
   )

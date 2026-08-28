@@ -216,15 +216,15 @@ function Login() {
       {/* Footer inferior */}
       <footer className="auth-footer">
         <div className="auth-footer-content">
+          © 2026 Drogueria Carrisan, C.A. Todos los derechos reservados.
           <div className="auth-footer-links">
             <Link to="/terminos">Términos de uso</Link>
             <Link to="/privacidad">Aviso de privacidad</Link>
             <Link to="/contacto">Soporte</Link>
           </div>
-          © 2026 Drogueria Carrisan, C.A. Todos los derechos reservados. 
           <span className="auth-footer-rif">RIF J-40068410-2</span>
         </div>
-        <span className="auth-footer-rif">RIF J-40068410-2</span>
+        
       </footer>
     </div>
   )

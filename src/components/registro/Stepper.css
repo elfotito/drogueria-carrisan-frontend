@@ -1,0 +1,94 @@
+.stepper {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0;
+  margin: 1.5rem 0 2rem;
+  width: 100%;
+}
+
+.stepper__paso {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  flex: 1;
+}
+
+.stepper__circulo {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border: 2px solid #D1D5DB;
+  background: #fff;
+  color: #9CA3AF;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 2;
+}
+
+.stepper__paso--activo .stepper__circulo {
+  border-color: #1B4B8F;
+  background: #1B4B8F;
+  color: #fff;
+}
+
+.stepper__paso--completado .stepper__circulo {
+  border-color: #12A594;
+  background: #12A594;
+  color: #fff;
+}
+
+.stepper__label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #9CA3AF;
+  margin-top: 0.5rem;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.stepper__paso--activo .stepper__label {
+  color: #1B4B8F;
+}
+
+.stepper__paso--completado .stepper__label {
+  color: #12A594;
+}
+
+.stepper__linea {
+  position: absolute;
+  top: 18px;
+  left: calc(50% + 22px);
+  width: calc(100% - 44px);
+  height: 2px;
+  background: #E5E7EB;
+  z-index: 1;
+}
+
+.stepper__paso--completado .stepper__linea {
+  background: #12A594;
+}
+
+@media (max-width: 480px) {
+  .stepper__label {
+    font-size: 0.65rem;
+  }
+
+  .stepper__circulo {
+    width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
+  }
+
+  .stepper__linea {
+    top: 16px;
+    left: calc(50% + 18px);
+    width: calc(100% - 36px);
+  }
+}
