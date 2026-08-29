@@ -1,63 +1,172 @@
-.registro-tipo__selectores {
-  display: flex;
-  flex-direction: column;
-  gap: 0.9rem;
+/* ============================================================
+   RegistroConTipo — selector de tipo de usuario (3 tarjetas)
+   Desktop (>=768px): fila horizontal. Móvil: columna vertical.
+   ============================================================ */
+
+/* Esta página necesita más ancho que el resto de Auth.css (440px)
+   para que las 3 tarjetas quepan cómodas en fila en desktop.
+   Se agrega como clase extra sobre .auth-container solo aquí,
+   así el resto de las páginas de auth no se ven afectadas. */
+.auth-container.registro-tipo-container {
+  max-width: 440px;
+}
+
+@media (min-width: 768px) {
+  .auth-container.registro-tipo-container {
+    max-width: 920px;
+  }
+}
+
+.registro-tipo__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
   width: 100%;
   margin-top: 1.5rem;
 }
 
+@media (min-width: 768px) {
+  .registro-tipo__grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+}
+
 .registro-tipo__card {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.4rem;
-  padding: 1.1rem 1.25rem;
-  border: 1.5px solid #E5E7EB;
-  border-radius: 14px;
-  background: #fff;
+  gap: 0.9rem;
+  padding: 1.1rem;
+  border: 2px solid transparent;
+  border-radius: 18px;
+  background: var(--fondo);
   text-align: left;
   cursor: pointer;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
   font-family: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
 }
 
 .registro-tipo__card:hover {
-  border-color: #0052DC;
-  box-shadow: 0 4px 14px rgba(0, 82, 220, 0.08);
+  box-shadow: 0 6px 18px rgba(17, 24, 39, 0.08);
+  transform: translateY(-2px);
 }
 
 .registro-tipo__card:active {
-  transform: scale(0.99);
+  transform: translateY(0) scale(0.99);
 }
 
-.registro-tipo__icono {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background: #EFF4FF;
-  color: #0052DC;
+.registro-tipo__card--seleccionada {
+  border-color: var(--acento);
+  box-shadow: 0 8px 20px rgba(17, 24, 39, 0.1);
+}
+
+/* Paleta pastel por tipo, derivada de la paleta de marca */
+.registro-tipo__card--institucional {
+  --acento: #0052dc;
+  --fondo: #eaf1ff;
+  --fondo-imagen: #dce8ff;
+  --borde-imagen: rgba(0, 82, 220, 0.35);
+}
+
+.registro-tipo__card--profesional {
+  --acento: #0f9488;
+  --fondo: #e6f7f4;
+  --fondo-imagen: #d3f0ea;
+  --borde-imagen: rgba(15, 148, 136, 0.35);
+}
+
+.registro-tipo__card--honorifico {
+  --acento: #c2740d;
+  --fondo: #fff3e6;
+  --fondo-imagen: #ffe8cc;
+  --borde-imagen: rgba(194, 116, 13, 0.35);
+}
+
+/* ---------- Espacio para la ilustración (Tito la reemplaza por su imagen) ---------- */
+
+.registro-tipo__imagen {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 14px;
+  border: 1.5px dashed var(--borde-imagen);
+  background: var(--fondo-imagen);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 0.2rem;
+  overflow: hidden;
+}
+
+/* Clase lista para cuando se reemplace el placeholder por la imagen real:
+   <img src={...} alt="" className="registro-tipo__imagen-img" /> */
+.registro-tipo__imagen-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.registro-tipo__icono {
+  width: 44px;
+  height: 44px;
+  color: var(--acento);
+  opacity: 0.55;
 }
 
 .registro-tipo__icono svg {
-  width: 22px;
-  height: 22px;
-  stroke-width: 1.8;
+  width: 100%;
+  height: 100%;
+  stroke-width: 1.5;
 }
 
-.registro-tipo__card h3 {
-  margin: 0;
+/* ---------- Texto ---------- */
+
+.registro-tipo__cuerpo h3 {
+  margin: 0 0 0.3rem;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
   color: #111827;
 }
 
-.registro-tipo__card p {
+.registro-tipo__cuerpo p {
   margin: 0;
   font-size: 0.85rem;
-  color: #6B7280;
-  line-height: 1.35;
+  color: #4b5563;
+  line-height: 1.4;
+}
+
+/* ---------- Check de selección (esquina, estilo imagen de referencia) ---------- */
+
+.registro-tipo__check {
+  position: absolute;
+  bottom: -8px;
+  right: 14px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--acento);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(17, 24, 39, 0.25);
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.registro-tipo__check svg {
+  width: 14px;
+  height: 14px;
+}
+
+.registro-tipo__card--seleccionada .registro-tipo__check {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ---------- Botón Siguiente ---------- */
+
+.registro-tipo__siguiente {
+  margin-top: 1.75rem;
 }
