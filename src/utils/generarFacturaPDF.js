@@ -26,8 +26,6 @@ const COLOR_GRIS_CLARO = [246, 247, 250]
 const COLOR_BORDE = [223, 226, 235]
 const COLOR_TEXTO = [30, 31, 45]
 const COLOR_MUTED = [110, 113, 133]
-const COLOR_VERDE = [21, 128, 61]
-const COLOR_AMBAR = [180, 120, 10]
 const COLOR_BLANCO = [255, 255, 255]
 
 const MARGEN = 14
@@ -131,20 +129,6 @@ function dibujarTituloFactura(doc, factura) {
   doc.setFontSize(9)
   doc.setTextColor(...COLOR_MUTED)
   doc.text(`Fecha de emisión: ${formatFechaLarga(factura.created_at)}`, MARGEN, y + 13)
-
-  // Badge de estado, arriba a la derecha
-  const estado = factura.estado || 'pendiente'
-  const esPagada = estado === 'pagada'
-  const colorBadge = esPagada ? COLOR_VERDE : COLOR_AMBAR
-  const textoBadge = esPagada ? 'PAGADA' : estado.toUpperCase()
-  const anchoBadge = doc.getTextWidth(textoBadge) + 10
-
-  doc.setFillColor(...colorBadge)
-  doc.roundedRect(ANCHO_PAGINA - MARGEN - anchoBadge, y - 5, anchoBadge, 7, 3, 3, 'F')
-  doc.setFont('helvetica', 'bold')
-  doc.setFontSize(8)
-  doc.setTextColor(...COLOR_BLANCO)
-  doc.text(textoBadge, ANCHO_PAGINA - MARGEN - anchoBadge / 2, y - 0.5, { align: 'center' })
 
   return y + 20
 }
