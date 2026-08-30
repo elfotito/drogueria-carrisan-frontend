@@ -314,6 +314,7 @@ function Carrito() {
   const [productosRecientes, setProductosRecientes] = useState([])
   const [cargandoCarruseles, setCargandoCarruseles] = useState(true)
   const [subUsuarioId, setSubUsuarioId] = useState(null)
+  const [tieneSubUsuarios, setTieneSubUsuarios] = useState(false)
   
   const navigate = useNavigate()
 
@@ -383,6 +384,11 @@ function Carrito() {
     if (opcionActual?.requiereAgencia && !agenciaSeleccionada) {
       setError('Debes seleccionar una agencia de envío')
       setEnvioExpandido(true)
+      return
+    }
+
+    if (tieneSubUsuarios && !subUsuarioId) {
+      setError('Debes indicar el PIN de quién hace este pedido')
       return
     }
 
@@ -512,7 +518,7 @@ function Carrito() {
           </div>
         )}
 
-        <PinCheckout onResuelto={setSubUsuarioId} />
+        <PinCheckout onResuelto={setSubUsuarioId} onDisponibilidad={setTieneSubUsuarios} />
 
         {error && <p className="carrito-error carrito-error--sidebar">{error}</p>}
 
