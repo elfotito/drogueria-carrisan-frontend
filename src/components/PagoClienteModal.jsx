@@ -1,4 +1,4 @@
-import { X, DollarSign } from 'lucide-react'
+import { X, CheckCircle2 } from 'lucide-react'
 import './OrdenClienteModal.css' // reutiliza overlay/content/close/divider
 
 function formatUSD(valor) {
@@ -12,9 +12,11 @@ function formatBs(valor) {
 export default function PagoClienteModal({ pago, onClose }) {
   if (!pago) return null
 
-  // pago viene del historial: para un pago verificado, el monto_bs y tasa_usada
-  // salen del reporte_pago que lo originó (ver nota debajo del componente)
-  const montoBs = pago.monto_bs ?? (pago.monto * (pago.tasa_usada || 0))
+  // El equivalente en Bs solo existe cuando el pago viene de un reporte de
+  // cliente (con tasa capturada en el momento). Un abono cargado directo
+  // por el admin no tiene monto_bs/tasa_usada — en ese caso no mostramos
+  // conversión en vez de fingir un "Bs. 0,00" con tasa 0.
+  const tieneConversionBs = pago.monto_bs != null && pago.tasa_usada != null
 
   return (
     <div className="ocm-overlay" onClick={onClose}>
@@ -31,19 +33,16 @@ export default function PagoClienteModal({ pago, onClose }) {
         </div>
 
         <div className="pcm-monto-hero">
-          <DollarSign size={20} />
-          <span>Bs. {formatBs(montoBs)}</span>
+          <span className="pcm-monto-hero__valor">${formatUSD(pago.monto)}</span>
+          {tieneConversionBs && (
+            <span className="pcm-monto-hero__bs">Bs. {formatBs(pago.monto_bs)}</span>
+          )}
         </div>
-        <p className="pcm-tasa">
-          Tasa aplicada: <strong>Bs. {formatBs(pago.tasa_usada)}</strong> / $
-        </p>
-
-        <div className="ocm-divider" />
-
-        <div className="ocm-total-row">
-          <span>Equivalente en $</span>
-          <strong>${formatUSD(pago.monto)}</strong>
-        </div>
+        {tieneConversionBs && (
+          <p className="pcm-tasa">
+            Tasa aplicada: <strong>Bs. {formatBs(pago.tasa_usada)}</strong> / $
+          </p>
+        )}
 
         {pago.detalle && (
           <>
@@ -55,7 +54,10 @@ export default function PagoClienteModal({ pago, onClose }) {
           </>
         )}
 
-        <p className="ocm-estado-pago-nota">✅ Pago verificado</p>
+        <p className="ocm-estado-pago-nota">
+          <CheckCircle2 size={16} />
+          Pago verificado
+        </p>
       </div>
     </div>
   )
