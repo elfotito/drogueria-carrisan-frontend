@@ -1,4 +1,5 @@
-import { X, CheckCircle2 } from 'lucide-react'
+import { X, CheckCircle2, Download } from 'lucide-react'
+import generarComprobantePagoPDF from '../utils/generarComprobantePagoPDF'
 import './OrdenClienteModal.css' // reutiliza overlay/content/close/divider
 
 function formatUSD(valor) {
@@ -9,7 +10,7 @@ function formatBs(valor) {
   return Number(valor || 0).toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
-export default function PagoClienteModal({ pago, onClose }) {
+export default function PagoClienteModal({ pago, cliente, onClose }) {
   if (!pago) return null
 
   // El equivalente en Bs solo existe cuando el pago viene de un reporte de
@@ -58,6 +59,15 @@ export default function PagoClienteModal({ pago, onClose }) {
           <CheckCircle2 size={16} />
           Pago verificado
         </p>
+
+        <button
+          type="button"
+          className="pcm-btn-descarga"
+          onClick={() => generarComprobantePagoPDF({ pago, cliente })}
+        >
+          <Download size={16} />
+          Descargar comprobante
+        </button>
       </div>
     </div>
   )
