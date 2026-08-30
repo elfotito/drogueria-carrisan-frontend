@@ -703,7 +703,19 @@
      clase en <body> en vez de anidarlo en el árbol de React, para no
      tener que reestructurar App.jsx ni romper el position:sticky /
      los overlays position:fixed que ya tiene el Navbar.
-     ----------------------------------------------------------------- */
+
+     La transition va en una regla SIN el prefijo de body.ppal-drawer-open,
+     para que exista de forma permanente en <1024px — si viviera solo
+     dentro de la regla condicional, al quitar la clase (cerrar el
+     drawer) la propia transition desaparece en el mismo instante que
+     el transform, y el navbar "salta" a su posición final sin animar,
+     mientras .ppal-shift sí completa su regreso animado (su transition
+     es permanente). Con la transition siempre presente, abrir y
+     cerrar quedan perfectamente sincronizados con la página. */
+  .navbar-container {
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1), filter 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
   /* !important a propósito: esta regla debe ganar pase lo que pase,
      incluso si algún día otro CSS le agrega su propio transform al
      navbar (ej. un efecto de scroll) — no queremos volver a perseguir
@@ -717,7 +729,6 @@
        brightness() da el mismo efecto de "apagado" sin necesitar un
        segundo elemento superpuesto, y con la misma transición. */
     filter: brightness(0.62);
-    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1), filter 0.28s cubic-bezier(0.4, 0, 0.2, 1);
     border-radius: 0 0 18px 0;
     overflow: hidden;
   }
