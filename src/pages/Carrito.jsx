@@ -5,6 +5,7 @@ import { useCart } from '../context/CartContext'
 import { useEnvio } from '../context/EnvioContext'
 import { useAuth } from '../context/AuthContext'
 import HomeCarrusel from '../components/HomeCarrusel'
+import PinCheckout from '../components/PinCheckout'
 import './Carrito.css'
 
 function formatUSD(valor) {
@@ -312,6 +313,7 @@ function Carrito() {
   const [ofertas, setOfertas] = useState([])
   const [productosRecientes, setProductosRecientes] = useState([])
   const [cargandoCarruseles, setCargandoCarruseles] = useState(true)
+  const [subUsuarioId, setSubUsuarioId] = useState(null)
   
   const navigate = useNavigate()
 
@@ -396,6 +398,7 @@ function Carrito() {
         direccion_envio_id: direccionSeleccionada?.id || null,
         agencia_envio: agenciaSeleccionada || null,
         forma_pago: formaPago,
+        sub_usuario_id: subUsuarioId,
       }
       await api.post('/orders', payload)
       clearCart()
@@ -508,6 +511,8 @@ function Carrito() {
             </div>
           </div>
         )}
+
+        <PinCheckout onResuelto={setSubUsuarioId} />
 
         {error && <p className="carrito-error carrito-error--sidebar">{error}</p>}
 
