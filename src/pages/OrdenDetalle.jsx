@@ -128,7 +128,11 @@ function OrdenDetalle() {
     setCargando(true)
     api
       .get(`/orders/${id}`)
-      .then(({ data }) => setOrden(data))
+      .then(({ data }) => {
+        console.log('[OrdenDetalle] orden recibida:', data)
+        console.log('[OrdenDetalle] ordenes_items:', data.ordenes_items)
+        setOrden(data)
+      })
       .catch((err) => {
         console.error(err)
         setError('No pudimos cargar esta orden. Puede que no exista o no tengas acceso a ella.')
@@ -218,7 +222,9 @@ function OrdenDetalle() {
             {items.map((item, index) => (
               <div key={item.id || index} className="od-item">
                 <div className="od-item__body">
-                  <p className="od-item__nombre">{item.productos?.nombre_comercial || 'Producto'}</p>
+                  <p className="od-item__nombre">
+                    {item.productos?.nombre_comercial || item.producto?.nombre_comercial || `Producto #${item.producto_id}`}
+                  </p>
                   <p className="od-item__cantidad">
                     {item.cantidad} × ${formatUSD(item.precio_unitario)}
                   </p>
