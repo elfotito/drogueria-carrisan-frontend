@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext'
 import api from '../api/axios'
 import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
 import { NAV_UNIFICADO } from '../components/paginas-principales/NavUnificado'
+import generarFacturaPDF from '../utils/generarFacturaPDF'
 import './EstadoCuenta.css'
 
 // ---------------------------------------------------------------
@@ -37,6 +38,7 @@ function claveGrupoFecha(fecha) {
 export default function FacturasEstadoCuenta() {
   const { user } = useAuth()
   const [facturas, setFacturas] = useState([])
+  const [cliente, setCliente] = useState(null)
   const [deudaActual, setDeudaActual] = useState(0)
   const [cargando, setCargando] = useState(true)
   const [busqueda, setBusqueda] = useState('')
@@ -45,6 +47,7 @@ export default function FacturasEstadoCuenta() {
     api.get(`/clientes/${user.id}/estado-cuenta`)
       .then(({ data }) => {
         setFacturas(data.facturas || [])
+        setCliente(data.cliente || null)
         setDeudaActual(data.resumen?.deuda_actual || 0)
       })
       .finally(() => setCargando(false))
@@ -74,15 +77,7 @@ export default function FacturasEstadoCuenta() {
   }, [facturas])
 
   async function exportarPDF(factura) {
-    const { jsPDF } = await import('jspdf')
-    const doc = new jsPDF()
-    doc.setFontSize(16)
-    doc.text('Droguería Carrisan', 14, 20)
-    doc.setFontSize(11)
-    doc.text(`Factura #${factura.numero_factura}`, 14, 32)
-    doc.text(`Fecha: ${new Date(factura.created_at).toLocaleDateString('es-VE')}`, 14, 40)
-    doc.text(`Monto: ${formatUSD(factura.monto_facturado)}`, 14, 48)
-    doc.save(`factura-${factura.numero_factura}.pdf`)
+    await generarFacturaPDF({ factura, cliente })
   }
 
   return (
