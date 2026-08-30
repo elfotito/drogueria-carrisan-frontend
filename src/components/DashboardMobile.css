@@ -1,17 +1,7 @@
 .dashboard {
   width: 100%;
-  max-width: 100%;
-  margin: 0 auto;
-  padding: 20px 20px 0;
-  overflow-x: hidden;
+  padding: 20px 20px 4px;
 }
-
-/* Espacio para que el bottom nav fijo no tape el último tile */
-.dashboard__espaciador {
-  height: 24px;
-}
-
-
 
 /* ---------- Topbar: saludo + tasa ---------- */
 .dashboard__topbar {
@@ -131,80 +121,4 @@
   font-family: 'Inter', sans-serif;
   font-size: 0.78rem;
   color: rgba(20, 24, 42, 0.55);
-}
-
-/* Espacio para que el dock flotante del bottom nav no tape el último tile */
-.dashboard__espaciador {
-  height: 92px;
-}
-
-/* ---------- Ads: par de cards lado a lado ---------- */
-.dashboard__ads-pair {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin: 6px 0 10px;
-}
-
-/* ---------- Sentinel invisible (trigger del infinite scroll) ---------- */
-.dashboard__sentinel {
-  width: 100%;
-  height: 1px;
-  pointer-events: none;
-}
-
-/* ---------- Bloques dinámicos (cargados al scrollear) ---------- */
-.dashboard__bloque-dinamico {
-  animation: dashboard-fadein 0.4s ease both;
-}
-
-@keyframes dashboard-fadein {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* ---------- Footer wrapper ---------- */
-.dashboard__footer-wrapper {
-  margin-top: 20px;
-  border-top: 1px solid rgba(35, 43, 69, 0.08);
-}
-
-/* ---------- Tablet ancho (grid): el dock sigue visible hasta 1023px ---------- */
-@media (min-width: 769px) {
-  .dashboard {
-    padding: 32px 24px 0;
-  }
-
-  .dashboard__grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-
-  .dashboard__ads-pair {
-    gap: 16px;
-  }
-}
-
-/* ---------- Desktop real: acá el bottom nav ya no se muestra ---------- */
-@media (min-width: 1024px) {
-  .dashboard__espaciador {
-    height: 24px;
-  }
-}
-
-/* ---------- Desktop grande: recién acá se limita el ancho ---------- */
-@media (min-width: 1440px) {
-  .dashboard {
-    max-width: 1400px;
-    padding: 32px 24px 0;
-  }
-
-  .dashboard__footer-wrapper {
-    margin-top: 32px;
-  }
 }
