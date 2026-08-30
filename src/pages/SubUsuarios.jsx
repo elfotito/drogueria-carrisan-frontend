@@ -42,9 +42,9 @@ function ModalFormulario({ subUsuario, onClose, onGuardado }) {
     setGuardando(true)
     try {
       if (esEdicion) {
-        await api.patch(`/sub-usuarios/${subUsuario.id}`, { nombre: nombre.trim() })
+        await api.patch(`/subusuarios/${subUsuario.id}`, { nombre: nombre.trim() })
       } else {
-        await api.post('/sub-usuarios', { nombre: nombre.trim(), pin })
+        await api.post('/subusuarios', { nombre: nombre.trim(), pin })
       }
       onGuardado()
     } catch (err) {
@@ -126,7 +126,7 @@ function SubUsuarios() {
 
   async function cargar() {
     try {
-      const { data } = await api.get('/sub-usuarios')
+      const { data } = await api.get('/subusuarios')
       setSubUsuarios(data)
     } catch (err) {
       console.error('Error al cargar sub-usuarios:', err)
@@ -137,7 +137,7 @@ function SubUsuarios() {
 
   async function toggleActivo(su) {
     try {
-      await api.patch(`/sub-usuarios/${su.id}`, { activo: !su.activo })
+      await api.patch(`/subusuarios/${su.id}`, { activo: !su.activo })
       setSubUsuarios((prev) =>
         prev.map((s) => (s.id === su.id ? { ...s, activo: !s.activo } : s))
       )
@@ -149,7 +149,7 @@ function SubUsuarios() {
   async function eliminar(su) {
     if (!window.confirm(`¿Eliminar a ${su.nombre}? Esto no borra sus órdenes pasadas.`)) return
     try {
-      await api.delete(`/sub-usuarios/${su.id}`)
+      await api.delete(`/subusuarios/${su.id}`)
       setSubUsuarios((prev) => prev.filter((s) => s.id !== su.id))
     } catch (err) {
       console.error('Error al eliminar:', err)
