@@ -98,7 +98,7 @@ function PinCheckout({ onResuelto, onDisponibilidad }) {
 
   useEffect(() => {
     api
-      .get('/sub-usuarios')
+      .get('/subusuarios')
       .then(({ data }) => {
         const activos = data.filter((s) => s.activo)
         setSubUsuarios(activos)
@@ -114,7 +114,7 @@ function PinCheckout({ onResuelto, onDisponibilidad }) {
     setVerificando(true)
     setError('')
     try {
-      const { data } = await api.post('/sub-usuarios/verificar', { pin: pinCompleto })
+      const { data } = await api.post('/subusuarios/verificar', { pin: pinCompleto })
       setResultado(data)
       onResuelto?.(data.id)
     } catch (err) {
