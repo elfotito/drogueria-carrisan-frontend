@@ -1,11 +1,12 @@
 import { useState, useEffect, useMemo } from 'react'
 import { Stat } from '@chakra-ui/react'
-import { DollarSign, Search } from 'lucide-react'
+import { DollarSign, Download, Search } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import api from '../api/axios'
 import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
 import { NAV_UNIFICADO } from '../components/paginas-principales/NavUnificado'
 import PagoClienteModal from '../components/PagoClienteModal'
+import generarComprobantePagoPDF from '../utils/generarComprobantePagoPDF'
 import './EstadoCuenta.css'
 
 // ---------------------------------------------------------------
@@ -31,13 +32,17 @@ function claveGrupoFecha(fecha) {
 export default function PagosEstadoCuenta() {
   const { user } = useAuth()
   const [pagos, setPagos] = useState([])
+  const [cliente, setCliente] = useState(null)
   const [cargando, setCargando] = useState(true)
   const [busqueda, setBusqueda] = useState('')
   const [pagoSeleccionado, setPagoSeleccionado] = useState(null)
 
   useEffect(() => {
     api.get(`/clientes/${user.id}/estado-cuenta`)
-      .then(({ data }) => setPagos(data.pagos || []))
+      .then(({ data }) => {
+        setPagos(data.pagos || [])
+        setCliente(data.cliente || null)
+      })
       .finally(() => setCargando(false))
   }, [user.id])
 
@@ -63,6 +68,10 @@ export default function PagosEstadoCuenta() {
     const total = pagos.reduce((sum, p) => sum + Number(p.monto), 0)
     return { total, cantidad: pagos.length }
   }, [pagos])
+
+  async function exportarPDF(pago) {
+    await generarComprobantePagoPDF({ pago, cliente })
+  }
 
   return (
     <LayoutPaginaPrincipal
@@ -125,6 +134,13 @@ export default function PagosEstadoCuenta() {
                           <strong className="ec-movimiento__monto ec-movimiento__monto--verde">
                             +{formatUSD(pago.monto)}
                           </strong>
+                          <button
+                            className="ec-movimiento__descarga"
+                            onClick={(e) => { e.stopPropagation(); exportarPDF(pago) }}
+                            aria-label="Descargar comprobante"
+                          >
+                            <Download size={16} />
+                          </button>
                         </li>
                       ))}
                     </ul>
@@ -137,7 +153,7 @@ export default function PagosEstadoCuenta() {
       </div>
 
       {pagoSeleccionado && (
-        <PagoClienteModal pago={pagoSeleccionado} onClose={() => setPagoSeleccionado(null)} />
+        <PagoClienteModal pago={pagoSeleccionado} cliente={cliente} onClose={() => setPagoSeleccionado(null)} />
       )}
     </LayoutPaginaPrincipal>
   )
