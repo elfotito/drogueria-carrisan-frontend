@@ -5,6 +5,7 @@ import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
 import HomeCarrusel from '../components/HomeCarrusel'
 import SeccionesCarrusel from '../components/SeccionesCarrusel'
+import Valoraciones from '../components/Valoraciones'
 import Footer from '../components/Footer'
 import { agruparPorLinea } from '../utils/agruparPorLinea'
 import BottomNav from '../components/BottomNav'
@@ -455,13 +456,9 @@ function ProductoDetalle() {
           ))}
         </div>
 
-        {/* Calificaciones y reseñas — placeholder, aún sin configurar */}
+        {/* Calificaciones y reseñas */}
         <div className="detalle-resenas detalle-area-resenas">
-          <h2 className="detalle-seccion-titulo">Calificaciones y reseñas</h2>
-          <div className="detalle-resenas-placeholder">
-            <span className="detalle-estrellas-icono">☆ ☆ ☆ ☆ ☆</span>
-            <p>Todavía no hay calificaciones para este producto.</p>
-          </div>
+          <Valoraciones productoId={producto.id} />
         </div>
       </div>
 
