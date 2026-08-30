@@ -192,7 +192,7 @@ export default function EstadoCuenta() {
       </div>
 
       {ordenSeleccionada && <OrdenClienteModal orden={ordenSeleccionada} onClose={() => setOrdenSeleccionada(null)} />}
-      {pagoSeleccionado && <PagoClienteModal pago={pagoSeleccionado} onClose={() => setPagoSeleccionado(null)} />}
+      {pagoSeleccionado && <PagoClienteModal pago={pagoSeleccionado} cliente={datos?.cliente} onClose={() => setPagoSeleccionado(null)} />}
       
       {modalPagoAbierto && (
         <ModalReportarPago
