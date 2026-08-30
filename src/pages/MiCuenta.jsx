@@ -9,7 +9,7 @@ import { usePush } from '../hooks/usePush'
 import { CATEGORIAS } from '../utils/notificacionesCatalogo'
 import {
   Package, ChevronRight, ChevronDown, Loader2, AlertCircle,
-  MessageCircle, ShieldCheck, Wallet, Bell, LogOut, Settings, X, Lock, Scale,
+  MessageCircle, ShieldCheck, Wallet, Bell, LogOut, Settings, X, Lock, Scale, Users,
 } from 'lucide-react'
 import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
 import BannerOnboarding from '../components/BannerOnboarding'
@@ -138,6 +138,14 @@ function ContenidoModalCuenta({ user, inicial, onCerrar, onCambiarCuenta, onCerr
         <span>Reiniciar Contraseña</span>
         <span className="etiqueta-proximamente">Próximamente</span>
       </div>
+
+      <Link to="/subusuarios" onClick={onCerrar} className="modal-cuenta__fila modal-cuenta__fila--link">
+        <span className="modal-cuenta__fila-icono-texto">
+          <Users size={16} />
+          Sub-usuarios
+        </span>
+        <ChevronRight size={16} />
+      </Link>
 
       <div className="modal-cuenta__separador" />
 
