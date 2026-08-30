@@ -5,7 +5,7 @@ import { useCart } from '../context/CartContext'
 import { useEnvio } from '../context/EnvioContext'
 import { useAuth } from '../context/AuthContext'
 import HomeCarrusel from '../components/HomeCarrusel'
-import PinCheckout from '../components/PinCheckout'
+import ConfirmarPedidoModal from '../components/ConfirmarPedidoModal'
 import './Carrito.css'
 
 function formatUSD(valor) {
@@ -307,14 +307,13 @@ function Carrito() {
   const [saldoDisponible, setSaldoDisponible] = useState(null)
   const [ordenesVencidas, setOrdenesVencidas] = useState(0)
   const [formaPago, setFormaPago] = useState('contado')
-  const [enviando, setEnviando] = useState(false)
   const [error, setError] = useState('')
   const [envioExpandido, setEnvioExpandido] = useState(false)
   const [ofertas, setOfertas] = useState([])
   const [productosRecientes, setProductosRecientes] = useState([])
   const [cargandoCarruseles, setCargandoCarruseles] = useState(true)
-  const [subUsuarioId, setSubUsuarioId] = useState(null)
   const [tieneSubUsuarios, setTieneSubUsuarios] = useState(false)
+  const [modalConfirmarAbierto, setModalConfirmarAbierto] = useState(false)
   
   const navigate = useNavigate()
 
@@ -361,6 +360,15 @@ function Carrito() {
       .finally(() => setCargandoCarruseles(false))
   }, [])
 
+  // Detecta si la cuenta tiene sub-usuarios activos configurados, para
+  // saber si ConfirmarPedidoModal debe abrir pidiendo el PIN primero.
+  useEffect(() => {
+    api
+      .get('/subusuarios')
+      .then(({ data }) => setTieneSubUsuarios(data.some((s) => s.activo)))
+      .catch(() => setTieneSubUsuarios(false))
+  }, [])
+
   // 🆕 Cerrar panel SOLO cuando se selecciona una dirección (no al cambiar tipo de envío)
     const handleCambiarTipoEnvio = (tipo) => {
     cambiarTipoEnvio(tipo) // Esto actualiza el contexto global
@@ -372,48 +380,45 @@ function Carrito() {
     setEnvioExpandido(false) // Colapsar después de seleccionar
   }
 
-  async function handleConfirmar() {
+  function handleConfirmar() {
     setError('')
-    
+
     if (opcionActual?.requiereDireccion && !direccionSeleccionada) {
       setError('Debes seleccionar una dirección de entrega')
       setEnvioExpandido(true)
       return
     }
-    
+
     if (opcionActual?.requiereAgencia && !agenciaSeleccionada) {
       setError('Debes seleccionar una agencia de envío')
       setEnvioExpandido(true)
       return
     }
 
-    if (tieneSubUsuarios && !subUsuarioId) {
-      setError('Debes indicar el PIN de quién hace este pedido')
-      return
-    }
+    setModalConfirmarAbierto(true)
+  }
 
-    setEnviando(true)
-
-    try {
-      const payload = {
-        items: items.map((item) => ({
-          producto_id: item.producto.id,
-          cantidad: item.cantidad,
-        })),
-        tipo_envio: tipoEnvio,
-        direccion_envio_id: direccionSeleccionada?.id || null,
-        agencia_envio: agenciaSeleccionada || null,
-        forma_pago: formaPago,
-        sub_usuario_id: subUsuarioId,
-      }
-      await api.post('/orders', payload)
-      clearCart()
-      navigate('/orders')
-    } catch (err) {
-      setError(err.response?.data?.error || 'Error al confirmar la orden')
-    } finally {
-      setEnviando(false)
+  // Invocado por ConfirmarPedidoModal: si la cuenta tiene sub-usuarios
+  // activos, solo se llama después de verificar el PIN — nunca antes.
+  async function crearOrden(subUsuarioIdResuelto) {
+    const payload = {
+      items: items.map((item) => ({
+        producto_id: item.producto.id,
+        cantidad: item.cantidad,
+      })),
+      tipo_envio: tipoEnvio,
+      direccion_envio_id: direccionSeleccionada?.id || null,
+      agencia_envio: agenciaSeleccionada || null,
+      forma_pago: formaPago,
+      sub_usuario_id: subUsuarioIdResuelto,
     }
+    await api.post('/orders', payload)
+  }
+
+  function cerrarModalConExito() {
+    setModalConfirmarAbierto(false)
+    clearCart()
+    navigate('/')
   }
 
   const cantidadArticulos = items.reduce((acc, item) => acc + item.cantidad, 0)
@@ -518,17 +523,14 @@ function Carrito() {
           </div>
         )}
 
-        <PinCheckout onResuelto={setSubUsuarioId} onDisponibilidad={setTieneSubUsuarios} />
-
         {error && <p className="carrito-error carrito-error--sidebar">{error}</p>}
 
         <button
           type="button"
           className="carrito-bottombar__cta carrito-bottombar__cta--sidebar"
           onClick={handleConfirmar}
-          disabled={enviando}
         >
-          {enviando ? 'Confirmando...' : 'Confirmar pedido'}
+          Confirmar pedido
         </button>
 
         <div className="cart-resumen-seguridad">
@@ -695,11 +697,19 @@ function Carrito() {
           type="button"
           className="carrito-bottombar__cta"
           onClick={handleConfirmar}
-          disabled={enviando}
         >
-          {enviando ? 'Confirmando...' : 'Confirmar pedido'}
+          Confirmar pedido
         </button>
       </div>
+
+      {modalConfirmarAbierto && (
+        <ConfirmarPedidoModal
+          requierePin={tieneSubUsuarios}
+          crearOrden={crearOrden}
+          onCerrar={() => setModalConfirmarAbierto(false)}
+          onCerrarExito={cerrarModalConExito}
+        />
+      )}
     </div>
   )
 }
