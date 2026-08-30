@@ -1,6 +1,4 @@
 import * as XLSX from 'xlsx';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
 
 const AZUL_RGB = [0, 82, 220];
 
@@ -17,7 +15,10 @@ export function exportToExcel(rows, columnas, filename) {
   XLSX.writeFile(workbook, `${filename}.xlsx`);
 }
 
-export function exportToPdf(rows, columnas, filename, titulo) {
+export async function exportToPdf(rows, columnas, filename, titulo) {
+  const { jsPDF } = await import('jspdf');
+  const { default: autoTable } = await import('jspdf-autotable');
+
   const doc = new jsPDF();
   doc.setFontSize(14);
   doc.text(titulo, 14, 15);
