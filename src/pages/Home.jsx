@@ -16,9 +16,10 @@ import './Home.css'
 
 // ── Constantes ──────────────────────────────────────────────────
 const PRODUCTOS_POR_CARGA = 12
-const MAX_CARGAS = 2
+const MAX_CARGAS = 3
 
 // Configuración de las secciones dinámicas que se cargan al scrollear.
+// Cada entrada del array = una "carga" (etapa) del infinite scroll.
 const SECCIONES_DINAMICAS = [
   [
     { titulo: 'Nuevos para ti', verTodoTo: '/catalogo' },
@@ -27,6 +28,10 @@ const SECCIONES_DINAMICAS = [
   [
     { titulo: 'Más populares', verTodoTo: '/catalogo' },
     { titulo: 'Descubrí más', verTodoTo: '/catalogo' },
+  ],
+  [
+    { titulo: 'Elegidos para tu farmacia', verTodoTo: '/catalogo' },
+    { titulo: 'Últimas unidades', verTodoTo: '/catalogo' },
   ],
 ]
 
