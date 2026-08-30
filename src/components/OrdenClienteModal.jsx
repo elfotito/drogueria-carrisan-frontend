@@ -1,101 +1,250 @@
-import { X, Package } from 'lucide-react'
-import './OrdenClienteModal.css'
-
-const PASOS = ['pedido_creado', 'procesando', 'preparando', 'enviado', 'entregado']
-
-const LABELS = {
-  pedido_creado: 'Pedido creado',
-  procesando: 'Procesando',
-  preparando: 'Preparando',
-  enviado: 'Enviado',
-  entregado: 'Entregado',
-  cancelado: 'Cancelado',
+.ocm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 1000;
+  animation: ocm-fadeIn 0.2s ease;
 }
 
-const LEGACY = {
-  pendiente: 'pedido_creado',
-  confirmado: 'procesando',
-  en_preparacion: 'preparando',
-  finalizado: 'entregado',
+@keyframes ocm-fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-function formatUSD(valor) {
-  return Number(valor || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+.ocm-content {
+  position: relative;
+  background: white;
+  width: 100%;
+  max-width: 460px;
+  max-height: 85vh;
+  overflow-y: auto;
+  border-radius: 20px 20px 0 0;
+  padding: 24px 20px calc(20px + env(safe-area-inset-bottom));
 }
 
-export default function OrdenClienteModal({ orden, onClose }) {
-  if (!orden) return null
+@media (min-width: 640px) {
+  .ocm-overlay { align-items: center; padding: 1rem; }
+  .ocm-content { border-radius: 16px; padding: 28px 24px; }
+}
 
-  const estadoNormalizado = LEGACY[orden.estado] || orden.estado
-  const esCancelada = estadoNormalizado === 'cancelado'
-  const pasoActual = PASOS.indexOf(estadoNormalizado)
-  const items = orden.items || orden.ordenes_items || orden.productos || []
+.ocm-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: #f1f5f9;
+  color: #64748b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-  return (
-    <div className="ocm-overlay" onClick={onClose}>
-      <div className="ocm-content" onClick={(e) => e.stopPropagation()}>
-        <button className="ocm-close" onClick={onClose} aria-label="Cerrar">
-          <X size={18} />
-        </button>
+.ocm-header {
+  padding-right: 36px;
+  margin-bottom: 16px;
+}
 
-        <div className="ocm-header">
-          <h2 className="ocm-numero">Orden #{orden.id}</h2>
-          <p className="ocm-fecha">
-            {new Date(orden.created_at).toLocaleDateString('es-VE', { day: 'numeric', month: 'long', year: 'numeric' })}
-          </p>
-        </div>
+.ocm-numero {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 4px;
+  font-family: 'Courier New', monospace;
+}
 
-        {/* Progreso con puntos */}
-        {esCancelada ? (
-          <div className="ocm-estado-cancelado">
-            <span className="ocm-badge ocm-badge--cancelado">Cancelada</span>
-          </div>
-        ) : (
-          <div className="ocm-progreso">
-            <div className="ocm-progreso-dots">
-              {PASOS.map((paso, i) => (
-                <div key={paso} className={`ocm-dot ${i <= pasoActual ? 'ocm-dot--activo' : ''} ${i === pasoActual ? 'ocm-dot--actual' : ''}`} />
-              ))}
-            </div>
-            <p className="ocm-progreso-label">
-              {LABELS[estadoNormalizado] || orden.estado}
-              <span className="ocm-progreso-contador"> · Paso {pasoActual + 1} de {PASOS.length}</span>
-            </p>
-          </div>
-        )}
+.ocm-fecha {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin: 0;
+  text-transform: capitalize;
+}
 
-        <div className="ocm-divider" />
+/* Progreso con puntos */
+.ocm-progreso {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 0 20px;
+}
 
-        {/* Resumen de productos, compacto */}
-        <div className="ocm-section">
-          <h3 className="ocm-section-title"><Package size={16} /> Productos ({items.length})</h3>
-          <div className="ocm-items">
-            {items.map((item, i) => (
-              <div key={item.id || i} className="ocm-item">
-                <span className="ocm-item-nombre">
-                  {item.nombre || item.producto?.nombre_comercial || item.productos?.nombre_comercial || 'Producto'}
-                </span>
-                <span className="ocm-item-cant">×{item.cantidad || 1}</span>
-              </div>
-            ))}
-          </div>
-        </div>
+.ocm-progreso-dots {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
-        <div className="ocm-divider" />
+.ocm-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  transition: all 0.2s;
+}
 
-        <div className="ocm-total-row">
-          <span>Total</span>
-          <strong>${formatUSD(orden.total_usd)}</strong>
-        </div>
+.ocm-dot--activo {
+  background: #0052dc;
+}
 
-        <p className="ocm-estado-pago-nota">
-          {orden.estado_pago === 'verificado'
-            ? '✅ Esta orden ya fue pagada'
-            : orden.estado_pago === 'reportado'
-              ? '⏳ Pago reportado, en revisión'
-              : '💳 Pendiente de pago'}
-        </p>
-      </div>
-    </div>
-  )
+.ocm-dot--actual {
+  width: 14px;
+  height: 14px;
+  box-shadow: 0 0 0 4px rgba(0, 82, 220, 0.15);
+}
+
+.ocm-progreso-label {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1a1a3a;
+  margin: 0;
+  text-align: center;
+}
+
+.ocm-progreso-contador {
+  font-weight: 400;
+  color: #64748b;
+  font-size: 0.85rem;
+}
+
+.ocm-estado-cancelado {
+  display: flex;
+  justify-content: center;
+  padding: 16px 0;
+}
+
+.ocm-badge--cancelado {
+  background: #fee2e2;
+  color: #991b1b;
+  font-weight: 700;
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+}
+
+.ocm-divider {
+  height: 1px;
+  background: #e2e8f0;
+  margin: 16px 0;
+}
+
+.ocm-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #334155;
+  margin: 0 0 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.ocm-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ocm-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #1e293b;
+}
+
+.ocm-item-cant {
+  color: #64748b;
+  font-family: 'Courier New', monospace;
+}
+
+.ocm-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.ocm-total-row strong {
+  font-family: 'Courier New', monospace;
+  color: #0052dc;
+  font-size: 1.2rem;
+}
+
+.ocm-estado-pago-nota {
+  margin-top: 16px;
+  padding: 10px 14px;
+  background: #f0fdf4;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #16a34a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.pcm-monto-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 12px 0 4px;
+}
+
+.pcm-monto-hero__valor {
+  font-family: 'Courier New', monospace;
+  font-size: 2.1rem;
+  font-weight: 800;
+  color: #16a34a;
+  line-height: 1;
+}
+
+.pcm-monto-hero__bs {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.pcm-tasa {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin: 0 0 8px;
+}
+
+.pcm-tasa strong {
+  color: #64748b;
+}
+
+.pcm-btn-descarga {
+  width: 100%;
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  background: white;
+  color: #334155;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.pcm-btn-descarga:hover {
+  background: #f8fafc;
 }
