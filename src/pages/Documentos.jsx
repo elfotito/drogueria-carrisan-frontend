@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import { jsPDF } from 'jspdf' // npm install jspdf
 import api from '../api/axios'
 import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
 import { NAV_UNIFICADO } from '../components/paginas-principales/NavUnificado'
@@ -10,19 +11,15 @@ import './Documentos.css'
 const TIPOS = [
   { id: 'rif', label: 'RIF', automatica: true, desc: 'Descarga inmediata, válida por 72 horas' },
   { id: 'estado_cuenta', label: 'Estado de cuenta', automatica: false, desc: 'Te lo enviamos a tu correo' },
-  { id: 'referencia_comercial', label: 'Referencia comercial', automatica: false, desc: 'Te lo enviamos a tu correo' },
+  { id: 'referencia_comercial', label: 'Referencia comercial', automatica: true, desc: 'Se genera al instante con tus datos' },
   { id: 'otro', label: 'Otro documento', automatica: false, desc: 'Cuéntanos qué necesitas' },
 ]
 
-// ── RIF: mismo documento para todos los clientes, enlace fijo en Drive ──
-// "uc?export=download" hace que Drive sirva el archivo directo en vez de
-// abrir la vista previa (dispara la descarga automáticamente).
-const RIF_FILE_ID = '1urzfao8FWFlvjCTXtz42KZNZX-uTJm9i'
-const RIF_DOWNLOAD_URL = `https://drive.google.com/uc?export=download&id=${RIF_FILE_ID}`
-
-const RIF_VENTANA_MS = 72 * 60 * 60 * 1000 // 72h disponible para descargar
-const RIF_ENFRIAMIENTO_MS = 72 * 60 * 60 * 1000 // + 72h inhabilitado
-const RIF_STORAGE_KEY = 'doc_rif_ultima_solicitud'
+// RIF: el backend ya resuelve el enlace fijo de Drive (env var
+// URL_DOCUMENTO_RIF), aprueba la solicitud al instante y calcula
+// fecha_expiracion (72h) + el enfriamiento de 72h más. Acá solo leemos
+// esos datos de la solicitud más reciente.
+const RIF_ENFRIAMIENTO_MS = 72 * 60 * 60 * 1000
 
 const NOVENTA_DIAS_MS = 90 * 24 * 60 * 60 * 1000
 
@@ -61,15 +58,10 @@ function Cronometro({ hasta, texto }) {
   )
 }
 
-// ── Estado del RIF, controlado en el navegador (mismo archivo para     ──
-// todos, no depende de que el backend guarde una URL por solicitud).
-// Si más adelante el backend empieza a devolver `fecha_expiracion` real
-// por solicitud, este hook es el único lugar que habría que ajustar.
-function useEstadoRif(registrarSolicitud) {
-  const [ultimaSolicitud, setUltimaSolicitud] = useState(() => {
-    const guardado = localStorage.getItem(RIF_STORAGE_KEY)
-    return guardado ? Number(guardado) : null
-  })
+// ── Estado del RIF, derivado de la solicitud automática más reciente ──
+// que devuelve GET /documentos/mios (ya viene ordenada por fecha_solicitud
+// descendente, así que la primera que encontremos es la última).
+function useEstadoRif(solicitudes, solicitarRif) {
   const [, forzarTick] = useState(0)
 
   useEffect(() => {
@@ -77,35 +69,101 @@ function useEstadoRif(registrarSolicitud) {
     return () => clearInterval(id)
   }, [])
 
+  const ultima = solicitudes.find((s) => s.tipo_documento === 'rif' && s.es_automatica)
   const ahora = Date.now()
-  const expiraEn = ultimaSolicitud ? ultimaSolicitud + RIF_VENTANA_MS : null
-  const habilitaEn = ultimaSolicitud ? ultimaSolicitud + RIF_VENTANA_MS + RIF_ENFRIAMIENTO_MS : null
 
-  let estado = 'disponible' // puede solicitarse
-  if (expiraEn && ahora < expiraEn) estado = 'descargable'
-  else if (habilitaEn && ahora < habilitaEn) estado = 'enfriamiento'
+  let estado = 'disponible'
+  let expiraEn = null
+  let habilitaEn = null
+
+  if (ultima) {
+    if (ultima.url_documento) {
+      // El backend ya nos manda null si venció; si hay url, seguimos dentro de las 72h.
+      estado = 'descargable'
+      expiraEn = new Date(ultima.fecha_expiracion).getTime()
+    } else if (ultima.fecha_expiracion) {
+      habilitaEn = new Date(ultima.fecha_expiracion).getTime() + RIF_ENFRIAMIENTO_MS
+      if (ahora < habilitaEn) estado = 'enfriamiento'
+    }
+  }
 
   function descargar() {
-    const a = document.createElement('a')
-    a.href = RIF_DOWNLOAD_URL
-    a.rel = 'noreferrer'
-    a.target = '_blank'
-    document.body.appendChild(a)
-    a.click()
-    a.remove()
+    if (!ultima?.url_documento) return
+    window.open(ultima.url_documento, '_blank', 'noreferrer')
   }
 
-  function solicitar() {
-    const ts = Date.now()
-    setUltimaSolicitud(ts)
-    localStorage.setItem(RIF_STORAGE_KEY, String(ts))
-    descargar()
-    // Dejamos registro en el backend para que quede en el historial del
-    // admin, sin bloquear la descarga si la solicitud tarda o falla.
-    registrarSolicitud?.('rif')?.catch(() => {})
-  }
+  return { estado, expiraEn, habilitaEn, descargar, solicitar: solicitarRif }
+}
 
-  return { estado, expiraEn, habilitaEn, descargar, solicitar }
+// ── Referencia comercial: PDF armado en el navegador con los datos      ──
+// del cliente. El texto y la firma son siempre los mismos, solo cambia
+// el nombre y la cédula/RIF.
+function generarReferenciaPDF({ nombre, identificacion }) {
+  const doc = new jsPDF({ unit: 'pt', format: 'letter' })
+  const margenX = 72
+  const anchoTexto = 468
+  let y = 90
+
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(13)
+  doc.text('DROGUERÍA CARRISAN, C.A.', margenX, y)
+
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(10)
+  y += 16
+  const fecha = new Date().toLocaleDateString('es-VE', { day: 'numeric', month: 'long', year: 'numeric' })
+  doc.text(`Caracas, ${fecha}`, margenX, y)
+
+  y += 50
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(12)
+  doc.text('REFERENCIA COMERCIAL', 306, y, { align: 'center' })
+
+  y += 30
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(11)
+  doc.text('A quien pueda interesar:', margenX, y)
+
+  y += 26
+  const parrafo1 =
+    `Por medio de la presente, Droguería Carrisan, C.A. hace constar que ${nombre}, ` +
+    `titular de la Cédula/RIF N.° ${identificacion}, es cliente comercial de nuestra empresa, ` +
+    `con quien mantenemos relaciones comerciales activas.`
+  const lineas1 = doc.splitTextToSize(parrafo1, anchoTexto)
+  doc.text(lineas1, margenX, y)
+  y += lineas1.length * 15 + 14
+
+  const parrafo2 =
+    'Durante este tiempo, el cliente ha manejado montos de siete (7) cifras o más de forma ' +
+    'trimestral, cumpliendo satisfactoriamente con sus compromisos comerciales.'
+  const lineas2 = doc.splitTextToSize(parrafo2, anchoTexto)
+  doc.text(lineas2, margenX, y)
+  y += lineas2.length * 15 + 14
+
+  const parrafo3 =
+    'La presente referencia se emite a solicitud del interesado, para los fines que estime conveniente.'
+  const lineas3 = doc.splitTextToSize(parrafo3, anchoTexto)
+  doc.text(lineas3, margenX, y)
+  y += lineas3.length * 15 + 36
+
+  doc.text('Sin otro particular,', margenX, y)
+  y += 24
+  doc.text('Atentamente,', margenX, y)
+
+  // Espacio para la firma
+  y += 70
+  doc.line(margenX, y, margenX + 220, y)
+  y += 16
+  doc.setFont('helvetica', 'bold')
+  doc.text('Victor H. Carrillo S.', margenX, y)
+  y += 14
+  doc.setFont('helvetica', 'normal')
+  doc.text('Director General', margenX, y)
+  y += 14
+  doc.text('Droguería Carrisan, C.A.', margenX, y)
+
+  const slug = nombre.trim().toLowerCase().replace(/\s+/g, '-')
+  doc.save(`referencia-comercial-${slug}.pdf`)
 }
 
 function TarjetaTipo({ tipo, onSolicitar, enviando, rif }) {
@@ -160,7 +218,7 @@ function TarjetaTipo({ tipo, onSolicitar, enviando, rif }) {
         )}
 
         {rif.estado === 'disponible' && (
-          <button className="doc-tipo__btn" onClick={rif.solicitar}>
+          <button className="doc-tipo__btn" onClick={rif.solicitar} disabled={enviando}>
             Solicitar
           </button>
         )}
@@ -199,8 +257,12 @@ function SolicitudCard({ solicitud }) {
 
       {solicitud.descripcion && <p className="doc-card__desc">{solicitud.descripcion}</p>}
 
-      {solicitud.estado === 'aprobada' && solicitud.es_automatica && (
+      {solicitud.estado === 'aprobada' && solicitud.es_automatica && solicitud.tipo_documento === 'rif' && (
         <p className="doc-card__nota">Disponible para descarga arriba, mientras esté vigente</p>
+      )}
+
+      {solicitud.estado === 'aprobada' && solicitud.es_automatica && solicitud.tipo_documento === 'referencia_comercial' && (
+        <p className="doc-card__nota">Generada al instante con tus datos</p>
       )}
 
       {solicitud.estado === 'aprobada' && !solicitud.es_automatica && (
@@ -214,11 +276,9 @@ function SolicitudCard({ solicitud }) {
   )
 }
 
-// Intenta leer la fecha de creación sin importar cómo la llame el backend.
-// Ajusta esta lista si tu API usa otro nombre de campo.
+// Campo real confirmado en documentos.controller.js: fecha_solicitud.
 function obtenerFechaCreacion(solicitud) {
-  const valor = solicitud.fecha_creacion || solicitud.created_at || solicitud.createdAt
-  return valor ? new Date(valor) : null
+  return solicitud.fecha_solicitud ? new Date(solicitud.fecha_solicitud) : null
 }
 
 function Documentos() {
@@ -245,16 +305,36 @@ function Documentos() {
   async function handleSolicitar(tipo_documento, descripcion) {
     setEnviando(true)
     try {
-      await api.post('/documentos', { tipo_documento, descripcion })
+      const { data } = await api.post('/documentos', { tipo_documento, descripcion })
+
+      // RIF: la descarga arranca de una vez, sin esperar al refresh de la lista.
+      if (tipo_documento === 'rif' && data.es_automatica && data.url_documento) {
+        window.open(data.url_documento, '_blank', 'noreferrer')
+      }
+
+      // Referencia comercial: el PDF se arma en el momento con los datos que mandó el backend.
+      if (tipo_documento === 'referencia_comercial') {
+        const { nombre, identificacion } = data.datos_cliente || {}
+        if (!nombre || !identificacion) {
+          alert('Tu perfil no tiene registrada la cédula o RIF. Actualízalo antes de generar la referencia.')
+        } else {
+          generarReferenciaPDF({ nombre, identificacion })
+        }
+      }
+
       cargar()
     } catch (err) {
-      alert(err.response?.data?.error || 'Error al solicitar el documento')
+      if (err.response?.status === 429) {
+        alert(err.response.data?.error || 'Todavía no puedes solicitar este documento de nuevo')
+      } else {
+        alert(err.response?.data?.error || 'Error al solicitar el documento')
+      }
     } finally {
       setEnviando(false)
     }
   }
 
-  const rif = useEstadoRif((tipo) => api.post('/documentos', { tipo_documento: tipo }).then(cargar))
+  const rif = useEstadoRif(solicitudes, () => handleSolicitar('rif'))
 
   // Solo mostramos actividad de los últimos 90 días; pasado ese tiempo se
   // consideran limpiadas de la vista. El borrado real en la base de datos
