@@ -25,13 +25,16 @@ function PrecioSuperIndice({ valor }) {
   )
 }
 
-// Renderiza estrellas (llenas, medias, vacías) + total de reseñas
+// Renderiza estrellas (llenas, medias, vacías) + total de reseñas.
+// Si el producto no tiene valoraciones, muestra 5 estrellas grises y (S/V).
 function Estrellas({ promedio, total }) {
-  if (promedio == null || promedio === 0) return null
+  const sinValoraciones = promedio == null || promedio === 0 || !total
 
   const estrellas = []
   for (let i = 1; i <= 5; i++) {
-    if (i <= Math.floor(promedio)) {
+    if (sinValoraciones) {
+      estrellas.push('☆')
+    } else if (i <= Math.floor(promedio)) {
       estrellas.push('★')
     } else if (i - promedio < 1 && i - promedio > 0) {
       estrellas.push('★') // media estrella se muestra como llena por simplicidad
@@ -41,9 +44,9 @@ function Estrellas({ promedio, total }) {
   }
 
   return (
-    <span className="pcard__rating">
+    <span className={`pcard__rating ${sinValoraciones ? 'pcard__rating--vacio' : ''}`}>
       <span className="pcard__rating-stars">{estrellas.join('')}</span>
-      <span className="pcard__rating-count">({total})</span>
+      <span className="pcard__rating-count">{sinValoraciones ? '(S/V)' : `(${total})`}</span>
     </span>
   )
 }
@@ -314,7 +317,7 @@ function ProductCard({ producto, tasaVes, variante = 'vertical' }) {
                   <PrecioSuperIndice valor={producto.precio_usd} />
                 </span>
                 <span className="pcard__precio-original">
-                  ${formatUSD(producto.precio_original_usd)}
+                  <PrecioSuperIndice valor={producto.precio_original_usd} />
                 </span>
               </>
             ) : (

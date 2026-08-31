@@ -15,13 +15,6 @@ const categoriasFiltro = [
   { id: 'Primeros Auxilios', nombre: 'Primeros Auxilios', icono: '🩹' },
 ]
 
-const filtrosRapidos = [
-  { key: 'laboratorio', label: 'Laboratorio', icono: '🏷️' },
-  { key: 'disponibilidad', label: 'Disponibilidad', icono: '📦' },
-  { key: 'forma', label: 'Forma', icono: '⚗️' },
-  { key: 'precio', label: 'Precio', icono: '💲' },
-]
-
 function Catalogo() {
   const [searchParams] = useSearchParams()
   const searchTerm = searchParams.get('search') || ''
@@ -145,11 +138,6 @@ useEffect(() => {
     setSeccionesAbiertas((prev) => ({ ...prev, [key]: !prev[key] }))
   }
 
-  function irAFiltro(key) {
-    setSeccionesAbiertas((prev) => ({ ...prev, [key]: true }))
-    setFiltrosAbiertos(true)
-  }
-
   function toggleEnArray(valor, array, setArray) {
     setArray((prev) =>
       prev.includes(valor) ? prev.filter((v) => v !== valor) : [...prev, valor]
@@ -182,76 +170,32 @@ useEffect(() => {
 
   return (
     <div className="catalogo-layout">
-      <div className="catalogo-filtros-rapidos">
-        <button
-          type="button"
-          className="pill-filtro-sliders"
-          onClick={() => setFiltrosAbiertos(true)}
-          aria-label="Abrir todos los filtros"
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <line x1="4" y1="6" x2="20" y2="6"></line>
-            <circle cx="9" cy="6" r="2" fill="currentColor" stroke="none"></circle>
-            <line x1="4" y1="12" x2="20" y2="12"></line>
-            <circle cx="16" cy="12" r="2" fill="currentColor" stroke="none"></circle>
-            <line x1="4" y1="18" x2="20" y2="18"></line>
-            <circle cx="11" cy="18" r="2" fill="currentColor" stroke="none"></circle>
-          </svg>
-        </button>
-
-        {filtrosRapidos.map((f) => (
+      {/* Carrusel de categorías — solo mobile */}
+      {!esDesktop && (
+        <div className="catalogo-carrusel-wrap">
+          <div className="catalogo-carrusel" ref={carruselRef}>
+            {categoriasFiltro.map((cat) => (
+              <button
+                key={cat.id}
+                type="button"
+                className={`carrusel-item ${categoriaActiva === cat.id ? 'carrusel-item--activo' : ''}`}
+                onClick={() => setCategoriaActiva(cat.id)}
+              >
+                <span className="carrusel-item__icono">{cat.icono}</span>
+                <span className="carrusel-item__label">{cat.nombre}</span>
+              </button>
+            ))}
+          </div>
           <button
-            key={f.key}
             type="button"
-            className="pill-filtro-rapido"
-            onClick={() => irAFiltro(f.key)}
+            className="catalogo-carrusel-flecha"
+            onClick={() => scrollCarrusel(1)}
+            aria-label="Ver más categorías"
           >
-            <span className="pill-filtro-rapido__icono">{f.icono}</span>
-            {f.label}
-            <span className="pill-filtro-rapido__chevron">⌄</span>
+            ›
           </button>
-        ))}
-
-        <div className="catalogo-ordenar-desktop">
-          <span className="catalogo-ordenar-label">Ordenar por</span>
-          <select
-            value={sort}
-            onChange={(e) => setSort(e.target.value)}
-            className="catalogo-sort-select"
-          >
-            <option value="relevancia">Mejor coincidencia</option>
-            <option value="nombre_asc">Nombre (A-Z)</option>
-            <option value="precio_asc">Precio: menor a mayor</option>
-            <option value="precio_desc">Precio: mayor a menor</option>
-          </select>
         </div>
-      </div>
-
-      <div className="catalogo-carrusel-wrap">
-        <div className="catalogo-carrusel" ref={carruselRef}>
-          {categoriasFiltro.map((cat) => (
-            <button
-              key={cat.id}
-              type="button"
-              className={`carrusel-item ${categoriaActiva === cat.id ? 'carrusel-item--activo' : ''}`}
-              onClick={() => setCategoriaActiva(cat.id)}
-            >
-              <span className="carrusel-item__icono">{cat.icono}</span>
-              <span className="carrusel-item__label">{cat.nombre}</span>
-            </button>
-          ))}
-        </div>
-        <button
-          type="button"
-          className="catalogo-carrusel-flecha"
-          onClick={() => scrollCarrusel(1)}
-          aria-label="Ver más categorías"
-        >
-          ›
-        </button>
-      </div>
-
-      <div className="catalogo-divider"></div>
+      )}
 
       <header className="catalogo-header">
         <div className="header-titles">
@@ -271,162 +215,187 @@ useEffect(() => {
             }
           </p>
         </div>
+
+        {/* Botón Filtros — solo mobile */}
+        {!esDesktop && (
+          <button
+            type="button"
+            className="catalogo-filtros-btn"
+            onClick={() => setFiltrosAbiertos(true)}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="4" y1="6" x2="20" y2="6"></line>
+              <circle cx="9" cy="6" r="2" fill="currentColor" stroke="none"></circle>
+              <line x1="4" y1="12" x2="20" y2="12"></line>
+              <circle cx="16" cy="12" r="2" fill="currentColor" stroke="none"></circle>
+              <line x1="4" y1="18" x2="20" y2="18"></line>
+              <circle cx="11" cy="18" r="2" fill="currentColor" stroke="none"></circle>
+            </svg>
+            Filtros
+          </button>
+        )}
+
+        {/* Ordenar por — desktop */}
+        {esDesktop && (
+          <div className="catalogo-ordenar-desktop">
+            <span className="catalogo-ordenar-label">Ordenar por</span>
+            <select
+              value={sort}
+              onChange={(e) => setSort(e.target.value)}
+              className="catalogo-sort-select"
+            >
+              <option value="relevancia">Mejor coincidencia</option>
+              <option value="nombre_asc">Nombre (A-Z)</option>
+              <option value="precio_asc">Precio: menor a mayor</option>
+              <option value="precio_desc">Precio: mayor a menor</option>
+            </select>
+          </div>
+        )}
       </header>
 
       <div className="catalogo-body">
-        {filtrosAbiertos && (
-          <div
-            className="catalogo-overlay"
-            onClick={() => setFiltrosAbiertos(false)}
-            aria-hidden="true"
-          />
+        {/* Sidebar filtros — solo desktop */}
+        {esDesktop && (
+          <aside className="catalogo-filtros">
+            {hayFiltrosActivos && (
+              <button type="button" className="btn-limpiar-filtros" onClick={limpiarFiltros}>
+                Limpiar filtros
+              </button>
+            )}
+
+            {/* Categoría */}
+            <div className="filtro-seccion">
+              <button className="filtro-accordion-btn" onClick={() => toggleSeccion('categoria')}>
+                <span>Categoría</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                  style={{ transform: seccionesAbiertas.categoria ? 'rotate(180deg)' : 'none' }}>
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              {seccionesAbiertas.categoria && (
+                <div className="filtro-content">
+                  {categoriasFiltro.map((cat) => (
+                    <button
+                      key={cat.id}
+                      className={`filtro-pill ${categoriaActiva === cat.id ? 'active' : ''}`}
+                      onClick={() => setCategoriaActiva(cat.id)}
+                    >
+                      {cat.nombre}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Laboratorio */}
+            <div className="filtro-seccion">
+              <button className="filtro-accordion-btn" onClick={() => toggleSeccion('laboratorio')}>
+                <span>Laboratorio</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                  style={{ transform: seccionesAbiertas.laboratorio ? 'rotate(180deg)' : 'none' }}>
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              {seccionesAbiertas.laboratorio && (
+                <div className="filtro-content">
+                  {laboratoriosDisponibles.length === 0 && (
+                    <p className="filtro-vacio">Sin datos aún</p>
+                  )}
+                  {laboratoriosDisponibles.map((lab) => (
+                    <button
+                      key={lab}
+                      className={`filtro-pill ${laboratoriosActivos.includes(lab) ? 'active' : ''}`}
+                      onClick={() => toggleEnArray(lab, laboratoriosActivos, setLaboratoriosActivos)}
+                    >
+                      {lab}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Forma */}
+            <div className="filtro-seccion">
+              <button className="filtro-accordion-btn" onClick={() => toggleSeccion('forma')}>
+                <span>Forma</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                  style={{ transform: seccionesAbiertas.forma ? 'rotate(180deg)' : 'none' }}>
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              {seccionesAbiertas.forma && (
+                <div className="filtro-content">
+                  {formasDisponibles.length === 0 && (
+                    <p className="filtro-vacio">Sin datos aún</p>
+                  )}
+                  {formasDisponibles.map((forma) => (
+                    <button
+                      key={forma}
+                      className={`filtro-pill ${formasActivas.includes(forma) ? 'active' : ''}`}
+                      onClick={() => toggleEnArray(forma, formasActivas, setFormasActivas)}
+                    >
+                      {forma}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Disponibilidad */}
+            <div className="filtro-seccion">
+              <button className="filtro-accordion-btn" onClick={() => toggleSeccion('disponibilidad')}>
+                <span>Disponibilidad</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                  style={{ transform: seccionesAbiertas.disponibilidad ? 'rotate(180deg)' : 'none' }}>
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              {seccionesAbiertas.disponibilidad && (
+                <div className="filtro-content">
+                  <label className="filtro-checkbox">
+                    <input
+                      type="checkbox"
+                      checked={soloDisponibles}
+                      onChange={(e) => setSoloDisponibles(e.target.checked)}
+                    />
+                    Solo productos disponibles
+                  </label>
+                </div>
+              )}
+            </div>
+
+            {/* Precio */}
+            <div className="filtro-seccion">
+              <button className="filtro-accordion-btn" onClick={() => toggleSeccion('precio')}>
+                <span>Precio (USD)</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                  style={{ transform: seccionesAbiertas.precio ? 'rotate(180deg)' : 'none' }}>
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              {seccionesAbiertas.precio && (
+                <div className="filtro-precio-rango">
+                  <input
+                    type="number"
+                    placeholder="Mín"
+                    value={precioMin}
+                    onChange={(e) => setPrecioMin(e.target.value)}
+                    min="0"
+                  />
+                  <span>—</span>
+                  <input
+                    type="number"
+                    placeholder="Máx"
+                    value={precioMax}
+                    onChange={(e) => setPrecioMax(e.target.value)}
+                    min="0"
+                  />
+                </div>
+              )}
+            </div>
+          </aside>
         )}
 
-        {(esDesktop || filtrosAbiertos) && (
-  <aside className={`catalogo-filtros ${filtrosAbiertos ? 'catalogo-filtros--abierto' : ''}`}>
-          <div className="catalogo-filtros__header-mobile">
-            <span>Filtros</span>
-            <button type="button" onClick={() => setFiltrosAbiertos(false)} aria-label="Cerrar filtros">✕</button>
-          </div>
-
-          {hayFiltrosActivos && (
-            <button type="button" className="btn-limpiar-filtros" onClick={limpiarFiltros}>
-              Limpiar filtros
-            </button>
-          )}
-
-          {/* Categoría */}
-          <div className="filtro-seccion">
-            <button className="filtro-accordion-btn" onClick={() => toggleSeccion('categoria')}>
-              <span>Categoría</span>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-                style={{ transform: seccionesAbiertas.categoria ? 'rotate(180deg)' : 'none' }}>
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </button>
-            {seccionesAbiertas.categoria && (
-              <div className="filtro-content">
-                {categoriasFiltro.map((cat) => (
-                  <button
-                    key={cat.id}
-                    className={`filtro-pill ${categoriaActiva === cat.id ? 'active' : ''}`}
-                    onClick={() => setCategoriaActiva(cat.id)}
-                  >
-                    {cat.nombre}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Laboratorio */}
-          <div className="filtro-seccion">
-            <button className="filtro-accordion-btn" onClick={() => toggleSeccion('laboratorio')}>
-              <span>Laboratorio</span>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-                style={{ transform: seccionesAbiertas.laboratorio ? 'rotate(180deg)' : 'none' }}>
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </button>
-            {seccionesAbiertas.laboratorio && (
-              <div className="filtro-content">
-                {laboratoriosDisponibles.length === 0 && (
-                  <p className="filtro-vacio">Sin datos aún</p>
-                )}
-                {laboratoriosDisponibles.map((lab) => (
-                  <button
-                    key={lab}
-                    className={`filtro-pill ${laboratoriosActivos.includes(lab) ? 'active' : ''}`}
-                    onClick={() => toggleEnArray(lab, laboratoriosActivos, setLaboratoriosActivos)}
-                  >
-                    {lab}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Forma */}
-          <div className="filtro-seccion">
-            <button className="filtro-accordion-btn" onClick={() => toggleSeccion('forma')}>
-              <span>Forma</span>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-                style={{ transform: seccionesAbiertas.forma ? 'rotate(180deg)' : 'none' }}>
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </button>
-            {seccionesAbiertas.forma && (
-              <div className="filtro-content">
-                {formasDisponibles.length === 0 && (
-                  <p className="filtro-vacio">Sin datos aún</p>
-                )}
-                {formasDisponibles.map((forma) => (
-                  <button
-                    key={forma}
-                    className={`filtro-pill ${formasActivas.includes(forma) ? 'active' : ''}`}
-                    onClick={() => toggleEnArray(forma, formasActivas, setFormasActivas)}
-                  >
-                    {forma}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Disponibilidad */}
-          <div className="filtro-seccion">
-            <button className="filtro-accordion-btn" onClick={() => toggleSeccion('disponibilidad')}>
-              <span>Disponibilidad</span>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-                style={{ transform: seccionesAbiertas.disponibilidad ? 'rotate(180deg)' : 'none' }}>
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </button>
-            {seccionesAbiertas.disponibilidad && (
-              <div className="filtro-content">
-                <label className="filtro-checkbox">
-                  <input
-                    type="checkbox"
-                    checked={soloDisponibles}
-                    onChange={(e) => setSoloDisponibles(e.target.checked)}
-                  />
-                  Solo productos disponibles
-                </label>
-              </div>
-            )}
-          </div>
-
-          {/* Precio */}
-          <div className="filtro-seccion">
-            <button className="filtro-accordion-btn" onClick={() => toggleSeccion('precio')}>
-              <span>Precio (USD)</span>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-                style={{ transform: seccionesAbiertas.precio ? 'rotate(180deg)' : 'none' }}>
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </button>
-            {seccionesAbiertas.precio && (
-              <div className="filtro-precio-rango">
-                <input
-                  type="number"
-                  placeholder="Mín"
-                  value={precioMin}
-                  onChange={(e) => setPrecioMin(e.target.value)}
-                  min="0"
-                />
-                <span>—</span>
-                <input
-                  type="number"
-                  placeholder="Máx"
-                  value={precioMax}
-                  onChange={(e) => setPrecioMax(e.target.value)}
-                  min="0"
-                />
-              </div>
-            )}
-          </div>
-        </aside>
-     )}
         <main className="catalogo-main-content">
           {cargando ? (
             <div className="product-grid">
@@ -445,6 +414,183 @@ useEffect(() => {
           )}
         </main>
       </div>
+
+      {/* Modal filtros — solo mobile */}
+      {!esDesktop && filtrosAbiertos && (
+        <>
+          <div className="catalogo-overlay" onClick={() => setFiltrosAbiertos(false)} />
+          <div className="catalogo-filtros-modal">
+            <div className="catalogo-filtros-modal__header">
+              <span>Filtros</span>
+              <button type="button" onClick={() => setFiltrosAbiertos(false)} aria-label="Cerrar filtros">✕</button>
+            </div>
+
+            {hayFiltrosActivos && (
+              <button type="button" className="btn-limpiar-filtros" onClick={limpiarFiltros}>
+                Limpiar filtros
+              </button>
+            )}
+
+            {/* Ordenar por */}
+            <div className="filtro-seccion">
+              <span className="filtro-seccion__titulo">Ordenar por</span>
+              <div className="catalogo-sort-modal-options">
+                {[
+                  { value: 'relevancia', label: 'Mejor coincidencia' },
+                  { value: 'nombre_asc', label: 'Nombre (A-Z)' },
+                  { value: 'precio_asc', label: 'Precio: menor a mayor' },
+                  { value: 'precio_desc', label: 'Precio: mayor a menor' },
+                ].map((opt) => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    className={`filtro-pill ${sort === opt.value ? 'active' : ''}`}
+                    onClick={() => setSort(opt.value)}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Categoría */}
+            <div className="filtro-seccion">
+              <button className="filtro-accordion-btn" onClick={() => toggleSeccion('categoria')}>
+                <span>Categoría</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                  style={{ transform: seccionesAbiertas.categoria ? 'rotate(180deg)' : 'none' }}>
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              {seccionesAbiertas.categoria && (
+                <div className="filtro-content">
+                  {categoriasFiltro.map((cat) => (
+                    <button
+                      key={cat.id}
+                      className={`filtro-pill ${categoriaActiva === cat.id ? 'active' : ''}`}
+                      onClick={() => setCategoriaActiva(cat.id)}
+                    >
+                      {cat.nombre}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Laboratorio */}
+            <div className="filtro-seccion">
+              <button className="filtro-accordion-btn" onClick={() => toggleSeccion('laboratorio')}>
+                <span>Laboratorio</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                  style={{ transform: seccionesAbiertas.laboratorio ? 'rotate(180deg)' : 'none' }}>
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              {seccionesAbiertas.laboratorio && (
+                <div className="filtro-content">
+                  {laboratoriosDisponibles.length === 0 && (
+                    <p className="filtro-vacio">Sin datos aún</p>
+                  )}
+                  {laboratoriosDisponibles.map((lab) => (
+                    <button
+                      key={lab}
+                      className={`filtro-pill ${laboratoriosActivos.includes(lab) ? 'active' : ''}`}
+                      onClick={() => toggleEnArray(lab, laboratoriosActivos, setLaboratoriosActivos)}
+                    >
+                      {lab}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Forma */}
+            <div className="filtro-seccion">
+              <button className="filtro-accordion-btn" onClick={() => toggleSeccion('forma')}>
+                <span>Forma</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                  style={{ transform: seccionesAbiertas.forma ? 'rotate(180deg)' : 'none' }}>
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              {seccionesAbiertas.forma && (
+                <div className="filtro-content">
+                  {formasDisponibles.length === 0 && (
+                    <p className="filtro-vacio">Sin datos aún</p>
+                  )}
+                  {formasDisponibles.map((forma) => (
+                    <button
+                      key={forma}
+                      className={`filtro-pill ${formasActivas.includes(forma) ? 'active' : ''}`}
+                      onClick={() => toggleEnArray(forma, formasActivas, setFormasActivas)}
+                    >
+                      {forma}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Disponibilidad */}
+            <div className="filtro-seccion">
+              <button className="filtro-accordion-btn" onClick={() => toggleSeccion('disponibilidad')}>
+                <span>Disponibilidad</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                  style={{ transform: seccionesAbiertas.disponibilidad ? 'rotate(180deg)' : 'none' }}>
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              {seccionesAbiertas.disponibilidad && (
+                <div className="filtro-content">
+                  <label className="filtro-checkbox">
+                    <input
+                      type="checkbox"
+                      checked={soloDisponibles}
+                      onChange={(e) => setSoloDisponibles(e.target.checked)}
+                    />
+                    Solo productos disponibles
+                  </label>
+                </div>
+              )}
+            </div>
+
+            {/* Precio */}
+            <div className="filtro-seccion">
+              <button className="filtro-accordion-btn" onClick={() => toggleSeccion('precio')}>
+                <span>Precio (USD)</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                  style={{ transform: seccionesAbiertas.precio ? 'rotate(180deg)' : 'none' }}>
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              {seccionesAbiertas.precio && (
+                <div className="filtro-precio-rango">
+                  <input
+                    type="number"
+                    placeholder="Mín"
+                    value={precioMin}
+                    onChange={(e) => setPrecioMin(e.target.value)}
+                    min="0"
+                  />
+                  <span>—</span>
+                  <input
+                    type="number"
+                    placeholder="Máx"
+                    value={precioMax}
+                    onChange={(e) => setPrecioMax(e.target.value)}
+                    min="0"
+                  />
+                </div>
+              )}
+            </div>
+
+            <button type="button" className="catalogo-filtros-modal__apply" onClick={() => setFiltrosAbiertos(false)}>
+              Aplicar filtros
+            </button>
+          </div>
+        </>
+      )}
+
       <BottomNav />
     </div>
   )

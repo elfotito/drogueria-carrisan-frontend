@@ -29,7 +29,7 @@ export const NAV_UNIFICADO = [
     items: [
       { id: 'ordenes', to: '/orders', icono: Package, texto: 'Mis órdenes' },
       { id: 'presupuesto', to: '/presupuesto', icono: ClipboardList, texto: 'Presupuesto' },
-      { id: 'chat', to: '/chat', icono: MessageCircle, texto: 'Centro de Comunicaciones' },
+      { id: 'chat', to: '/chat', icono: MessageCircle, texto: 'Chats' },
     ],
   },
   {
@@ -37,7 +37,7 @@ export const NAV_UNIFICADO = [
     items: [
       { id: 'mis-items', to: '/mis-items', icono: Star, texto: 'Mis items', soloCliente: true },
       { id: 'direcciones', to: '/direcciones', icono: MapPin, texto: 'Direcciones', soloCliente: true },
-      { id: 'cuenta', to: '/cuenta', icono: Settings, texto: 'Datos de la cuenta' },
+      { id: 'cuenta', to: '/cuenta', icono: Settings, texto: 'Mi Cuenta' },
       { id: 'notificaciones', to: '/notificaciones', icono: Bell, texto: 'Notificaciones' },
     ],
   },
