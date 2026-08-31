@@ -273,9 +273,9 @@
 
 /* ---------- Save with (placeholder) ---------- */
 .pcard__save-with {
-  font-size: 0.72rem;
+  font-size: 0.88rem;
   color: #1B4B8F;
-  margin: 0 0 6px;
+  margin: 0 0 7px;
 }
 
 .pcard__save-with strong {
@@ -284,9 +284,10 @@
 
 /* ---------- Delivery ---------- */
 .pcard__delivery-info {
-  font-size: 0.7rem;
+  font-size: 0.85rem;
   color: #74767c;
   margin-bottom: 10px;
+  line-height: 1.25;
 }
 
 .pcard__delivery-info p {
@@ -295,19 +296,37 @@
 
 .pcard__delivery-arrive {
   font-weight: 600;
-  color: #14182A;
-  display: flex;
+  color: #FFFFFF;
+  background: #1B4B8F;
+  display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  margin-bottom: 4px;
+  width: fit-content;
+  font-size: 0.9rem;
+}
+
+.pcard__delivery-arrive strong {
+  font-weight: 800;
+  color: #FFFFFF;
 }
 
 .pcard__delivery-rayo {
   flex-shrink: 0;
-  color: #1B4B8F;
+  color: #FFFFFF;
 }
 
 .pcard__delivery-pickup {
-  margin-top: 4px !important;
+  margin-top: 2px !important;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.pcard__delivery-pickup strong {
+  font-weight: 800;
+  color: #14182A;
 }
 
 /* ---------- Acciones ---------- */
@@ -577,23 +596,11 @@
 
   /* Caja azul de entrega estilo "Entrega tan pronto como en 15 min" */
   .pcard__delivery-arrive {
-    background: #1B4B8F;
-    color: #FFFFFF;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 10px;
-    border-radius: 8px;
-    font-size: 0.72rem;
-    margin-bottom: 5px;
-  }
-
-  .pcard__delivery-rayo {
-    color: #FFFFFF;
+    font-size: 0.78rem;
   }
 
   .pcard__delivery-pickup {
-    font-size: 0.72rem;
+    font-size: 0.78rem;
   }
 
   /* Rating más compacto en mobile */

@@ -66,10 +66,10 @@ function obtenerEtiquetaDescuento(descuento) {
 function obtenerMensajeEntrega(disponible) {
   if (!disponible) return 'Se despachará cuando esté disponible'
   const hora = new Date().getHours()
-  if (hora >= 7 && hora < 11) return 'Entrega en 30 a 45 min'
-  if (hora >= 11 && hora < 15) return 'Entrega en 1 hora'
-  if (hora >= 15) return 'Entrega para mañana' // 3pm–12am
-  return 'Entrega para las 10:00 am' // 12am–7am
+  if (hora >= 7 && hora < 11) return (<><span>Entrega en </span><strong>30 a 45 min</strong></>)
+  if (hora >= 11 && hora < 15) return (<><span>Entrega en </span><strong>1 hora</strong></>)
+  if (hora >= 15) return (<><span>Entrega para </span><strong>mañana</strong></>) // 3pm–12am
+  return (<><span>Entrega para las </span><strong>10:00 am</strong></>) // 12am–7am
 }
 
 // Retiro en tienda: corte a las 4:30pm. Si ya pasó, avisamos que es
@@ -77,7 +77,7 @@ function obtenerMensajeEntrega(disponible) {
 function obtenerMensajeRetiro() {
   const ahora = new Date()
   const antesDelCorte = ahora.getHours() < 16 || (ahora.getHours() === 16 && ahora.getMinutes() <= 30)
-  return antesDelCorte ? 'Retiro en tienda hasta las 4:30 pm' : 'Retiro en tienda disponible mañana'
+  return antesDelCorte ? (<><span>Retiro en tienda hasta las </span><strong>4:30 pm</strong></>) : (<><span>Retiro en tienda disponible </span><strong>mañana</strong></>)
 }
 
 function ProductCard({ producto, tasaVes, variante = 'vertical' }) {
@@ -106,7 +106,7 @@ function ProductCard({ producto, tasaVes, variante = 'vertical' }) {
   }
 
   const precioVes = tasaVes && producto.precio_usd != null
-    ? (producto.precio_usd * tasaVes).toFixed(2)
+    ? Number((producto.precio_usd * tasaVes).toFixed(2)).toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
     : null
 
   const tieneDescuento = producto.precio_original_usd != null && producto.descuento_activo

@@ -749,3 +749,259 @@
   flex-direction: column;
   gap: 4px;
 }
+
+
+/* ============================================================
+   SUBPÁGINA — Ampliación de línea de crédito
+   ============================================================ */
+.ec-amp-hero {
+  background: var(--ec-surface);
+  border: 1px solid var(--ec-border);
+  border-radius: 20px;
+  padding: 28px 24px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  color: var(--ec-brand);
+}
+
+.ec-amp-hero h2 {
+  margin: 4px 0 0;
+  font-size: 1.15rem;
+  color: var(--ec-text);
+}
+
+.ec-amp-hero__texto {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--ec-text-muted);
+  max-width: 420px;
+}
+
+.ec-amp-hero--no-califica { color: var(--ec-text-muted); }
+
+.ec-amp-hero__comparacion {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin: 12px 0 4px;
+}
+
+.ec-amp-hero__comparacion > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ec-amp-hero__comparacion span:first-child {
+  font-size: 0.72rem;
+  color: var(--ec-text-muted);
+}
+
+.ec-amp-hero__comparacion strong {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--ec-text);
+}
+
+.ec-amp-hero__monto--verde { color: #059669 !important; }
+
+.ec-amp-hero__flecha {
+  font-size: 1.2rem;
+  color: var(--ec-text-muted);
+}
+
+.ec-amp-hero__error {
+  color: var(--ec-negativo);
+  font-size: 0.8rem;
+  margin: 4px 0 0;
+}
+
+.ec-amp-hero__btn {
+  margin-top: 10px;
+  background: var(--ec-brand);
+  color: white;
+  border: none;
+  padding: 13px 24px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.ec-amp-hero__btn:disabled { opacity: 0.6; cursor: default; }
+
+.ec-amp-hero--resultado { background: var(--ec-accent-light); border-color: var(--ec-accent); }
+
+.ec-amp-hero__monto-grande {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #059669;
+}
+
+.ec-amp-hero__detalle {
+  font-size: 0.8rem;
+  color: var(--ec-text-muted);
+  margin: 0;
+}
+
+/* ---- Niveles de ampliación (15% / 30% / 50%) ---- */
+.ec-tiers {
+  background: var(--ec-surface);
+  border: 1px solid var(--ec-border);
+  border-radius: 16px;
+  padding: 18px;
+  margin-bottom: 16px;
+}
+
+.ec-tiers__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+  color: var(--ec-text);
+}
+
+.ec-tiers__intro {
+  font-size: 0.82rem;
+  color: var(--ec-text-muted);
+  margin: 0 0 16px;
+  line-height: 1.5;
+}
+
+.ec-tiers__lista {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ec-tiers__nivel {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ec-tiers__nivel-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ec-tiers__nivel-info > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ec-tiers__nivel-porcentaje {
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: var(--ec-brand);
+}
+
+.ec-tiers__nivel--alcanzado .ec-tiers__nivel-porcentaje { color: #059669; }
+
+.ec-tiers__nivel-umbral {
+  font-size: 0.75rem;
+  color: var(--ec-text-muted);
+}
+
+.ec-tiers__check { color: #059669; flex-shrink: 0; }
+
+.ec-tiers__barra-wrap {
+  height: 6px;
+  background: var(--ec-bg);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.ec-tiers__barra {
+  height: 100%;
+  background: var(--ec-brand);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.ec-tiers__nivel--alcanzado .ec-tiers__barra { background: #059669; }
+
+/* ---- Requisitos básicos ---- */
+.ec-requisitos {
+  background: var(--ec-surface);
+  border: 1px solid var(--ec-border);
+  border-radius: 16px;
+  padding: 18px;
+  margin-bottom: 16px;
+}
+
+.ec-requisitos__titulo {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.ec-requisitos__lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ec-requisitos__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.ec-requisitos__icono { flex-shrink: 0; margin-top: 1px; }
+.ec-requisitos__icono--ok { color: #059669; }
+.ec-requisitos__icono--pendiente { color: var(--ec-text-muted); }
+
+.ec-requisitos__item-titulo {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ec-text);
+}
+
+.ec-requisitos__item-detalle {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--ec-text-muted);
+  margin-top: 2px;
+}
+
+/* ---- "Cómo funciona tu crédito" (reutiliza financiamiento.js) ---- */
+.ec-faq-credito {
+  background: var(--ec-surface);
+  border: 1px solid var(--ec-border);
+  border-radius: 16px;
+  padding: 18px;
+}
+
+.ec-faq-credito__item + .ec-faq-credito__item {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--ec-bg);
+}
+
+.ec-faq-credito__pregunta {
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin: 0 0 4px;
+  color: var(--ec-text);
+}
+
+.ec-faq-credito__respuesta {
+  font-size: 0.8rem;
+  color: var(--ec-text-muted);
+  margin: 0;
+  line-height: 1.5;
+}
