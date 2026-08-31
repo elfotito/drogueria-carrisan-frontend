@@ -176,30 +176,33 @@
 .pcard__precio-ahora {
   color: #12A594; /* Teal — precio con descuento */
   font-weight: 700;
-  font-size: 1.5rem;
+  font-size: 1.4rem;
 }
 
 .pcard__precio-normal {
   color: #14182A; /* Ink — precio sin descuento */
   font-weight: 700;
-  font-size: 1.5rem;
+  font-size: 1.4rem;
 }
 
 .pcard__precio-simbolo {
+  display: inline-block;
   font-size: 0.55em;
   font-weight: 700;
-  vertical-align: super;
+  vertical-align: top;
   margin-right: 1px;
 }
 
 .pcard__precio-entero {
+  display: inline-block;
   font-size: 1em;
 }
 
 .pcard__precio-centavos {
+  display: inline-block;
   font-size: 0.55em;
-  vertical-align: super;
   font-weight: 700;
+  vertical-align: top;
 }
 
 .pcard__precio-numero {
@@ -532,7 +535,7 @@
 
   .pcard__precio-ahora,
   .pcard__precio-normal {
-    font-size: 1.15rem;
+    font-size: 1.4rem;
   }
 
   .pcard__precio-original {
