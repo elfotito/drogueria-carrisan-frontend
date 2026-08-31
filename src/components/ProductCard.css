@@ -187,9 +187,8 @@
 
 .pcard__precio-simbolo {
   display: inline-block;
-  font-size: 0.55em;
+  font-size: 1em;
   font-weight: 700;
-  vertical-align: top;
   margin-right: 1px;
 }
 
@@ -212,7 +211,7 @@
 .pcard__precio-original {
   color: #74767c;
   text-decoration: line-through;
-  font-size: 0.82rem;
+  font-size: 0.75rem;
 }
 
 .pcard__precio-ves {
