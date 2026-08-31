@@ -353,36 +353,37 @@ function ProductCard({ producto, tasaVes, variante = 'vertical' }) {
             </p>
             <p className="pcard__delivery-pickup">{obtenerMensajeRetiro()}</p>
           </div>
+        </div>
 
-          <div className="pcard__separator" />
+        {/* Bloque 3: Acciones — sección separada de ancho completo,
+            como el badge de descuento arriba. En mobile ocupa toda
+            la fila inferior del card. */}
+        <div className="pcard__acciones">
+          {user && (
+            <button
+              className="pcard__btn-items"
+              onClick={(e) => { e.stopPropagation(); setMostrarModal(true) }}
+              title="Agregar a una lista"
+              aria-label="Agregar a una lista"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M19 21 12 16 5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2Z"></path>
+              </svg>
+              <span className="pcard__btn-items-label">Agregar a lista</span>
+            </button>
+          )}
 
-          <div className="pcard__acciones">
-            {user && (
-              <button
-                className="pcard__btn-items"
-                onClick={(e) => { e.stopPropagation(); setMostrarModal(true) }}
-                title="Agregar a una lista"
-                aria-label="Agregar a una lista"
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M19 21 12 16 5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2Z"></path>
-                </svg>
-                <span className="pcard__btn-items-label">Agregar a lista</span>
-              </button>
-            )}
-
-            {(mostrarContador || cantidad > 0) ? (
-              <div className="pcard__contador">
-                <button className="contador-btn" onClick={handleRestar} aria-label="Quitar uno">−</button>
-                <span className="contador-cantidad">{cantidad}</span>
-                <button className="contador-btn" onClick={handleSumar} aria-label="Agregar uno">+</button>
-              </div>
-            ) : (
-              <button className="pcard__btn-agregar" onClick={handleAgregar}>
-                + Agregar
-              </button>
-            )}
-          </div>
+          {(mostrarContador || cantidad > 0) ? (
+            <div className="pcard__contador">
+              <button className="contador-btn" onClick={handleRestar} aria-label="Quitar uno">−</button>
+              <span className="contador-cantidad">{cantidad}</span>
+              <button className="contador-btn" onClick={handleSumar} aria-label="Agregar uno">+</button>
+            </div>
+          ) : (
+            <button className="pcard__btn-agregar" onClick={handleAgregar}>
+              + Agregar
+            </button>
+          )}
         </div>
 
         {toast && (

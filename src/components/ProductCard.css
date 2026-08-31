@@ -10,8 +10,6 @@
   width: 270px;
   height: 580px;
   font-family: 'Figtree', 'Inter', sans-serif;
-  border-radius: 12px;
-  border: 1px solid #E7E5DE;
   overflow: hidden;
 }
 
@@ -301,17 +299,13 @@
   margin-top: 4px !important;
 }
 
-/* ---------- Separador ---------- */
-.pcard__separator {
-  display: none;
-}
-
 /* ---------- Acciones ---------- */
 .pcard__acciones {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 10px;
+  padding: 0;
+  margin-top: auto;
 }
 
 /* Botón: agregar a una lista (antes era solo un ícono suelto sin estilo) */
@@ -454,21 +448,9 @@
     flex-wrap: wrap;
     align-items: flex-start;
     padding: 12px;
-    gap: 0 12px;
+    gap: 0;
     width: 100%;
     height: auto;
-    border-radius: 12px;
-    border: 1px solid #E7E5DE;
-    box-shadow: 0 1px 4px rgba(20, 24, 42, 0.06);
-  }
-
-  .pcard__acciones {
-    order: 5;
-    flex: 0 0 100%;
-    margin-bottom: 0;
-    margin-top: 0;
-    flex-wrap: nowrap;
-    gap: 10px;
   }
 
   /* El badge social ocupa toda la fila de arriba, antes de imagen + info */
@@ -483,20 +465,19 @@
     margin-bottom: 8px;
   }
 
-  /* Columna izquierda: imagen — un poco más angosta que la mitad de la tarjeta.
-     En la miniatura mobile volvemos a "contain" (sin zoom) para no recortar. */
+  /* Columna izquierda: imagen — ocupa ~48% para equiparararse con la info */
   .pcard__media {
-    flex: 0 0 32%;
-    max-width: 128px;
-    min-width: 88px;
+    flex: 0 0 48%;
     width: auto;
     height: auto;
     margin-bottom: 0;
+    padding-right: 12px;
   }
 
   .pcard__image {
-    max-width: 78%;
-    max-height: 78%;
+    width: 100%;
+    height: auto;
+    max-height: 200px;
     object-fit: contain;
     transform: none;
   }
@@ -507,6 +488,7 @@
     min-width: 0;
     display: flex;
     flex-direction: column;
+    padding-left: 0;
   }
 
   .pcard__nombre {
@@ -528,17 +510,18 @@
     font-size: 0.78rem;
   }
 
-  /* Separador visible solo en mobile */
-  .pcard__separator {
-    display: block;
-    height: 1px;
-    background: #E7E5DE;
-    margin: 10px 0;
+  /* Acciones: sección separada de ancho completo, como el badge de arriba */
+  .pcard__acciones {
     flex: 0 0 100%;
-    order: 4;
+    order: 3;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #E7E5DE;
+    flex-wrap: nowrap;
+    gap: 10px;
   }
 
-  /* Botones de acciones: fila de dos pastillas 50/50 */
+  /* Botón agregar a lista: outline expandible */
   .pcard__btn-items {
     flex: 1;
     width: auto;
