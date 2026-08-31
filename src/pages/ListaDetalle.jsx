@@ -2,7 +2,8 @@ import { useState, useEffect, useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import api from '../api/axios'
 import { useCart } from '../context/CartContext'
-import BottomNav from '../components/BottomNav'
+import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
+import { NAV_UNIFICADO } from '../components/paginas-principales/NavUnificado'
 import './ListaDetalle.css'
 
 function formatUSD(valor) {
@@ -191,160 +192,164 @@ function ListaDetalle() {
 
   if (cargando) {
     return (
-      <div className="lista-detalle">
-        <p className="lista-detalle-cargando">Cargando lista…</p>
-      </div>
+      <LayoutPaginaPrincipal activo="items" titulo="Lista" nav={NAV_UNIFICADO}>
+        <div className="lista-detalle">
+          <p className="lista-detalle-cargando">Cargando lista…</p>
+        </div>
+      </LayoutPaginaPrincipal>
     )
   }
 
   if (error) {
     return (
-      <div className="lista-detalle">
-        <p className="lista-detalle-error">{error}</p>
-        <Link to="/mis-items">← Volver a Mis Items</Link>
-      </div>
+      <LayoutPaginaPrincipal activo="items" titulo="Lista" nav={NAV_UNIFICADO}>
+        <div className="lista-detalle">
+          <p className="lista-detalle-error">{error}</p>
+          <Link to="/mis-items">← Volver a Mis Items</Link>
+        </div>
+      </LayoutPaginaPrincipal>
     )
   }
 
   return (
-    <div className="lista-detalle">
-      <Link to="/mis-items" className="lista-detalle-volver">← Mis Items</Link>
+    <LayoutPaginaPrincipal activo="items" titulo={lista?.nombre || 'Lista'} subtitulo={`${items.length} producto${items.length !== 1 ? 's' : ''}`} nav={NAV_UNIFICADO}>
+      <div className="lista-detalle">
+        <Link to="/mis-items" className="lista-detalle-volver">← Mis Items</Link>
 
-      {/* Header estilo Amazon: título + Privada + Agregar producto + ⋯ */}
-      <header className="lista-detalle-header">
-        <div className="lista-detalle-header__titulo">
-          <h1>{lista?.nombre || 'Lista'}</h1>
-          <span className="lista-detalle-header__privada">Privada</span>
-        </div>
-        <div className="lista-detalle-header__acciones">
-          <Link to="/catalogo" className="lista-detalle-btn-agregar">+ Agregar producto</Link>
-        </div>
-      </header>
-
-      {items.length > 0 && (
-        <>
-          {/* Toolbar: toggle grid/lista + buscador + agregar todos */}
-          <div className="lista-detalle-toolbar">
-            <div className="lista-detalle-toolbar__vista">
-              <button
-                type="button"
-                className={vista === 'lista' ? 'activo' : ''}
-                onClick={() => setVista('lista')}
-                aria-label="Vista de lista"
-              >
-                <IconoLista />
-              </button>
-              <button
-                type="button"
-                className={vista === 'grid' ? 'activo' : ''}
-                onClick={() => setVista('grid')}
-                aria-label="Vista de cuadrícula"
-              >
-                <IconoGrid />
-              </button>
-            </div>
-
-            <div className="lista-detalle-buscador">
-              <IconoBuscar />
-              <input
-                type="text"
-                value={busqueda}
-                onChange={(e) => setBusqueda(e.target.value)}
-                placeholder="Buscar en esta lista"
-              />
-            </div>
-
-            <button type="button" className="lista-detalle-btn-todos" onClick={agregarTodos}>
-              Agregar todos al carrito
-            </button>
+        {/* Header: título + Agregar producto */}
+        <header className="lista-detalle-header">
+          <div className="lista-detalle-header__titulo">
+            <h1>{lista?.nombre || 'Lista'}</h1>
+            <span className="lista-detalle-header__privada">Privada</span>
           </div>
+          <div className="lista-detalle-header__acciones">
+            <Link to="/catalogo" className="lista-detalle-btn-agregar">+ Agregar producto</Link>
+          </div>
+        </header>
 
-          <p className="lista-detalle-contador">
-            {itemsFiltrados.length} producto{itemsFiltrados.length !== 1 ? 's' : ''}
-          </p>
-        </>
-      )}
+        {items.length > 0 && (
+          <>
+            {/* Toolbar: toggle grid/lista + buscador + agregar todos */}
+            <div className="lista-detalle-toolbar">
+              <div className="lista-detalle-toolbar__vista">
+                <button
+                  type="button"
+                  className={vista === 'lista' ? 'activo' : ''}
+                  onClick={() => setVista('lista')}
+                  aria-label="Vista de lista"
+                >
+                  <IconoLista />
+                </button>
+                <button
+                  type="button"
+                  className={vista === 'grid' ? 'activo' : ''}
+                  onClick={() => setVista('grid')}
+                  aria-label="Vista de cuadrícula"
+                >
+                  <IconoGrid />
+                </button>
+              </div>
 
-      {items.length === 0 ? (
-        <div className="lista-detalle-vacia">
-          <p>Esta lista está vacía</p>
-          <Link to="/catalogo" className="lista-detalle-cta">Ir al catálogo</Link>
-        </div>
-      ) : itemsFiltrados.length === 0 ? (
-        <p className="lista-detalle-sin-resultados">No hay productos que coincidan con "{busqueda}".</p>
-      ) : (
-        <div className={vista === 'grid' ? 'lista-detalle-grid' : 'lista-detalle-filas'}>
-          {itemsFiltrados.map((item) => (
-            <div key={item.id} className="lista-item-card">
-              <Link to={`/producto/${item.producto_id}`} className="lista-item-imagen">
-                {item.productos?.foto_url ? (
-                  <img src={item.productos.foto_url} alt={item.productos.nombre_comercial} />
-                ) : (
-                  <div className="lista-item-sin-imagen">Sin imagen</div>
-                )}
-              </Link>
+              <div className="lista-detalle-buscador">
+                <IconoBuscar />
+                <input
+                  type="text"
+                  value={busqueda}
+                  onChange={(e) => setBusqueda(e.target.value)}
+                  placeholder="Buscar en esta lista"
+                />
+              </div>
 
-              <div className="lista-item-info">
-                <Link to={`/producto/${item.producto_id}`} className="lista-item-nombre">
-                  {item.productos?.nombre_comercial}
+              <button type="button" className="lista-detalle-btn-todos" onClick={agregarTodos}>
+                Agregar todos al carrito
+              </button>
+            </div>
+
+            <p className="lista-detalle-contador">
+              {itemsFiltrados.length} producto{itemsFiltrados.length !== 1 ? 's' : ''}
+            </p>
+          </>
+        )}
+
+        {items.length === 0 ? (
+          <div className="lista-detalle-vacia">
+            <p>Esta lista está vacía</p>
+            <Link to="/catalogo" className="lista-detalle-cta">Ir al catálogo</Link>
+          </div>
+        ) : itemsFiltrados.length === 0 ? (
+          <p className="lista-detalle-sin-resultados">No hay productos que coincidan con "{busqueda}".</p>
+        ) : (
+          <div className={vista === 'grid' ? 'lista-detalle-grid' : 'lista-detalle-filas'}>
+            {itemsFiltrados.map((item) => (
+              <div key={item.id} className="lista-item-card">
+                <Link to={`/producto/${item.producto_id}`} className="lista-item-imagen">
+                  {item.productos?.foto_url ? (
+                    <img src={item.productos.foto_url} alt={item.productos.nombre_comercial} />
+                  ) : (
+                    <div className="lista-item-sin-imagen">Sin imagen</div>
+                  )}
                 </Link>
-                <p className="lista-item-precio">${formatUSD(item.productos?.precio_usd)} USD</p>
 
-                <div className="lista-item-acciones">
-                  <button
-                    type="button"
-                    className={`lista-item-carrito ${cantidadEnCarrito(item.producto_id) ? 'en-carrito' : ''}`}
-                    onClick={() => addItem(item.productos, 1)}
-                  >
-                    {cantidadEnCarrito(item.producto_id)
-                      ? `En el carrito (${cantidadEnCarrito(item.producto_id)})`
-                      : 'Agregar al Carrito'}
-                  </button>
+                <div className="lista-item-info">
+                  <Link to={`/producto/${item.producto_id}`} className="lista-item-nombre">
+                    {item.productos?.nombre_comercial}
+                  </Link>
+                  <p className="lista-item-precio">${formatUSD(item.productos?.precio_usd)} USD</p>
 
-                  <MenuAcciones
-                    item={item}
-                    onMover={setItemAMover}
-                    onCompartir={compartirProducto}
-                    onEliminar={(i) => quitarItem(i.producto_id)}
-                  />
+                  <div className="lista-item-acciones">
+                    <button
+                      type="button"
+                      className={`lista-item-carrito ${cantidadEnCarrito(item.producto_id) ? 'en-carrito' : ''}`}
+                      onClick={() => addItem(item.productos, 1)}
+                    >
+                      {cantidadEnCarrito(item.producto_id)
+                        ? `En el carrito (${cantidadEnCarrito(item.producto_id)})`
+                        : 'Agregar al Carrito'}
+                    </button>
+
+                    <MenuAcciones
+                      item={item}
+                      onMover={setItemAMover}
+                      onCompartir={compartirProducto}
+                      onEliminar={(i) => quitarItem(i.producto_id)}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
 
-      {/* Modal: Mover a otra lista */}
-      {itemAMover && (
-        <Modal titulo="Mover a otra lista" onCerrar={() => setItemAMover(null)}>
-          <p className="lista-detalle-modal__nota">
-            Elige a qué lista quieres mover "{itemAMover.productos?.nombre_comercial}".
-          </p>
-          {otrasListas.length === 0 ? (
-            <p className="lista-detalle-modal__nota">No tienes otras listas todavía. Crea una desde Mis Items.</p>
-          ) : (
-            <div className="lista-detalle-modal__opciones">
-              {otrasListas.map((l) => (
-                <button
-                  key={l.id}
-                  type="button"
-                  className="lista-detalle-modal__opcion"
-                  disabled={moviendo}
-                  onClick={() => moverItem(itemAMover, l.id)}
-                >
-                  <span>{l.es_predeterminada ? '📌' : '📋'}</span>
-                  <span>{l.nombre}</span>
-                </button>
-              ))}
-            </div>
-          )}
-        </Modal>
-      )}
+        {/* Modal: Mover a otra lista */}
+        {itemAMover && (
+          <Modal titulo="Mover a otra lista" onCerrar={() => setItemAMover(null)}>
+            <p className="lista-detalle-modal__nota">
+              Elige a qué lista quieres mover "{itemAMover.productos?.nombre_comercial}".
+            </p>
+            {otrasListas.length === 0 ? (
+              <p className="lista-detalle-modal__nota">No tienes otras listas todavía. Crea una desde Mis Items.</p>
+            ) : (
+              <div className="lista-detalle-modal__opciones">
+                {otrasListas.map((l) => (
+                  <button
+                    key={l.id}
+                    type="button"
+                    className="lista-detalle-modal__opcion"
+                    disabled={moviendo}
+                    onClick={() => moverItem(itemAMover, l.id)}
+                  >
+                    <span>{l.es_predeterminada ? '📌' : '📋'}</span>
+                    <span>{l.nombre}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </Modal>
+        )}
 
-      {toast && <div className="lista-detalle-toast">{toast}</div>}
-
-      <BottomNav />
-    </div>
+        {toast && <div className="lista-detalle-toast">{toast}</div>}
+      </div>
+    </LayoutPaginaPrincipal>
   )
 }
 

@@ -358,42 +358,34 @@
 
 /* ==========================================================
    COLUMNA DE PRODUCTOS
-   (las tarjetas miden 270px, así que los cortes de columna se
-   ajustan para que vaya bajando 4 → 3 → 2 → 1 columna)
+   Tarjetas 270px · breakpoints suaves para mobile → tablet → desktop
    ========================================================== */
 
-/* 4 columnas — pantallas grandes */
-@media (min-width: 1200px) {
+/* 1 columna — mobile */
+@media (max-width: 659px) {
   .product-grid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: 1fr;
   }
 }
 
-/* 3 columnas */
+/* 2 columnas — tablets pequeñas / landscape */
+@media (min-width: 660px) and (max-width: 899px) {
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 3 columnas — tablets grandes / laptops */
 @media (min-width: 900px) and (max-width: 1199px) {
   .product-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
-/* 2 columnas (vertical) — compacto justo antes de la tablet */
-@media (min-width: 769px) and (max-width: 899px) {
+/* 4 columnas — desktop */
+@media (min-width: 1200px) {
   .product-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-/* tablet: los pcard pasan a horizontales (≤768px) en 2 columnas */
-@media (max-width: 768px) {
-  .product-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-/* 1 columna (mobile) */
-@media (max-width: 480px) {
-  .product-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 
@@ -485,4 +477,12 @@
 .btn-limpiar-busqueda:hover {
   background: #0071dc;
   color: white;
+}
+
+/* BottomNav: solo visible en mobile (<769px). Cuando aparece el
+   sidebar de desktop (>768px), el dock desaparece. */
+@media (min-width: 769px) {
+  .catalogo-layout .bottom-nav {
+    display: none;
+  }
 }

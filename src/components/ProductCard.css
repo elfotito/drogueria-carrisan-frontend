@@ -8,9 +8,11 @@
   display: flex;
   flex-direction: column;
   width: 270px;
+  max-width: 100%;
   height: 580px;
   font-family: 'Figtree', 'Inter', sans-serif;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 
@@ -516,7 +518,6 @@
     order: 3;
     margin-top: 12px;
     padding-top: 12px;
-    border-top: 1px solid #E7E5DE;
     flex-wrap: nowrap;
     gap: 10px;
   }
@@ -654,7 +655,7 @@
 .pcard__btn-agregar--horizontal {
   width: 100%;
   font-size: 0.76rem;
-  padding: 7px 10px;
+  padding: 10px 14px;
 }
 
 .pcard--horizontal .pcard__contador {

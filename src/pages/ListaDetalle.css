@@ -1,16 +1,11 @@
 /* ==========================================================
    ListaDetalle — Droguería Carrisán
-   Paleta: Índigo #232B45 · Azul #1B4B8F · Teal #12A594
-           Ink #14182A · Paper #FBFAF7
+   Consistente con MisItems.css: dentro de <LayoutPaginaPrincipal>.
    ========================================================== */
 
 .lista-detalle {
-  min-height: 100vh;
-  background: var(--paper);
+  padding: 0 16px 24px;
   font-family: 'Inter', sans-serif;
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 16px 16px 40px;
 }
 
 .lista-detalle-volver {
@@ -245,12 +240,6 @@
   gap: 16px;
 }
 
-@media (min-width: 640px) {
-  .lista-detalle-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
 .lista-detalle-grid .lista-item-card {
   display: flex;
   flex-direction: column;
@@ -443,7 +432,7 @@
 --------------------------------------------------------- */
 .lista-detalle-toast {
   position: fixed;
-  bottom: 90px;
+  bottom: 32px;
   left: 50%;
   transform: translateX(-50%);
   background: #14182A;
@@ -573,8 +562,19 @@
 /* ================================================================
    RESPONSIVE — Escritorio
    ================================================================ */
+@media (min-width: 768px) {
+  .lista-detalle {
+    padding: 0 24px 32px;
+  }
+
+  .lista-detalle-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+}
+
 @media (min-width: 1024px) {
   .lista-detalle {
-    padding: 32px 20px 60px;
+    padding: 0 28px 40px;
   }
 }
