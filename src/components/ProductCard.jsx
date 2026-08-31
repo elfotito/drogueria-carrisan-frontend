@@ -12,6 +12,42 @@ function formatUSD(valor) {
   return Number(valor).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
+// Separa parte entera y centavos para formato superíndice: $1⁰⁶
+function PrecioSuperIndice({ valor }) {
+  if (valor == null) return <span>—</span>
+  const partes = Number(valor).toFixed(2).split('.')
+  return (
+    <>
+      <span className="pcard__precio-simbolo">$</span>
+      <span className="pcard__precio-entero">{partes[0]}</span>
+      <sup className="pcard__precio-centavos">{partes[1]}</sup>
+    </>
+  )
+}
+
+// Renderiza estrellas (llenas, medias, vacías) + total de reseñas
+function Estrellas({ promedio, total }) {
+  if (promedio == null || promedio === 0) return null
+
+  const estrellas = []
+  for (let i = 1; i <= 5; i++) {
+    if (i <= Math.floor(promedio)) {
+      estrellas.push('★')
+    } else if (i - promedio < 1 && i - promedio > 0) {
+      estrellas.push('★') // media estrella se muestra como llena por simplicidad
+    } else {
+      estrellas.push('☆')
+    }
+  }
+
+  return (
+    <span className="pcard__rating">
+      <span className="pcard__rating-stars">{estrellas.join('')}</span>
+      <span className="pcard__rating-count">({total})</span>
+    </span>
+  )
+}
+
 function obtenerEtiquetaDescuento(descuento) {
   if (!descuento) return null
   if (descuento.tipo === 'monto') return 'Oferta Especial'
@@ -74,7 +110,6 @@ function ProductCard({ producto, tasaVes, variante = 'vertical' }) {
   const etiquetaDescuento = tieneDescuento ? obtenerEtiquetaDescuento(producto.descuento_activo) : null
 
   const badgeSocial = producto.badge_social || null
-  const esPatrocinado = producto.sponsored || false
   const favorito = esFavorito(producto.id)
 
   const itemEnCarrito = cartItems.find(i => i.producto.id === producto.id)
@@ -180,7 +215,7 @@ function ProductCard({ producto, tasaVes, variante = 'vertical' }) {
               {tieneDescuento ? (
                 <>
                   <span className="pcard__precio-ahora">
-                    <span className="pcard__precio-simbolo">$</span><span className="pcard__precio-numero">{formatUSD(producto.precio_usd)}</span>
+                    <PrecioSuperIndice valor={producto.precio_usd} />
                   </span>
                   <span className="pcard__precio-original">
                     ${formatUSD(producto.precio_original_usd)}
@@ -188,7 +223,7 @@ function ProductCard({ producto, tasaVes, variante = 'vertical' }) {
                 </>
               ) : (
                 <span className="pcard__precio-normal">
-                  <span className="pcard__precio-simbolo">$</span><span className="pcard__precio-numero">{formatUSD(producto.precio_usd)}</span>
+                  <PrecioSuperIndice valor={producto.precio_usd} />
                 </span>
               )}
             </div>
@@ -268,10 +303,59 @@ function ProductCard({ producto, tasaVes, variante = 'vertical' }) {
           />
         </div>
 
-        {/* Bloque 2: Contenido — el orden de aquí en adelante es
-            "botón, precio, nombre..." en desktop/tablet. En mobile
-            el CSS reordena el botón al final con `order`. */}
+        {/* Bloque 2: Contenido — el orden natural es precio → nombre →
+            marca → delivery → acciones. En mobile el CSS reordena las
+            acciones al fondo con `order`. */}
         <div className="pcard__body">
+          <div className="pcard__precios">
+            {tieneDescuento ? (
+              <>
+                <span className="pcard__precio-ahora">
+                  <PrecioSuperIndice valor={producto.precio_usd} />
+                </span>
+                <span className="pcard__precio-original">
+                  ${formatUSD(producto.precio_original_usd)}
+                </span>
+              </>
+            ) : (
+              <span className="pcard__precio-normal">
+                <PrecioSuperIndice valor={producto.precio_usd} />
+              </span>
+            )}
+            {precioVes && (
+              <span className="pcard__precio-ves">
+                ≈ Bs. {precioVes}
+              </span>
+            )}
+          </div>
+
+          <h3
+            className="pcard__nombre"
+            onClick={() => navigate(`/producto/${producto.id}`)}
+          >
+            {producto.nombre_comercial}
+          </h3>
+
+          <Estrellas promedio={producto.rating_promedio} total={producto.rating_total} />
+
+          <p className="pcard__marca">
+            {producto.marcas?.nombre || producto.laboratorio || ''}
+          </p>
+
+          <p className="pcard__save-with">Ahorra con <strong>Plan Carrisán+</strong></p>
+
+          <div className="pcard__delivery-info">
+            <p className="pcard__delivery-arrive">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" className="pcard__delivery-rayo">
+                <path d="M13 2 3 14h7l-1 8 11-14h-7l1-6Z" />
+              </svg>
+              {obtenerMensajeEntrega(producto.disponible)}
+            </p>
+            <p className="pcard__delivery-pickup">{obtenerMensajeRetiro()}</p>
+          </div>
+
+          <div className="pcard__separator" />
+
           <div className="pcard__acciones">
             {user && (
               <button
@@ -299,57 +383,6 @@ function ProductCard({ producto, tasaVes, variante = 'vertical' }) {
               </button>
             )}
           </div>
-
-          {esPatrocinado && (
-            <p className="pcard__sponsored">
-              Patrocinado <span className="pcard__sponsored-info" title="Producto patrocinado">ⓘ</span>
-            </p>
-          )}
-
-          <div className="pcard__precios">
-            {tieneDescuento ? (
-              <>
-                <span className="pcard__precio-ahora">
-                  Ahora <span className="pcard__precio-simbolo">$</span><span className="pcard__precio-numero">{formatUSD(producto.precio_usd)}</span>
-                </span>
-                <span className="pcard__precio-original">
-                  ${formatUSD(producto.precio_original_usd)}
-                </span>
-              </>
-            ) : (
-              <span className="pcard__precio-normal">
-                <span className="pcard__precio-simbolo">$</span><span className="pcard__precio-numero">{formatUSD(producto.precio_usd)}</span>
-              </span>
-            )}
-            {precioVes && (
-              <span className="pcard__precio-ves">
-                ≈ Bs. {precioVes}
-              </span>
-            )}
-          </div>
-
-          <h3
-            className="pcard__nombre"
-            onClick={() => navigate(`/producto/${producto.id}`)}
-          >
-            {producto.nombre_comercial}
-          </h3>
-          <p className="pcard__marca">
-            {producto.marcas?.nombre || producto.laboratorio || ''}
-          </p>
-
-          <p className="pcard__save-with">Ahorra con <strong>Plan Carrisán+</strong></p>
-
-          <div className="pcard__delivery-info">
-            <p className="pcard__delivery-arrive">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" className="pcard__delivery-rayo">
-                <path d="M13 2 3 14h7l-1 8 11-14h-7l1-6Z" />
-              </svg>
-              {obtenerMensajeEntrega(producto.disponible)}
-            </p>
-            <p className="pcard__delivery-pickup">{obtenerMensajeRetiro()}</p>
-          </div>
-
         </div>
 
         {toast && (

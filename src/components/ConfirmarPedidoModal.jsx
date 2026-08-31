@@ -44,9 +44,8 @@ function InputPin({ onCompleto, deshabilitado, resetKey }) {
     if (digito && index < LARGO_PIN - 1) {
       refs.current[index + 1]?.focus()
     }
-    const pinCompleto = nuevos.join('')
-    if (pinCompleto.length === LARGO_PIN && !pinCompleto.includes('')) {
-      onCompleto(pinCompleto)
+    if (nuevos.every(d => d !== '') && nuevos.length === LARGO_PIN) {
+      onCompleto(nuevos.join(''))
     }
   }
 

@@ -17,6 +17,15 @@ const LISTAS_SUGERIDAS = [
   { nombre: 'Vitaminas', icon: '🛡️' },
 ]
 
+// Filtros por línea de producto — iguales en "Mis Items" y "Comprar de nuevo"
+// para que ambas pestañas se vean y se comporten de forma consistente.
+const LINEAS_FILTRO = [
+  { id: 'todo', nombre: 'Todo' },
+  { id: 'Linea Hospitalaria', nombre: 'Línea hospitalaria' },
+  { id: 'Linea Farmacia', nombre: 'Línea farmacia' },
+  { id: 'Material Medico', nombre: 'Material Médico' },
+]
+
 function formatUSD(valor) {
   return Number(valor).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
@@ -295,7 +304,7 @@ function TabMisItems({ mostrarCrear, setMostrarCrear }) {
   const [busqueda, setBusqueda] = useState('')
   const [lineaActiva, setLineaActiva] = useState('todo')
   const [vista, setVista] = useState('grid') // 'grid' | 'lista'
-  const [mostrarFiltroMovil, setMostrarFiltroMovil] = useState(false)
+  const [filtrosAbiertos, setFiltrosAbiertos] = useState(false)
 
   async function cargarListas() {
     try {
@@ -352,12 +361,6 @@ function TabMisItems({ mostrarCrear, setMostrarCrear }) {
     return linea?.cantidad || 0
   }
 
-  // Líneas de producto disponibles entre los favoritos, para armar los chips
-  const lineasDisponibles = useMemo(() => {
-    const unicas = new Set(favoritos.map((p) => p.linea).filter(Boolean))
-    return Array.from(unicas)
-  }, [favoritos])
-
   const itemsFiltrados = useMemo(() => {
     let resultado = favoritos
     if (lineaActiva !== 'todo') {
@@ -402,111 +405,84 @@ function TabMisItems({ mostrarCrear, setMostrarCrear }) {
 
 
         {!cargando && favoritos.length > 0 && (
-          <div className="favoritos-layout">
-            {/* Sidebar de filtros — visible en desktop */}
-            <aside className="favoritos-filtros favoritos-filtros--desktop">
-              <h3>Filtros</h3>
-              <div className="favoritos-filtros__grupo">
+          <>
+            {/* Toolbar: buscador + filtros + toggle vista */}
+            <div className="misitems-toolbar">
+              <div className="misitems-buscador">
+                <IconoBuscar />
+                <input
+                  type="text"
+                  value={busqueda}
+                  onChange={(e) => setBusqueda(e.target.value)}
+                  placeholder="Buscar en esta lista"
+                />
+              </div>
+              <button
+                type="button"
+                className={`misitems-toolbar__btn ${lineaActiva !== 'todo' ? 'misitems-toolbar__btn--activo' : ''}`}
+                onClick={() => setFiltrosAbiertos(!filtrosAbiertos)}
+                aria-expanded={filtrosAbiertos}
+              >
+                <IconoFiltro /> Filtros
+              </button>
+              <div className="misitems-toolbar__vista">
                 <button
                   type="button"
-                  className={`filtro-chip ${lineaActiva === 'todo' ? 'filtro-chip--activo' : ''}`}
-                  onClick={() => setLineaActiva('todo')}
+                  className={vista === 'lista' ? 'activo' : ''}
+                  onClick={() => setVista('lista')}
+                  aria-label="Vista de lista"
                 >
-                  Todo
+                  <IconoLista />
                 </button>
-                {lineasDisponibles.map((linea) => (
-                  <button
-                    key={linea}
-                    type="button"
-                    className={`filtro-chip ${lineaActiva === linea ? 'filtro-chip--activo' : ''}`}
-                    onClick={() => setLineaActiva(linea)}
-                  >
-                    {linea}
-                  </button>
-                ))}
-              </div>
-            </aside>
-
-            <div className="favoritos-contenido">
-              {/* Barra: buscador + toggle vista + filtro móvil */}
-              <div className="favoritos-toolbar">
-                <div className="misitems-buscador">
-                  <IconoBuscar />
-                  <input
-                    type="text"
-                    value={busqueda}
-                    onChange={(e) => setBusqueda(e.target.value)}
-                    placeholder="Buscar en esta lista"
-                  />
-                </div>
                 <button
                   type="button"
-                  className="favoritos-toolbar__filtro-movil"
-                  onClick={() => setMostrarFiltroMovil(true)}
+                  className={vista === 'grid' ? 'activo' : ''}
+                  onClick={() => setVista('grid')}
+                  aria-label="Vista de cuadrícula"
                 >
-                  <IconoFiltro /> Filtros
+                  <IconoGrid />
                 </button>
-                <div className="favoritos-toolbar__vista">
-                  <button
-                    type="button"
-                    className={vista === 'lista' ? 'activo' : ''}
-                    onClick={() => setVista('lista')}
-                    aria-label="Vista de lista"
-                  >
-                    <IconoLista />
-                  </button>
-                  <button
-                    type="button"
-                    className={vista === 'grid' ? 'activo' : ''}
-                    onClick={() => setVista('grid')}
-                    aria-label="Vista de cuadrícula"
-                  >
-                    <IconoGrid />
-                  </button>
-                </div>
               </div>
+            </div>
 
-              {/* Chips de filtro — visible en móvil, scrollable */}
-              <div className="favoritos-filtros-movil">
-                <button
-                  type="button"
-                  className={`filtro-chip ${lineaActiva === 'todo' ? 'filtro-chip--activo' : ''}`}
-                  onClick={() => setLineaActiva('todo')}
-                >
-                  Todo
-                </button>
-                {lineasDisponibles.map((linea) => (
-                  <button
-                    key={linea}
-                    type="button"
-                    className={`filtro-chip ${lineaActiva === linea ? 'filtro-chip--activo' : ''}`}
-                    onClick={() => setLineaActiva(linea)}
-                  >
-                    {linea}
-                  </button>
-                ))}
-              </div>
-
-              {itemsFiltrados.length === 0 ? (
-                <p className="misitems-vacio-filtro">
-                  No hay favoritos que coincidan con los filtros actuales.
-                </p>
-              ) : (
-                <div className={vista === 'grid' ? 'product-grid' : 'product-lista'}>
-                  {itemsFiltrados.map((producto) => (
-                    <ItemsCard
-                      key={producto.id}
-                      producto={producto}
-                      cantidadEnCarrito={cantidadEnCarrito(producto.id)}
-                      onAgregar={() => addItem(producto, 1)}
-                      onQuitar={() => quitarItem(producto.id)}
-                      mostrarQuitar
-                    />
+            {/* Filtros colapsables — solo cuando se abre el botón Filtros */}
+            {filtrosAbiertos && (
+              <div className="misitems-filtros">
+                <p className="misitems-filtros__titulo">Tipo de producto</p>
+                <div className="misitems-filtros__chips">
+                  {LINEAS_FILTRO.map((linea) => (
+                    <button
+                      key={linea.id}
+                      type="button"
+                      className={`filtro-chip ${lineaActiva === linea.id ? 'filtro-chip--activo' : ''}`}
+                      onClick={() => setLineaActiva(linea.id)}
+                    >
+                      {linea.nombre}
+                    </button>
                   ))}
                 </div>
-              )}
-            </div>
-          </div>
+              </div>
+            )}
+
+            {itemsFiltrados.length === 0 ? (
+              <p className="misitems-vacio-filtro">
+                No hay favoritos que coincidan con los filtros actuales.
+              </p>
+            ) : (
+              <div className={vista === 'grid' ? 'product-grid' : 'product-lista'}>
+                {itemsFiltrados.map((producto) => (
+                  <ItemsCard
+                    key={producto.id}
+                    producto={producto}
+                    cantidadEnCarrito={cantidadEnCarrito(producto.id)}
+                    onAgregar={() => addItem(producto, 1)}
+                    onQuitar={() => quitarItem(producto.id)}
+                    mostrarQuitar
+                  />
+                ))}
+              </div>
+            )}
+          </>
         )}
 
         {cargando && (
@@ -583,41 +559,6 @@ function TabMisItems({ mostrarCrear, setMostrarCrear }) {
         </Modal>
       )}
 
-      {/* Modal: Filtrar y ordenar (móvil) */}
-      {mostrarFiltroMovil && (
-        <Modal titulo="Filtrar" onCerrar={() => setMostrarFiltroMovil(false)}>
-          <p className="misitems-modal__label">Tipo de producto</p>
-          <div className="misitems-modal__chips">
-            <button
-              type="button"
-              className={`filtro-chip ${lineaActiva === 'todo' ? 'filtro-chip--activo' : ''}`}
-              onClick={() => setLineaActiva('todo')}
-            >
-              Todo
-            </button>
-            {lineasDisponibles.map((linea) => (
-              <button
-                key={linea}
-                type="button"
-                className={`filtro-chip ${lineaActiva === linea ? 'filtro-chip--activo' : ''}`}
-                onClick={() => setLineaActiva(linea)}
-              >
-                {linea}
-              </button>
-            ))}
-          </div>
-          <div className="misitems-modal__acciones">
-            <button
-              type="button"
-              className="misitems-modal__btn misitems-modal__btn--crear"
-              onClick={() => setMostrarFiltroMovil(false)}
-            >
-              Ver resultados
-            </button>
-          </div>
-        </Modal>
-      )}
-
       {/* Modal: Agregar producto (buscador en vivo → agrega a favoritos) */}
       {mostrarAgregarProducto && (
         <Modal titulo="Agregar producto" onCerrar={() => setMostrarAgregarProducto(false)}>
@@ -648,6 +589,9 @@ function TabComprarDeNuevo() {
   const [error, setError] = useState('')
   const [busqueda, setBusqueda] = useState('')
   const [filtroActivo, setFiltroActivo] = useState('todo') // 'todo' | 'ofertas'
+  const [lineaActiva, setLineaActiva] = useState('todo')
+  const [vista, setVista] = useState('grid') // 'grid' | 'lista'
+  const [filtrosAbiertos, setFiltrosAbiertos] = useState(false)
 
   async function cargarRecompras() {
     try {
@@ -714,6 +658,7 @@ function TabComprarDeNuevo() {
   // "Ofertas" = productos con descuento activo, si el campo existe en el producto
   const productosFiltrados = productos
     .filter((p) => (filtroActivo === 'ofertas' ? p.precio_oferta_usd || p.en_oferta : true))
+    .filter((p) => (lineaActiva === 'todo' ? true : p.linea === lineaActiva))
     .filter((p) =>
       busqueda.trim()
         ? p.nombre_comercial?.toLowerCase().includes(busqueda.trim().toLowerCase())
@@ -724,15 +669,8 @@ function TabComprarDeNuevo() {
 
   return (
     <section className="comprar-nuevo">
-      <div className="comprar-nuevo__chips">
-        <button
-          type="button"
-          className={`filtro-chip filtro-chip--pill ${filtroActivo === 'todo' ? 'filtro-chip--activo' : ''}`}
-          onClick={() => setFiltroActivo('todo')}
-        >
-          Todo
-        </button>
-        {cantidadOfertas > 0 && (
+      {cantidadOfertas > 0 && (
+        <div className="comprar-nuevo__chips">
           <button
             type="button"
             className={`comprar-nuevo__chip-oferta ${filtroActivo === 'ofertas' ? 'comprar-nuevo__chip-oferta--activo' : ''}`}
@@ -745,11 +683,12 @@ function TabComprarDeNuevo() {
               {cantidadOfertas} producto{cantidadOfertas !== 1 ? 's' : ''}
             </span>
           </button>
-        )}
-      </div>
+        </div>
+      )}
 
-      <div className="comprar-nuevo__buscador-row">
-        <div className="misitems-buscador comprar-nuevo__buscador">
+      {/* Toolbar: buscador + filtros + toggle vista (igual que Mis Items) */}
+      <div className="misitems-toolbar">
+        <div className="misitems-buscador">
           <IconoBuscar />
           <input
             type="text"
@@ -758,13 +697,55 @@ function TabComprarDeNuevo() {
             placeholder="Buscar compras pasadas"
           />
         </div>
-        <button type="button" className="comprar-nuevo__filtros-btn">
+        <button
+          type="button"
+          className={`misitems-toolbar__btn ${lineaActiva !== 'todo' ? 'misitems-toolbar__btn--activo' : ''}`}
+          onClick={() => setFiltrosAbiertos(!filtrosAbiertos)}
+          aria-expanded={filtrosAbiertos}
+        >
           <IconoFiltro /> Filtros
         </button>
+        <div className="misitems-toolbar__vista">
+          <button
+            type="button"
+            className={vista === 'lista' ? 'activo' : ''}
+            onClick={() => setVista('lista')}
+            aria-label="Vista de lista"
+          >
+            <IconoLista />
+          </button>
+          <button
+            type="button"
+            className={vista === 'grid' ? 'activo' : ''}
+            onClick={() => setVista('grid')}
+            aria-label="Vista de cuadrícula"
+          >
+            <IconoGrid />
+          </button>
+        </div>
       </div>
 
+      {/* Filtros colapsables — igual que Mis Items */}
+      {filtrosAbiertos && (
+        <div className="misitems-filtros">
+          <p className="misitems-filtros__titulo">Tipo de producto</p>
+          <div className="misitems-filtros__chips">
+            {LINEAS_FILTRO.map((linea) => (
+              <button
+                key={linea.id}
+                type="button"
+                className={`filtro-chip ${lineaActiva === linea.id ? 'filtro-chip--activo' : ''}`}
+                onClick={() => setLineaActiva(linea.id)}
+              >
+                {linea.nombre}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {cargando ? (
-        <div className="comprar-nuevo__lista">
+        <div className={vista === 'grid' ? 'comprar-nuevo__lista' : 'comprar-nuevo__lista comprar-nuevo__lista--filas'}>
           {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="comprar-nuevo-card comprar-nuevo-card--skeleton" />
           ))}
@@ -778,7 +759,7 @@ function TabComprarDeNuevo() {
       ) : productosFiltrados.length === 0 ? (
         <p className="misitems-vacio-filtro">No hay compras que coincidan con tu búsqueda.</p>
       ) : (
-        <div className="comprar-nuevo__lista">
+        <div className={vista === 'grid' ? 'comprar-nuevo__lista' : 'comprar-nuevo__lista comprar-nuevo__lista--filas'}>
           {productosFiltrados.map((producto) => (
             <div key={producto.id} className="comprar-nuevo-card">
               <Link to={`/producto/${producto.id}`} className="comprar-nuevo-card__media">

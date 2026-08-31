@@ -10,6 +10,9 @@
   width: 270px;
   height: 580px;
   font-family: 'Figtree', 'Inter', sans-serif;
+  border-radius: 12px;
+  border: 1px solid #E7E5DE;
+  overflow: hidden;
 }
 
 
@@ -78,7 +81,6 @@
 .pcard__image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
 }
 
 /* Badge de descuento montado sobre la imagen — visible en desktop.
@@ -183,10 +185,20 @@
 }
 
 .pcard__precio-simbolo {
-  font-size: 0.65em;
+  font-size: 0.55em;
   font-weight: 700;
-  vertical-align: text-top;
+  vertical-align: super;
   margin-right: 1px;
+}
+
+.pcard__precio-entero {
+  font-size: 1em;
+}
+
+.pcard__precio-centavos {
+  font-size: 0.55em;
+  vertical-align: super;
+  font-weight: 700;
 }
 
 .pcard__precio-numero {
@@ -204,6 +216,25 @@
   color: #74767c;
   font-size: 0.72rem;
   margin-top: -2px;
+}
+
+/* ---------- Rating (estrellas + total) ---------- */
+.pcard__rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 2px 0;
+}
+
+.pcard__rating-stars {
+  color: #F5A623;
+  font-size: 0.82rem;
+  letter-spacing: 1px;
+}
+
+.pcard__rating-count {
+  color: #74767c;
+  font-size: 0.72rem;
 }
 
 /* ---------- Nombre / marca ---------- */
@@ -268,6 +299,11 @@
 
 .pcard__delivery-pickup {
   margin-top: 4px !important;
+}
+
+/* ---------- Separador ---------- */
+.pcard__separator {
+  display: none;
 }
 
 /* ---------- Acciones ---------- */
@@ -421,12 +457,18 @@
     gap: 0 12px;
     width: 100%;
     height: auto;
+    border-radius: 12px;
+    border: 1px solid #E7E5DE;
+    box-shadow: 0 1px 4px rgba(20, 24, 42, 0.06);
   }
 
   .pcard__acciones {
     order: 5;
+    flex: 0 0 100%;
     margin-bottom: 0;
-    margin-top: 10px;
+    margin-top: 0;
+    flex-wrap: nowrap;
+    gap: 10px;
   }
 
   /* El badge social ocupa toda la fila de arriba, antes de imagen + info */
@@ -463,46 +505,77 @@
   .pcard__body {
     flex: 1 1 0;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
   }
 
   .pcard__nombre {
     font-size: 0.87rem;
+    min-height: auto;
+    -webkit-line-clamp: 2;
   }
+
   .pcard__precio-ahora,
   .pcard__precio-normal {
     font-size: 1.15rem;
   }
+
   .pcard__precio-original {
     font-size: 0.85rem;
   }
+
   .pcard__marca {
     font-size: 0.78rem;
   }
 
-  /* Botones de acciones: fila de dos pastillas 50/50, como la referencia
-     (outline "Agregar a lista" + sólido "Agregar al carrito") */
-  .pcard__acciones {
-    flex-wrap: nowrap;
-    gap: 10px;
+  /* Separador visible solo en mobile */
+  .pcard__separator {
+    display: block;
+    height: 1px;
+    background: #E7E5DE;
+    margin: 10px 0;
+    flex: 0 0 100%;
+    order: 4;
   }
 
+  /* Botones de acciones: fila de dos pastillas 50/50 */
   .pcard__btn-items {
     flex: 1;
     width: auto;
     height: auto;
     border-radius: 999px;
-    padding: 9px 10px;
+    padding: 10px 14px;
     font-size: 0.8rem;
     font-weight: 700;
     gap: 6px;
   }
+
   .pcard__btn-items-label {
     display: inline;
   }
 
-  .pcard__btn-agregar,
+  .pcard__btn-agregar {
+    flex: 1;
+  }
+
+  /* Contador sólido azul en mobile */
   .pcard__contador {
     flex: 1;
+    background: #0052DC;
+    border-color: #0052DC;
+  }
+
+  .pcard__contador .contador-btn {
+    background: rgba(255, 255, 255, 0.2);
+    color: #FFFFFF;
+  }
+
+  .pcard__contador .contador-btn:hover {
+    background: rgba(255, 255, 255, 0.35);
+  }
+
+  .pcard__contador .contador-cantidad {
+    color: #FFFFFF;
   }
 
   /* Caja azul de entrega estilo "Entrega tan pronto como en 15 min" */
@@ -517,11 +590,26 @@
     font-size: 0.72rem;
     margin-bottom: 5px;
   }
+
   .pcard__delivery-rayo {
     color: #FFFFFF;
   }
+
   .pcard__delivery-pickup {
     font-size: 0.72rem;
+  }
+
+  /* Rating más compacto en mobile */
+  .pcard__rating {
+    margin: 1px 0 3px;
+  }
+
+  .pcard__rating-stars {
+    font-size: 0.75rem;
+  }
+
+  .pcard__rating-count {
+    font-size: 0.68rem;
   }
 
   .pcard__toast {

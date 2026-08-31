@@ -357,6 +357,126 @@
 .carrito-bottombar__cta:hover { background: #003fa8; }
 .carrito-bottombar__cta:disabled { background: #A9AC9F; cursor: not-allowed; }
 
+/* ---------- Alerta de órdenes vencidas ---------- */
+.cart-alerta-vencidas {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #FFF8E6;
+  border: 1px solid #F5D67A;
+  border-radius: 10px;
+  padding: 12px;
+  margin: 12px 0;
+}
+.cart-alerta-vencidas__icono { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+.cart-alerta-vencidas strong {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: #7A5B00;
+  display: block;
+  margin-bottom: 4px;
+}
+.cart-alerta-vencidas p {
+  font-size: 0.75rem;
+  color: #5B6270;
+  margin: 0 0 8px;
+  line-height: 1.4;
+}
+.cart-alerta-vencidas__link {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #0052DC;
+  text-decoration: none;
+}
+.cart-alerta-vencidas__link:hover { text-decoration: underline; }
+
+/* ---------- Cupón de descuento ---------- */
+.cart-cupon {
+  background: #F9F9F6;
+  border: 1px solid #E7E5DE;
+  border-radius: 10px;
+  padding: 14px;
+  margin-top: 14px;
+}
+.cart-cupon__titulo {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #1A1A3A;
+  margin: 0 0 10px;
+}
+.cart-cupon__row {
+  display: flex;
+  gap: 8px;
+}
+.cart-cupon__input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1.5px solid #E7E5DE;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: #333;
+  background: #FFFFFF;
+  transition: border-color 0.15s ease;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+.cart-cupon__input:focus {
+  outline: none;
+  border-color: #0052DC;
+  box-shadow: 0 0 0 3px rgba(0, 82, 220, 0.1);
+}
+.cart-cupon__input::placeholder { color: #A9AC9F; }
+.cart-cupon__btn {
+  flex-shrink: 0;
+  padding: 10px 16px;
+  background: #14182A;
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 0.8rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.cart-cupon__btn:hover { background: #2A2E45; }
+
+/* ---------- Beneficios ---------- */
+.cart-benefits {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #F0EEE7;
+}
+.cart-benefits__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.cart-benefits__icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.cart-benefits__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.cart-benefits__text strong {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: #14182A;
+}
+.cart-benefits__text {
+  font-size: 0.72rem;
+  color: #5B6270;
+  line-height: 1.4;
+}
+
 /* En desktop el resumen vive en el sidebar sticky, no en la barra inferior */
 @media (min-width: 1024px) {
   .carrito-bottombar--mobile { display: none; }

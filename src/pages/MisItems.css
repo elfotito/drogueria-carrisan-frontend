@@ -598,36 +598,16 @@
 }
 
 /* ---------------------------------------------------------
-   Sección de favoritos: layout con sidebar de filtros (desktop)
+   Sección de favoritos — layout consistente con "Comprar de nuevo"
+   (toolbar con buscador + botón Filtros + toggle de vista, y filtros
+   colapsables que no ocupan espacio hasta que se abren).
 --------------------------------------------------------- */
 .misitems-section--favoritos {
   border-top: 1px solid #E7E5DE;
   padding-top: 20px;
 }
 
-.favoritos-layout {
-  display: block;
-}
-
-.favoritos-filtros--desktop {
-  display: none;
-}
-
-.favoritos-filtros__grupo {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.favoritos-filtros h3 {
-  font-family: 'Manrope', sans-serif;
-  font-weight: 800;
-  font-size: 0.95rem;
-  color: #14182A;
-  margin: 0 0 12px;
-}
-
-/* Chips de filtro — usados tanto en sidebar desktop como en móvil/modal */
+/* Chips de filtro — usados en la fila colapsable de ambas pestañas */
 .filtro-chip {
   background: #FFFFFF;
   border: 1.5px solid #E7E5DE;
@@ -648,24 +628,20 @@
   color: #FBFAF7;
 }
 
-.favoritos-filtros--desktop .filtro-chip {
-  text-align: left;
-}
-
-/* Toolbar: buscador + filtro móvil + toggle vista */
-.favoritos-toolbar {
+/* Toolbar compartida: buscador + botón Filtros + toggle vista */
+.misitems-toolbar {
   display: flex;
   align-items: center;
   gap: 10px;
   margin-bottom: 12px;
 }
 
-.favoritos-toolbar .misitems-buscador {
+.misitems-toolbar .misitems-buscador {
   flex: 1;
   margin-bottom: 0;
 }
 
-.favoritos-toolbar__filtro-movil {
+.misitems-toolbar__btn {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -678,23 +654,74 @@
   color: #14182A;
   cursor: pointer;
   flex-shrink: 0;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
 }
 
-.favoritos-toolbar__vista {
-  display: none;
+.misitems-toolbar__btn:hover {
+  border-color: #0052DC;
+  color: #0052DC;
 }
 
-.favoritos-filtros-movil {
+.misitems-toolbar__btn--activo {
+  border-color: #0052DC;
+  background: #EEF3FB;
+  color: #0052DC;
+}
+
+/* Toggle de vista (grid/lista) — visible en móvil y desktop */
+.misitems-toolbar__vista {
   display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  margin-bottom: 16px;
-  padding-bottom: 2px;
+  gap: 4px;
+  background: #F7F6F1;
+  border-radius: 10px;
+  padding: 4px;
+  flex-shrink: 0;
 }
 
-.favoritos-filtros-movil::-webkit-scrollbar {
-  display: none;
+.misitems-toolbar__vista button {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: none;
+  border-radius: 7px;
+  color: #5B6270;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.misitems-toolbar__vista button.activo {
+  background: #FFFFFF;
+  color: #14182A;
+  box-shadow: 0 1px 4px rgba(20, 24, 42, 0.1);
+}
+
+/* Filtros colapsables: fila de chips debajo de la toolbar */
+.misitems-filtros {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #FFFFFF;
+  border: 1px solid #E7E5DE;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 16px;
+}
+
+.misitems-filtros__titulo {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #5B6270;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0;
+}
+
+.misitems-filtros__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 /* ---------------------------------------------------------
@@ -863,10 +890,6 @@
   display: none;
 }
 
-.filtro-chip--pill {
-  flex-shrink: 0;
-}
-
 .comprar-nuevo__chip-oferta {
   flex-shrink: 0;
   display: flex;
@@ -897,32 +920,6 @@
   font-size: 1.3rem;
 }
 
-.comprar-nuevo__buscador-row {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.comprar-nuevo__buscador {
-  flex: 1;
-  margin-bottom: 0;
-}
-
-.comprar-nuevo__filtros-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: #FFFFFF;
-  border: 1px solid #E7E5DE;
-  border-radius: 999px;
-  padding: 10px 16px;
-  font-weight: 700;
-  font-size: 0.82rem;
-  color: #14182A;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-
 .comprar-nuevo__lista {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -939,6 +936,50 @@
   .comprar-nuevo__lista {
     grid-template-columns: repeat(4, 1fr);
   }
+}
+
+/* Vista de lista (toggle) para Comprar de nuevo — filas horizontales,
+   igual que la vista "lista" de Mis Items */
+.comprar-nuevo__lista--filas {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.comprar-nuevo__lista--filas .comprar-nuevo-card {
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 14px;
+}
+
+.comprar-nuevo__lista--filas .comprar-nuevo-card__media {
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  aspect-ratio: unset;
+  border-radius: 10px;
+}
+
+.comprar-nuevo__lista--filas .comprar-nuevo-card__info {
+  flex: 1;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0;
+}
+
+.comprar-nuevo__lista--filas .comprar-nuevo-card__nombre {
+  flex: 1;
+  -webkit-line-clamp: 1;
+  min-height: 0;
+}
+
+.comprar-nuevo__lista--filas .comprar-nuevo-card__cta {
+  flex-shrink: 0;
+  margin-top: 0;
+  white-space: nowrap;
 }
 
 .comprar-nuevo-card {
@@ -1127,63 +1168,16 @@
      ahora lo da el <LayoutPaginaPrincipal> que envuelve esta página
      (.ppal-container), evitar duplicarlo acá. */
 
-  /* Layout de favoritos: sidebar de filtros a la izquierda + contenido */
-  .favoritos-layout {
-    display: grid;
-    grid-template-columns: 220px 1fr;
-    gap: 32px;
-    align-items: start;
-  }
-
-  .favoritos-filtros--desktop {
-    display: block;
-    position: sticky;
-    /* Mismo offset que el sidebar de cuenta (.ppal-sidebar__sticky)
-       para que ambas columnas se sientan alineadas al hacer scroll. */
-    top: 140px;
-  }
-
-  .favoritos-filtros-movil {
-    display: none;
-  }
-
-  .favoritos-toolbar__filtro-movil {
-    display: none;
-  }
-
-  .favoritos-toolbar__vista {
-    display: flex;
-    gap: 4px;
-    background: #F7F6F1;
-    border-radius: 10px;
-    padding: 4px;
-    flex-shrink: 0;
-  }
-
-  .favoritos-toolbar__vista button {
-    width: 32px;
-    height: 32px;
-    border: none;
-    background: none;
-    border-radius: 7px;
-    color: #5B6270;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-  }
-
-  .favoritos-toolbar__vista button.activo {
-    background: #FFFFFF;
-    color: #14182A;
-    box-shadow: 0 1px 4px rgba(20, 24, 42, 0.1);
-  }
-
   .product-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 
   .comprar-nuevo__lista {
     grid-template-columns: repeat(5, 1fr);
+  }
+
+  .comprar-nuevo__lista--filas .comprar-nuevo-card__info {
+    gap: 20px;
+    padding: 0 8px;
   }
 }
