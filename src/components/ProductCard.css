@@ -201,7 +201,6 @@
   display: inline-block;
   font-size: 0.55em;
   font-weight: 700;
-  vertical-align: top;
 }
 
 .pcard__precio-numero {
@@ -212,6 +211,21 @@
   color: #74767c;
   text-decoration: line-through;
   font-size: 0.75rem;
+}
+
+.pcard__precio-original .pcard__precio-simbolo,
+.pcard__precio-original .pcard__precio-entero,
+.pcard__precio-original .pcard__precio-centavos {
+  text-decoration: line-through;
+}
+
+.pcard__precio-ahora-label {
+  color: #12A594;
+  font-size: 0.6em;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin-right: 4px;
+  letter-spacing: 0.3px;
 }
 
 .pcard__precio-ves {

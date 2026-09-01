@@ -218,6 +218,7 @@ function ProductCard({ producto, tasaVes, variante = 'vertical' }) {
               {tieneDescuento ? (
                 <>
                   <span className="pcard__precio-ahora">
+                    <span className="pcard__precio-ahora-label">Ahora</span>
                     <PrecioSuperIndice valor={producto.precio_usd} />
                   </span>
                   <span className="pcard__precio-original">
@@ -314,6 +315,7 @@ function ProductCard({ producto, tasaVes, variante = 'vertical' }) {
             {tieneDescuento ? (
               <>
                 <span className="pcard__precio-ahora">
+                  <span className="pcard__precio-ahora-label">Ahora</span>
                   <PrecioSuperIndice valor={producto.precio_usd} />
                 </span>
                 <span className="pcard__precio-original">
