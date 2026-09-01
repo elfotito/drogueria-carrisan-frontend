@@ -207,6 +207,7 @@ function Home() {
           cada BloquePromocional con la URL real. */}
       <section className="home__bloques-promocionales">
         <BloquePromocional
+          imagen="https://fqeshthtycmzgyibiurq.supabase.co/storage/v1/object/public/crsnimages/quirofano.png"
           className="home__bloque-a"
           tamano="grande"
           posicionTexto="arriba"
@@ -216,6 +217,7 @@ function Home() {
           link="/catalogo"
         />
         <BloquePromocional
+          imagen="https://fqeshthtycmzgyibiurq.supabase.co/storage/v1/object/public/crsnimages/ampollas.png"
           className="home__bloque-b"
           tamano="mediano"
           posicionTexto="arriba"
@@ -225,6 +227,7 @@ function Home() {
           link="/mi-cuenta"
         />
         <BloquePromocional
+          imagen="https://fqeshthtycmzgyibiurq.supabase.co/storage/v1/object/public/crsnimages/medicamentos.png"
           className="home__bloque-c"
           tamano="pequeno"
           variante="oferta"
@@ -233,6 +236,7 @@ function Home() {
           link="/catalogo"
         />
         <BloquePromocional
+          imagen="https://fqeshthtycmzgyibiurq.supabase.co/storage/v1/object/public/crsnimages/ampolla.jpg"
           className="home__bloque-e"
           tamano="pequeno"
           variante="nuevo"
@@ -242,6 +246,7 @@ function Home() {
           link="/catalogo"
         />
         <BloquePromocional
+          imagen="https://fqeshthtycmzgyibiurq.supabase.co/storage/v1/object/public/crsnimages/repartidor.jpg"
           className="home__bloque-d"
           tamano="grande"
           posicionTexto="arriba"
