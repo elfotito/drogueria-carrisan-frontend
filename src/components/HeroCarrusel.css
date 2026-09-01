@@ -13,7 +13,7 @@
   justify-content: center;
   border: 2px dashed #d1d5db;
   color: #9ca3af;
-  font-family: 'Quicksand', sans-serif;
+  font-family: 'Bricolage Grotesque', sans-serif;
   font-weight: 600;
 }
 
@@ -36,7 +36,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: top;
+  object-position: 50% 25%;
 }
 
 /* ── Overlay de texto + botón ─────────────────────────── */
@@ -65,7 +65,7 @@
 }
 
 .hero-carrusel__titulo {
-  font-family: 'Quicksand', sans-serif;
+  font-family: 'Bricolage Grotesque', sans-serif;
   font-size: 1.7rem;
   font-weight: 800;
   color: #FFFFFF;
@@ -76,6 +76,7 @@
 
 .hero-carrusel__boton {
   display: inline-block;
+  width: fit-content;
   padding: 10px 28px;
   background: #FFFFFF;
   color: #1A1A3A;
@@ -93,33 +94,39 @@
   transform: scale(1.03);
 }
 
-/* ── Controles: flechas + pausa + dots, arriba a la izquierda ── */
+/* ── Controles: flechas + pausa + dots, arriba a la derecha (sutiles) ── */
 .hero-carrusel__controles {
   position: absolute;
   top: 12px;
-  left: 12px;
+  right: 12px;
   z-index: 3;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .hero-carrusel__flecha,
 .hero-carrusel__pausa {
-  width: 34px;
-  height: 34px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   border: none;
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.35);
   color: #1A1A3A;
   cursor: pointer;
   display: none;
   align-items: center;
   justify-content: center;
+  transition: background 0.15s ease;
+}
+
+.hero-carrusel__flecha:hover,
+.hero-carrusel__pausa:hover {
+  background: rgba(255, 255, 255, 0.65);
 }
 
 .hero-carrusel__flecha {
-  font-size: 1.3rem;
+  font-size: 1rem;
   line-height: 1;
 }
 
@@ -130,23 +137,23 @@
 .hero-carrusel__dots {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-left: 8px;
+  gap: 4px;
+  margin-left: 4px;
 }
 
 .hero-carrusel__dot {
-  width: 7px;
-  height: 7px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   border: none;
-  background: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.4);
   cursor: pointer;
   padding: 0;
 }
 
 .hero-carrusel__dot--activo {
-  background: #FFFFFF;
-  width: 18px;
+  background: rgba(255, 255, 255, 0.9);
+  width: 14px;
   border-radius: 4px;
 }
 
@@ -168,7 +175,6 @@
 
   .hero-carrusel__overlay-contenido {
     padding-left: 20px;
-    padding-top: 40px;
     max-width: 75%;
   }
 
