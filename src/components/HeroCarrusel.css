@@ -36,6 +36,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: top;
 }
 
 /* ── Overlay de texto + botón ─────────────────────────── */
@@ -92,34 +93,45 @@
   transform: scale(1.03);
 }
 
-.hero-carrusel__flecha {
+/* ── Controles: flechas + pausa + dots, arriba a la izquierda ── */
+.hero-carrusel__controles {
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 12px;
+  left: 12px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hero-carrusel__flecha,
+.hero-carrusel__pausa {
   width: 34px;
   height: 34px;
   border-radius: 50%;
   border: none;
   background: rgba(255, 255, 255, 0.85);
   color: #1A1A3A;
-  font-size: 1.3rem;
-  line-height: 1;
   cursor: pointer;
   display: none;
   align-items: center;
   justify-content: center;
 }
 
-.hero-carrusel__flecha--izq { left: 12px; }
-.hero-carrusel__flecha--der { right: 12px; }
+.hero-carrusel__flecha {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.hero-carrusel__pausa {
+  display: flex;
+}
 
 .hero-carrusel__dots {
-  position: absolute;
-  bottom: 12px;
-  left: 50%;
-  transform: translateX(-50%);
   display: flex;
+  align-items: center;
   gap: 6px;
+  margin-left: 8px;
 }
 
 .hero-carrusel__dot {
@@ -156,6 +168,7 @@
 
   .hero-carrusel__overlay-contenido {
     padding-left: 20px;
+    padding-top: 40px;
     max-width: 75%;
   }
 

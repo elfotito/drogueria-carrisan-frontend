@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { Link } from 'react-router-dom'
+import { Pause, Play } from 'lucide-react'
 import './HeroCarrusel.css'
 
 // ---------------------------------------------------------------
@@ -117,9 +118,17 @@ function HeroCarrusel({ slides = [], intervaloMs = 5000, altura }) {
       </div>
 
       {total > 1 && (
-        <>
+        <div className="hero-carrusel__controles">
           <button type="button" className="hero-carrusel__flecha hero-carrusel__flecha--izq" onClick={anterior} aria-label="Anterior">
             ‹
+          </button>
+          <button
+            type="button"
+            className="hero-carrusel__pausa"
+            onClick={() => setPausado((p) => !p)}
+            aria-label={pausado ? 'Reanudar carrusel' : 'Pausar carrusel'}
+          >
+            {pausado ? <Play size={16} /> : <Pause size={16} />}
           </button>
           <button type="button" className="hero-carrusel__flecha hero-carrusel__flecha--der" onClick={siguiente} aria-label="Siguiente">
             ›
@@ -135,7 +144,7 @@ function HeroCarrusel({ slides = [], intervaloMs = 5000, altura }) {
               />
             ))}
           </div>
-        </>
+        </div>
       )}
     </div>
   )
