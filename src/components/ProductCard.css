@@ -313,7 +313,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 1px 3px;
+  padding: 1px 4px;
   border-radius: 2px;
   margin-bottom: 4px;
   width: fit-content;
@@ -321,8 +321,9 @@
 }
 
 .pcard__delivery-arrive strong {
-  font-weight: 800;
+  font-weight: 700;
   color: #FFFFFF;
+  letter-spacing: -0.3px;
 }
 
 .pcard__delivery-rayo {
@@ -332,13 +333,14 @@
 
 .pcard__delivery-pickup {
   margin-top: 2px !important;
-  font-weight: 600;
+  font-weight: 400;
   font-size: 0.85rem;
 }
 
 .pcard__delivery-pickup strong {
-  font-weight: 800;
+  font-weight: 700;
   color: #14182A;
+  letter-spacing: -0.3px;
 }
 
 /* ---------- Acciones ---------- */
