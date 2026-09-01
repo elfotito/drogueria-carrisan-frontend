@@ -339,7 +339,7 @@
 
 .pcard__delivery-pickup strong {
   font-weight: 700;
-  color: #14182A;
+  color: #0e111d;
   letter-spacing: -0.3px;
 }
 
@@ -395,7 +395,7 @@
 }
 
 .pcard__btn-agregar:hover {
-  filter: brightness(1.1);
+  background: #1B4B8F;
 }
 
 .pcard__btn-agregar:active {
