@@ -1,4 +1,9 @@
+import { useRef, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Heart } from 'lucide-react'
+import { useCart } from '../context/CartContext'
+import { useAuth } from '../context/AuthContext'
+import { useFavoritos } from '../context/FavoritosContext'
 import './PromoCard.css'
 
 function PrecioSuperIndice({ valor }) {
@@ -23,12 +28,24 @@ function obtenerEtiquetaDescuento(descuento) {
   return 'Descuento'
 }
 
-// Card compacta para carruseles estilo Walmart/Amazon: imagen grande,
-// badge de oferta (si aplica), precio (USD + Bs. abajo) y nombre.
-// Sin botón de agregar/favorito a propósito — es solo vitrina, para eso
-// está ProductCard en el catálogo.
+// Card compacta para carruseles estilo Walmart/Amazon: etiqueta de
+// oferta arriba (sin tapar la imagen), imagen grande, botón de favorito,
+// botón de agregar al carrito, precio (USD + Bs. abajo) y nombre.
 function PromoCard({ producto, tasaVes }) {
   const navigate = useNavigate()
+  const { items: cartItems, addItem, removeItem, updateCantidad } = useCart()
+  const { user } = useAuth()
+  const { esFavorito, toggleFavorito } = useFavoritos()
+
+  const [mostrarContador, setMostrarContador] = useState(false)
+  const [favoritoPop, setFavoritoPop] = useState(false)
+  const favoritoPopTimerRef = useRef(null)
+
+  useEffect(() => {
+    return () => {
+      clearTimeout(favoritoPopTimerRef.current)
+    }
+  }, [])
 
   const precioVes = tasaVes && producto.precio_usd != null
     ? (producto.precio_usd * tasaVes).toFixed(2)
@@ -37,16 +54,65 @@ function PromoCard({ producto, tasaVes }) {
   const tieneDescuento = producto.precio_original_usd != null && producto.descuento_activo
   const etiquetaDescuento = tieneDescuento ? obtenerEtiquetaDescuento(producto.descuento_activo) : null
 
+  const itemEnCarrito = cartItems.find(i => i.producto.id === producto.id)
+  const cantidad = itemEnCarrito?.cantidad || 0
+  const favorito = esFavorito(producto.id)
+
+  function handleAgregar(e) {
+    e.stopPropagation()
+    if (cantidad === 0) addItem(producto, 1)
+    setMostrarContador(true)
+  }
+
+  function handleSumar(e) {
+    e.stopPropagation()
+    updateCantidad(producto.id, cantidad + 1)
+  }
+
+  function handleRestar(e) {
+    e.stopPropagation()
+    if (cantidad <= 1) {
+      removeItem(producto.id)
+      setMostrarContador(false)
+    } else {
+      updateCantidad(producto.id, cantidad - 1)
+    }
+  }
+
+  function handleFavorito(e) {
+    e.stopPropagation()
+    if (!user) {
+      navigate('/login')
+      return
+    }
+    toggleFavorito(producto)
+
+    clearTimeout(favoritoPopTimerRef.current)
+    setFavoritoPop(true)
+    favoritoPopTimerRef.current = setTimeout(() => setFavoritoPop(false), 260)
+  }
+
   return (
-    <button
-      type="button"
-      className="promocard"
+    <div
+      className={`promocard ${tieneDescuento ? 'promocard--oferta' : ''}`}
       onClick={() => navigate(`/producto/${producto.id}`)}
     >
-      <div className="promocard__media">
+      {/* Etiqueta de descuento ARRIBA de la foto para no tapar la imagen */}
+      <div className="promocard__top-badge">
         {etiquetaDescuento && (
           <span className="promocard__badge">{etiquetaDescuento}</span>
         )}
+      </div>
+
+      <div className="promocard__media">
+        <button
+          type="button"
+          className={`promocard__fav ${favorito ? 'promocard__fav--activo' : ''} ${favoritoPop ? 'promocard__fav--pop' : ''}`}
+          onClick={handleFavorito}
+          aria-label={favorito ? 'Quitar de favoritos' : 'Agregar a favoritos'}
+        >
+          <Heart size={14} fill={favorito ? 'currentColor' : 'none'} strokeWidth={2} />
+        </button>
         <img
           src={producto.foto_url || '/placeholder.png'}
           alt={producto.nombre_comercial}
@@ -54,6 +120,18 @@ function PromoCard({ producto, tasaVes }) {
           loading="lazy"
         />
       </div>
+
+      {(mostrarContador || cantidad > 0) ? (
+        <div className="promocard__contador" onClick={(e) => e.stopPropagation()}>
+          <button className="promocard__contador-btn" onClick={handleRestar} aria-label="Quitar uno">−</button>
+          <span className="promocard__contador-cantidad">{cantidad}</span>
+          <button className="promocard__contador-btn" onClick={handleSumar} aria-label="Agregar uno">+</button>
+        </div>
+      ) : (
+        <button className="promocard__btn-agregar" onClick={handleAgregar}>
+          + Agregar
+        </button>
+      )}
 
       <div className="promocard__precios">
         {tieneDescuento ? (
@@ -75,7 +153,7 @@ function PromoCard({ producto, tasaVes }) {
       {precioVes && <span className="promocard__precio-ves">≈ Bs. {precioVes}</span>}
 
       <h4 className="promocard__nombre">{producto.nombre_comercial}</h4>
-    </button>
+    </div>
   )
 }
 
