@@ -1,4 +1,4 @@
-.ec-dashboard,
+﻿.ec-dashboard,
 .ec-dashboard *,
 .ec-dashboard *::before,
 .ec-dashboard *::after {
@@ -15,7 +15,7 @@
   --ec-positivo: #15803d;
   --ec-negativo: #dc2626;
   --ec-warning: #d97706;
-  --ec-bg: #FBFAF7;
+  --ec-bg: #FFFFFF;
   --ec-surface: #ffffff;
   --ec-border: #e7e6e0;
   --ec-text: #1A1A3A;
@@ -26,7 +26,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Botón "Exportar" que va en el header del layout (prop acciones) */
+/* BotÃ³n "Exportar" que va en el header del layout (prop acciones) */
 .ec-btn-exportar {
   display: flex;
   align-items: center;
@@ -77,7 +77,7 @@
   margin-bottom: 16px;
 }
 
-/* ============ GAUGE DE CRÉDITO ============ */
+/* ============ GAUGE DE CRÃ‰DITO ============ */
 .ec-gauge-card {
   background: linear-gradient(135deg, var(--ec-brand-dark) 0%, #262650 100%);
   color: white;
@@ -195,7 +195,7 @@
   .ec-gauge-card { padding: 32px 40px 28px; }
 }
 
-/* ============ BANNER CONTADO (sin línea de crédito) ============ */
+/* ============ BANNER CONTADO (sin lÃ­nea de crÃ©dito) ============ */
 .ec-banner-contado {
   display: flex;
   align-items: center;
@@ -236,7 +236,7 @@
   flex-shrink: 0;
 }
 
-/* ============ BANNER DE ALERTA (crédito alto) ============ */
+/* ============ BANNER DE ALERTA (crÃ©dito alto) ============ */
 .ec-banner-alerta {
   display: flex;
   align-items: flex-start;
@@ -296,7 +296,7 @@
 
 .ec-kpi__valor--negativo { color: var(--ec-negativo); }
 
-/* ============ PLACEHOLDERS "PRÓXIMAMENTE" ============ */
+/* ============ PLACEHOLDERS "PRÃ“XIMAMENTE" ============ */
 .ec-proximamente {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -434,7 +434,7 @@
   color: var(--ec-text-muted);
 }
 
-/* ============ ACCESOS RÁPIDOS ============ */
+/* ============ ACCESOS RÃPIDOS ============ */
 .ec-accesos {
   display: flex;
   gap: 12px;
@@ -636,18 +636,18 @@
 .ec-movimiento__monto--rojo { color: var(--ec-negativo); }
 .ec-movimiento__monto--verde { color: #059669; }
 
-/* El modal "Reportar pago" (.ec-modal-*, .ec-btn) que vivía acá se
-   eliminó junto con el componente en EstadoCuenta.jsx — ver nota ahí.
-   Ninguna otra página usaba estas clases. */
+/* El modal "Reportar pago" (.ec-modal-*, .ec-btn) que vivÃ­a acÃ¡ se
+   eliminÃ³ junto con el componente en EstadoCuenta.jsx â€” ver nota ahÃ­.
+   Ninguna otra pÃ¡gina usaba estas clases. */
 
 /* ============================================================
-   SUBPÁGINAS — Historial de pagos / facturas / reportes.
+   SUBPÃGINAS â€” Historial de pagos / facturas / reportes.
    Reutilizan .ec-kpi(s), .ec-buscador, .ec-grupo-fecha, .ec-movimiento,
    .ec-badge ya definidos arriba (mismo dashboard visual). Estas
-   reglas cubren solo lo específico de cada subpágina.
+   reglas cubren solo lo especÃ­fico de cada subpÃ¡gina.
    ============================================================ */
 
-/* Botón de descarga dentro de una fila de movimiento (Facturas) */
+/* BotÃ³n de descarga dentro de una fila de movimiento (Facturas) */
 .ec-movimiento__descarga {
   flex-shrink: 0;
   width: 34px;
@@ -720,7 +720,7 @@
 
 .ec-reporte-form__generar:disabled { opacity: 0.6; cursor: default; }
 
-/* Vista previa en vivo del período seleccionado, antes de generar el PDF */
+/* Vista previa en vivo del perÃ­odo seleccionado, antes de generar el PDF */
 .ec-reporte-preview {
   margin-bottom: 16px;
 }
@@ -752,7 +752,7 @@
 
 
 /* ============================================================
-   SUBPÁGINA — Ampliación de línea de crédito
+   SUBPÃGINA â€” AmpliaciÃ³n de lÃ­nea de crÃ©dito
    ============================================================ */
 .ec-amp-hero {
   background: var(--ec-surface);
@@ -848,7 +848,7 @@
   margin: 0;
 }
 
-/* ---- Niveles de ampliación (15% / 30% / 50%) ---- */
+/* ---- Niveles de ampliaciÃ³n (15% / 30% / 50%) ---- */
 .ec-tiers {
   background: var(--ec-surface);
   border: 1px solid var(--ec-border);
@@ -930,7 +930,7 @@
 
 .ec-tiers__nivel--alcanzado .ec-tiers__barra { background: #059669; }
 
-/* ---- Requisitos básicos ---- */
+/* ---- Requisitos bÃ¡sicos ---- */
 .ec-requisitos {
   background: var(--ec-surface);
   border: 1px solid var(--ec-border);
@@ -978,7 +978,7 @@
   margin-top: 2px;
 }
 
-/* ---- "Cómo funciona tu crédito" (reutiliza financiamiento.js) ---- */
+/* ---- "CÃ³mo funciona tu crÃ©dito" (reutiliza financiamiento.js) ---- */
 .ec-faq-credito {
   background: var(--ec-surface);
   border: 1px solid var(--ec-border);

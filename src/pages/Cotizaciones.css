@@ -1,4 +1,4 @@
-.cot-page,
+﻿.cot-page,
 .cot-page *,
 .cot-page *::before,
 .cot-page *::after {
@@ -10,7 +10,7 @@
   --cot-brand-dark: #1A1A3A;
   --cot-accent: #12A594;
   --cot-accent-light: #e7f8f5;
-  --cot-bg: #FBFAF7;
+  --cot-bg: #FFFFFF;
   --cot-surface: #ffffff;
   --cot-border: #e7e6e0;
   --cot-text: #1A1A3A;
@@ -84,7 +84,7 @@
   color: var(--cot-brand);
 }
 
-/* --- Badges de estado (mismo patrón de píldora que mo-badge) --- */
+/* --- Badges de estado (mismo patrÃ³n de pÃ­ldora que mo-badge) --- */
 .cot-card__estado {
   display: inline-flex;
   align-items: center;
@@ -104,7 +104,7 @@
   font-weight: 500;
 }
 
-/* --- Precio + vigencia + acción --- */
+/* --- Precio + vigencia + acciÃ³n --- */
 .cot-card__precio {
   margin: 0;
   font-size: 1.1rem;
@@ -150,7 +150,7 @@
   font-size: 0.9rem;
 }
 
-/* --- Estado vacío (mismo patrón que mo-vacio) --- */
+/* --- Estado vacÃ­o (mismo patrÃ³n que mo-vacio) --- */
 .cot-vacio {
   display: flex;
   flex-direction: column;

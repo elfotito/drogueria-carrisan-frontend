@@ -1,4 +1,4 @@
-.mo-page,
+﻿.mo-page,
 .mo-page *,
 .mo-page *::before,
 .mo-page *::after {
@@ -10,7 +10,7 @@
   --mo-brand-dark: #1A1A3A;
   --mo-accent: #12A594;
   --mo-accent-light: #e7f8f5;
-  --mo-bg: #FBFAF7;
+  --mo-bg: #FFFFFF;
   --mo-surface: #ffffff;
   --mo-border: #e7e6e0;
   --mo-text: #1A1A3A;
@@ -112,7 +112,7 @@
   background: rgba(255, 255, 255, 0.25);
 }
 
-/* --- Grid de órdenes --- */
+/* --- Grid de Ã³rdenes --- */
 .mo-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -205,7 +205,7 @@
   background: var(--mo-brand);
 }
 
-/* --- Info de envío --- */
+/* --- Info de envÃ­o --- */
 .mo-card__envio {
   display: flex;
   align-items: center;
@@ -229,7 +229,7 @@
   color: var(--mo-text);
 }
 
-/* --- Total + botón --- */
+/* --- Total + botÃ³n --- */
 .mo-card__bottom {
   display: flex;
   align-items: center;
@@ -292,7 +292,7 @@
   100% { background-position: 0 50%; }
 }
 
-/* --- Estado vacío --- */
+/* --- Estado vacÃ­o --- */
 .mo-vacio {
   display: flex;
   flex-direction: column;

@@ -1,4 +1,4 @@
-.mi-cuenta,
+﻿.mi-cuenta,
 .mi-cuenta *,
 .mi-cuenta *::before,
 .mi-cuenta *::after {
@@ -14,7 +14,7 @@
   --color-positive: #15803d;
   --color-negative: #dc2626;
   --color-warning: #d97706;
-  --color-bg: #FBFAF7;
+  --color-bg: #FFFFFF;
   --color-surface: #ffffff;
   --color-border: #e7e6e0;
   --color-text: #1A1A3A;
@@ -74,7 +74,7 @@
   font-size: 1.05rem;
 }
 
-/* El saludo ahora es un botón (abre "Tu cuenta"), no texto suelto */
+/* El saludo ahora es un botÃ³n (abre "Tu cuenta"), no texto suelto */
 .mi-cuenta__saludo-btn {
   display: flex;
   align-items: center;
@@ -190,7 +190,7 @@
 }
 
 /* ================================================================== */
-/* Modal de confirmación rápida (icono de logout del header)           */
+/* Modal de confirmaciÃ³n rÃ¡pida (icono de logout del header)           */
 /* ================================================================== */
 .modal-overlay {
   position: fixed;
@@ -436,7 +436,7 @@
   color: var(--color-text-muted);
 }
 
-/* --- Preferencias por categoría de notificación --- */
+/* --- Preferencias por categorÃ­a de notificaciÃ³n --- */
 .modal-permisos__categorias {
   margin-top: 4px;
   padding-top: 10px;
@@ -463,7 +463,7 @@
 }
 
 /* ================================================================== */
-/* Tarjeta base — todos los bloques del dashboard comparten este       */
+/* Tarjeta base â€” todos los bloques del dashboard comparten este       */
 /* estilo de card (borde, radio, padding, hover si es clickeable)      */
 /* ================================================================== */
 .bloque-tarjeta {
@@ -529,13 +529,13 @@ a.bloque-tarjeta:hover {
 }
 
 /* Grid de 2 columnas en desktop para los pares de bloques
-   (crédito+pedidos activos, favoritos+soporte) — ver media query abajo */
+   (crÃ©dito+pedidos activos, favoritos+soporte) â€” ver media query abajo */
 .mi-cuenta__grid-2col {
   display: block;
 }
 
 /* ================================================================== */
-/* Bloque de crédito — barra Chakra + cifras. Si es cliente de contado,  */
+/* Bloque de crÃ©dito â€” barra Chakra + cifras. Si es cliente de contado,  */
 /* variante con icono + CTA a Pagos en su lugar.                       */
 /* ================================================================== */
 .bloque-credito--contado {
@@ -599,7 +599,7 @@ a.bloque-tarjeta:hover {
 }
 
 /* ================================================================== */
-/* Bloque de pedidos activos — barra apilada + leyenda                 */
+/* Bloque de pedidos activos â€” barra apilada + leyenda                 */
 /* ================================================================== */
 .bloque-pedidos-activos__header {
   display: flex;
@@ -648,7 +648,7 @@ a.bloque-tarjeta:hover {
 }
 
 /* ================================================================== */
-/* Gráfico de gasto mensual — barras simples de los últimos 6 meses    */
+/* GrÃ¡fico de gasto mensual â€” barras simples de los Ãºltimos 6 meses    */
 /* ================================================================== */
 .gasto-mensual__header {
   display: flex;
@@ -703,7 +703,7 @@ a.bloque-tarjeta:hover {
 }
 
 /* ================================================================== */
-/* Sección "Tus pedidos" — título + flecha, carrusel de MiniOrdenCard   */
+/* SecciÃ³n "Tus pedidos" â€” tÃ­tulo + flecha, carrusel de MiniOrdenCard   */
 /* ================================================================== */
 .seccion-pedidos {
   margin-bottom: 16px;
@@ -862,7 +862,7 @@ a.bloque-tarjeta:hover {
 }
 
 /* ================================================================== */
-/* Preview de favoritos — mini grid con imagen                         */
+/* Preview de favoritos â€” mini grid con imagen                         */
 /* ================================================================== */
 .bloque-favoritos__header {
   display: flex;
@@ -898,7 +898,7 @@ a.bloque-tarjeta:hover {
 }
 
 /* ================================================================== */
-/* Soporte — CTA destacada a Contacto                                  */
+/* Soporte â€” CTA destacada a Contacto                                  */
 /* ================================================================== */
 .soporte-card {
   flex-direction: row;
@@ -917,7 +917,7 @@ a.bloque-tarjeta:hover {
 }
 
 /* ================================================================== */
-/* Footer legal — Términos / Privacidad, discreto                      */
+/* Footer legal â€” TÃ©rminos / Privacidad, discreto                      */
 /* ================================================================== */
 .legal-footer {
   display: flex;
@@ -962,7 +962,7 @@ a.bloque-tarjeta:hover {
 }
 
 /* ================================================================== */
-/* Banner de onboarding — invita a instalar la app y activar push      */
+/* Banner de onboarding â€” invita a instalar la app y activar push      */
 /* ================================================================== */
 .banner-onboarding {
   position: relative;
@@ -1108,7 +1108,7 @@ a.bloque-tarjeta:hover {
 }
 
 /* ================================================================== */
-/* Responsive: desktop — los pares de bloques pasan a 2 columnas       */
+/* Responsive: desktop â€” los pares de bloques pasan a 2 columnas       */
 /* ================================================================== */
 @media (min-width: 720px) {
   .mi-cuenta__grid-2col {

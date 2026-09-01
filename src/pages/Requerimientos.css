@@ -1,4 +1,4 @@
-.req-page,
+﻿.req-page,
 .req-page *,
 .req-page *::before,
 .req-page *::after {
@@ -7,7 +7,7 @@
 
 .req-page {
   --req-brand: #0052DC;
-  --req-bg: #FBFAF7;
+  --req-bg: #FFFFFF;
   --req-surface: #ffffff;
   --req-border: #e7e6e0;
   --req-text: #1A1A3A;

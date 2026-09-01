@@ -11,11 +11,9 @@
   align-items: flex-start;
   text-align: left;
   background: #FFFFFF;
-  border: 1px solid #e3e4e5;
-  border-radius: 12px;
   padding: 10px;
   cursor: pointer;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Figtree', sans-serif;
   transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
 }
 
@@ -32,7 +30,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #FBFAF7;
+  background: #FFFFFF;
   border-radius: 8px;
   overflow: hidden;
   margin-bottom: 8px;

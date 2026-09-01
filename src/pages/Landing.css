@@ -1,4 +1,4 @@
-.landing,
+﻿.landing,
 .landing *,
 .landing *::before,
 .landing *::after {
@@ -11,7 +11,7 @@
   --color-accent: #12A594;
   --color-accent-light: #e7f8f5;
   --color-warning: #F5A623;
-  --color-bg: #FBFAF7;
+  --color-bg: #FFFFFF;
   --color-surface: #ffffff;
   --color-border: #e7e6e0;
   --color-text: #1A1A3A;
@@ -70,7 +70,7 @@
   padding: 44px 20px;
 }
 
-/* --- Placeholder de imagen genérico --- */
+/* --- Placeholder de imagen genÃ©rico --- */
 .landing-img-placeholder {
   display: flex;
   align-items: center;
@@ -91,7 +91,7 @@
   min-height: 180px;
 }
 
-/* --- Links y botones genéricos --- */
+/* --- Links y botones genÃ©ricos --- */
 .landing-link {
   display: inline-block;
   color: var(--color-accent);
@@ -133,7 +133,7 @@
 }
 
 .btn-landing--primario {
-  transition: all 0.3s ease; /* Hace que la iluminación sea suave y no de golpe */
+  transition: all 0.3s ease; /* Hace que la iluminaciÃ³n sea suave y no de golpe */
 }
 
 .btn-landing--primario:hover {
@@ -226,9 +226,9 @@
   cursor: pointer;
 }
 
-/* Estilo específico para el candado */
+/* Estilo especÃ­fico para el candado */
 .enlace-seguridad__icono {
-  color: #232f3e; /* Un gris muy oscuro/azulado, típico de Amazon */
+  color: #232f3e; /* Un gris muy oscuro/azulado, tÃ­pico de Amazon */
   flex-shrink: 0;
 }
 
@@ -243,7 +243,7 @@
 
 /* Efecto hover opcional para cuando pasas el mouse */
 .enlace-seguridad:hover .enlace-seguridad__texto {
-  color: #c45500; /* Naranja (estilo Amazon) o puedes usar un azul más oscuro */
+  color: #c45500; /* Naranja (estilo Amazon) o puedes usar un azul mÃ¡s oscuro */
   text-decoration-color: #c45500;
 }
 
@@ -252,7 +252,7 @@
 /* ================================================================== */
 .landing-beneficios {
   padding: 16px 0;
-  border-bottom: 1px solid #e0e0e0; /* La imagen parece tener una sutil línea gris abajo */
+  border-bottom: 1px solid #e0e0e0; /* La imagen parece tener una sutil lÃ­nea gris abajo */
 }
 
 .landing-beneficios__lista {
@@ -260,7 +260,7 @@
   margin: 0;
   padding: 0;
   display: flex;
-  flex-direction: column; /* Apilado en móviles */
+  flex-direction: column; /* Apilado en mÃ³viles */
   gap: 16px;
 }
 
@@ -271,7 +271,7 @@
   gap: 10px;
 }
 
-/* El círculo verde/menta sólido que envuelve al check */
+/* El cÃ­rculo verde/menta sÃ³lido que envuelve al check */
 .landing-beneficios__icono {
   display: flex;
   align-items: center;
@@ -301,7 +301,7 @@
   text-decoration: underline;
 }
 
-/* Diseño de Escritorio (Desktop) */
+/* DiseÃ±o de Escritorio (Desktop) */
 @media (min-width: 1024px) {
   .landing-beneficios {
     max-width: 1160px;
@@ -321,7 +321,7 @@
 }
 
 /* ================================================================== */
-/* 3. MÁS FORMAS DE GASTAR MENOS                                      */
+/* 3. MÃS FORMAS DE GASTAR MENOS                                      */
 /* ================================================================== */
 .landing-ahorros {
   background: var(--bg-rosado);
@@ -352,25 +352,25 @@
   background: var(--color-surface);
   border-radius: 12px; /* Redondeo general de la tarjeta */
   overflow: hidden; /* CLAVE: Corta la imagen para que respete el borde redondeado */
-  border: 1px solid #e0e0e0; /* Opcional: borde sutil como en el diseño */
+  border: 1px solid #e0e0e0; /* Opcional: borde sutil como en el diseÃ±o */
   display: flex;
   flex-direction: column;
-  /* IMPORTANTE: Quitamos el padding de aquí */
+  /* IMPORTANTE: Quitamos el padding de aquÃ­ */
 }
 
 .landing-ahorros__card-imagen {
   width: 100%; /* Obliga a la imagen a tocar los bordes laterales */
   min-height: 120px;
-  display: block; /* Quita el espacio blanco "fantasma" debajo de las imágenes */
-  object-fit: cover; /* Asegura que la imagen no se deforme si cambia el tamaño */
+  display: block; /* Quita el espacio blanco "fantasma" debajo de las imÃ¡genes */
+  object-fit: cover; /* Asegura que la imagen no se deforme si cambia el tamaÃ±o */
 }
 
 /* NUEVO: Contenedor exclusivo para los textos */
 .landing-ahorros__card-content {
-  padding: 20px 24px 24px; /* Ahora el padding solo aplica aquí */
+  padding: 20px 24px 24px; /* Ahora el padding solo aplica aquÃ­ */
   display: flex;
   flex-direction: column;
-  gap: 10px; /* Separación automática entre título, texto y link */
+  gap: 10px; /* SeparaciÃ³n automÃ¡tica entre tÃ­tulo, texto y link */
   text-align: center;
 }
 
@@ -403,7 +403,7 @@
   max-width: 340px;
 }
 
-/* --- Imágenes de secciones: evitar overflow en móvil --- */
+/* --- ImÃ¡genes de secciones: evitar overflow en mÃ³vil --- */
 .landing-seguros__imagen,
 .landing-envios__imagen,
 .landing-ayuda-meds__imagen,
@@ -437,7 +437,7 @@
 }
 
 /* ================================================================== */
-/* 5. DESPÍDETE DE LAS FILAS                                           */
+/* 5. DESPÃDETE DE LAS FILAS                                           */
 /* ================================================================== */
 .landing-envios {
   background: #fcebe5;
@@ -559,7 +559,7 @@
 }
 
 /* ================================================================== */
-/* 7. ESTAMOS AQUÍ PARA AYUDARTE                                       */
+/* 7. ESTAMOS AQUÃ PARA AYUDARTE                                       */
 /* ================================================================== */
 .landing-ayudarte {
   background: #e5eee7;
@@ -622,7 +622,7 @@
   /* ELIMINAMOS background, border y border-radius para quitar la caja */
   background: transparent;
   border: none;
-  padding: 0 10px; /* Solo un poco de padding lateral por si es móvil */
+  padding: 0 10px; /* Solo un poco de padding lateral por si es mÃ³vil */
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -632,11 +632,11 @@
 .landing-como-funciona__imagen {
   height: 160px; /* Mantiene la altura, puedes subirla si la imagen se ve muy chica */
   width: auto;
-  margin-bottom: 16px; /* Separación controlada con el título */
-  object-fit: contain; /* Evita que la ilustración se recorte o deforme */
+  margin-bottom: 16px; /* SeparaciÃ³n controlada con el tÃ­tulo */
+  object-fit: contain; /* Evita que la ilustraciÃ³n se recorte o deforme */
 }
 
-/* --- TIPOGRAFÍA MÁS PEQUEÑA Y JUNTITA --- */
+/* --- TIPOGRAFÃA MÃS PEQUEÃ‘A Y JUNTITA --- */
 .landing-como-funciona__titulo {
   color: #002f36 !important;
   margin: 0 0 8px !important;
@@ -986,7 +986,7 @@
 
 
 /* ================================================================== */
-/* INFORMACIÓN                                                        */
+/* INFORMACIÃ“N                                                        */
 /* ================================================================== */
 
 .landing-footer__info {
@@ -1372,7 +1372,7 @@
 }
 
 /* ================================================================== */
-/* RESPONSIVE: TABLET (≥768px) - Solo escala de tamaños                */
+/* RESPONSIVE: TABLET (â‰¥768px) - Solo escala de tamaÃ±os                */
 /* ================================================================== */
 @media (min-width: 768px) {
   .landing h1 {
@@ -1428,7 +1428,7 @@
 }
 
 /* ================================================================== */
-/* RESPONSIVE: ESCRITORIO (≥1024px)                                    */
+/* RESPONSIVE: ESCRITORIO (â‰¥1024px)                                    */
 /* ================================================================== */
 @media (min-width: 1024px) {
   .landing section {
@@ -1522,7 +1522,7 @@
     width: auto;
   }
 
-  /* --- Envíos: media izq, texto der --- */
+  /* --- EnvÃ­os: media izq, texto der --- */
   .landing-envios {
     display: flex;
     flex-direction: row;
@@ -1580,7 +1580,7 @@
     width: auto;
   }
 
-  /* --- Estamos aquí para ayudarte: texto izq, imagen der --- */
+  /* --- Estamos aquÃ­ para ayudarte: texto izq, imagen der --- */
   .landing-ayudarte {
     flex-direction: row;
     justify-content: center;

@@ -1,310 +1,498 @@
-/* ============================================
-   BottomNav — dock flotante (mobile + tablet)
-   Paleta: Azul #0052DC · Índigo #1A1A3A
-   ============================================ */
-
-.bottom-nav {
-  display: none; /* solo aparece <1024px, ver media query */
+﻿/* ============================================   BottomNav â€” dock flotante (mobile + tablet)   Paleta: Azul #0052DC Â· Ãndigo #1A1A3A   ============================================ */.bottom-nav 
+{
+  display: none
+;
+ /* solo aparece <1024px, ver media query */
 }
-
-@media (max-width: 1023px) {
-  .bottom-nav {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 2px;
-    position: fixed;
-    left: 50%;
-    bottom: calc(12px + env(safe-area-inset-bottom, 0));
-    transform: translateX(-50%);
-    width: calc(100% - 24px);
-    max-width: 420px;
-    padding: 6px 8px;
-    background: rgba(255, 255, 255, 0.86);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(26, 26, 58, 0.06);
-    border-radius: 999px;
-    box-shadow:
-      0 10px 30px rgba(26, 26, 58, 0.16),
-      0 2px 8px rgba(26, 26, 58, 0.08);
-    z-index: 100;
-  }
-
-  /* --- Items normales (Inicio, Mis Items, Mis Órdenes, Cuenta) --- */
-
-  .bottom-nav__item {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 2px;
-    flex: 1;
-    min-width: 0;
-    padding: 6px 2px;
-    text-decoration: none;
-    color: rgba(26, 26, 58, 0.5);
-    font-family: 'Inter', sans-serif;
-    font-size: 0.62rem;
-    font-weight: 600;
-    border-radius: 18px;
-    transition: color 0.15s ease;
-  }
-
-  .bottom-nav__item svg {
-    position: relative;
-    z-index: 1;
-    width: 20px;
-    height: 20px;
-    transition: stroke 0.15s ease;
-  }
-
-  .bottom-nav__label {
-    position: relative;
-    z-index: 1;
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  /* Ícono envuelto para poder animar el "pill" de fondo detrás, sin
-     tocar los SVG — así se pueden reemplazar por otros íconos sin
-     romper el efecto. */
-  .bottom-nav__icon-wrap {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 42px;
-    height: 26px;
-  }
-
-  .bottom-nav__icon-pill {
-    position: absolute;
-    inset: 0;
-    border-radius: 13px;
-    background: #E5EDFC; /* tinte claro del Azul de marca */
-    opacity: 0;
-    transform: scale(0.6);
-    transition: opacity 0.18s ease, transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  .bottom-nav__item--activo {
-    color: #0052DC;
-  }
-
-  .bottom-nav__item--activo svg {
-    stroke: #0052DC;
-  }
-
-  .bottom-nav__item--activo .bottom-nav__icon-pill {
-    opacity: 1;
-    transform: scale(1);
-  }
-
-  /* --- Botón central "Menú" (FAB elevado) --- */
-
-  .bottom-nav__fab-wrapper {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    flex: 0 0 auto;
-    padding: 0 6px;
-    text-decoration: none;
-    color: rgba(26, 26, 58, 0.6);
-    font-family: 'Inter', sans-serif;
-    font-size: 0.62rem;
-    font-weight: 600;
-  }
-
-  .bottom-nav__fab {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    margin-top: -20px; /* eleva el botón por encima del dock */
-    background: linear-gradient(145deg, #0052DC, #1A1A3A);
-    color: #FFFFFF; /* íconos usan currentColor */
-    box-shadow: 0 6px 16px rgba(0, 82, 220, 0.35);
-    border: 3px solid #FBFAF7;
-    transition: transform 0.15s ease, background 0.15s ease;
-  }
-
-  .bottom-nav__fab svg {
-    width: 20px;
-    height: 20px;
-  }
-
-  .bottom-nav__fab-label {
-    margin-top: 4px;
-  }
-
-  .bottom-nav__fab-wrapper:active .bottom-nav__fab {
-    transform: scale(0.92);
-  }
-
-  .bottom-nav__fab-wrapper--activo .bottom-nav__fab {
-    background: linear-gradient(145deg, #12A594, #0052DC);
-  }
-
-  .bottom-nav__fab-wrapper--activo .bottom-nav__fab-label {
-    color: #0052DC;
-  }
-
-  /* --- Campanita flotante: fuera del grid, ancla al borde superior del dock --- */
-
-  .bottom-nav__campana {
-    position: absolute;
-    top: -10px;
-    right: -4px;
-    z-index: 101; /* por encima del dock */
-    width: 38px;
-    height: 38px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.94);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(26, 26, 58, 0.08);
-    box-shadow: 0 8px 18px rgba(26, 26, 58, 0.2);
-    color: #0052DC;
-    text-decoration: none;
-    /* oculta por defecto: sin espacio propio, sin bloquear toques */
-    transform: scale(0) translateY(6px);
-    opacity: 0;
-    pointer-events: none;
-    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease, background 0.15s ease, color 0.15s ease;
-  }
-
-  .bottom-nav__campana svg {
-    width: 18px;
-    height: 18px;
-  }
-
-  .bottom-nav__campana--visible {
-    transform: scale(1) translateY(0);
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  .bottom-nav__campana--visible svg {
-    animation: campana-sonar 3.2s ease-in-out infinite;
-    transform-origin: 50% 15%;
-  }
-
-  .bottom-nav__campana--activa {
-    background: #0052DC;
-    color: #FFFFFF;
-    border-color: transparent;
-  }
-
-  .bottom-nav__campana-badge {
-    position: absolute;
-    top: -5px;
-    right: -3px;
-    min-width: 16px;
-    height: 16px;
-    padding: 0 3px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #D64550;
-    color: #FFFFFF;
-    font-size: 0.6rem;
-    font-weight: 700;
-    line-height: 1;
-    border-radius: 999px;
-    border: 2px solid #FBFAF7;
-  }
-
-  /* Anillo tipo "radar" alrededor de la burbuja — respira mientras haya pendientes */
-  .bottom-nav__campana-ping {
-    position: absolute;
-    inset: -5px;
-    border-radius: 50%;
-    border: 2px solid rgba(0, 82, 220, 0.35);
-    animation: campana-ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
-  }
-
-  @keyframes campana-ping {
-    0% { transform: scale(1); opacity: 0.8; }
-    75%, 100% { transform: scale(1.55); opacity: 0; }
-  }
-
-  @keyframes campana-sonar {
-    0%, 12%, 100% { transform: rotate(0deg); }
-    2% { transform: rotate(-14deg); }
-    4% { transform: rotate(12deg); }
-    6% { transform: rotate(-9deg); }
-    8% { transform: rotate(6deg); }
-    10% { transform: rotate(-3deg); }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .bottom-nav__campana--visible svg,
-    .bottom-nav__campana-ping {
-      animation: none;
-    }
-  }
+@media (max-width: 1023px) 
+{
+  .bottom-nav 
+{
+    display: flex
+;
+    align-items: center
+;
+    justify-content: center
+;
+    gap: 2px
+;
+    position: fixed
+;
+    left: 50%
+;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0))
+;
+    transform: translateX(-50%)
+;
+    width: calc(100% - 24px)
+;
+    max-width: 420px
+;
+    padding: 6px 8px
+;
+    background: rgba(255, 255, 255, 0.86)
+;
+    backdrop-filter: blur(20px)
+;
+    -webkit-backdrop-filter: blur(20px)
+;
+    border: 1px solid rgba(26, 26, 58, 0.06)
+;
+    border-radius: 999px
+;
+    box-shadow:      0 10px 30px rgba(26, 26, 58, 0.16),      0 2px 8px rgba(26, 26, 58, 0.08)
+;
+    z-index: 100
+;
 }
-
-/* ---------- Tablet: dock un poco más grande y más separado del borde ---------- */
-@media (min-width: 600px) and (max-width: 1023px) {
-  .bottom-nav {
-    max-width: 480px;
-    padding: 8px 12px;
-    bottom: calc(20px + env(safe-area-inset-bottom, 0));
-  }
-
-  .bottom-nav__item,
-  .bottom-nav__fab-wrapper {
-    font-size: 0.68rem;
-  }
-
-  .bottom-nav__icon-wrap {
-    width: 46px;
-    height: 28px;
-  }
-
-  .bottom-nav__item svg {
-    width: 22px;
-    height: 22px;
-  }
-
-  .bottom-nav__fab {
-    width: 54px;
-    height: 54px;
-    margin-top: -24px;
-  }
-
-  .bottom-nav__fab svg {
-    width: 22px;
-    height: 22px;
-  }
-
-  .bottom-nav__campana {
-    width: 42px;
-    height: 42px;
-    top: -22px;
-    right: 28px;
-  }
-
-  .bottom-nav__campana svg {
-    width: 20px;
-    height: 20px;
-  }
-
-  .bottom-nav__campana-badge {
-    min-width: 17px;
-    height: 17px;
-    font-size: 0.64rem;
-  }
+  /* --- Items normales (Inicio, Mis Items, Mis Ã“rdenes, Cuenta) --- */  .bottom-nav__item 
+{
+    position: relative
+;
+    display: flex
+;
+    flex-direction: column
+;
+    align-items: center
+;
+    justify-content: center
+;
+    gap: 2px
+;
+    flex: 1
+;
+    min-width: 0
+;
+    padding: 6px 2px
+;
+    text-decoration: none
+;
+    color: rgba(26, 26, 58, 0.5)
+;
+    font-family: 'Inter', sans-serif
+;
+    font-size: 0.62rem
+;
+    font-weight: 600
+;
+    border-radius: 18px
+;
+    transition: color 0.15s ease
+;
+}
+  .bottom-nav__item svg 
+{
+    position: relative
+;
+    z-index: 1
+;
+    width: 20px
+;
+    height: 20px
+;
+    transition: stroke 0.15s ease
+;
+}
+  .bottom-nav__label 
+{
+    position: relative
+;
+    z-index: 1
+;
+    max-width: 100%
+;
+    overflow: hidden
+;
+    text-overflow: ellipsis
+;
+    white-space: nowrap
+;
+}
+  /* Ãcono envuelto para poder animar el "pill" de fondo detrÃ¡s, sin     tocar los SVG â€” asÃ­ se pueden reemplazar por otros Ã­conos sin     romper el efecto. */  .bottom-nav__icon-wrap 
+{
+    position: relative
+;
+    display: flex
+;
+    align-items: center
+;
+    justify-content: center
+;
+    width: 42px
+;
+    height: 26px
+;
+}
+  .bottom-nav__icon-pill 
+{
+    position: absolute
+;
+    inset: 0
+;
+    border-radius: 13px
+;
+    background: #E5EDFC
+;
+ /* tinte claro del Azul de marca */    opacity: 0
+;
+    transform: scale(0.6)
+;
+    transition: opacity 0.18s ease, transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1)
+;
+}
+  .bottom-nav__item--activo 
+{
+    color: #0052DC
+;
+}
+  .bottom-nav__item--activo svg 
+{
+    stroke: #0052DC
+;
+}
+  .bottom-nav__item--activo .bottom-nav__icon-pill 
+{
+    opacity: 1
+;
+    transform: scale(1)
+;
+}
+  /* --- BotÃ³n central "MenÃº" (FAB elevado) --- */  .bottom-nav__fab-wrapper 
+{
+    position: relative
+;
+    display: flex
+;
+    flex-direction: column
+;
+    align-items: center
+;
+    justify-content: flex-start
+;
+    flex: 0 0 auto
+;
+    padding: 0 6px
+;
+    text-decoration: none
+;
+    color: rgba(26, 26, 58, 0.6)
+;
+    font-family: 'Inter', sans-serif
+;
+    font-size: 0.62rem
+;
+    font-weight: 600
+;
+}
+  .bottom-nav__fab 
+{
+    display: flex
+;
+    align-items: center
+;
+    justify-content: center
+;
+    width: 48px
+;
+    height: 48px
+;
+    border-radius: 50%
+;
+    margin-top: -20px
+;
+ /* eleva el botÃ³n por encima del dock */    background: linear-gradient(145deg, #0052DC, #1A1A3A)
+;
+    color: #FFFFFF
+;
+ /* Ã­conos usan currentColor */    box-shadow: 0 6px 16px rgba(0, 82, 220, 0.35)
+;
+    border: 3px solid #FFFFFF
+;
+    transition: transform 0.15s ease, background 0.15s ease
+;
+}
+  .bottom-nav__fab svg 
+{
+    width: 20px
+;
+    height: 20px
+;
+}
+  .bottom-nav__fab-label 
+{
+    margin-top: 4px
+;
+}
+  .bottom-nav__fab-wrapper:active .bottom-nav__fab 
+{
+    transform: scale(0.92)
+;
+}
+  .bottom-nav__fab-wrapper--activo .bottom-nav__fab 
+{
+    background: linear-gradient(145deg, #12A594, #0052DC)
+;
+}
+  .bottom-nav__fab-wrapper--activo .bottom-nav__fab-label 
+{
+    color: #0052DC
+;
+}
+  /* --- Campanita flotante: fuera del grid, ancla al borde superior del dock --- */  .bottom-nav__campana 
+{
+    position: absolute
+;
+    top: -10px
+;
+    right: -4px
+;
+    z-index: 101
+;
+ /* por encima del dock */    width: 38px
+;
+    height: 38px
+;
+    display: flex
+;
+    align-items: center
+;
+    justify-content: center
+;
+    border-radius: 50%
+;
+    background: rgba(255, 255, 255, 0.94)
+;
+    backdrop-filter: blur(10px)
+;
+    -webkit-backdrop-filter: blur(10px)
+;
+    border: 1px solid rgba(26, 26, 58, 0.08)
+;
+    box-shadow: 0 8px 18px rgba(26, 26, 58, 0.2)
+;
+    color: #0052DC
+;
+    text-decoration: none
+;
+    /* oculta por defecto: sin espacio propio, sin bloquear toques */    transform: scale(0) translateY(6px)
+;
+    opacity: 0
+;
+    pointer-events: none
+;
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease, background 0.15s ease, color 0.15s ease
+;
+}
+  .bottom-nav__campana svg 
+{
+    width: 18px
+;
+    height: 18px
+;
+}
+  .bottom-nav__campana--visible 
+{
+    transform: scale(1) translateY(0)
+;
+    opacity: 1
+;
+    pointer-events: auto
+;
+}
+  .bottom-nav__campana--visible svg 
+{
+    animation: campana-sonar 3.2s ease-in-out infinite
+;
+    transform-origin: 50% 15%
+;
+}
+  .bottom-nav__campana--activa 
+{
+    background: #0052DC
+;
+    color: #FFFFFF
+;
+    border-color: transparent
+;
+}
+  .bottom-nav__campana-badge 
+{
+    position: absolute
+;
+    top: -5px
+;
+    right: -3px
+;
+    min-width: 16px
+;
+    height: 16px
+;
+    padding: 0 3px
+;
+    display: flex
+;
+    align-items: center
+;
+    justify-content: center
+;
+    background: #D64550
+;
+    color: #FFFFFF
+;
+    font-size: 0.6rem
+;
+    font-weight: 700
+;
+    line-height: 1
+;
+    border-radius: 999px
+;
+    border: 2px solid #FFFFFF
+;
+}
+  /* Anillo tipo "radar" alrededor de la burbuja â€” respira mientras haya pendientes */  .bottom-nav__campana-ping 
+{
+    position: absolute
+;
+    inset: -5px
+;
+    border-radius: 50%
+;
+    border: 2px solid rgba(0, 82, 220, 0.35)
+;
+    animation: campana-ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite
+;
+}
+  @keyframes campana-ping 
+{
+    0% 
+{
+ transform: scale(1)
+;
+ opacity: 0.8
+;
+}
+    75%, 100% 
+{
+ transform: scale(1.55)
+;
+ opacity: 0
+;
+}
+}
+  @keyframes campana-sonar 
+{
+    0%, 12%, 100% 
+{
+ transform: rotate(0deg)
+;
+}
+    2% 
+{
+ transform: rotate(-14deg)
+;
+}
+    4% 
+{
+ transform: rotate(12deg)
+;
+}
+    6% 
+{
+ transform: rotate(-9deg)
+;
+}
+    8% 
+{
+ transform: rotate(6deg)
+;
+}
+    10% 
+{
+ transform: rotate(-3deg)
+;
+}
+}
+  @media (prefers-reduced-motion: reduce) 
+{
+    .bottom-nav__campana--visible svg,    .bottom-nav__campana-ping 
+{
+      animation: none
+;
+}
+}
+}
+/* ---------- Tablet: dock un poco mÃ¡s grande y mÃ¡s separado del borde ---------- */@media (min-width: 600px) and (max-width: 1023px) 
+{
+  .bottom-nav 
+{
+    max-width: 480px
+;
+    padding: 8px 12px
+;
+    bottom: calc(20px + env(safe-area-inset-bottom, 0))
+;
+}
+  .bottom-nav__item,  .bottom-nav__fab-wrapper 
+{
+    font-size: 0.68rem
+;
+}
+  .bottom-nav__icon-wrap 
+{
+    width: 46px
+;
+    height: 28px
+;
+}
+  .bottom-nav__item svg 
+{
+    width: 22px
+;
+    height: 22px
+;
+}
+  .bottom-nav__fab 
+{
+    width: 54px
+;
+    height: 54px
+;
+    margin-top: -24px
+;
+}
+  .bottom-nav__fab svg 
+{
+    width: 22px
+;
+    height: 22px
+;
+}
+  .bottom-nav__campana 
+{
+    width: 42px
+;
+    height: 42px
+;
+    top: -22px
+;
+    right: 28px
+;
+}
+  .bottom-nav__campana svg 
+{
+    width: 20px
+;
+    height: 20px
+;
+}
+  .bottom-nav__campana-badge 
+{
+    min-width: 17px
+;
+    height: 17px
+;
+    font-size: 0.64rem
+;
+}
 }
