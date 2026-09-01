@@ -5,7 +5,9 @@
 
 .secciones-carrusel {
   width: 100%;
-  padding: 20px 16px;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 20px 0;
 }
 
 .secciones-carrusel__header {
@@ -134,7 +136,7 @@
 /* ---------- Tablet: más padding, flechas visibles, columnas un poco más anchas ---------- */
 @media (min-width: 768px) {
   .secciones-carrusel {
-    padding: 28px 32px;
+    padding: 28px 0;
   }
   .secciones-carrusel__header h2 {
     font-size: 1.35rem;
@@ -151,9 +153,7 @@
 /* ---------- Desktop ---------- */
 @media (min-width: 1200px) {
   .secciones-carrusel {
-    padding: 32px 48px;
-    max-width: 1600px;
-    margin: 0 auto;
+    padding: 32px 0;
   }
   .secciones-carrusel__columna {
     flex: 0 0 320px;

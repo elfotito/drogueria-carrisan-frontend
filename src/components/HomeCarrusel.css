@@ -4,8 +4,8 @@
 
 .home-carrusel {
   width: 100%;
-  padding-left: .75rem;
-  padding-right: .75rem;
+  max-width: 1600px;
+  margin: 0 auto;
 }
 
 .home-carrusel__header {
@@ -108,10 +108,6 @@
 
 /* ---------- Tablet: más padding, flechas visibles ---------- */
 @media (min-width: 768px) {
-  .home-carrusel {
-    padding-left: .75rem;
-    padding-right: .75rem;
-  }
   .home-carrusel__header h2 {
     font-size: 1.35rem;
   }
@@ -125,12 +121,6 @@
 
 /* ---------- Desktop ---------- */
 @media (min-width: 1200px) {
-  .home-carrusel {
-    padding-left: .75rem;
-    padding-right: .75rem;
-    max-width: 1600px;
-    margin: 0 auto;
-  }
   .home-carrusel__skeleton {
     flex: 0 0 210px;
   }
