@@ -1,25 +1,25 @@
-﻿.home 
-{
-  width: 100%
-;
-  background: #FFFFFF
-;
-}
-.home__container 
-{
-  width: 100%
-;
-  max-width: 1600px
-;
-  margin: 0 auto
-;
-}
-/* ---------- Hero ---------- */.home__hero 
-{
-  width: 100%
-;
+﻿/* ============================================================
+   HOME — página principal
+   ============================================================ */
+
+.home {
+  width: 100%;
+  background: #FFFFFF;
 }
 
+/* Contenedor que limita el ancho de todo el contenido */
+.home__container {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+/* ---------- Hero ---------- */
+.home__hero {
+  width: 100%;
+}
+
+/* ---------- Bloques promocionales (grid tipo bento) ---------- */
 .home__bloques-promocionales {
   display: flex;
   flex-direction: column;
@@ -27,125 +27,101 @@
   padding: 20px 20px 0;
 }
 
-/* ---------- Vitrina: carruseles + ads ---------- */.home__vitrina 
-{
-  width: 100%
-;
-  margin: 0 auto
-;
-  padding: 20px 20px 0
-;
-  display: flex
-;
-  flex-direction: column
-;
-  gap: 6px
-;
+/* ---------- Vitrina: carruseles + ads ---------- */
+.home__vitrina {
+  width: 100%;
+  margin: 0 auto;
+  padding: 20px 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
-/* ---------- Ads: par de cards lado a lado ---------- */.home__ads-pair 
-{
-  display: grid
-;
-  grid-template-columns: 1fr 1fr
-;
-  gap: 12px
-;
-  margin: 6px 0 10px
-;
-}
-/* ---------- Bloques dinÃ¡micos (cargados al scrollear) ---------- */.home__bloque-dinamico 
-{
-  animation: home-fadein 0.4s ease both
-;
-}
-@keyframes home-fadein 
-{
-  from 
-{
-    opacity: 0
-;
-    transform: translateY(12px)
-;
-}
-  to 
-{
-    opacity: 1
-;
-    transform: translateY(0)
-;
-}
-}
-/* ---------- Sentinel invisible (trigger del infinite scroll) ---------- */.home__sentinel 
-{
-  width: 100%
-;
-  height: 1px
-;
-  pointer-events: none
-;
-}
-/* ---------- Footer wrapper ---------- */.home__footer-wrapper 
-{
-  margin-top: 20px
-;
-  border-top: 1px solid rgba(35, 43, 69, 0.08)
-;
-}
-/* Espacio para que el bottom nav fijo no tape lo Ãºltimo */.home__espaciador 
-{
-  height: 92px
-;
-}
-/* ---------- Tablet ancho: el dock sigue visible hasta 1023px ---------- */@media (min-width: 769px) 
-{
 
-  .home__bloques-promocionales {
+/* ---------- Ads: par de cards lado a lado ---------- */
+.home__ads-pair {
   display: grid;
-  grid-template-columns: 1.3fr 0.85fr 0.85fr 1fr;
-  grid-template-rows: repeat(2, minmax(200px, 1fr));
-  grid-template-areas:
-    "a b b d"
-    "a c e d";
-  gap: 16px;
-  padding: 32px 24px 0;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 6px 0 10px;
+}
+
+/* ---------- Bloques dinámicos (cargados al scrollear) ---------- */
+.home__bloque-dinamico {
+  animation: home-fadein 0.4s ease both;
+}
+
+@keyframes home-fadein {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- Sentinel invisible (trigger del infinite scroll) ---------- */
+.home__sentinel {
+  width: 100%;
+  height: 1px;
+  pointer-events: none;
+}
+
+/* ---------- Footer wrapper ---------- */
+.home__footer-wrapper {
+  margin-top: 20px;
   border-top: 1px solid rgba(35, 43, 69, 0.08);
 }
 
-.home__bloque-a { grid-area: a; }
-.home__bloque-b { grid-area: b; }
-.home__bloque-c { grid-area: c; }
-.home__bloque-e { grid-area: e; }
-.home__bloque-d { grid-area: d; }
+/* Espacio para que el bottom nav fijo no tape lo último */
+.home__espaciador {
+  height: 92px;
+}
 
-  .home__vitrina 
-{
-    padding: 32px 24px 0
-;
+/* ---------- Tablet ancho: el dock sigue visible hasta 1023px ---------- */
+@media (min-width: 769px) {
+  .home__bloques-promocionales {
+    display: grid;
+    grid-template-columns: 1.3fr 0.85fr 0.85fr 1fr;
+    grid-template-rows: repeat(2, minmax(200px, 1fr));
+    grid-template-areas:
+      "a b b d"
+      "a c e d";
+    gap: 16px;
+    padding: 32px 24px 0;
+    border-top: 1px solid rgba(35, 43, 69, 0.08);
+  }
+
+  .home__bloque-a { grid-area: a; }
+  .home__bloque-b { grid-area: b; }
+  .home__bloque-c { grid-area: c; }
+  .home__bloque-e { grid-area: e; }
+  .home__bloque-d { grid-area: d; }
+
+  .home__vitrina {
+    padding: 32px 24px 0;
+  }
+
+  .home__ads-pair {
+    gap: 16px;
+  }
 }
-  .home__ads-pair 
-{
-    gap: 16px
-;
+
+/* ---------- Desktop real: acá el bottom nav ya no se muestra ---------- */
+@media (min-width: 1024px) {
+  .home__espaciador {
+    height: 24px;
+  }
 }
-}
-/* ---------- Desktop real: acÃ¡ el bottom nav ya no se muestra ---------- */@media (min-width: 1024px) 
-{
-  .home__espaciador 
-{
-    height: 24px
-;
-}
-}
-/* ---------- Desktop grande ---------- */@media (min-width: 1440px) 
-{
-  .home__vitrina 
-{
-    padding: 32px 24px 0
-;
-}
-  .home__footer-wrapper 
-{
-    margin-top: 32px
-;
-}
+
+/* ---------- Desktop grande ---------- */
+@media (min-width: 1440px) {
+  .home__vitrina {
+    padding: 32px 24px 0;
+  }
+
+  .home__footer-wrapper {
+    margin-top: 32px;
+  }
 }

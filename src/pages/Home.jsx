@@ -36,15 +36,22 @@ const SECCIONES_DINAMICAS = [
   ],
 ]
 
-// Slides del hero. Vacío por defecto: HeroCarrusel ya trae su propio
-// placeholder ("Espacio para banner hero") mientras no le pases imágenes.
-// Cuando tengas las artes, reemplaza esto con tus URLs reales:
-// { id: 1, imagen: '/hero/banner-1.jpg', imagenMovil: '/hero/banner-1-m.jpg', link: '/catalogo', alt: '...' }
+// ── Imágenes de los banners hero (Supabase Storage, mismo patrón que Landing) ──
+const BASE_URL = 'https://fqeshthtycmzgyibiurq.supabase.co/storage/v1/object/public/crsnimages'
+
+const urlsHero = {
+  banner1: `${BASE_URL}/banner1.png`,
+  banner2: `${BASE_URL}/banner2.png`,
+  banner3: `${BASE_URL}/banner3.png`,
+}
+
+// Slides del hero. Cada slide usa una sola imagen como fondo; el CSS la
+// recorta sola en móvil (object-fit: cover).
+// Para cambiar texto/botón/imagen editá acá directo.
 const HERO_SLIDES = [
   {
     id: 1,
-    imagen: '/hero/banner-1.jpg',
-    imagenMovil: '/hero/banner-1-m.jpg',
+    imagen: urlsHero.banner1,
     alt: 'Descuentos de temporada',
     subtitulo: 'Descuentos de temporada',
     titulo: 'Tu farmacia ahorra hasta 30% en cada compra',
@@ -53,8 +60,7 @@ const HERO_SLIDES = [
   },
   {
     id: 2,
-    imagen: '/hero/banner-2.jpg',
-    imagenMovil: '/hero/banner-2-m.jpg',
+    imagen: urlsHero.banner2,
     alt: 'Nuevos productos',
     subtitulo: 'Recién llegados',
     titulo: 'Descubrí los nuevos productos para tu clínica',
@@ -63,8 +69,7 @@ const HERO_SLIDES = [
   },
   {
     id: 3,
-    imagen: '/hero/banner-3.jpg',
-    imagenMovil: '/hero/banner-3-m.jpg',
+    imagen: urlsHero.banner3,
     alt: 'Ofertas relámpago',
     subtitulo: 'Solo por hoy',
     titulo: 'Ofertas relámpago con la mejor tasa del día',
