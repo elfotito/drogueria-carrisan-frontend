@@ -19,6 +19,14 @@
   width: 100%
 ;
 }
+
+.home__bloques-promocionales {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px 20px 0;
+}
+
 /* ---------- Vitrina: carruseles + ads ---------- */.home__vitrina 
 {
   width: 100%
@@ -90,6 +98,24 @@
 }
 /* ---------- Tablet ancho: el dock sigue visible hasta 1023px ---------- */@media (min-width: 769px) 
 {
+
+  .home__bloques-promocionales {
+  display: grid;
+  grid-template-columns: 1.3fr 0.85fr 0.85fr 1fr;
+  grid-template-rows: repeat(2, minmax(200px, 1fr));
+  grid-template-areas:
+    "a b b d"
+    "a c e d";
+  gap: 16px;
+  padding: 32px 24px 0;
+}
+
+.home__bloque-a { grid-area: a; }
+.home__bloque-b { grid-area: b; }
+.home__bloque-c { grid-area: c; }
+.home__bloque-e { grid-area: e; }
+.home__bloque-d { grid-area: d; }
+
   .home__vitrina 
 {
     padding: 32px 24px 0
