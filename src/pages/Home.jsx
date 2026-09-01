@@ -12,6 +12,7 @@ import Footer from '../components/Footer'
 import BottomNav from '../components/BottomNav'
 import CookieConsent from '../components/CookieConsent'
 import { agruparPorLinea } from '../utils/agruparPorLinea'
+import BloquePromocional from '../components/BloquePromocional'
 import './Home.css'
 
 // ── Constantes ──────────────────────────────────────────────────
@@ -152,7 +153,57 @@ function Home() {
       <section className="home__hero">
         <HeroCarrusel slides={HERO_SLIDES} intervaloMs={5000} />
       </section>
-
+      {/* ── Bloques promocionales: grid tipo bento, imagen + texto/CTA superpuestos ──
+          Sin `imagen` todavía → cada bloque cae en modo placeholder (mismo patrón que
+          AdBanner/AdCard). Cuando tengas las artes, agrega `imagen`/`imagenMovil` a
+          cada BloquePromocional con la URL real. */}
+      <section className="home__bloques-promocionales">
+        <BloquePromocional
+          className="home__bloque-a"
+          tamano="grande"
+          posicionTexto="arriba"
+          titulo="Envío gratis en tu primer pedido"
+          subtitulo="Aplica para compras mayores a $200"
+          textoCta="Comprar ahora"
+          link="/catalogo"
+        />
+        <BloquePromocional
+          className="home__bloque-b"
+          tamano="mediano"
+          posicionTexto="arriba"
+          titulo="Activa tu línea de crédito"
+          textoCta="Conocer más"
+          estiloCta="enlace"
+          link="/mi-cuenta"
+        />
+        <BloquePromocional
+          className="home__bloque-c"
+          tamano="pequeno"
+          variante="oferta"
+          titulo="Ofertas de la semana"
+          textoCta="Ver ofertas"
+          link="/catalogo"
+        />
+        <BloquePromocional
+          className="home__bloque-e"
+          tamano="pequeno"
+          variante="nuevo"
+          titulo="Nuevos productos cada semana"
+          textoCta="Explorar"
+          estiloCta="enlace"
+          link="/catalogo"
+        />
+        <BloquePromocional
+          className="home__bloque-d"
+          tamano="grande"
+          posicionTexto="arriba"
+          titulo="Todo lo que tu farmacia necesita, a domicilio"
+          subtitulo="Recibe tus pedidos donde estés"
+          textoCta="Conocer más"
+          estiloCta="enlace"
+          link="/catalogo"
+        />
+      </section>
       {/* ── Vitrina: carruseles fijos + ads ── */}
       <div className="home__vitrina">
         <HomeCarrusel

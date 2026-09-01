@@ -87,9 +87,30 @@ function HeroCarrusel({ slides = [], intervaloMs = 5000, altura }) {
               <img src={slide.imagen} alt={slide.alt || ''} loading="lazy" />
             </picture>
           )
+          const tieneOverlay = slide.titulo || slide.botonTexto
           return (
             <div className="hero-carrusel__slide" key={slide.id}>
               {slide.link ? <Link to={slide.link}>{contenido}</Link> : contenido}
+              {tieneOverlay && (
+                <div className="hero-carrusel__overlay">
+                  <div className="hero-carrusel__overlay-contenido">
+                    {slide.subtitulo && (
+                      <p className="hero-carrusel__subtitulo">{slide.subtitulo}</p>
+                    )}
+                    {slide.titulo && (
+                      <h2 className="hero-carrusel__titulo">{slide.titulo}</h2>
+                    )}
+                    {slide.botonTexto && (
+                      <Link
+                        to={slide.botonLink || slide.link || '#'}
+                        className="hero-carrusel__boton"
+                      >
+                        {slide.botonTexto}
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           )
         })}

@@ -1,0 +1,220 @@
+/* ── BloquePromocional: bloque de imagen con texto/CTA superpuestos ── */
+.bloque-promocional {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  min-height: 220px;
+}
+
+.bloque-promocional__link {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ---------- Imagen de fondo ---------- */
+.bloque-promocional__picture {
+  position: absolute;
+  inset: 0;
+}
+
+.bloque-promocional__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.35s ease;
+}
+
+.bloque-promocional__link:hover .bloque-promocional__img {
+  transform: scale(1.04);
+}
+
+/* ---------- Degradado (garantiza contraste del texto sobre cualquier imagen) ---------- */
+.bloque-promocional__overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.bloque-promocional--arriba .bloque-promocional__overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(15, 18, 33, 0.62) 0%,
+    rgba(15, 18, 33, 0.32) 45%,
+    rgba(15, 18, 33, 0) 75%
+  );
+}
+
+.bloque-promocional--abajo .bloque-promocional__overlay {
+  background: linear-gradient(
+    to top,
+    rgba(15, 18, 33, 0.68) 0%,
+    rgba(15, 18, 33, 0.32) 45%,
+    rgba(15, 18, 33, 0) 75%
+  );
+}
+
+/* ---------- Texto + CTA superpuestos ---------- */
+.bloque-promocional__contenido {
+  position: absolute;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 20px;
+}
+
+.bloque-promocional--arriba .bloque-promocional__contenido {
+  top: 0;
+}
+
+.bloque-promocional--abajo .bloque-promocional__contenido {
+  bottom: 0;
+}
+
+.bloque-promocional__titulo {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.15rem;
+  line-height: 1.25;
+  color: #FBFAF7;
+  margin: 0;
+  text-shadow: 0 1px 8px rgba(15, 18, 33, 0.25);
+}
+
+.bloque-promocional__subtitulo {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: rgba(251, 250, 247, 0.92);
+  margin: 0;
+}
+
+/* ---------- CTA: botón pill sólido ("Shop now") ---------- */
+.bloque-promocional__cta--boton {
+  display: inline-block;
+  background: #FBFAF7;
+  color: #1A1A3A;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 0.8rem;
+  padding: 9px 18px;
+  border-radius: 999px;
+  margin-top: 2px;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.bloque-promocional__link:hover .bloque-promocional__cta--boton {
+  background: #FFFFFF;
+  transform: translateY(-1px);
+}
+
+/* ---------- CTA: enlace subrayado ("Learn more") ---------- */
+.bloque-promocional__cta--enlace {
+  display: inline-block;
+  color: #FBFAF7;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.82rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: opacity 0.15s ease;
+}
+
+.bloque-promocional__link:hover .bloque-promocional__cta--enlace {
+  opacity: 0.8;
+}
+
+/* ---------- Tamaños ---------- */
+.bloque-promocional--pequeno {
+  min-height: 160px;
+}
+
+.bloque-promocional--mediano {
+  min-height: 220px;
+}
+
+.bloque-promocional--grande {
+  min-height: 340px;
+  grid-row: span 2; /* solo tiene efecto si el padre es display:grid */
+}
+
+.bloque-promocional--grande .bloque-promocional__titulo {
+  font-size: 1.4rem;
+}
+
+.bloque-promocional--grande .bloque-promocional__subtitulo {
+  font-size: 0.92rem;
+}
+
+.bloque-promocional--grande .bloque-promocional__contenido {
+  padding: 26px;
+}
+
+/* ---------- Placeholder (sin imagen todavía) ---------- */
+.bloque-promocional__placeholder {
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+  background: linear-gradient(135deg, #f0f4ff 0%, #e8f4f0 100%);
+}
+
+.bloque-promocional__placeholder--oferta {
+  background: linear-gradient(135deg, #fff1f1 0%, #ffe8e8 100%);
+}
+
+.bloque-promocional__placeholder--nuevo {
+  background: linear-gradient(135deg, #e8f8f5 0%, #d1f5ef 100%);
+}
+
+.bloque-promocional__placeholder .bloque-promocional__titulo,
+.bloque-promocional__placeholder .bloque-promocional__subtitulo {
+  color: #1A1A3A;
+  text-shadow: none;
+}
+
+.bloque-promocional__placeholder .bloque-promocional__subtitulo {
+  color: rgba(20, 24, 42, 0.6);
+}
+
+.bloque-promocional__placeholder .bloque-promocional__cta--boton {
+  background: #1A1A3A;
+  color: #FBFAF7;
+}
+
+.bloque-promocional__placeholder .bloque-promocional__cta--enlace {
+  color: #1A1A3A;
+}
+
+/* ---------- Desktop ---------- */
+@media (min-width: 769px) {
+  .bloque-promocional--pequeno {
+    min-height: 200px;
+  }
+
+  .bloque-promocional--mediano {
+    min-height: 260px;
+  }
+
+  .bloque-promocional--grande {
+    min-height: 420px;
+  }
+
+  .bloque-promocional__titulo {
+    font-size: 1.3rem;
+  }
+
+  .bloque-promocional--grande .bloque-promocional__titulo {
+    font-size: 1.75rem;
+  }
+
+  .bloque-promocional__contenido {
+    padding: 26px;
+  }
+}

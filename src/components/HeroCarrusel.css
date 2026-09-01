@@ -1,7 +1,7 @@
 .hero-carrusel {
   position: relative;
   width: 100%;
-  height: 220px;
+  height: 300px;
   border-radius: 16px;
   overflow: hidden;
   background: #f1f1f2;
@@ -35,6 +35,60 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* ── Overlay de texto + botón ─────────────────────────── */
+.hero-carrusel__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.15) 50%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero-carrusel__overlay-contenido {
+  padding-left: 48px;
+  max-width: 55%;
+  pointer-events: auto;
+}
+
+.hero-carrusel__subtitulo {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #FFFFFF;
+  margin: 0 0 6px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+.hero-carrusel__titulo {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  line-height: 1.15;
+  margin: 0 0 18px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.hero-carrusel__boton {
+  display: inline-block;
+  padding: 10px 28px;
+  background: #FFFFFF;
+  color: #1A1A3A;
+  border-radius: 24px;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.2s ease, transform 0.15s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.hero-carrusel__boton:hover {
+  background: #E8F5E9;
+  transform: scale(1.03);
 }
 
 .hero-carrusel__flecha {
@@ -85,10 +139,38 @@
 
 @media (min-width: 768px) {
   .hero-carrusel {
-    height: 320px;
+    height: 300px;
   }
 
   .hero-carrusel__flecha {
     display: flex;
+  }
+}
+
+/* ── Mobile: texto reducido, más pegado a la izquierda ── */
+@media (max-width: 640px) {
+  .hero-carrusel {
+    height: 200px;
+  }
+
+  .hero-carrusel__overlay-contenido {
+    padding-left: 20px;
+    max-width: 75%;
+  }
+
+  .hero-carrusel__subtitulo {
+    font-size: 0.72rem;
+    margin-bottom: 4px;
+  }
+
+  .hero-carrusel__titulo {
+    font-size: 1.15rem;
+    margin-bottom: 14px;
+    line-height: 1.2;
+  }
+
+  .hero-carrusel__boton {
+    padding: 8px 18px;
+    font-size: 0.8rem;
   }
 }
