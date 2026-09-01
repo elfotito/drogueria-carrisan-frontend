@@ -1,9 +1,16 @@
 import { useNavigate } from 'react-router-dom'
 import './PromoCard.css'
 
-function formatUSD(valor) {
-  if (valor == null) return '—'
-  return Number(valor).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+function PrecioSuperIndice({ valor }) {
+  if (valor == null) return <span>—</span>
+  const partes = Number(valor).toFixed(2).split('.')
+  return (
+    <>
+      <span className="promocard__precio-simbolo">$</span>
+      <span className="promocard__precio-entero">{partes[0]}</span>
+      <sup className="promocard__precio-centavos">{partes[1]}</sup>
+    </>
+  )
 }
 
 function obtenerEtiquetaDescuento(descuento) {
@@ -52,13 +59,15 @@ function PromoCard({ producto, tasaVes }) {
         {tieneDescuento ? (
           <>
             <span className="promocard__precio-ahora">
-              <span className="promocard__precio-simbolo">$</span>{formatUSD(producto.precio_usd)}
+              <PrecioSuperIndice valor={producto.precio_usd} />
             </span>
-            <span className="promocard__precio-original">${formatUSD(producto.precio_original_usd)}</span>
+            <span className="promocard__precio-original">
+              <PrecioSuperIndice valor={producto.precio_original_usd} />
+            </span>
           </>
         ) : (
           <span className="promocard__precio-normal">
-            <span className="promocard__precio-simbolo">$</span>{formatUSD(producto.precio_usd)}
+            <PrecioSuperIndice valor={producto.precio_usd} />
           </span>
         )}
       </div>

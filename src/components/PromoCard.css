@@ -78,15 +78,33 @@
 }
 
 .promocard__precio-simbolo {
-  font-size: 0.7em;
+  display: inline-block;
+  font-size: 0.75em;
   font-weight: 700;
   margin-right: 1px;
+}
+
+.promocard__precio-entero {
+  display: inline-block;
+  font-size: 1em;
+}
+
+.promocard__precio-centavos {
+  display: inline-block;
+  font-size: 0.55em;
+  font-weight: 700;
 }
 
 .promocard__precio-original {
   color: #74767c;
   text-decoration: line-through;
-  font-size: 0.78rem;
+  font-size: 0.75rem;
+}
+
+.promocard__precio-original .promocard__precio-simbolo,
+.promocard__precio-original .promocard__precio-entero,
+.promocard__precio-original .promocard__precio-centavos {
+  text-decoration: line-through;
 }
 
 .promocard__precio-ves {
