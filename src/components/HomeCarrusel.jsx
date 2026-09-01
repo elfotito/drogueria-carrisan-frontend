@@ -6,7 +6,6 @@ import './HomeCarrusel.css'
 // Bloque de vitrina estilo Walmart: título + "Ver todo" + flechas de
 // navegación, con una fila de PromoCard con scroll horizontal.
 // Reutilizable: se usa tanto en Home.jsx (invitados) como en
-// DashboardMobile (usuarios logueados).
 function HomeCarrusel({ titulo, subtitulo, productos, tasaVes, verTodoTo = '/catalogo', cargando = false }) {
   const carruselRef = useRef(null)
 

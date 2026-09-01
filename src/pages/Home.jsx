@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useAuth } from '../context/AuthContext'
 import api from '../api/axios'
-import DashboardMobile from '../components/DashboardMobile'
 import HeroCarrusel from '../components/HeroCarrusel'
 import HomeCarrusel from '../components/HomeCarrusel'
 import SeccionesCarrusel from '../components/SeccionesCarrusel'
@@ -78,27 +77,9 @@ const HERO_SLIDES = [
   },
 ]
 
-// ── Hook: saber si estamos en viewport mobile (mismo breakpoint que el resto del CSS) ──
-function useIsMobile(breakpoint = 769) {
-  const [isMobile, setIsMobile] = useState(
-    typeof window !== 'undefined' ? window.innerWidth < breakpoint : true
-  )
-
-  useEffect(() => {
-    const mql = window.matchMedia(`(max-width: ${breakpoint - 1}px)`)
-    const handler = (e) => setIsMobile(e.matches)
-    handler(mql)
-    mql.addEventListener('change', handler)
-    return () => mql.removeEventListener('change', handler)
-  }, [breakpoint])
-
-  return isMobile
-}
-
 // ── Componente ──────────────────────────────────────────────────
 function Home() {
   const { user } = useAuth()
-  const isMobile = useIsMobile()
 
   const sentinelRef = useRef(null)
   const cargasRef = useRef(0)
@@ -179,11 +160,6 @@ function Home() {
   // ── Render ──────────────────────────────────────────────────
   return (
     <div className="home">
-      {/* ── Dashboard reducido: bienvenida + accesos rápidos, solo en teléfono ── */}
-      {isMobile && user && (
-        <DashboardMobile user={user} tasa={tasa} />
-      )}
-
       <div className="home__container">
       {/* ── Hero banner ── */}
       <section className="home__hero">
