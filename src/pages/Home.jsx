@@ -40,7 +40,38 @@ const SECCIONES_DINAMICAS = [
 // placeholder ("Espacio para banner hero") mientras no le pases imágenes.
 // Cuando tengas las artes, reemplaza esto con tus URLs reales:
 // { id: 1, imagen: '/hero/banner-1.jpg', imagenMovil: '/hero/banner-1-m.jpg', link: '/catalogo', alt: '...' }
-const HERO_SLIDES = []
+const HERO_SLIDES = [
+  {
+    id: 1,
+    imagen: '/hero/banner-1.jpg',
+    imagenMovil: '/hero/banner-1-m.jpg',
+    alt: 'Descuentos de temporada',
+    subtitulo: 'Descuentos de temporada',
+    titulo: 'Tu farmacia ahorra hasta 30% en cada compra',
+    botonTexto: 'Ver ofertas',
+    botonLink: '/catalogo',
+  },
+  {
+    id: 2,
+    imagen: '/hero/banner-2.jpg',
+    imagenMovil: '/hero/banner-2-m.jpg',
+    alt: 'Nuevos productos',
+    subtitulo: 'Recién llegados',
+    titulo: 'Descubrí los nuevos productos para tu clínica',
+    botonTexto: 'Explorar catálogo',
+    botonLink: '/catalogo',
+  },
+  {
+    id: 3,
+    imagen: '/hero/banner-3.jpg',
+    imagenMovil: '/hero/banner-3-m.jpg',
+    alt: 'Ofertas relámpago',
+    subtitulo: 'Solo por hoy',
+    titulo: 'Ofertas relámpago con la mejor tasa del día',
+    botonTexto: 'Aprovechar ahora',
+    botonLink: '/catalogo',
+  },
+]
 
 // ── Hook: saber si estamos en viewport mobile (mismo breakpoint que el resto del CSS) ──
 function useIsMobile(breakpoint = 769) {
@@ -153,7 +184,19 @@ function Home() {
       <section className="home__hero">
         <HeroCarrusel slides={HERO_SLIDES} intervaloMs={5000} />
       </section>
-      {/* ── Bloques promocionales: grid tipo bento, imagen + texto/CTA superpuestos ──
+  
+      {/* ── Vitrina: carruseles fijos + ads ── */}
+      <div className="home__vitrina">
+        <HomeCarrusel
+          titulo="Ofertas destacadas"
+          subtitulo="Precios con descuento activo"
+          productos={ofertas}
+          tasaVes={tasa}
+          verTodoTo="/catalogo"
+          cargando={cargandoVitrina}
+        />
+
+        {/* ── Bloques promocionales: grid tipo bento, imagen + texto/CTA superpuestos ──
           Sin `imagen` todavía → cada bloque cae en modo placeholder (mismo patrón que
           AdBanner/AdCard). Cuando tengas las artes, agrega `imagen`/`imagenMovil` a
           cada BloquePromocional con la URL real. */}
@@ -204,14 +247,11 @@ function Home() {
           link="/catalogo"
         />
       </section>
-      {/* ── Vitrina: carruseles fijos + ads ── */}
-      <div className="home__vitrina">
-        <HomeCarrusel
-          titulo="Ofertas destacadas"
-          subtitulo="Precios con descuento activo"
-          productos={ofertas}
+
+      <SeccionesCarrusel
+          titulo="Rollbacks y más"
+          secciones={secciones}
           tasaVes={tasa}
-          verTodoTo="/catalogo"
           cargando={cargandoVitrina}
         />
 
@@ -246,12 +286,7 @@ function Home() {
           />
         </div>
 
-        <SeccionesCarrusel
-          titulo="Rollbacks y más"
-          secciones={secciones}
-          tasaVes={tasa}
-          cargando={cargandoVitrina}
-        />
+
 
         {/* ── Secciones dinámicas (cargadas por infinite scroll) ── */}
         {seccionesDinamicas.map((seccion, idx) => (
