@@ -387,7 +387,7 @@
 .pcard__btn-agregar {
   border: none;
   border-radius: 999px;
-  background: #1B4B8F;
+  background: #0052dc;
   color: #FFFFFF;
   font-weight: 700;
   font-size: 0.85rem;
@@ -397,7 +397,7 @@
 }
 
 .pcard__btn-agregar:hover {
-  background: #163c72;
+  filter: brightness(1.1);
 }
 
 .pcard__btn-agregar:active {
@@ -409,10 +409,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border: 1px solid #1B4B8F;
+  border: 1px solid #0052DC;
   border-radius: 999px;
   padding: 4px 6px;
-  background: #FFFFFF;
+  background: #0052dc;
 }
 
 .contador-btn {
@@ -420,8 +420,7 @@
   height: 26px;
   border: none;
   border-radius: 50%;
-  background: #EFF4FB;
-  color: #1B4B8F;
+  color: #FFF;
   font-size: 1rem;
   font-weight: 700;
   line-height: 1;
@@ -433,13 +432,13 @@
 }
 
 .contador-btn:hover {
-  background: #DCE7F5;
+  background: #1a1a3a;
 }
 
 .contador-cantidad {
   font-weight: 700;
   font-size: 0.88rem;
-  color: #14182A;
+  color: #FFF;
   min-width: 18px;
   text-align: center;
   padding: 0 20px;

@@ -1,10 +1,14 @@
-import { useState, useEffect, useMemo, useRef } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { useSearchParams, Link } from 'react-router-dom'
 import api from '../api/axios'
 import ProductCard from '../components/ProductCard'
 import ProductCardSkeleton from '../components/Productcardskeleton'
 import BottomNav from '../components/BottomNav'
+import InfiniteScrollLoader from '../components/InfiniteScrollLoader'
+import Footer from '../components/Footer'
 import './Catalogo.css'
+
+const PAGE_SIZE = 24
 
 const categoriasFiltro = [
   { id: 'todos', nombre: 'Todo', icono: '🗂️' },
@@ -20,8 +24,12 @@ function Catalogo() {
   const searchTerm = searchParams.get('search') || ''
 
   const [productos, setProductos] = useState([])
+  const [total, setTotal] = useState(0)
+  const [pagina, setPagina] = useState(1)
+  const [hasMore, setHasMore] = useState(false)
   const [tasaVes, setTasaVes] = useState(null)
   const [cargando, setCargando] = useState(true)
+  const [cargandoMas, setCargandoMas] = useState(false)
   const [error, setError] = useState('')
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(false)
   const [sort, setSort] = useState('nombre_asc')
@@ -31,6 +39,9 @@ function Catalogo() {
   const [soloDisponibles, setSoloDisponibles] = useState(false)
   const [precioMin, setPrecioMin] = useState('')
   const [precioMax, setPrecioMax] = useState('')
+
+  const [laboratoriosDisponibles, setLaboratoriosDisponibles] = useState([])
+  const [formasDisponibles, setFormasDisponibles] = useState([])
 
   const [seccionesAbiertas, setSeccionesAbiertas] = useState({
     categoria: true,
@@ -54,85 +65,92 @@ useEffect(() => {
   return () => window.removeEventListener('resize', handleResize)
 }, [])
 
-  // Cargar productos con búsqueda
+  // ── Metadata de filtros (laboratorios/formas) — un solo fetch ligero ──
   useEffect(() => {
-    async function cargarDatos() {
+    api
+      .get('/products/metadata')
+      .then((res) => {
+        setLaboratoriosDisponibles(res.data.laboratorios || [])
+        setFormasDisponibles(res.data.formas || [])
+      })
+      .catch((err) => console.error('Error al cargar metadata de filtros:', err))
+  }, [])
+
+  // Construye los parámetros de consulta a partir del estado actual de filtros.
+  const construirQuery = useCallback((
+    { search = searchTerm, page = 1, limit = PAGE_SIZE } = {}
+  ) => {
+    const params = { sort, page, limit }
+    if (search) params.search = search
+    if (categoriaActiva !== 'todos') params.linea = categoriaActiva
+    if (laboratoriosActivos.length > 0) params.laboratorio = laboratoriosActivos.join(',')
+    if (formasActivas.length > 0) params.forma = formasActivas.join(',')
+    if (soloDisponibles) params.disponible = 'true'
+    if (precioMin !== '') params.precio_min = precioMin
+    if (precioMax !== '') params.precio_max = precioMax
+    return params
+  }, [searchTerm, sort, categoriaActiva, laboratoriosActivos, formasActivas, soloDisponibles, precioMin, precioMax])
+
+  // Carga una página determinada. Si `reset` es true, reemplaza la lista
+  // (primera página); si es false, agrega al final (infinite scroll).
+  // El estado de carga se maneja aquí dentro (no en el body de un effect).
+  const cargarPagina = useCallback(async ({ page, reset } = {}) => {
+    if (reset) {
       setCargando(true)
       setError('')
-      try {
-        const endpoint = searchTerm
-          ? `/products?search=${encodeURIComponent(searchTerm)}`
-          : '/products'
-
-        const [resProductos, resTasa] = await Promise.all([
-          api.get(endpoint),
-          api.get('/prices'),
-        ])
-        setProductos(resProductos.data)
-        setTasaVes(resTasa.data.usd_a_ves)
-      } catch (err) {
-        setError('No se pudieron cargar los productos')
-        console.error(err)
-      } finally {
-        setCargando(false)
-      }
+    } else {
+      setCargandoMas(true)
     }
-    cargarDatos()
-  }, [searchTerm])
-
-  // Listas derivadas de los productos
-  const laboratoriosDisponibles = useMemo(() => {
-    const set = new Set(productos.map((p) => p.laboratorio).filter(Boolean))
-    return Array.from(set).sort()
-  }, [productos])
-
-  const formasDisponibles = useMemo(() => {
-    const set = new Set(productos.map((p) => p.forma).filter(Boolean))
-    return Array.from(set).sort()
-  }, [productos])
-
-  // ⚠️ ESTE ES EL useMemo QUE TE FALTABA - productosFiltrados
-  const productosFiltrados = useMemo(() => {
-    let resultado = productos
-
-    if (categoriaActiva !== 'todos') {
-      resultado = resultado.filter((p) => p.linea === categoriaActiva)
+    try {
+      const { data } = await api.get('/products', { params: construirQuery({ page }) })
+      const nuevos = data.productos || []
+      setTotal(data.total ?? nuevos.length)
+      setHasMore(!!data.hasMore)
+      setPagina(data.page ?? page)
+      setProductos(prev => (reset ? nuevos : [...prev, ...nuevos]))
+    } catch (err) {
+      console.error('Error al cargar productos:', err)
+      setError('No se pudieron cargar los productos')
+    } finally {
+      if (reset) setCargando(false)
+      else setCargandoMas(false)
     }
+  }, [construirQuery])
 
-    if (laboratoriosActivos.length > 0) {
-      resultado = resultado.filter((p) => laboratoriosActivos.includes(p.laboratorio))
-    }
+  // Carga inicial + cada vez que cambian búsqueda, orden o filtros → página 1.
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    cargarPagina({ page: 1, reset: true })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchTerm, sort, categoriaActiva, laboratoriosActivos, formasActivas, soloDisponibles, precioMin, precioMax])
 
-    if (formasActivas.length > 0) {
-      resultado = resultado.filter((p) => formasActivas.includes(p.forma))
-    }
+  // Tasa de cambio ves — global, se carga una sola vez.
+  useEffect(() => {
+    api
+      .get('/prices')
+      .then((res) => setTasaVes(res.data.usd_a_ves))
+      .catch((err) => console.error(err))
+  }, [])
 
-    if (soloDisponibles) {
-      resultado = resultado.filter((p) => p.disponible)
-    }
+  // ── Infinite scroll: sentinel al final de la grilla → carga siguiente página ──
+  const sentinelRef = useRef(null)
 
-    if (precioMin !== '') {
-      resultado = resultado.filter((p) => p.precio_usd >= Number(precioMin))
-    }
-    if (precioMax !== '') {
-      resultado = resultado.filter((p) => p.precio_usd <= Number(precioMax))
-    }
+  useEffect(() => {
+    if (cargando || !hasMore || cargandoMas) return
+    const sentinel = sentinelRef.current
+    if (!sentinel) return
 
-    const ordenado = [...resultado].sort((a, b) => {
-      switch (sort) {
-        case 'precio_asc':
-          return a.precio_usd - b.precio_usd
-        case 'precio_desc':
-          return b.precio_usd - a.precio_usd
-        case 'nombre_asc':
-          return a.nombre_comercial.localeCompare(b.nombre_comercial)
-        default:
-          return 0
-      }
-    })
-
-    return ordenado
-  }, [productos, categoriaActiva, laboratoriosActivos, formasActivas, soloDisponibles, precioMin, precioMax, sort])
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          cargarPagina({ page: pagina + 1, reset: false })
+        }
+      },
+      { rootMargin: '300px' }
+    )
+    observer.observe(sentinel)
+    return () => observer.disconnect()
+  }, [cargando, hasMore, cargandoMas, pagina, cargarPagina])
 
   function toggleSeccion(key) {
     setSeccionesAbiertas((prev) => ({ ...prev, [key]: !prev[key] }))
@@ -206,7 +224,7 @@ useEffect(() => {
               <>Resultados para "{categoriaActiva === 'todos' ? 'Catálogo' : categoriaActiva}"</>
             )}
             {' '}
-            <span>({productosFiltrados.length} artículos)</span>
+            <span>({total} artículos)</span>
           </h1>
           <p className="header-subtitle">
             {searchTerm
@@ -403,17 +421,42 @@ useEffect(() => {
                 <ProductCardSkeleton key={i} />
               ))}
             </div>
-          ) : productosFiltrados.length === 0 ? (
+          ) : productos.length === 0 ? (
             <p className="catalogo-vacio">No encontramos productos para esta búsqueda.</p>
           ) : (
             <div className="product-grid">
-              {productosFiltrados.map((producto) => (
+              {productos.map((producto) => (
                 <ProductCard key={producto.id} producto={producto} tasaVes={tasaVes} />
               ))}
             </div>
           )}
+
+          {/* Sentinel para infinite scroll */}
+          {!cargando && productos.length > 0 && hasMore && (
+            <div ref={sentinelRef} className="catalogo-sentinel" />
+          )}
+          {cargandoMas && <InfiniteScrollLoader />}
         </main>
       </div>
+
+      {/* Bloque informativo + footer — solo al llegar al final de los resultados */}
+      {!cargando && total > 0 && !hasMore && (
+        <div className="catalogo-final">
+          <section className="catalogo-contacto">
+            <div className="catalogo-contacto__info">
+              <h2>¿No encuentras lo que buscas?</h2>
+              <p>
+                Cuéntanos qué producto necesitas y haremos todo lo posible por conseguirlo
+                para ti. Nuestro equipo lo revisará y te responderá a la brevedad.
+              </p>
+            </div>
+            <Link to="/mis-solicitudes/requerimientos" className="catalogo-contacto__btn">
+              ¡Solicítalo aquí!
+            </Link>
+          </section>
+          <Footer />
+        </div>
+      )}
 
       {/* Modal filtros — solo mobile */}
       {!esDesktop && filtrosAbiertos && (
@@ -590,6 +633,8 @@ useEffect(() => {
           </div>
         </>
       )}
+
+      <div className="catalogo-espaciador" aria-hidden="true" />
 
       <BottomNav />
     </div>

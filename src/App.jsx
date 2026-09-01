@@ -9,6 +9,7 @@ import { useEffect } from 'react'
 import TopLoadingBar from './components/TopLoadingBar'
 import Navbar from './components/Navbar'
 import ScrollToTop from './components/ScrollToTop'
+import ScrollToTopFloat from './components/ScrollToTopFloat'
 import PrivateRoute from './components/PrivateRoute'
 import PrivateRouteSensible from './components/PrivateRouteSensible'
 import Home from './pages/Home'
@@ -71,6 +72,7 @@ function App() {
             <ScrollToTop />
             <LoadingBarProvider>
               <Navbar />
+              <ScrollToTopFloat />
               <LoadingBarBridge />
               <Toaster />
               <Routes>
