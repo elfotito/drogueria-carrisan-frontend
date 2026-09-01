@@ -111,7 +111,7 @@ function PromoCard({ producto, tasaVes }) {
           onClick={handleFavorito}
           aria-label={favorito ? 'Quitar de favoritos' : 'Agregar a favoritos'}
         >
-          <Heart size={14} fill={favorito ? 'currentColor' : 'none'} strokeWidth={2} />
+          <Heart size={18} fill={favorito ? 'currentColor' : 'none'} strokeWidth={2} />
         </button>
         <img
           src={producto.foto_url || '/placeholder.png'}
