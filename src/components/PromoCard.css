@@ -198,6 +198,15 @@
   font-size: 1em;
 }
 
+.promocard__precio-ahora-label {
+  color: #12A594;
+  font-size: 0.6em;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin-right: 4px;
+  letter-spacing: 0.3px;
+}
+
 .promocard__precio-centavos {
   display: inline-block;
   font-size: 0.55em;

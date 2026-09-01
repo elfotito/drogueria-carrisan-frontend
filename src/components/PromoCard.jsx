@@ -137,6 +137,7 @@ function PromoCard({ producto, tasaVes }) {
         {tieneDescuento ? (
           <>
             <span className="promocard__precio-ahora">
+              <span className="promocard__precio-ahora-label">Ahora</span>
               <PrecioSuperIndice valor={producto.precio_usd} />
             </span>
             <span className="promocard__precio-original">
