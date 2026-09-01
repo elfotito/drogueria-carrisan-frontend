@@ -195,7 +195,7 @@ function ProductCard({ producto, tasaVes, variante = 'vertical' }) {
               onClick={handleFavorito}
               aria-label={favorito ? 'Quitar de favoritos' : 'Agregar a favoritos'}
             >
-              <Heart size={16} fill={favorito ? 'currentColor' : 'none'} strokeWidth={2} />
+              <Heart size={18} fill={favorito ? 'currentColor' : 'none'} strokeWidth={2} />
             </button>
 
             <img
@@ -296,7 +296,7 @@ function ProductCard({ producto, tasaVes, variante = 'vertical' }) {
             onClick={handleFavorito}
             aria-label={favorito ? 'Quitar de favoritos' : 'Agregar a favoritos'}
           >
-            <Heart size={16} fill={favorito ? 'currentColor' : 'none'} strokeWidth={2} />
+            <Heart size={18} fill={favorito ? 'currentColor' : 'none'} strokeWidth={2} />
           </button>
 
           <img

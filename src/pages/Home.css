@@ -5,6 +5,15 @@
   background: #FFFFFF
 ;
 }
+.home__container 
+{
+  width: 100%
+;
+  max-width: 1600px
+;
+  margin: 0 auto
+;
+}
 /* ---------- Hero ---------- */.home__hero 
 {
   width: 100%
@@ -100,12 +109,10 @@
 ;
 }
 }
-/* ---------- Desktop grande: reciÃ©n acÃ¡ se limita el ancho ---------- */@media (min-width: 1440px) 
+/* ---------- Desktop grande ---------- */@media (min-width: 1440px) 
 {
   .home__vitrina 
 {
-    max-width: 1400px
-;
     padding: 32px 24px 0
 ;
 }

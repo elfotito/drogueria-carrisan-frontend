@@ -147,6 +147,7 @@ function Home() {
         <DashboardMobile user={user} tasa={tasa} />
       )}
 
+      <div className="home__container">
       {/* ── Hero banner ── */}
       <section className="home__hero">
         <HeroCarrusel slides={HERO_SLIDES} intervaloMs={5000} />
@@ -250,6 +251,8 @@ function Home() {
           <Footer />
         </div>
       )}
+
+      </div>{/* fin home__container */}
 
       {/* Espaciador para bottom nav */}
       <div className="home__espaciador" aria-hidden="true" />
