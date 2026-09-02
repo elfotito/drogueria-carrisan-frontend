@@ -78,7 +78,7 @@
 
 .home-carrusel__fila {
   display: flex;
-  gap: 12px;
+  gap: 6px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
