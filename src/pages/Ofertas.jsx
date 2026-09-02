@@ -161,7 +161,6 @@ function Ofertas() {
         <SeccionesCarrusel
           titulo="Más ofertas por marca"
           secciones={seccionesResto}
-          tasaVes={tasaVes}
         />
       )}
 

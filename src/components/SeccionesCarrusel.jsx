@@ -8,7 +8,7 @@ import './SeccionesCarrusel.css'
 // Todo el bloque de columnas se desplaza horizontalmente como una sola fila.
 //
 // secciones: [{ id, titulo, verTodoTo, productos: [4 productos] }]
-function SeccionesCarrusel({ titulo = 'Rollbacks y más', secciones, tasaVes, cargando = false }) {
+function SeccionesCarrusel({ titulo = 'Rollbacks y más', secciones, cargando = false }) {
   const filaRef = useRef(null)
 
   function scrollFila(direccion) {
@@ -47,7 +47,7 @@ function SeccionesCarrusel({ titulo = 'Rollbacks y más', secciones, tasaVes, ca
                 </div>
                 <div className="secciones-carrusel__grid">
                   {seccion.productos.slice(0, 4).map((producto) => (
-                    <MiniPromoCard key={producto.id} producto={producto} tasaVes={tasaVes} />
+                    <MiniPromoCard key={producto.id} producto={producto} />
                   ))}
                 </div>
               </div>

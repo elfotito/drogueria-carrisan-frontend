@@ -17,15 +17,9 @@ function obtenerEtiquetaDescuento(descuento) {
 }
 
 // Card mínima para los mini-grids de categoría (estilo "Rollbacks & more"
-// de Walmart): etiqueta, foto, precio (USD + Bs. abajo) y nombre en una
-// sola línea con ellipsis. Aún más compacta que PromoCard — pensada para
-// verse 2x2 dentro de una sección angosta.
-function MiniPromoCard({ producto, tasaVes }) {
+// de Walmart): etiqueta, foto, precio USD y nombre.
+function MiniPromoCard({ producto }) {
   const navigate = useNavigate()
-
-  const precioVes = tasaVes && producto.precio_usd != null
-    ? (producto.precio_usd * tasaVes).toFixed(2)
-    : null
 
   const tieneDescuento = producto.precio_original_usd != null && producto.descuento_activo
   const etiqueta = tieneDescuento ? obtenerEtiquetaDescuento(producto.descuento_activo) : null
@@ -49,11 +43,13 @@ function MiniPromoCard({ producto, tasaVes }) {
 
       <div className="minipromocard__precios">
         {tieneDescuento ? (
-          <span className="minipromocard__precio-ahora">${formatUSD(producto.precio_usd)}</span>
+          <>
+            <span className="minipromocard__precio-ahora">${formatUSD(producto.precio_usd)}</span>
+            <span className="minipromocard__precio-original">${formatUSD(producto.precio_original_usd)}</span>
+          </>
         ) : (
           <span className="minipromocard__precio-normal">${formatUSD(producto.precio_usd)}</span>
         )}
-        {precioVes && <span className="minipromocard__precio-ves">Bs. {precioVes}</span>}
       </div>
 
       <span className="minipromocard__nombre">{producto.nombre_comercial}</span>

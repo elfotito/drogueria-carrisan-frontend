@@ -237,7 +237,6 @@ function Home() {
       <SeccionesCarrusel
           titulo="Rollbacks y más"
           secciones={secciones}
-          tasaVes={tasa}
           cargando={cargandoVitrina}
         />
 

@@ -480,7 +480,6 @@ function ProductoDetalle() {
                 key={`${producto.id}-${i}`}
                 titulo={c.titulo}
                 secciones={c.secciones}
-                tasaVes={tasaVes}
                 cargando={false}
               />
             )
