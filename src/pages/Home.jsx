@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext'
 import api from '../api/axios'
 import HeroCarrusel from '../components/HeroCarrusel'
 import HomeCarrusel from '../components/HomeCarrusel'
+import ExploraCarrusel from '../components/ExploraCarrusel'
 import SeccionesCarrusel from '../components/SeccionesCarrusel'
 import AdBanner from '../components/AdBanner'
 import AdCard from '../components/AdCard'
@@ -165,6 +166,9 @@ function Home() {
       <section className="home__hero">
         <HeroCarrusel slides={HERO_SLIDES} intervaloMs={5000} />
       </section>
+
+      {/* ── Explorá por categoría y laboratorio ── */}
+      <ExploraCarrusel />
   
       {/* ── Vitrina: carruseles fijos + ads ── */}
       <div className="home__vitrina">

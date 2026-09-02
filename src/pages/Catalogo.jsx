@@ -22,6 +22,8 @@ const categoriasFiltro = [
 function Catalogo() {
   const [searchParams] = useSearchParams()
   const searchTerm = searchParams.get('search') || ''
+  const categoriaParam = searchParams.get('categoria') || ''
+  const laboratorioParam = searchParams.get('laboratorio') || ''
 
   const [productos, setProductos] = useState([])
   const [total, setTotal] = useState(0)
@@ -33,8 +35,10 @@ function Catalogo() {
   const [error, setError] = useState('')
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(false)
   const [sort, setSort] = useState('nombre_asc')
-  const [categoriaActiva, setCategoriaActiva] = useState('todos')
-  const [laboratoriosActivos, setLaboratoriosActivos] = useState([])
+  const [categoriaActiva, setCategoriaActiva] = useState(categoriaParam || 'todos')
+  const [laboratoriosActivos, setLaboratoriosActivos] = useState(
+    laboratorioParam ? [laboratorioParam] : []
+  )
   const [formasActivas, setFormasActivas] = useState([])
   const [soloDisponibles, setSoloDisponibles] = useState(false)
   const [precioMin, setPrecioMin] = useState('')
