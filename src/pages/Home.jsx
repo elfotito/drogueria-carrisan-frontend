@@ -13,6 +13,7 @@ import BottomNav from '../components/BottomNav'
 import CookieConsent from '../components/CookieConsent'
 import { agruparPorLinea } from '../utils/agruparPorLinea'
 import BloquePromocional from '../components/BloquePromocional'
+import SeccionPromocional from '../components/SeccionPromocional'
 import './Home.css'
 
 // ── Constantes ──────────────────────────────────────────────────
@@ -244,8 +245,42 @@ function Home() {
           cargando={cargandoVitrina}
         />
 
+
         {/* ── Explorá por laboratorio (sección aparte, más abajo) ── */}
         <ExploraLaboratorios />
+
+        {/* ── Sección promocional: imagen + carrusel (imagen a la izquierda) ── */}
+      <SeccionPromocional
+        imagen="https://fqeshthtycmzgyibiurq.supabase.co/storage/v1/object/public/crsnimages/quirofano.png"
+        alt="Productos hospitalarios"
+        titulo="Insumos quirúrgicos para cada procedimiento"
+        subtitulo="Equipamiento completo para tu clínica"
+        badgeTexto="Desde 20% off"
+        textoCta="Comprar ahora"
+        linkCta="/hospitalaria"
+        linkImagen="/hospitalaria"
+        productos={ofertas}
+        tasaVes={tasa}
+        tituloCarrusel="Más vendidos"
+        verTodoTo="/catalogo"
+        cargando={cargandoVitrina}
+      />
+
+        {/* ── Sección promocional invertida: imagen a la derecha ── */}
+        <SeccionPromocional
+          invertido
+          imagen="https://fqeshthtycmzgyibiurq.supabase.co/storage/v1/object/public/crsnimages/ampollas.png"
+          alt="Inyectables"
+          titulo="Inyectables con cadena de frío garantizada"
+          textoCta="Conocer más"
+          linkCta="/ayuda"
+          linkImagen="/ayuda"
+          productos={productosIniciales}
+          tasaVes={tasa}
+          tituloCarrusel="Recomendados para ti"
+          verTodoTo="/catalogo"
+        />
+
 
         <AdBanner
           titulo="Descuentos de temporada"
@@ -262,7 +297,7 @@ function Home() {
           verTodoTo="/catalogo"
           cargando={cargandoVitrina}
         />
-
+        
         <div className="home__ads-pair">
           <AdCard
             titulo="Nuevos productos"
@@ -291,6 +326,8 @@ function Home() {
                 link="/catalogo"
               />
             )}
+            {/* ── Explorá por categoría (colocado justo tras el hero) ── */}
+        <ExploraCategorias />
             <HomeCarrusel
               titulo={seccion.titulo}
               productos={seccion.productos}

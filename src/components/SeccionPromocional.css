@@ -1,0 +1,246 @@
+/* ============================================================
+   SeccionPromocional — split: panel promocional + carrusel
+   Estilo Walmart: image + texto a un lado, productos al otro.
+   ============================================================ */
+
+.seccion-promo {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  background: #FFFFFF;
+  border: 1px solid #EDEEF0;
+  border-radius: 16px;
+  overflow: hidden;
+  margin: 20px 0;
+}
+
+/* ---------- Panel promocional (imagen + texto) ---------- */
+.seccion-promo__panel {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.seccion-promo__panel-link {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 220px;
+  text-decoration: none;
+}
+
+.seccion-promo__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.seccion-promo__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(20, 24, 42, 0.10) 0%, rgba(20, 24, 42, 0.55) 100%);
+}
+
+.seccion-promo__badge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background: #12A594;
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  border-radius: 999px;
+  letter-spacing: 0;
+  z-index: 2;
+}
+
+.seccion-promo__texto {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  bottom: 24px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.seccion-promo__titulo {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.5rem;
+  line-height: 1.15;
+  color: #FFFFFF;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.seccion-promo__subtitulo {
+  font-family: 'Figtree', sans-serif;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+}
+
+.seccion-promo__cta {
+  display: inline-block;
+  background: #FFFFFF;
+  color: #14182A;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 10px 20px;
+  border-radius: 999px;
+  margin-top: 6px;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.seccion-promo__panel-link:hover .seccion-promo__cta {
+  background: #EFF4FB;
+}
+
+/* ---------- Carrusel ---------- */
+.seccion-promo__carrusel-wrap {
+  width: 100%;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.seccion-promo__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.seccion-promo__titulo-carrusel {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: #14182A;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.seccion-promo__acciones {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.seccion-promo__ver-todo {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1B4B8F;
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
+.seccion-promo__flechas {
+  display: none;
+  gap: 8px;
+}
+
+.seccion-promo__flechas button {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid #e3e4e5;
+  background: #FFFFFF;
+  color: #14182A;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.seccion-promo__flechas button:hover {
+  background: #EFF4FB;
+  border-color: #1B4B8F;
+  color: #1B4B8F;
+}
+
+.seccion-promo__fila {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  padding-bottom: 4px;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.seccion-promo__fila::-webkit-scrollbar {
+  display: none;
+}
+
+/* ---------- Skeleton ---------- */
+.seccion-promo__skeleton {
+  flex: 0 0 calc((100% - 24px) / 3);
+  aspect-ratio: 3 / 4;
+  background: linear-gradient(90deg, #f0f1f3 25%, #f7f8f9 37%, #f0f1f3 63%);
+  background-size: 400% 100%;
+  border-radius: 12px;
+  animation: seccion-promo-shimmer 1.4s ease infinite;
+}
+
+@keyframes seccion-promo-shimmer {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+
+/* ---------- Tablet / Desktop: split en dos columnas ---------- */
+@media (min-width: 768px) {
+  .seccion-promo {
+    grid-template-columns: 40% 60%;
+  }
+  .seccion-promo__carrusel-wrap {
+    padding: 24px 20px;
+  }
+  .seccion-promo__panel-link {
+    min-height: 320px;
+  }
+  .seccion-promo__titulo {
+    font-size: 1.8rem;
+  }
+  .seccion-promo__flechas {
+    display: flex;
+  }
+  .seccion-promo__titulo-carrusel {
+    font-size: 1.3rem;
+  }
+}
+
+/* ---------- Desktop grande ---------- */
+@media (min-width: 1200px) {
+  .seccion-promo {
+    grid-template-columns: 45% 55%;
+  }
+  .seccion-promo__panel-link {
+    min-height: 380px;
+  }
+  .seccion-promo__titulo {
+    font-size: 2rem;
+  }
+}
+
+/* ---------- Layout invertido: imagen a la derecha, carrusel a la izquierda ---------- */
+@media (min-width: 768px) {
+  .seccion-promo--invertido .seccion-promo__panel {
+    order: 2;
+  }
+  .seccion-promo--invertido .seccion-promo__carrusel-wrap {
+    order: 1;
+  }
+}
