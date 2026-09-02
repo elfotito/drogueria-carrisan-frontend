@@ -72,6 +72,10 @@
 .home__footer-wrapper {
   margin-top: 20px;
   border-top: 1px solid rgba(35, 43, 69, 0.08);
+  /* Full-bleed: break out of home__container max-width */
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
 }
 
 /* Espacio para que el bottom nav fijo no tape lo último */

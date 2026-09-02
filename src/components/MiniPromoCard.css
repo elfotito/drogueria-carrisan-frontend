@@ -9,9 +9,8 @@
   align-items: flex-start;
   text-align: left;
   background: #FFFFFF;
-  border: 1px solid #e3e4e5;
   border-radius: 8px;
-  padding: 8px;
+  padding: 6px;
   cursor: pointer;
   font-family: 'Figtree', 'Inter', sans-serif;
   width: 100%;
@@ -29,11 +28,11 @@
    el mismo alto (con o sin etiqueta) para que todas las tarjetas
    queden parejas aunque no tengan promoción. */
 .minipromocard__badge-slot {
-  min-height: 20px;
+  min-height: 16px;
   display: flex;
   align-items: flex-start;
   width: 100%;
-  margin-bottom: 5px;
+  margin-bottom: 3px;
 }
 
 .minipromocard__badge {
@@ -50,14 +49,14 @@
 
 .minipromocard__media {
   width: 100%;
-  aspect-ratio: 1 / 1.3;
+  aspect-ratio: 1 / 1.2;
   display: flex;
   align-items: center;
   justify-content: center;
   background: #FFFFFF;
   border-radius: 6px;
   overflow: hidden;
-  margin-bottom: 7px;
+  margin-bottom: 5px;
 }
 
 .minipromocard__image {
@@ -125,7 +124,7 @@
 }
 
 .minipromocard__nombre {
-  margin-top: 4px;
+  margin-top: 2px;
   width: 100%;
   font-size: 0.82rem;
   font-weight: 500;

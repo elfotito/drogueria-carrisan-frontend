@@ -188,9 +188,9 @@ function Home() {
           tamano="grande"
           posicionTexto="arriba"
           titulo="Insumos quirúrgicos para cada procedimiento"
-          subtitulo="Todo el equipamiento que tu quirófano necesita, en un solo pedido"
+          subtitulo="Todo el equipamiento que tu quirófano necesita"
           textoCta="Comprar ahora"
-          link="/catalogo"
+          link="/hospitalaria"
         />
         <BloquePromocional
           imagen="https://fqeshthtycmzgyibiurq.supabase.co/storage/v1/object/public/crsnimages/ampollas.png"
@@ -207,7 +207,7 @@ function Home() {
           className="home__bloque-c"
           tamano="pequeno"
           variante="oferta"
-          titulo="Encuentra cada presentación que tu farmacia necesita"
+          titulo="Encuentra cualquier presentación"
           textoCta="Linea Farmacia"
           link="/farmacia"
         />

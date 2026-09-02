@@ -612,6 +612,15 @@
 ;
   border-bottom: 1px solid rgba(0, 82, 220, 0.12)
 ;
+  /* Full-bleed: break out of catalogo-layout padding */
+  width: 100vw
+;
+  margin-left: calc(-50vw + 50%)
+;
+  margin-right: calc(-50vw + 50%)
+;
+  max-width: none
+;
 }
 .catalogo-contacto__info 
 {
