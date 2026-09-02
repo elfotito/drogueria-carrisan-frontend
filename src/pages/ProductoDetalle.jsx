@@ -4,14 +4,11 @@ import api from '../api/axios'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
 import HomeCarrusel from '../components/HomeCarrusel'
-import SeccionesCarrusel from '../components/SeccionesCarrusel'
-import Valoraciones from '../components/Valoraciones'
-import Footer from '../components/Footer'
 import { agruparPorLinea } from '../utils/agruparPorLinea'
 import BottomNav from '../components/BottomNav'
 import './ProductoDetalle.css'
-import { Bell, BellOff } from 'lucide-react'
 
+// Cuántos carruseles mostrar al final de la página (elegidos al azar del pool).
 const CANTIDAD_CARRUSELES = 2
 const MINIMO_POR_CARRUSEL = 4
 
@@ -22,12 +19,6 @@ function barajar(array) {
     ;[copia[i], copia[j]] = [copia[j], copia[i]]
   }
   return copia
-}
-
-function getEstadoProducto(producto) {
-  if (producto.es_cotizacion) return 'cotizacion'
-  if (!producto.precio_usd || Number(producto.precio_usd) === 0) return 'proximamente'
-  return 'normal'
 }
 
 function elegirCarruseles(producto, otrosActivos) {
@@ -57,95 +48,30 @@ function elegirCarruseles(producto, otrosActivos) {
     pool.push({ tipo: 'productos', titulo: 'También te puede interesar', productos: barajar(otrosActivos).slice(0, 12) })
   }
 
-  const secciones = agruparPorLinea(otrosActivos)
-  if (secciones.length >= 2) {
-    pool.push({ tipo: 'secciones', titulo: 'Explora por categoría', secciones })
-  }
+  // agruparPorLinea ya devuelve carruseles individuales listos para HomeCarrusel
+  // (cada uno con su propio título y link "ver todo"), no un bloque agregado.
+  const seccionesPorLinea = agruparPorLinea(otrosActivos).map((s) => ({
+    tipo: 'productos',
+    titulo: s.titulo,
+    productos: s.productos,
+    verTodoTo: s.verTodoTo,
+  }))
+  pool.push(...seccionesPorLinea)
 
   return barajar(pool).slice(0, CANTIDAD_CARRUSELES)
 }
 
-function construirSecciones(producto) {
-  const secciones = []
-
-  secciones.push({
-    id: 'detalles',
-    titulo: 'Detalles del producto',
-    contenido: (
-      <div className="detalle-acc-grid">
-        {producto.laboratorio && (
-          <div className="detalle-campo">
-            <span className="detalle-label">Laboratorio</span>
-            <span className="detalle-valor">{producto.laboratorio}</span>
-          </div>
-        )}
-        {producto.molecula && (
-          <div className="detalle-campo">
-            <span className="detalle-label">Molécula</span>
-            <span className="detalle-valor">{producto.molecula}</span>
-          </div>
-        )}
-        {producto.forma && (
-          <div className="detalle-campo">
-            <span className="detalle-label">Forma farmacéutica</span>
-            <span className="detalle-valor">{producto.forma}</span>
-          </div>
-        )}
-        {producto.linea && (
-          <div className="detalle-campo">
-            <span className="detalle-label">Línea</span>
-            <span className="detalle-valor">{producto.linea}</span>
-          </div>
-        )}
-        {producto.pais_origen && (
-          <div className="detalle-campo">
-            <span className="detalle-label">País de origen</span>
-            <span className="detalle-valor">{producto.pais_origen}</span>
-          </div>
-        )}
-        <div className="detalle-campo">
-          <span className="detalle-label">Disponibilidad</span>
-          <span className={`detalle-valor ${producto.disponible ? 'disponible' : 'agotado'}`}>
-            {producto.disponible ? 'Disponible' : 'Agotado'}
-          </span>
-        </div>
-      </div>
-    ),
-  })
-
-  if (producto.descripcion) {
-    secciones.push({
-      id: 'descripcion',
-      titulo: 'Descripción',
-      contenido: <p className="detalle-acc-texto">{producto.descripcion}</p>,
-    })
-  }
-
-  if (producto.indicaciones) {
-    secciones.push({
-      id: 'indicaciones',
-      titulo: 'Indicaciones',
-      contenido: <p className="detalle-acc-texto">{producto.indicaciones}</p>,
-    })
-  }
-
-  if (producto.modo_uso) {
-    secciones.push({
-      id: 'modo_uso',
-      titulo: 'Modo de uso',
-      contenido: <p className="detalle-acc-texto">{producto.modo_uso}</p>,
-    })
-  }
-
-  if (producto.composicion) {
-    secciones.push({
-      id: 'composicion',
-      titulo: 'Composición',
-      contenido: <p className="detalle-acc-texto">{producto.composicion}</p>,
-    })
-  }
-
-  return secciones
+// Estrellas de rating — solo lectura, usada arriba del título
+function Estrellas({ promedio, tamano = '1rem' }) {
+  return (
+    <span className="rating-estrellas" style={{ fontSize: tamano }} aria-hidden="true">
+      {[1, 2, 3, 4, 5].map((n) => (
+        <span key={n} className={n <= Math.round(promedio) ? 'estrella-llena' : 'estrella-vacia'}>
+          ★
+        </span>
+      ))}
+    </span>
+  )
 }
 
 function ProductoDetalle() {
@@ -153,24 +79,25 @@ function ProductoDetalle() {
   const navigate = useNavigate()
   const { addItem } = useCart()
   const { user } = useAuth()
-  const [cotizacion, setCotizacion] = useState(null)
-  const [solicitandoCotizacion, setSolicitandoCotizacion] = useState(false)
+
   const [producto, setProducto] = useState(null)
+  const [detalles, setDetalles] = useState(null)
+  const [moleculas, setMoleculas] = useState([])
+  const [valoraciones, setValoraciones] = useState({ promedio: 0, total: 0, valoraciones: [] })
   const [tasaVes, setTasaVes] = useState(null)
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
   const [cantidad, setCantidad] = useState(1)
   const [agregado, setAgregado] = useState(false)
   const [carruseles, setCarruseles] = useState([])
-  const [seccionesAbiertas, setSeccionesAbiertas] = useState({ detalles: true })
-  const [suscrito, setSuscrito] = useState(false)
-  const [cargandoAlerta, setCargandoAlerta] = useState(false)
-  const [estadoCotizacion, setEstadoCotizacion] = useState(null) // null | 'pendiente' | 'cotizada' | 'rechazada'
-  const [enviandoCotizacion, setEnviandoCotizacion] = useState(false)
+  const [imagenActiva, setImagenActiva] = useState(0)
+  const [tabActiva, setTabActiva] = useState('descripcion')
 
   useEffect(() => {
     cargarProducto()
     window.scrollTo(0, 0)
+    setImagenActiva(0)
+    setTabActiva('descripcion')
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id])
 
@@ -178,45 +105,31 @@ function ProductoDetalle() {
     setCargando(true)
     setCarruseles([])
     try {
-      const [resProducto, resTasa] = await Promise.all([
-        api.get(`/products/${id}`),
+      const [resCompleto, resTasa] = await Promise.all([
+        api.get(`/moleculas/products/${id}/completo`),
         api.get('/prices'),
       ])
-      setProducto(resProducto.data)
-      
-      const estadoInicial = getEstadoProducto(resProducto.data)
-      
-      if (estadoInicial === 'proximamente' && user) {
-        api.get(`/products/${id}/avisame`)
-          .then(({ data }) => setSuscrito(data.suscrito))
-          .catch((err) => console.error('Error al consultar alerta:', err))
-      }
-      
-      if (user) {
-        try {
-          const { data: misCotizaciones } = await api.get('/cotizaciones/mias')
-          const activa = misCotizaciones.find(
-            (c) => c.producto_id === resProducto.data.id && ['pendiente', 'cotizada'].includes(c.estado)
-          )
-          
-          if (activa) {
-            const vencida = activa.estado === 'cotizada' && new Date(activa.fecha_expiracion) <= new Date()
-            setEstadoCotizacion(vencida ? null : activa.estado)
-            setCotizacion(vencida ? null : activa)
-          }
-        } catch (err) {
-          console.error('No se pudo verificar cotización existente', err)
-        }
-      }
-      
+
+      const { producto: p, detalles: d, moleculas: m } = resCompleto.data
+      setProducto(p)
+      setDetalles(d)
+      setMoleculas(m || [])
       setTasaVes(resTasa.data.usd_a_ves)
       setError('')
-      setSeccionesAbiertas({ detalles: true })
 
+      // Valoraciones: si falla, no tumbamos la página, solo no se muestra rating
+      try {
+        const resVal = await api.get(`/products/${id}/valoraciones`)
+        setValoraciones(resVal.data)
+      } catch (err) {
+        console.error('No se pudieron cargar las valoraciones', err)
+      }
+
+      // Carruseles relacionados: mismo criterio, es un "extra"
       try {
         const { data: todos } = await api.get('/products')
-        const otrosActivos = todos.filter((p) => p.activo && p.id !== resProducto.data.id)
-        setCarruseles(elegirCarruseles(resProducto.data, otrosActivos))
+        const otrosActivos = todos.filter((prod) => prod.activo && prod.id !== p.id)
+        setCarruseles(elegirCarruseles(p, otrosActivos))
       } catch (err) {
         console.error('No se pudieron cargar los carruseles relacionados', err)
       }
@@ -232,45 +145,6 @@ function ProductoDetalle() {
     addItem(producto, cantidad)
     setAgregado(true)
     setTimeout(() => setAgregado(false), 2000)
-  }
-
-  async function handleToggleAlerta() {
-    if (!user) return navigate('/login')
-    setCargandoAlerta(true)
-    try {
-      if (suscrito) {
-        await api.delete(`/products/${id}/avisame`)
-        setSuscrito(false)
-      } else {
-        await api.post(`/products/${id}/avisame`)
-        setSuscrito(true)
-      }
-    } catch (err) {
-      console.error('Error al actualizar alerta:', err)
-    } finally {
-      setCargandoAlerta(false)
-    }
-  }
-
-  async function handleSolicitarCotizacion() {
-    if (!user) return navigate('/login')
-    setEnviandoCotizacion(true)
-    try {
-      await api.post('/cotizaciones', { producto_id: producto.id })
-      setEstadoCotizacion('pendiente')
-    } catch (err) {
-      if (err.response?.status === 409) {
-        setEstadoCotizacion('pendiente')
-      } else {
-        console.error('Error al solicitar cotización:', err)
-      }
-    } finally {
-      setEnviandoCotizacion(false)
-    }
-  }
-
-  function toggleSeccion(id) {
-    setSeccionesAbiertas((prev) => ({ ...prev, [id]: !prev[id] }))
   }
 
   if (cargando) {
@@ -300,12 +174,19 @@ function ProductoDetalle() {
     )
   }
 
-  const estado = getEstadoProducto(producto)
   const precioVes = tasaVes && producto.precio_usd != null
     ? (producto.precio_usd * tasaVes).toFixed(2)
     : null
 
-  const secciones = construirSecciones(producto)
+  // Galería: imagen principal + hasta 4 secundarias (si existen en producto_detalles)
+  const galeria = [producto.foto_url, ...(detalles?.imagen_secundaria_urls || [])].filter(Boolean)
+
+  const tieneFichaTecnica = !!detalles && (
+    detalles.indicaciones || detalles.contraindicaciones || detalles.dosis_recomendada ||
+    detalles.via_administracion || detalles.efectos_secundarios || detalles.precauciones ||
+    detalles.presentacion || detalles.registro_sanitario
+  )
+  const tieneComposicion = moleculas.length > 0
 
   return (
     <div className="detalle-container">
@@ -318,147 +199,264 @@ function ProductoDetalle() {
         <span className="detalle-breadcrumb__actual">{producto.nombre_comercial}</span>
       </nav>
 
-      {/* Sección superior: imagen + acordeón + reseñas (izquierda) / buybox (derecha) */}
+      {/* Sección superior: Galería + Info + Columna de compra sticky */}
       <div className="detalle-main">
-        {/* Imagen */}
-        <div className="detalle-imagen-wrapper detalle-area-imagen">
-          <img
-            src={producto.foto_url || '/placeholder.png'}
-            alt={producto.nombre_comercial}
-            className="detalle-imagen"
-          />
-          {!producto.disponible && (
-            <span className="detalle-no-disponible">No disponible</span>
+        {/* Galería */}
+        <div className="detalle-galeria">
+          <div className="detalle-imagen-wrapper">
+            <img
+              src={galeria[imagenActiva] || '/placeholder.png'}
+              alt={producto.nombre_comercial}
+              className="detalle-imagen"
+            />
+            {!producto.disponible && (
+              <span className="detalle-no-disponible">No disponible</span>
+            )}
+          </div>
+
+          {galeria.length > 1 && (
+            <div className="detalle-miniaturas">
+              {galeria.map((url, i) => (
+                <button
+                  key={i}
+                  className={`detalle-miniatura ${i === imagenActiva ? 'activa' : ''}`}
+                  onClick={() => setImagenActiva(i)}
+                >
+                  <img src={url} alt={`${producto.nombre_comercial} ${i + 1}`} />
+                </button>
+              ))}
+            </div>
           )}
         </div>
 
-        {/* Buybox flotante */}
-        <aside className="detalle-area-buybox">
-          <div className="detalle-buybox-wrapper">
-            <div className="detalle-buybox">
-              {producto.marcas?.nombre && (
-                <p className="detalle-marca">{producto.marcas.nombre}</p>
-              )}
+        {/* Información principal */}
+        <div className="detalle-info">
+          {producto.marcas?.nombre && (
+            <p className="detalle-marca">{producto.marcas.nombre}</p>
+          )}
 
-              <h1 className="detalle-titulo">{producto.nombre_comercial}</h1>
+          <h1 className="detalle-titulo">{producto.nombre_comercial}</h1>
 
-              {/* Placeholder de estrellas — sin configurar todavía */}
-              <div className="detalle-buybox-estrellas">
-                <span className="detalle-estrellas-icono">☆ ☆ ☆ ☆ ☆</span>
-                <span className="detalle-estrellas-texto">Sin calificaciones aún</span>
-              </div>
-
-              <span className={`detalle-disponibilidad ${producto.disponible ? 'disponible' : 'agotado'}`}>
-                {producto.disponible ? '✓ Disponible' : 'Agotado'}
+          {valoraciones.total > 0 && (
+            <div className="detalle-rating">
+              <Estrellas promedio={valoraciones.promedio} />
+              <span className="detalle-rating-texto">
+                {valoraciones.promedio} · {valoraciones.total} {valoraciones.total === 1 ? 'valoración' : 'valoraciones'}
               </span>
+            </div>
+          )}
 
-              {/* Precios */}
-              <div className="detalle-precios">
-                {estado === 'normal' ? (
-                  <>
-                    <span className="detalle-precio-usd">
-                      ${Number(producto.precio_usd).toFixed(2)}
-                    </span>
-                    {precioVes && <span className="detalle-precio-ves">Bs. {precioVes}</span>}
-                  </>
-                ) : estado === 'cotizacion' ? (
-                  <span className="detalle-precio-usd detalle-precio-usd--consultar">Consultar precio</span>
-                ) : (
-                  <span className="detalle-precio-usd detalle-precio-usd--consultar">Llegará pronto</span>
-                )}
+          <span className={`detalle-disponibilidad ${producto.disponible ? 'disponible' : 'agotado'}`}>
+            {producto.disponible ? '✓ Disponible' : 'Agotado'}
+          </span>
+
+          {producto.descripcion && (
+            <p className="detalle-resumen">{producto.descripcion}</p>
+          )}
+
+          {/* Ficha rápida: laboratorio, forma, línea — lo esencial de un vistazo */}
+          <div className="detalle-ficha-rapida">
+            {producto.laboratorio && (
+              <div className="ficha-rapida-item">
+                <span className="ficha-rapida-label">Laboratorio</span>
+                <span className="ficha-rapida-valor">{producto.laboratorio}</span>
               </div>
-
-              {/* Acciones — varían según el estado del producto */}
-              {estado === 'normal' && producto.disponible && (
-                <div className="detalle-acciones">
-                  <div className="detalle-cantidad">
-                    <button onClick={() => setCantidad(c => Math.max(1, c - 1))} disabled={cantidad <= 1}>−</button>
-                    <span>{cantidad}</span>
-                    <button onClick={() => setCantidad(c => c + 1)}>+</button>
-                  </div>
-                  <button
-                    className={`detalle-btn-agregar ${agregado ? 'agregado' : ''}`}
-                    onClick={handleAgregar}
-                    disabled={!user}
-                  >
-                    {agregado ? '✓ Agregado' : 'Agregar al carrito'}
-                  </button>
-                </div>
-              )}
-
-              {estado === 'cotizacion' && (
-                <div className="detalle-acciones">
-                  {estadoCotizacion === 'pendiente' ? (
-                    <button className="detalle-btn-agregar agregado" disabled>
-                      Solicitud enviada
-                    </button>
-                  ) : estadoCotizacion === 'cotizada' ? (
-                    <button className="detalle-btn-agregar" onClick={() => navigate('/mis-solicitudes')}>
-                      Ya tienes un precio — ver en Mis Solicitudes
-                    </button>
-                  ) : (
-                    <button
-                      className="detalle-btn-agregar"
-                      onClick={handleSolicitarCotizacion}
-                      disabled={!user || enviandoCotizacion}
-                    >
-                      {enviandoCotizacion ? 'Enviando...' : 'Solicitar cotización'}
-                    </button>
-                  )}
-                </div>
-              )}
-
-              {estado === 'proximamente' && (
-                <div className="detalle-acciones">
-                  <button
-                    className={`detalle-btn-avisame ${suscrito ? 'detalle-btn-avisame--activo' : ''}`}
-                    onClick={handleToggleAlerta}
-                    disabled={!user || cargandoAlerta}
-                  >
-                    {suscrito ? <BellOff size={16} /> : <Bell size={16} />}
-                    {suscrito ? 'Te avisaremos ✓' : 'Avísame cuando llegue'}
-                  </button>
-                </div>
-              )}
-
-              {!user && (
-                <p className="detalle-login-aviso">
-                  <Link to="/login">Inicia sesión</Link> para {estado === 'proximamente' ? 'suscribirte' : 'comprar'}
-                </p>
-              )}
-
-              <p className="detalle-nota-precio">
-                * Los precios mostrados no incluyen IVA. Precios sujetos a cambios sin previo aviso.
-              </p>
-            </div>
+            )}
+            {producto.forma && (
+              <div className="ficha-rapida-item">
+                <span className="ficha-rapida-label">Forma</span>
+                <span className="ficha-rapida-valor">{producto.forma}</span>
+              </div>
+            )}
+            {detalles?.presentacion && (
+              <div className="ficha-rapida-item">
+                <span className="ficha-rapida-label">Presentación</span>
+                <span className="ficha-rapida-valor">{detalles.presentacion}</span>
+              </div>
+            )}
           </div>
-        </aside>
-
-        {/* Acordeón "Acerca de este producto" */}
-        <div className="detalle-acordeon detalle-area-acordeon">
-          <h2 className="detalle-seccion-titulo">Acerca de este producto</h2>
-
-          {secciones.map((s) => (
-            <div key={s.id} className="detalle-acc-item">
-              <button
-                type="button"
-                className="detalle-acc-header"
-                onClick={() => toggleSeccion(s.id)}
-                aria-expanded={!!seccionesAbiertas[s.id]}
-              >
-                <span>{s.titulo}</span>
-                <span className={`detalle-acc-flecha ${seccionesAbiertas[s.id] ? 'abierta' : ''}`}>⌄</span>
-              </button>
-              {seccionesAbiertas[s.id] && (
-                <div className="detalle-acc-contenido">{s.contenido}</div>
-              )}
-            </div>
-          ))}
         </div>
 
-        {/* Calificaciones y reseñas */}
-        <div className="detalle-resenas detalle-area-resenas">
-          <Valoraciones productoId={producto.id} />
+        {/* Columna de compra — sticky en desktop */}
+        <div className="detalle-compra-columna">
+          <div className="detalle-compra-card">
+            <div className="detalle-precios">
+              {producto.precio_usd != null ? (
+                <>
+                  <span className="detalle-precio-usd">
+                    ${Number(producto.precio_usd).toFixed(2)}
+                  </span>
+                  {precioVes && (
+                    <span className="detalle-precio-ves">Bs. {precioVes}</span>
+                  )}
+                </>
+              ) : (
+                <span className="detalle-precio-usd detalle-precio-usd--consultar">Consultar precio</span>
+              )}
+            </div>
+
+            {producto.disponible && (
+              <div className="detalle-acciones">
+                <div className="detalle-cantidad">
+                  <button
+                    onClick={() => setCantidad((c) => Math.max(1, c - 1))}
+                    disabled={cantidad <= 1}
+                  >
+                    −
+                  </button>
+                  <span>{cantidad}</span>
+                  <button onClick={() => setCantidad((c) => c + 1)}>+</button>
+                </div>
+
+                <button
+                  className={`detalle-btn-agregar ${agregado ? 'agregado' : ''}`}
+                  onClick={handleAgregar}
+                  disabled={!user}
+                >
+                  {agregado ? '✓ Agregado' : 'Agregar al carrito'}
+                </button>
+              </div>
+            )}
+
+            {!user && (
+              <p className="detalle-login-aviso">
+                <Link to="/login">Inicia sesión</Link> para comprar
+              </p>
+            )}
+
+            <p className="detalle-nota-precio">
+              * Los precios mostrados no incluyen IVA. Precios sujetos a cambios sin previo aviso.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Tabs: Descripción / Ficha técnica / Composición */}
+      <div className="detalle-tabs-container">
+        <div className="detalle-tabs-nav">
+          <button
+            className={`detalle-tab-btn ${tabActiva === 'descripcion' ? 'activa' : ''}`}
+            onClick={() => setTabActiva('descripcion')}
+          >
+            Descripción
+          </button>
+          {tieneFichaTecnica && (
+            <button
+              className={`detalle-tab-btn ${tabActiva === 'ficha' ? 'activa' : ''}`}
+              onClick={() => setTabActiva('ficha')}
+            >
+              Ficha técnica
+            </button>
+          )}
+          {tieneComposicion && (
+            <button
+              className={`detalle-tab-btn ${tabActiva === 'composicion' ? 'activa' : ''}`}
+              onClick={() => setTabActiva('composicion')}
+            >
+              Composición
+            </button>
+          )}
+        </div>
+
+        <div className="detalle-tab-panel">
+          {tabActiva === 'descripcion' && (
+            <div className="detalle-grid">
+              {producto.laboratorio && (
+                <div className="detalle-campo">
+                  <span className="detalle-label">Laboratorio</span>
+                  <span className="detalle-valor">{producto.laboratorio}</span>
+                </div>
+              )}
+              {producto.forma && (
+                <div className="detalle-campo">
+                  <span className="detalle-label">Forma farmacéutica</span>
+                  <span className="detalle-valor">{producto.forma}</span>
+                </div>
+              )}
+              {producto.linea && (
+                <div className="detalle-campo">
+                  <span className="detalle-label">Línea</span>
+                  <span className="detalle-valor">{producto.linea}</span>
+                </div>
+              )}
+              {producto.pais_origen && (
+                <div className="detalle-campo">
+                  <span className="detalle-label">País de origen</span>
+                  <span className="detalle-valor">{producto.pais_origen}</span>
+                </div>
+              )}
+              <div className="detalle-campo">
+                <span className="detalle-label">Disponibilidad</span>
+                <span className={`detalle-valor ${producto.disponible ? 'disponible' : 'agotado'}`}>
+                  {producto.disponible ? 'Disponible' : 'Agotado'}
+                </span>
+              </div>
+
+              {producto.descripcion && (
+                <div className="detalle-descripcion-completa">
+                  <p>{producto.descripcion}</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {tabActiva === 'ficha' && detalles && (
+            <table className="detalle-tabla-specs">
+              <tbody>
+                {detalles.indicaciones && (
+                  <tr><th>Indicaciones</th><td>{detalles.indicaciones}</td></tr>
+                )}
+                {detalles.dosis_recomendada && (
+                  <tr><th>Dosis recomendada</th><td>{detalles.dosis_recomendada}</td></tr>
+                )}
+                {detalles.via_administracion && (
+                  <tr><th>Vía de administración</th><td>{detalles.via_administracion}</td></tr>
+                )}
+                {detalles.contraindicaciones && (
+                  <tr><th>Contraindicaciones</th><td>{detalles.contraindicaciones}</td></tr>
+                )}
+                {detalles.efectos_secundarios && (
+                  <tr><th>Efectos secundarios</th><td>{detalles.efectos_secundarios}</td></tr>
+                )}
+                {detalles.precauciones && (
+                  <tr><th>Precauciones</th><td>{detalles.precauciones}</td></tr>
+                )}
+                {detalles.presentacion && (
+                  <tr><th>Presentación</th><td>{detalles.presentacion}</td></tr>
+                )}
+                {detalles.unidades_por_presentacion && (
+                  <tr><th>Unidades por presentación</th><td>{detalles.unidades_por_presentacion}</td></tr>
+                )}
+                {detalles.condiciones_almacenamiento && (
+                  <tr><th>Almacenamiento</th><td>{detalles.condiciones_almacenamiento}</td></tr>
+                )}
+                {detalles.registro_sanitario && (
+                  <tr><th>Registro sanitario</th><td>{detalles.registro_sanitario}</td></tr>
+                )}
+                {detalles.titular_registro && (
+                  <tr><th>Titular del registro</th><td>{detalles.titular_registro}</td></tr>
+                )}
+              </tbody>
+            </table>
+          )}
+
+          {tabActiva === 'composicion' && (
+            <div className="detalle-composicion">
+              {moleculas.map((m, i) => (
+                <div key={i} className="composicion-item">
+                  <span className="composicion-nombre">{m.moleculas_referencias?.nombre}</span>
+                  {m.concentracion && (
+                    <span className="composicion-concentracion">
+                      {m.concentracion} {m.unidad_concentracion}
+                    </span>
+                  )}
+                </div>
+              ))}
+              <p className="detalle-nota-precio" style={{ marginTop: '16px' }}>
+                * Consulta siempre con un profesional de la salud antes de usar cualquier medicamento.
+              </p>
+            </div>
+          )}
         </div>
       </div>
 
@@ -466,28 +464,18 @@ function ProductoDetalle() {
       {carruseles.length > 0 && (
         <div className="detalle-carruseles">
           {carruseles.map((c, i) => (
-            c.tipo === 'productos' ? (
-              <HomeCarrusel
-                key={`${producto.id}-${i}`}
-                titulo={c.titulo}
-                productos={c.productos}
-                tasaVes={tasaVes}
-                verTodoTo="/catalogo"
-                cargando={false}
-              />
-            ) : (
-              <SeccionesCarrusel
-                key={`${producto.id}-${i}`}
-                titulo={c.titulo}
-                secciones={c.secciones}
-                cargando={false}
-              />
-            )
+            <HomeCarrusel
+              key={`${producto.id}-${i}`}
+              titulo={c.titulo}
+              productos={c.productos}
+              tasaVes={tasaVes}
+              verTodoTo={c.verTodoTo || '/catalogo'}
+              cargando={false}
+            />
           ))}
         </div>
       )}
 
-      <Footer />
       <BottomNav />
     </div>
   )
