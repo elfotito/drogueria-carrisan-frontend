@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import './Menu.css'
 
 
@@ -168,15 +168,23 @@ function MenuListaItem({ item }) {
 }
 
 function Menu() {
+  const navigate = useNavigate()
+
   return (
     <div className="menu-page">
-      <h1 className="menu-page__titulo">Menú</h1>
-      <button
-            className="close-sidebar"
-            onClick={() => setMenuMobileAbierto(false)}
-          >
-            ✕
-          </button>
+      <div className="menu-page__header">
+        <h1 className="menu-page__titulo">Menú</h1>
+        <button
+          className="menu-page__close"
+          onClick={() => navigate(-1)}
+          aria-label="Volver"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M18 6 6 18" />
+            <path d="m6 6 12 12" />
+          </svg>
+        </button>
+      </div>
       <section className="menu-seccion">
         <div className="menu-grid">
           {GRID_PRINCIPAL.map((item) => (

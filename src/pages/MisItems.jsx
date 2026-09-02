@@ -30,6 +30,19 @@ function formatUSD(valor) {
   return Number(valor).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
+// Separa parte entera y centavos para formato superíndice: $1⁰⁶
+function PrecioSuperIndice({ valor }) {
+  if (valor == null) return <span>—</span>
+  const partes = Number(valor).toFixed(2).split('.')
+  return (
+    <>
+      <span className="precio-simbolo">$</span>
+      <span className="precio-entero">{partes[0]}</span>
+      <sup className="precio-centavos">{partes[1]}</sup>
+    </>
+  )
+}
+
 function IconoBuscar() {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -84,7 +97,12 @@ function CarruselSkeleton() {
 // ItemsCard — tarjeta compacta de producto (grid 2 columnas móvil /
 // grid de N columnas desktop). Usada en Mis Favoritos y Comprar de nuevo.
 // ---------------------------------------------------------
-function ItemsCard({ producto, cantidadEnCarrito, onAgregar, onQuitar, mostrarQuitar, badge }) {
+function ItemsCard({ producto, cantidadEnCarrito, onAgregar, onQuitar, mostrarQuitar, badge, tasaVes }) {
+  const tieneDescuento = producto?.precio_original_usd != null && producto?.descuento_activo
+  const precioVes = tasaVes && producto?.precio_usd != null
+    ? Number((producto.precio_usd * tasaVes).toFixed(2)).toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    : null
+
   return (
     <div className="itemcard">
       <Link to={`/producto/${producto?.id}`} className="itemcard__media">
@@ -111,7 +129,28 @@ function ItemsCard({ producto, cantidadEnCarrito, onAgregar, onQuitar, mostrarQu
       <div className="itemcard__body">
         <p className="itemcard__nombre">{producto?.nombre_comercial}</p>
         <div className="itemcard__footer">
-          <p className="itemcard__precio">${formatUSD(producto?.precio_usd)}</p>
+          <div className="itemcard__precios">
+            {tieneDescuento ? (
+              <>
+                <span className="itemcard__precio-ahora">
+                  <span className="itemcard__precio-ahora-label">Ahora</span>
+                  <PrecioSuperIndice valor={producto.precio_usd} />
+                </span>
+                <span className="itemcard__precio-original">
+                  <PrecioSuperIndice valor={producto.precio_original_usd} />
+                </span>
+              </>
+            ) : (
+              <span className="itemcard__precio-normal">
+                <PrecioSuperIndice valor={producto?.precio_usd} />
+              </span>
+            )}
+            {precioVes && (
+              <span className="itemcard__precio-ves">
+                ≈ Bs. {precioVes}
+              </span>
+            )}
+          </div>
           <button
             type="button"
             className={`itemcard__cta ${cantidadEnCarrito ? 'itemcard__cta--cantidad' : ''}`}
@@ -290,7 +329,7 @@ function BuscadorProducto({ onSeleccionar }) {
 // ---------------------------------------------------------
 // Tab: Mis Items (favoritos + carrusel de listas + filtro por línea)
 // ---------------------------------------------------------
-function TabMisItems({ mostrarCrear, setMostrarCrear }) {
+function TabMisItems({ mostrarCrear, setMostrarCrear, tasaVes }) {
   const { items: cartItems, addItem } = useCart()
   const { favoritos, toggleFavorito, loading: cargandoFav } = useFavoritos()
 
@@ -478,6 +517,7 @@ function TabMisItems({ mostrarCrear, setMostrarCrear }) {
                     onAgregar={() => addItem(producto, 1)}
                     onQuitar={() => quitarItem(producto.id)}
                     mostrarQuitar
+                    tasaVes={tasaVes}
                   />
                 ))}
               </div>
@@ -582,7 +622,7 @@ function TabMisItems({ mostrarCrear, setMostrarCrear }) {
 // Por cada producto único comprado se consulta su ficha actual
 // (GET /products/:id) para tener precio y foto vigentes.
 // ---------------------------------------------------------
-function TabComprarDeNuevo() {
+function TabComprarDeNuevo({ tasaVes }) {
   const { items: cartItems, addItem } = useCart()
   const [productos, setProductos] = useState([])
   const [cargando, setCargando] = useState(true)
@@ -760,32 +800,59 @@ function TabComprarDeNuevo() {
         <p className="misitems-vacio-filtro">No hay compras que coincidan con tu búsqueda.</p>
       ) : (
         <div className={vista === 'grid' ? 'comprar-nuevo__lista' : 'comprar-nuevo__lista comprar-nuevo__lista--filas'}>
-          {productosFiltrados.map((producto) => (
-            <div key={producto.id} className="comprar-nuevo-card">
-              <Link to={`/producto/${producto.id}`} className="comprar-nuevo-card__media">
-                {producto.foto_url ? (
-                  <img src={producto.foto_url} alt={producto.nombre_comercial} loading="lazy" />
-                ) : (
-                  <div className="itemcard__media-placeholder">Sin imagen</div>
-                )}
-              </Link>
-              <div className="comprar-nuevo-card__info">
-                <Link to={`/producto/${producto.id}`} className="comprar-nuevo-card__nombre">
-                  {producto.nombre_comercial}
+          {productosFiltrados.map((producto) => {
+            const tieneDescuentoCN = producto.precio_original_usd != null && producto.descuento_activo
+            const precioVesCN = tasaVes && producto.precio_usd != null
+              ? Number((producto.precio_usd * tasaVes).toFixed(2)).toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+              : null
+            return (
+              <div key={producto.id} className="comprar-nuevo-card">
+                <Link to={`/producto/${producto.id}`} className="comprar-nuevo-card__media">
+                  {producto.foto_url ? (
+                    <img src={producto.foto_url} alt={producto.nombre_comercial} loading="lazy" />
+                  ) : (
+                    <div className="itemcard__media-placeholder">Sin imagen</div>
+                  )}
                 </Link>
-                <p className="comprar-nuevo-card__precio">${formatUSD(producto.precio_usd)}</p>
-                <button
-                  type="button"
-                  className={`comprar-nuevo-card__cta ${cantidadEnCarrito(producto.id) ? 'comprar-nuevo-card__cta--cantidad' : ''}`}
-                  onClick={() => addItem(producto, 1)}
-                >
-                  {cantidadEnCarrito(producto.id)
-                    ? `En el carrito (${cantidadEnCarrito(producto.id)})`
-                    : 'Agregar al carrito'}
-                </button>
+                <div className="comprar-nuevo-card__info">
+                  <Link to={`/producto/${producto.id}`} className="comprar-nuevo-card__nombre">
+                    {producto.nombre_comercial}
+                  </Link>
+                  <div className="comprar-nuevo-card__precios">
+                    {tieneDescuentoCN ? (
+                      <>
+                        <span className="comprar-nuevo-card__precio-ahora">
+                          <span className="comprar-nuevo-card__precio-ahora-label">Ahora</span>
+                          <PrecioSuperIndice valor={producto.precio_usd} />
+                        </span>
+                        <span className="comprar-nuevo-card__precio-original">
+                          <PrecioSuperIndice valor={producto.precio_original_usd} />
+                        </span>
+                      </>
+                    ) : (
+                      <span className="comprar-nuevo-card__precio-normal">
+                        <PrecioSuperIndice valor={producto.precio_usd} />
+                      </span>
+                    )}
+                    {precioVesCN && (
+                      <span className="comprar-nuevo-card__precio-ves">
+                        ≈ Bs. {precioVesCN}
+                      </span>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    className={`comprar-nuevo-card__cta ${cantidadEnCarrito(producto.id) ? 'comprar-nuevo-card__cta--cantidad' : ''}`}
+                    onClick={() => addItem(producto, 1)}
+                  >
+                    {cantidadEnCarrito(producto.id)
+                      ? `En el carrito (${cantidadEnCarrito(producto.id)})`
+                      : 'Agregar al carrito'}
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
     </section>
@@ -807,6 +874,15 @@ function MisItems() {
   // botón "atrás" del navegador también funciona como uno espera.
   const [searchParams, setSearchParams] = useSearchParams()
   const tabActivo = searchParams.get('tab') === 'recomprar' ? 'recomprar' : 'items'
+
+  // Tasa de cambio VES — global, se carga una sola vez.
+  const [tasaVes, setTasaVes] = useState(null)
+  useEffect(() => {
+    api
+      .get('/prices')
+      .then((res) => setTasaVes(res.data.usd_a_ves))
+      .catch(() => setTasaVes(null))
+  }, [])
 
   function cambiarTab(id) {
     setSearchParams(id === 'recomprar' ? { tab: 'recomprar' } : {})
@@ -847,8 +923,8 @@ function MisItems() {
         </div>
 
         <div className="misitems-container">
-          {tabActivo === 'items' && <TabMisItems mostrarCrear={mostrarCrear} setMostrarCrear={setMostrarCrear} />}
-          {tabActivo === 'recomprar' && <TabComprarDeNuevo />}
+          {tabActivo === 'items' && <TabMisItems mostrarCrear={mostrarCrear} setMostrarCrear={setMostrarCrear} tasaVes={tasaVes} />}
+          {tabActivo === 'recomprar' && <TabComprarDeNuevo tasaVes={tasaVes} />}
         </div>
       </div>
     </LayoutPaginaPrincipal>

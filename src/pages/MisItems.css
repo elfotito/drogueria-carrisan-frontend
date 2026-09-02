@@ -204,6 +204,7 @@
   flex-shrink: 0;
   gap: 12px;
   margin-top: 0;
+  align-items: flex-end;
 }
 
 /* ---------------------------------------------------------
@@ -214,8 +215,7 @@
   flex-direction: column;
   width: 100%;
   background: #FFFFFF;
-  border: 1px solid #E7E5DE;
-  border-radius: 14px;
+  border-radius: 8px;
   overflow: hidden;
   transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
@@ -229,7 +229,7 @@
   position: relative;
   display: block;
   aspect-ratio: 4 / 3;
-  background: #F7F6F1;
+  background: #FFFFFF;
   overflow: hidden;
 }
 
@@ -237,7 +237,6 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
-  padding: 14px;
 }
 
 .itemcard__media-placeholder {
@@ -249,7 +248,6 @@
   font-size: 0.68rem;
   color: #A9AC9F;
   text-align: center;
-  padding: 6px;
 }
 
 .itemcard__quitar {
@@ -309,7 +307,7 @@
 
 .itemcard__footer {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   gap: 8px;
   margin-top: auto;
@@ -321,6 +319,89 @@
   font-size: 0.95rem;
   color: #12A594;
   margin: 0;
+}
+
+/* Bloque de precios apilados — componente compartido entre
+   itemcard y comprar-nuevo-card. Contiene precio principal,
+   precio original tachado, y conversión a Bs. */
+.itemcard__precios,
+.comprar-nuevo-card__precios {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Superíndice compartido para ambos tipos de tarjeta */
+.precio-simbolo {
+  display: inline-block;
+  font-size: 0.75em;
+  font-weight: 700;
+  margin-right: 1px;
+}
+
+.precio-entero {
+  display: inline-block;
+  font-size: 1em;
+}
+
+.precio-centavos {
+  display: inline-block;
+  font-size: 0.55em;
+  font-weight: 700;
+}
+
+/* Precio con descuento (teal) */
+.itemcard__precio-ahora,
+.comprar-nuevo-card__precio-ahora {
+  color: #12A594;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+/* Precio sin descuento (ink) */
+.itemcard__precio-normal,
+.comprar-nuevo-card__precio-normal {
+  color: #14182A;
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+/* Etiqueta "Ahora" sobre precio con descuento */
+.itemcard__precio-ahora-label,
+.comprar-nuevo-card__precio-ahora-label {
+  color: #12A594;
+  font-size: 0.6em;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin-right: 4px;
+  letter-spacing: -0.3px;
+}
+
+/* Precio original tachado */
+.itemcard__precio-original,
+.comprar-nuevo-card__precio-original {
+  color: #74767c;
+  text-decoration: line-through;
+  font-size: 0.72rem;
+  font-weight: 400;
+}
+
+.itemcard__precio-original .precio-simbolo,
+.itemcard__precio-original .precio-entero,
+.itemcard__precio-original .precio-centavos,
+.comprar-nuevo-card__precio-original .precio-simbolo,
+.comprar-nuevo-card__precio-original .precio-entero,
+.comprar-nuevo-card__precio-original .precio-centavos {
+  text-decoration: line-through;
+}
+
+/* Conversión a bolívares */
+.itemcard__precio-ves,
+.comprar-nuevo-card__precio-ves {
+  color: #74767c;
+  font-size: 0.72rem;
+  font-weight: 400;
+  margin-top: -1px;
 }
 
 .itemcard__cta {
@@ -1039,6 +1120,7 @@
 }
 
 .comprar-nuevo-card__precio {
+  /* Legacy — reemplazado por .comprar-nuevo-card__precios (bloque apilado) */
   font-family: 'JetBrains Mono', monospace;
   font-weight: 800;
   font-size: 1rem;
