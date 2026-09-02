@@ -21,8 +21,12 @@ function barajar(array) {
   return copia
 }
 
-function elegirCarruseles(producto, otrosActivos) {
+function elegirCarruseles(producto, otrosActivos, relacionadosPorMolecula) {
   const pool = []
+
+  if (relacionadosPorMolecula.length >= MINIMO_POR_CARRUSEL) {
+    pool.push({ tipo: 'productos', titulo: 'Mismo principio activo', productos: barajar(relacionadosPorMolecula).slice(0, 12) })
+  }
 
   const mismaLinea = otrosActivos.filter((p) => p.linea && p.linea === producto.linea)
   if (mismaLinea.length >= MINIMO_POR_CARRUSEL) {
@@ -32,11 +36,6 @@ function elegirCarruseles(producto, otrosActivos) {
   const mismoLaboratorio = otrosActivos.filter((p) => p.laboratorio && p.laboratorio === producto.laboratorio)
   if (mismoLaboratorio.length >= MINIMO_POR_CARRUSEL) {
     pool.push({ tipo: 'productos', titulo: `Más de ${producto.laboratorio}`, productos: barajar(mismoLaboratorio).slice(0, 12) })
-  }
-
-  const mismaMolecula = otrosActivos.filter((p) => p.molecula && p.molecula === producto.molecula)
-  if (mismaMolecula.length >= MINIMO_POR_CARRUSEL) {
-    pool.push({ tipo: 'productos', titulo: 'Mismo principio activo', productos: barajar(mismaMolecula).slice(0, 12) })
   }
 
   const ofertas = otrosActivos.filter((p) => p.descuento_activo)
@@ -127,9 +126,12 @@ function ProductoDetalle() {
 
       // Carruseles relacionados: mismo criterio, es un "extra"
       try {
-        const { data: todos } = await api.get('/products')
+        const [{ data: todos }, resRelacionados] = await Promise.all([
+          api.get('/products'),
+          api.get(`/moleculas/productos/${id}/relacionados-por-molecula`).catch(() => ({ data: [] })),
+        ])
         const otrosActivos = todos.filter((prod) => prod.activo && prod.id !== p.id)
-        setCarruseles(elegirCarruseles(p, otrosActivos))
+        setCarruseles(elegirCarruseles(p, otrosActivos, resRelacionados.data || []))
       } catch (err) {
         console.error('No se pudieron cargar los carruseles relacionados', err)
       }
