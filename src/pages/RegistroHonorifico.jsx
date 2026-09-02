@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import SelectorEstadoCiudad from '../components/registro/SelectorEstadoCiudad'
 import Stepper from '../components/registro/Stepper'
 import TurnstileWidget from '../components/registro/TurnstileWidget'
-import { validarEmail, validarTelefonoVenezuela } from '../utils/validadores'
+import { validarEmail, validarTelefonoVenezuela, validarPassword } from '../utils/validadores'
 import { useAuth } from '../context/AuthContext'
 import api from '../api/axios'
 import logo from '../assets/minilogo color sin fondo.png'
@@ -46,6 +46,22 @@ function RegistroHonorifico() {
   const [errorGeneral, setErrorGeneral] = useState('')
   const [cargando, setCargando] = useState(false)
   const [registroCompleto, setRegistroCompleto] = useState(false)
+  const [mostrarPassword, setMostrarPassword] = useState(false)
+  const [mostrarConfirmarPassword, setMostrarConfirmarPassword] = useState(false)
+
+  function calcularFuerzaPassword(pw) {
+    let score = 0
+    if (pw.length >= 8) score++
+    if (/[A-Z]/.test(pw)) score++
+    if (/[a-z]/.test(pw)) score++
+    if (/[0-9]/.test(pw)) score++
+    if (/[^A-Za-z0-9]/.test(pw)) score++
+
+    if (score <= 1) return { width: '20%', color: '#e53e3e', label: 'Débil' }
+    if (score <= 3) return { width: '60%', color: '#dd6b20', label: 'Media' }
+    if (score === 4) return { width: '80%', color: '#38a169', label: 'Fuerte' }
+    return { width: '100%', color: '#276749', label: 'Muy fuerte' }
+  }
 
   function actualizarCampo(campo, valor) {
     setForm((prev) => ({ ...prev, [campo]: valor }))
@@ -101,7 +117,8 @@ function RegistroHonorifico() {
   function validarPaso1() {
     const nuevosErrores = {}
     if (!aceptaTerminos) nuevosErrores.terminos = 'Debes aceptar los términos para continuar'
-    if (password.length < 8) nuevosErrores.password = 'La contraseña debe tener al menos 8 caracteres'
+    const pwCheck = validarPassword(password)
+    if (!pwCheck.valido) nuevosErrores.password = pwCheck.error
     if (password !== confirmarPassword) nuevosErrores.confirmarPassword = 'Las contraseñas no coinciden'
     if (!turnstileToken) nuevosErrores.turnstile = 'Completa la verificación de seguridad'
     setErrores(nuevosErrores)
@@ -208,9 +225,11 @@ function RegistroHonorifico() {
                 onChange={(e) => setCodigo(e.target.value)}
                 placeholder="Ej: CARRISAN2026"
                 className={errorCodigo ? 'registro-input--error' : ''}
+                aria-invalid={!!errorCodigo}
+                aria-describedby={errorCodigo ? 'codigo-error' : undefined}
                 autoFocus
               />
-              {errorCodigo && <span className="registro-error-texto">{errorCodigo}</span>}
+              {errorCodigo && <span id="codigo-error" className="registro-error-texto" role="alert">{errorCodigo}</span>}
             </div>
 
             <button type="submit" className="auth-btn-primary" disabled={verificandoCodigo}>
@@ -245,8 +264,10 @@ function RegistroHonorifico() {
                   value={form.email}
                   onChange={(e) => actualizarCampo('email', e.target.value)}
                   className={errores.email ? 'registro-input--error' : ''}
+                  aria-invalid={!!errores.email}
+                  aria-describedby={errores.email ? 'email-error' : undefined}
                 />
-                {errores.email && <span className="registro-error-texto">{errores.email}</span>}
+                {errores.email && <span id="email-error" className="registro-error-texto" role="alert">{errores.email}</span>}
               </div>
 
               <div className="registro-campo-doble">
@@ -282,9 +303,11 @@ function RegistroHonorifico() {
                       value={form.telDigitos}
                       onChange={(e) => actualizarCampo('telDigitos', e.target.value.replace(/\D/g, ''))}
                       className={errores.telefono ? 'registro-input--error' : ''}
+                      aria-invalid={!!errores.telefono}
+                      aria-describedby={errores.telefono ? 'telefono-error' : undefined}
                     />
                   </div>
-                  {errores.telefono && <span className="registro-error-texto">{errores.telefono}</span>}
+                  {errores.telefono && <span id="telefono-error" className="registro-error-texto" role="alert">{errores.telefono}</span>}
                 </div>
               </div>
 
@@ -296,8 +319,10 @@ function RegistroHonorifico() {
                     value={form.nombre}
                     onChange={(e) => actualizarCampo('nombre', e.target.value)}
                     className={errores.nombre ? 'registro-input--error' : ''}
+                    aria-invalid={!!errores.nombre}
+                    aria-describedby={errores.nombre ? 'nombre-error' : undefined}
                   />
-                  {errores.nombre && <span className="registro-error-texto">{errores.nombre}</span>}
+                  {errores.nombre && <span id="nombre-error" className="registro-error-texto" role="alert">{errores.nombre}</span>}
                 </div>
                 <div className="registro-campo">
                   <label htmlFor="apellido">Apellido</label>
@@ -306,8 +331,10 @@ function RegistroHonorifico() {
                     value={form.apellido}
                     onChange={(e) => actualizarCampo('apellido', e.target.value)}
                     className={errores.apellido ? 'registro-input--error' : ''}
+                    aria-invalid={!!errores.apellido}
+                    aria-describedby={errores.apellido ? 'apellido-error' : undefined}
                   />
-                  {errores.apellido && <span className="registro-error-texto">{errores.apellido}</span>}
+                  {errores.apellido && <span id="apellido-error" className="registro-error-texto" role="alert">{errores.apellido}</span>}
                 </div>
               </div>
 
@@ -379,46 +406,149 @@ function RegistroHonorifico() {
                   type="checkbox"
                   checked={aceptaTerminos}
                   onChange={(e) => setAceptaTerminos(e.target.checked)}
+                  aria-invalid={!!errores.terminos}
+                  aria-describedby={errores.terminos ? 'terminos-error' : undefined}
                 />
                 <span>
                   Acepto la <Link to="/privacidad">política de privacidad</Link> y
                   los <Link to="/terminos">términos de uso</Link>
                 </span>
               </label>
-              {errores.terminos && <span className="registro-error-texto">{errores.terminos}</span>}
+              {errores.terminos && <span id="terminos-error" className="registro-error-texto" role="alert">{errores.terminos}</span>}
 
               <div className="registro-campo">
                 <label htmlFor="password">Contraseña</label>
-                <input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Mínimo 8 caracteres"
-                  autoComplete="new-password"
-                  className={errores.password ? 'registro-input--error' : ''}
-                />
-                {errores.password && <span className="registro-error-texto">{errores.password}</span>}
+                <div style={{ position: 'relative' }}>
+                  <input
+                    id="password"
+                    type={mostrarPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Mínimo 8 caracteres"
+                    autoComplete="new-password"
+                    className={errores.password ? 'registro-input--error' : ''}
+                    aria-invalid={!!errores.password}
+                    aria-describedby={
+                      [errores.password ? 'password-error' : null, password ? 'password-fortaleza' : null].filter(Boolean).join(' ') || undefined
+                    }
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setMostrarPassword((prev) => !prev)}
+                    aria-label={mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                    aria-pressed={mostrarPassword}
+                    style={{
+                      position: 'absolute',
+                      right: '10px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      padding: '4px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      color: '#6b7280'
+                    }}
+                  >
+                    {mostrarPassword ? (
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" strokeLinecap="round" strokeLinejoin="round" />
+                        <line x1="1" y1="1" x2="23" y2="23" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    ) : (
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" strokeLinecap="round" strokeLinejoin="round" />
+                        <circle cx="12" cy="12" r="3" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+                {password.length > 0 && (() => {
+                  const fuerza = calcularFuerzaPassword(password)
+                  return (
+                    <span id="password-fortaleza" className="registro-password-fortaleza" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '6px' }}>
+                      <span
+                        style={{
+                          flex: 1,
+                          height: '4px',
+                          borderRadius: '2px',
+                          background: '#e2e8f0',
+                          overflow: 'hidden',
+                          display: 'block'
+                        }}
+                      >
+                        <span
+                          style={{
+                            display: 'block',
+                            height: '100%',
+                            width: fuerza.width,
+                            background: fuerza.color,
+                            borderRadius: '2px',
+                            transition: 'all 0.3s'
+                          }}
+                        />
+                      </span>
+                      <span style={{ fontSize: '12px', color: fuerza.color, whiteSpace: 'nowrap' }}>{fuerza.label}</span>
+                    </span>
+                  )
+                })()}
+                {errores.password && <span id="password-error" className="registro-error-texto" role="alert">{errores.password}</span>}
               </div>
 
               <div className="registro-campo">
                 <label htmlFor="confirmar-password">Confirmar contraseña</label>
-                <input
-                  id="confirmar-password"
-                  type="password"
-                  value={confirmarPassword}
-                  onChange={(e) => setConfirmarPassword(e.target.value)}
-                  placeholder="Repetí tu contraseña"
-                  autoComplete="new-password"
-                  className={errores.confirmarPassword ? 'registro-input--error' : ''}
-                />
-                {errores.confirmarPassword && <span className="registro-error-texto">{errores.confirmarPassword}</span>}
+                <div style={{ position: 'relative' }}>
+                  <input
+                    id="confirmar-password"
+                    type={mostrarConfirmarPassword ? 'text' : 'password'}
+                    value={confirmarPassword}
+                    onChange={(e) => setConfirmarPassword(e.target.value)}
+                    placeholder="Repetí tu contraseña"
+                    autoComplete="new-password"
+                    className={errores.confirmarPassword ? 'registro-input--error' : ''}
+                    aria-invalid={!!errores.confirmarPassword}
+                    aria-describedby={errores.confirmarPassword ? 'confirmar-password-error' : undefined}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setMostrarConfirmarPassword((prev) => !prev)}
+                    aria-label={mostrarConfirmarPassword ? 'Ocultar confirmación de contraseña' : 'Mostrar confirmación de contraseña'}
+                    aria-pressed={mostrarConfirmarPassword}
+                    style={{
+                      position: 'absolute',
+                      right: '10px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      padding: '4px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      color: '#6b7280'
+                    }}
+                  >
+                    {mostrarConfirmarPassword ? (
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" strokeLinecap="round" strokeLinejoin="round" />
+                        <line x1="1" y1="1" x2="23" y2="23" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    ) : (
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" strokeLinecap="round" strokeLinejoin="round" />
+                        <circle cx="12" cy="12" r="3" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+                {errores.confirmarPassword && <span id="confirmar-password-error" className="registro-error-texto" role="alert">{errores.confirmarPassword}</span>}
               </div>
 
               <TurnstileWidget onVerificado={setTurnstileToken} onExpirado={() => setTurnstileToken('')} />
-              {errores.turnstile && <span className="registro-error-texto">{errores.turnstile}</span>}
+              {errores.turnstile && <span className="registro-error-texto" role="alert">{errores.turnstile}</span>}
 
-              {errorGeneral && <p className="auth-error">{errorGeneral}</p>}
+              {errorGeneral && <p className="auth-error" role="alert">{errorGeneral}</p>}
             </>
           )}
         </div>

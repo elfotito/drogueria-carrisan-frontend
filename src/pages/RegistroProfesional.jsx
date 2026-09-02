@@ -11,6 +11,7 @@ import {
 } from '../data/profesionesSalud'
 import {
   validarEmail,
+  validarPassword,
   validarRifMedico,
   validarTelefonoVenezuela,
   validarDireccion
@@ -57,12 +58,33 @@ function RegistroProfesional() {
   const [confirmarPassword, setConfirmarPassword] = useState('')
   const [turnstileToken, setTurnstileToken] = useState('')
   const [errores, setErrores] = useState({})
+  const [mostrarPassword, setMostrarPassword] = useState(false)
   const [errorGeneral, setErrorGeneral] = useState('')
   const [cargando, setCargando] = useState(false)
   const [registroCompleto, setRegistroCompleto] = useState(false)
 
   const especialidadesDisponibles = obtenerEspecialidades(form.profesion)
   const esProfesionOtro = form.profesion === 'otro'
+
+  function calcularFortalezaPassword(pwd) {
+    if (!pwd || pwd.length === 0) return { puntaje: 0, texto: '', color: '' }
+    let puntaje = 0
+    if (pwd.length >= 8) puntaje++
+    if (/[A-Z]/.test(pwd)) puntaje++
+    if (/[a-z]/.test(pwd)) puntaje++
+    if (/[0-9]/.test(pwd)) puntaje++
+    if (/[^A-Za-z0-9]/.test(pwd)) puntaje++
+
+    let texto, color
+    if (puntaje <= 1) { texto = 'Débil'; color = '#e53e3e' }
+    else if (puntaje <= 3) { texto = 'Media'; color = '#ed8936' }
+    else if (puntaje === 4) { texto = 'Fuerte'; color = '#38a169' }
+    else { texto = 'Muy fuerte'; color = '#276749' }
+
+    return { puntaje, texto, color }
+  }
+
+  const fortalezaPassword = calcularFortalezaPassword(password)
 
   function actualizarCampo(campo, valor) {
     setForm((prev) => ({ ...prev, [campo]: valor }))
@@ -125,7 +147,7 @@ function RegistroProfesional() {
   function validarPaso2() {
     const nuevosErrores = {}
     if (!aceptaTerminos) nuevosErrores.terminos = 'Debes aceptar los términos para continuar'
-    if (password.length < 8) nuevosErrores.password = 'La contraseña debe tener al menos 8 caracteres'
+    if (!validarPassword(password).valido) nuevosErrores.password = validarPassword(password).error || 'La contraseña no es válida'
     if (password !== confirmarPassword) nuevosErrores.confirmarPassword = 'Las contraseñas no coinciden'
     if (!turnstileToken) nuevosErrores.turnstile = 'Completa la verificación de seguridad'
     setErrores(nuevosErrores)
@@ -234,8 +256,10 @@ function RegistroProfesional() {
                   value={form.email}
                   onChange={(e) => actualizarCampo('email', e.target.value)}
                   className={errores.email ? 'registro-input--error' : ''}
+                  aria-invalid={!!errores.email}
+                  aria-describedby={errores.email ? 'email-error' : undefined}
                 />
-                {errores.email && <span className="registro-error-texto">{errores.email}</span>}
+                {errores.email && <span id="email-error" className="registro-error-texto" role="alert">{errores.email}</span>}
               </div>
 
               <div className="registro-campo">
@@ -245,13 +269,15 @@ function RegistroProfesional() {
                   value={form.profesion}
                   onChange={(e) => actualizarCampo('profesion', e.target.value)}
                   className={errores.profesion ? 'registro-input--error' : ''}
+                  aria-invalid={!!errores.profesion}
+                  aria-describedby={errores.profesion ? 'profesion-error' : undefined}
                 >
                   <option value="">Selecciona tu profesión</option>
                   {PROFESIONES.map((p) => (
                     <option key={p.value} value={p.value}>{p.label}</option>
                   ))}
                 </select>
-                {errores.profesion && <span className="registro-error-texto">{errores.profesion}</span>}
+                {errores.profesion && <span id="profesion-error" className="registro-error-texto" role="alert">{errores.profesion}</span>}
               </div>
 
               <div className="registro-campo-doble">
@@ -264,6 +290,8 @@ function RegistroProfesional() {
                       value={form.titulo}
                       onChange={(e) => actualizarCampo('titulo', e.target.value)}
                       className={errores.titulo ? 'registro-input--error' : ''}
+                      aria-invalid={!!errores.titulo}
+                      aria-describedby={errores.titulo ? 'titulo-error' : undefined}
                     />
                   ) : (
                     <select
@@ -271,13 +299,15 @@ function RegistroProfesional() {
                       value={form.titulo}
                       onChange={(e) => actualizarCampo('titulo', e.target.value)}
                       className={errores.titulo ? 'registro-input--error' : ''}
+                      aria-invalid={!!errores.titulo}
+                      aria-describedby={errores.titulo ? 'titulo-error' : undefined}
                     >
                       {TITULOS_POR_DEFECTO[form.profesion].map((t) => (
                         <option key={t} value={t}>{t}</option>
                       ))}
                     </select>
                   )}
-                  {errores.titulo && <span className="registro-error-texto">{errores.titulo}</span>}
+                  {errores.titulo && <span id="titulo-error" className="registro-error-texto" role="alert">{errores.titulo}</span>}
                 </div>
 
                 <div className="registro-campo">
@@ -288,8 +318,10 @@ function RegistroProfesional() {
                     value={form.numeroCedula}
                     onChange={(e) => actualizarCampo('numeroCedula', e.target.value.replace(/\D/g, ''))}
                     className={errores.numeroCedula ? 'registro-input--error' : ''}
+                    aria-invalid={!!errores.numeroCedula}
+                    aria-describedby={errores.numeroCedula ? 'numeroCedula-error' : undefined}
                   />
-                  {errores.numeroCedula && <span className="registro-error-texto">{errores.numeroCedula}</span>}
+                  {errores.numeroCedula && <span id="numeroCedula-error" className="registro-error-texto" role="alert">{errores.numeroCedula}</span>}
                 </div>
               </div>
 
@@ -301,8 +333,10 @@ function RegistroProfesional() {
                     value={form.nombre}
                     onChange={(e) => actualizarCampo('nombre', e.target.value)}
                     className={errores.nombre ? 'registro-input--error' : ''}
+                    aria-invalid={!!errores.nombre}
+                    aria-describedby={errores.nombre ? 'nombre-error' : undefined}
                   />
-                  {errores.nombre && <span className="registro-error-texto">{errores.nombre}</span>}
+                  {errores.nombre && <span id="nombre-error" className="registro-error-texto" role="alert">{errores.nombre}</span>}
                 </div>
                 <div className="registro-campo">
                   <label htmlFor="apellido">Apellido</label>
@@ -311,8 +345,10 @@ function RegistroProfesional() {
                     value={form.apellido}
                     onChange={(e) => actualizarCampo('apellido', e.target.value)}
                     className={errores.apellido ? 'registro-input--error' : ''}
+                    aria-invalid={!!errores.apellido}
+                    aria-describedby={errores.apellido ? 'apellido-error' : undefined}
                   />
-                  {errores.apellido && <span className="registro-error-texto">{errores.apellido}</span>}
+                  {errores.apellido && <span id="apellido-error" className="registro-error-texto" role="alert">{errores.apellido}</span>}
                 </div>
               </div>
 
@@ -364,9 +400,11 @@ function RegistroProfesional() {
                     value={form.rifDigitos}
                     onChange={(e) => actualizarCampo('rifDigitos', e.target.value.replace(/\D/g, ''))}
                     className={errores.rif ? 'registro-input--error' : ''}
+                    aria-invalid={!!errores.rif}
+                    aria-describedby={errores.rif ? 'rif-error' : undefined}
                   />
                 </div>
-                {errores.rif && <span className="registro-error-texto">{errores.rif}</span>}
+                {errores.rif && <span id="rif-error" className="registro-error-texto" role="alert">{errores.rif}</span>}
               </div>
 
               <div className="registro-campo">
@@ -389,9 +427,11 @@ function RegistroProfesional() {
                     value={form.telDigitos}
                     onChange={(e) => actualizarCampo('telDigitos', e.target.value.replace(/\D/g, ''))}
                     className={errores.telefono ? 'registro-input--error' : ''}
+                    aria-invalid={!!errores.telefono}
+                    aria-describedby={errores.telefono ? 'telefono-error' : undefined}
                   />
                 </div>
-                {errores.telefono && <span className="registro-error-texto">{errores.telefono}</span>}
+                {errores.telefono && <span id="telefono-error" className="registro-error-texto" role="alert">{errores.telefono}</span>}
               </div>
 
               <SelectorEstadoCiudad
@@ -411,8 +451,10 @@ function RegistroProfesional() {
                   value={form.direccion_fiscal}
                   onChange={(e) => actualizarCampo('direccion_fiscal', e.target.value)}
                   className={errores.direccion_fiscal ? 'registro-input--error' : ''}
+                  aria-invalid={!!errores.direccion_fiscal}
+                  aria-describedby={errores.direccion_fiscal ? 'direccion_fiscal-error' : undefined}
                 />
-                {errores.direccion_fiscal && <span className="registro-error-texto">{errores.direccion_fiscal}</span>}
+                {errores.direccion_fiscal && <span id="direccion_fiscal-error" className="registro-error-texto" role="alert">{errores.direccion_fiscal}</span>}
               </div>
             </>
           )}
@@ -428,7 +470,7 @@ function RegistroProfesional() {
                 onSubida={setRifArchivoUrl}
                 onQuitar={() => setRifArchivoUrl('')}
               />
-              {errores.rif_archivo && <span className="registro-error-texto">{errores.rif_archivo}</span>}
+              {errores.rif_archivo && <span className="registro-error-texto" role="alert">{errores.rif_archivo}</span>}
 
               <SubidaArchivoDrive
                 tipoDocumento="certificado_acreditacion"
@@ -502,40 +544,126 @@ function RegistroProfesional() {
                   los <Link to="/terminos">términos de uso</Link>
                 </span>
               </label>
-              {errores.terminos && <span className="registro-error-texto">{errores.terminos}</span>}
+              {errores.terminos && <span className="registro-error-texto" role="alert">{errores.terminos}</span>}
 
               <div className="registro-campo">
                 <label htmlFor="password">Contraseña</label>
-                <input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Mínimo 8 caracteres"
-                  autoComplete="new-password"
-                  className={errores.password ? 'registro-input--error' : ''}
-                />
-                {errores.password && <span className="registro-error-texto">{errores.password}</span>}
+                <div style={{ position: 'relative' }}>
+                  <input
+                    id="password"
+                    type={mostrarPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Mínimo 8 caracteres"
+                    autoComplete="new-password"
+                    className={errores.password ? 'registro-input--error' : ''}
+                    aria-invalid={!!errores.password}
+                    aria-describedby={errores.password ? 'password-error' : undefined}
+                    style={{ paddingRight: '44px' }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setMostrarPassword((prev) => !prev)}
+                    aria-label={mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                    aria-pressed={mostrarPassword}
+                    style={{
+                      position: 'absolute',
+                      right: '8px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      border: 'none',
+                      background: 'transparent',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      padding: '4px'
+                    }}
+                  >
+                    {mostrarPassword ? (
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" strokeLinecap="round" strokeLinejoin="round" />
+                        <line x1="1" y1="1" x2="23" y2="23" strokeLinecap="round" />
+                      </svg>
+                    ) : (
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" strokeLinecap="round" strokeLinejoin="round" />
+                        <circle cx="12" cy="12" r="3" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+                {errores.password && <span id="password-error" className="registro-error-texto" role="alert">{errores.password}</span>}
+                {password.length > 0 && !errores.password && (
+                  <div role="status" aria-live="polite" style={{ marginTop: '8px' }}>
+                    <div
+                      style={{
+                        height: '4px',
+                        borderRadius: '2px',
+                        transition: 'all 0.3s',
+                        background: fortalezaPassword.color,
+                        width: `${(fortalezaPassword.puntaje / 5) * 100}%`
+                      }}
+                    />
+                    <div style={{ marginTop: '4px', fontSize: '12px', color: fortalezaPassword.color }}>
+                      {fortalezaPassword.texto === 'Media' ? 'Media' : fortalezaPassword.texto}
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="registro-campo">
                 <label htmlFor="confirmar-password">Confirmar contraseña</label>
-                <input
-                  id="confirmar-password"
-                  type="password"
-                  value={confirmarPassword}
-                  onChange={(e) => setConfirmarPassword(e.target.value)}
-                  placeholder="Repetí tu contraseña"
-                  autoComplete="new-password"
-                  className={errores.confirmarPassword ? 'registro-input--error' : ''}
-                />
-                {errores.confirmarPassword && <span className="registro-error-texto">{errores.confirmarPassword}</span>}
+                <div style={{ position: 'relative' }}>
+                  <input
+                    id="confirmar-password"
+                    type={mostrarPassword ? 'text' : 'password'}
+                    value={confirmarPassword}
+                    onChange={(e) => setConfirmarPassword(e.target.value)}
+                    placeholder="Repetí tu contraseña"
+                    autoComplete="new-password"
+                    className={errores.confirmarPassword ? 'registro-input--error' : ''}
+                    aria-invalid={!!errores.confirmarPassword}
+                    aria-describedby={errores.confirmarPassword ? 'confirmar-password-error' : undefined}
+                    style={{ paddingRight: '44px' }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setMostrarPassword((prev) => !prev)}
+                    aria-label={mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                    aria-pressed={mostrarPassword}
+                    style={{
+                      position: 'absolute',
+                      right: '8px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      border: 'none',
+                      background: 'transparent',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      padding: '4px'
+                    }}
+                  >
+                    {mostrarPassword ? (
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" strokeLinecap="round" strokeLinejoin="round" />
+                        <line x1="1" y1="1" x2="23" y2="23" strokeLinecap="round" />
+                      </svg>
+                    ) : (
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" strokeLinecap="round" strokeLinejoin="round" />
+                        <circle cx="12" cy="12" r="3" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+                {errores.confirmarPassword && <span id="confirmar-password-error" className="registro-error-texto" role="alert">{errores.confirmarPassword}</span>}
               </div>
 
               <TurnstileWidget onVerificado={setTurnstileToken} onExpirado={() => setTurnstileToken('')} />
-              {errores.turnstile && <span className="registro-error-texto">{errores.turnstile}</span>}
+              {errores.turnstile && <span className="registro-error-texto" role="alert">{errores.turnstile}</span>}
 
-              {errorGeneral && <p className="auth-error">{errorGeneral}</p>}
+              {errorGeneral && <p className="auth-error" role="alert">{errorGeneral}</p>}
             </>
           )}
         </div>

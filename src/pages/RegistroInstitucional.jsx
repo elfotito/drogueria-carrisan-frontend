@@ -11,7 +11,8 @@ import {
   validarRifInstitucion,
   validarTelefonoVenezuela,
   validarDireccion,
-  validarNombreInstitucion
+  validarNombreInstitucion,
+  validarPassword
 } from '../utils/validadores'
 import { useAuth } from '../context/AuthContext'
 import api from '../api/axios'
@@ -54,6 +55,8 @@ function RegistroInstitucional() {
   const [notifPromociones, setNotifPromociones] = useState(true)
   const [password, setPassword] = useState('')
   const [confirmarPassword, setConfirmarPassword] = useState('')
+  const [mostrarPassword, setMostrarPassword] = useState(false)
+  const [mostrarConfirmarPassword, setMostrarConfirmarPassword] = useState(false)
   const [turnstileToken, setTurnstileToken] = useState('')
   const [errores, setErrores] = useState({})
   const [errorGeneral, setErrorGeneral] = useState('')
@@ -116,11 +119,22 @@ function RegistroInstitucional() {
   function validarPaso2() {
     const nuevosErrores = {}
     if (!aceptaTerminos) nuevosErrores.terminos = 'Debes aceptar los términos para continuar'
-    if (password.length < 8) nuevosErrores.password = 'La contraseña debe tener al menos 8 caracteres'
+    const passwordCheck = validarPassword(password)
+    if (!passwordCheck.valido) nuevosErrores.password = passwordCheck.error
     if (password !== confirmarPassword) nuevosErrores.confirmarPassword = 'Las contraseñas no coinciden'
     if (!turnstileToken) nuevosErrores.turnstile = 'Completa la verificación de seguridad'
     setErrores(nuevosErrores)
     return Object.keys(nuevosErrores).length === 0
+  }
+
+  function calcularFortalezaPassword(pass) {
+    let puntaje = 0
+    if (pass.length >= 8) puntaje += 1
+    if (/[A-Z]/.test(pass)) puntaje += 1
+    if (/[a-z]/.test(pass)) puntaje += 1
+    if (/[0-9]/.test(pass)) puntaje += 1
+    if (/[^A-Za-z0-9]/.test(pass)) puntaje += 1
+    return puntaje
   }
 
   function handleSiguiente() {
@@ -229,8 +243,10 @@ function RegistroInstitucional() {
                   value={form.email}
                   onChange={(e) => actualizarCampo('email', e.target.value)}
                   className={errores.email ? 'registro-input--error' : ''}
+                  aria-invalid={!!errores.email}
+                  aria-describedby={errores.email ? 'email-error' : undefined}
                 />
-                {errores.email && <span className="registro-error-texto">{errores.email}</span>}
+                {errores.email && <span id="email-error" className="registro-error-texto" role="alert">{errores.email}</span>}
               </div>
 
               <div className="registro-campo">
@@ -240,8 +256,10 @@ function RegistroInstitucional() {
                   value={form.razon_social}
                   onChange={(e) => actualizarCampo('razon_social', e.target.value)}
                   className={errores.razon_social ? 'registro-input--error' : ''}
+                  aria-invalid={!!errores.razon_social}
+                  aria-describedby={errores.razon_social ? 'razon_social-error' : undefined}
                 />
-                {errores.razon_social && <span className="registro-error-texto">{errores.razon_social}</span>}
+                {errores.razon_social && <span id="razon_social-error" className="registro-error-texto" role="alert">{errores.razon_social}</span>}
               </div>
 
               <div className="registro-campo">
@@ -260,13 +278,15 @@ function RegistroInstitucional() {
                   value={form.tipo_institucion}
                   onChange={(e) => actualizarCampo('tipo_institucion', e.target.value)}
                   className={errores.tipo_institucion ? 'registro-input--error' : ''}
+                  aria-invalid={!!errores.tipo_institucion}
+                  aria-describedby={errores.tipo_institucion ? 'tipo_institucion-error' : undefined}
                 >
                   <option value="">Selecciona un tipo</option>
                   {TIPOS_INSTITUCION.map((t) => (
                     <option key={t.value} value={t.value}>{t.label}</option>
                   ))}
                 </select>
-                {errores.tipo_institucion && <span className="registro-error-texto">{errores.tipo_institucion}</span>}
+                {errores.tipo_institucion && <span id="tipo_institucion-error" className="registro-error-texto" role="alert">{errores.tipo_institucion}</span>}
               </div>
 
               <div className="registro-campo">
@@ -281,9 +301,11 @@ function RegistroInstitucional() {
                     value={form.rifDigitos}
                     onChange={(e) => actualizarCampo('rifDigitos', e.target.value.replace(/\D/g, ''))}
                     className={errores.rif ? 'registro-input--error' : ''}
+                    aria-invalid={!!errores.rif}
+                    aria-describedby={errores.rif ? 'rif-error' : undefined}
                   />
                 </div>
-                {errores.rif && <span className="registro-error-texto">{errores.rif}</span>}
+                {errores.rif && <span id="rif-error" className="registro-error-texto" role="alert">{errores.rif}</span>}
               </div>
 
               <SelectorEstadoCiudad
@@ -303,8 +325,10 @@ function RegistroInstitucional() {
                   value={form.direccion_fiscal}
                   onChange={(e) => actualizarCampo('direccion_fiscal', e.target.value)}
                   className={errores.direccion_fiscal ? 'registro-input--error' : ''}
+                  aria-invalid={!!errores.direccion_fiscal}
+                  aria-describedby={errores.direccion_fiscal ? 'direccion_fiscal-error' : undefined}
                 />
-                {errores.direccion_fiscal && <span className="registro-error-texto">{errores.direccion_fiscal}</span>}
+                {errores.direccion_fiscal && <span id="direccion_fiscal-error" className="registro-error-texto" role="alert">{errores.direccion_fiscal}</span>}
               </div>
 
               <div className="registro-campo-doble">
@@ -327,20 +351,24 @@ function RegistroInstitucional() {
                       value={form.telInstDigitos}
                       onChange={(e) => actualizarCampo('telInstDigitos', e.target.value.replace(/\D/g, ''))}
                       className={errores.telefono_institucional ? 'registro-input--error' : ''}
+                      aria-invalid={!!errores.telefono_institucional}
+                      aria-describedby={errores.telefono_institucional ? 'telefono_institucional-error' : undefined}
                     />
                   </div>
-                  {errores.telefono_institucional && <span className="registro-error-texto">{errores.telefono_institucional}</span>}
+                  {errores.telefono_institucional && <span id="telefono_institucional-error" className="registro-error-texto" role="alert">{errores.telefono_institucional}</span>}
                 </div>
                 <div className="registro-campo">
-                  <label htmlFor="correo_institucional">Correo institucional</label>
-                  <input
-                    id="correo_institucional"
-                    type="email"
-                    value={form.correo_institucional}
-                    onChange={(e) => actualizarCampo('correo_institucional', e.target.value)}
-                    className={errores.correo_institucional ? 'registro-input--error' : ''}
-                  />
-                  {errores.correo_institucional && <span className="registro-error-texto">{errores.correo_institucional}</span>}
+                <label htmlFor="correo_institucional">Correo institucional</label>
+                <input
+                  id="correo_institucional"
+                  type="email"
+                  value={form.correo_institucional}
+                  onChange={(e) => actualizarCampo('correo_institucional', e.target.value)}
+                  className={errores.correo_institucional ? 'registro-input--error' : ''}
+                  aria-invalid={!!errores.correo_institucional}
+                  aria-describedby={errores.correo_institucional ? 'correo_institucional-error' : undefined}
+                />
+                {errores.correo_institucional && <span id="correo_institucional-error" className="registro-error-texto" role="alert">{errores.correo_institucional}</span>}
                 </div>
               </div>
 
@@ -351,14 +379,16 @@ function RegistroInstitucional() {
 
               <div className="registro-campo-doble">
                 <div className="registro-campo">
-                  <label htmlFor="nombre_representante">Nombre del representante</label>
-                  <input
-                    id="nombre_representante"
-                    value={form.nombre_representante}
-                    onChange={(e) => actualizarCampo('nombre_representante', e.target.value)}
-                    className={errores.nombre_representante ? 'registro-input--error' : ''}
-                  />
-                  {errores.nombre_representante && <span className="registro-error-texto">{errores.nombre_representante}</span>}
+                <label htmlFor="nombre_representante">Nombre del representante</label>
+                <input
+                  id="nombre_representante"
+                  value={form.nombre_representante}
+                  onChange={(e) => actualizarCampo('nombre_representante', e.target.value)}
+                  className={errores.nombre_representante ? 'registro-input--error' : ''}
+                  aria-invalid={!!errores.nombre_representante}
+                  aria-describedby={errores.nombre_representante ? 'nombre_representante-error' : undefined}
+                />
+                {errores.nombre_representante && <span id="nombre_representante-error" className="registro-error-texto" role="alert">{errores.nombre_representante}</span>}
                 </div>
                 <div className="registro-campo">
                   <label htmlFor="telefono_representante">Teléfono del representante</label>
@@ -379,9 +409,11 @@ function RegistroInstitucional() {
                       value={form.telRepDigitos}
                       onChange={(e) => actualizarCampo('telRepDigitos', e.target.value.replace(/\D/g, ''))}
                       className={errores.telefono_representante ? 'registro-input--error' : ''}
+                      aria-invalid={!!errores.telefono_representante}
+                      aria-describedby={errores.telefono_representante ? 'telefono_representante-error' : undefined}
                     />
                   </div>
-                  {errores.telefono_representante && <span className="registro-error-texto">{errores.telefono_representante}</span>}
+                  {errores.telefono_representante && <span id="telefono_representante-error" className="registro-error-texto" role="alert">{errores.telefono_representante}</span>}
                 </div>
               </div>
             </>
@@ -398,7 +430,7 @@ function RegistroInstitucional() {
                 onSubida={setRifArchivoUrl}
                 onQuitar={() => setRifArchivoUrl('')}
               />
-              {errores.rif_archivo && <span className="registro-error-texto">{errores.rif_archivo}</span>}
+              {errores.rif_archivo && <span id="rif_archivo-error" className="registro-error-texto" role="alert">{errores.rif_archivo}</span>}
 
               <SubidaArchivoDrive
                 tipoDocumento="permiso_sanitario"
@@ -479,40 +511,109 @@ function RegistroInstitucional() {
                   los <Link to="/terminos">términos de uso</Link>
                 </span>
               </label>
-              {errores.terminos && <span className="registro-error-texto">{errores.terminos}</span>}
+              {errores.terminos && <span id="terminos-error" className="registro-error-texto" role="alert">{errores.terminos}</span>}
 
               <div className="registro-campo">
                 <label htmlFor="password">Contraseña</label>
-                <input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Mínimo 8 caracteres"
-                  autoComplete="new-password"
-                  className={errores.password ? 'registro-input--error' : ''}
-                />
-                {errores.password && <span className="registro-error-texto">{errores.password}</span>}
+                <div className="registro-input-con-toggle" style={{ position: 'relative' }}>
+                  <input
+                    id="password"
+                    type={mostrarPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Mínimo 8 caracteres"
+                    autoComplete="new-password"
+                    className={errores.password ? 'registro-input--error' : ''}
+                    aria-invalid={!!errores.password}
+                    aria-describedby={errores.password ? 'password-error' : undefined}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setMostrarPassword((prev) => !prev)}
+                    aria-label={mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                    className="registro-password-toggle"
+                  >
+                    {mostrarPassword ? (
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" strokeLinecap="round" strokeLinejoin="round" />
+                        <line x1="1" y1="1" x2="23" y2="23" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    ) : (
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" strokeLinecap="round" strokeLinejoin="round" />
+                        <circle cx="12" cy="12" r="3" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+                {password.length >= 1 && (() => {
+                  const puntaje = calcularFortalezaPassword(password)
+                  const { color, etiqueta, ancho } = puntaje <= 1
+                    ? { color: '#DC2626', etiqueta: 'Débil', ancho: 20 }
+                    : puntaje <= 3
+                    ? { color: '#F59E0B', etiqueta: 'Media', ancho: 60 }
+                    : puntaje === 4
+                    ? { color: '#10B981', etiqueta: 'Fuerte', ancho: 80 }
+                    : { color: '#059669', etiqueta: 'Muy fuerte', ancho: 100 }
+                  return (
+                    <div className="registro-password-fortaleza">
+                      <div
+                        className="registro-password-fortaleza-barra"
+                        role="progressbar"
+                        aria-label="Fortaleza de la contraseña"
+                        aria-valuenow={puntaje}
+                        aria-valuemin={0}
+                        aria-valuemax={5}
+                        aria-valuetext={etiqueta}
+                        style={{ height: '4px', borderRadius: '2px', background: color, width: `${ancho}%`, transition: 'all 0.3s' }}
+                      />
+                      <span className="registro-password-fortaleza-texto" style={{ color }}>{etiqueta}</span>
+                    </div>
+                  )
+                })()}
+                {errores.password && <span id="password-error" className="registro-error-texto" role="alert">{errores.password}</span>}
               </div>
 
               <div className="registro-campo">
                 <label htmlFor="confirmar-password">Confirmar contraseña</label>
-                <input
-                  id="confirmar-password"
-                  type="password"
-                  value={confirmarPassword}
-                  onChange={(e) => setConfirmarPassword(e.target.value)}
-                  placeholder="Repetí tu contraseña"
-                  autoComplete="new-password"
-                  className={errores.confirmarPassword ? 'registro-input--error' : ''}
-                />
-                {errores.confirmarPassword && <span className="registro-error-texto">{errores.confirmarPassword}</span>}
+                <div className="registro-input-con-toggle" style={{ position: 'relative' }}>
+                  <input
+                    id="confirmar-password"
+                    type={mostrarConfirmarPassword ? 'text' : 'password'}
+                    value={confirmarPassword}
+                    onChange={(e) => setConfirmarPassword(e.target.value)}
+                    placeholder="Repetí tu contraseña"
+                    autoComplete="new-password"
+                    className={errores.confirmarPassword ? 'registro-input--error' : ''}
+                    aria-invalid={!!errores.confirmarPassword}
+                    aria-describedby={errores.confirmarPassword ? 'confirmar-password-error' : undefined}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setMostrarConfirmarPassword((prev) => !prev)}
+                    aria-label={mostrarConfirmarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                    className="registro-password-toggle"
+                  >
+                    {mostrarConfirmarPassword ? (
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" strokeLinecap="round" strokeLinejoin="round" />
+                        <line x1="1" y1="1" x2="23" y2="23" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    ) : (
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" strokeLinecap="round" strokeLinejoin="round" />
+                        <circle cx="12" cy="12" r="3" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+                {errores.confirmarPassword && <span id="confirmar-password-error" className="registro-error-texto" role="alert">{errores.confirmarPassword}</span>}
               </div>
 
               <TurnstileWidget onVerificado={setTurnstileToken} onExpirado={() => setTurnstileToken('')} />
-              {errores.turnstile && <span className="registro-error-texto">{errores.turnstile}</span>}
+              {errores.turnstile && <span id="turnstile-error" className="registro-error-texto" role="alert">{errores.turnstile}</span>}
 
-              {errorGeneral && <p className="auth-error">{errorGeneral}</p>}
+              {errorGeneral && <p className="auth-error" role="alert">{errorGeneral}</p>}
             </>
           )}
         </div>

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../api/axios'
+import { validarPassword } from '../utils/validadores'
 import './Auth.css'
 
 function RecuperarPassword() {
@@ -26,8 +27,9 @@ function RecuperarPassword() {
       return
     }
 
-    if (password.length < 6) {
-      setError('La contraseña debe tener al menos 6 caracteres')
+    const pwCheck = validarPassword(password)
+    if (!pwCheck.valido) {
+      setError(pwCheck.error || 'La contraseña debe tener al menos 8 caracteres, incluyendo letras y números')
       return
     }
 

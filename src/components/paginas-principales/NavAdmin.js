@@ -10,7 +10,7 @@
 // ---------------------------------------------------------------
 import {
   LayoutDashboard, Package, ShoppingCart, Users, Wallet, CreditCard,
-  Tag, FileText, Inbox, MessagesSquare, DollarSign, Files, ReceiptText, Megaphone, Truck, FlaskConical,
+  Tag, FileText, Inbox, MessagesSquare, DollarSign, Files, ReceiptText, Megaphone, Truck, FlaskConical, KeyRound,
 } from 'lucide-react'
 
 export const NAV_ADMIN = [
@@ -53,6 +53,7 @@ export const NAV_ADMIN = [
     pie: true,
     items: [
       { id: 'usuarios', to: '/admin/usuarios', icono: Users, texto: 'Usuarios' },
+      { id: 'gestionCodigos', to: '/admin/gestion-codigos', icono: KeyRound, texto: 'Gestionar códigos' },
       { id: 'chat', to: '/admin/chat', icono: MessagesSquare, texto: 'Chat' },
     ],
   },

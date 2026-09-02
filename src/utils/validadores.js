@@ -9,8 +9,8 @@ export function validarEmail(email) {
 }
 
 export function validarPassword(password) {
-  // Mínimo 6 caracteres, al menos 1 letra y 1 número
-  if (password.length < 6) return { valido: false, error: 'Mínimo 6 caracteres' }
+  // Mínimo 8 caracteres, al menos 1 letra y 1 número
+  if (password.length < 8) return { valido: false, error: 'Mínimo 8 caracteres' }
   if (!/[a-zA-Z]/.test(password)) return { valido: false, error: 'Debe contener al menos una letra' }
   if (!/[0-9]/.test(password)) return { valido: false, error: 'Debe contener al menos un número' }
   return { valido: true, error: '' }

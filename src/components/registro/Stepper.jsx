@@ -7,16 +7,16 @@ import './Stepper.css'
  */
 function Stepper({ pasos, pasoActual }) {
   return (
-    <div className="stepper">
+    <nav className="stepper" aria-label={`Paso ${pasoActual + 1} de ${pasos.length}`}>
       {pasos.map((nombre, i) => {
         const completado = i < pasoActual
         const activo = i === pasoActual
 
         return (
-          <div key={i} className={`stepper__paso ${completado ? 'stepper__paso--completado' : ''} ${activo ? 'stepper__paso--activo' : ''}`}>
+          <div key={i} className={`stepper__paso ${completado ? 'stepper__paso--completado' : ''} ${activo ? 'stepper__paso--activo' : ''}`} aria-current={activo ? 'step' : undefined}>
             <div className="stepper__circulo">
               {completado ? (
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="3">
+                <svg role="img" aria-label="Paso completado" aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="3">
                   <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               ) : (
@@ -28,7 +28,7 @@ function Stepper({ pasos, pasoActual }) {
           </div>
         )
       })}
-    </div>
+    </nav>
   )
 }
 
