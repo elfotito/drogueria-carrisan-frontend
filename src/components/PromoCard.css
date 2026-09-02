@@ -112,7 +112,7 @@
   background: #0052dc;
   color: #FFFFFF;
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 0.8rem;
   padding: 9px 18px;
   cursor: pointer;
   margin-bottom: 10px;
@@ -233,7 +233,7 @@
 }
 
 .promocard--oferta .promocard__precio-ves {
-  font-size: 1rem;
+  font-size: 0.7rem;
 }
 
 .promocard__precio-original .promocard__precio-simbolo,

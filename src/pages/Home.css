@@ -31,7 +31,7 @@
 .home__vitrina {
   width: 100%;
   margin: 0 auto;
-  padding: 20px 0 0;
+  padding: 20px 16px 0;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -99,9 +99,6 @@
   .home__bloque-e { grid-area: e; }
   .home__bloque-d { grid-area: d; }
 
-  .home__vitrina {
-    padding: 32px 0 0;
-  }
 
   .home__ads-pair {
     gap: 16px;

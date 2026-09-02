@@ -10,7 +10,7 @@
 // ---------------------------------------------------------------
 import {
   LayoutDashboard, Package, ShoppingCart, Users, Wallet, CreditCard,
-  Tag, FileText, Inbox, MessagesSquare, DollarSign, Files, ReceiptText, Megaphone, Truck,
+  Tag, FileText, Inbox, MessagesSquare, DollarSign, Files, ReceiptText, Megaphone, Truck, FlaskConical,
 } from 'lucide-react'
 
 export const NAV_ADMIN = [
@@ -28,7 +28,7 @@ export const NAV_ADMIN = [
       { id: 'nuevaOrden', to: '/admin/nueva-orden', icono: ReceiptText, texto: 'Nueva orden rápida' },
       { id: 'delivery', to: '/admin/delivery', icono: Truck, texto: 'Delivery' },
       { id: 'productos', to: '/admin/productos', icono: Package, texto: 'Productos' },
-      { id: 'moleculas', to" '/admin/moleculas'  texto: 'Moléculas', icono: '🧬' },
+      { id: 'moleculas', to: '/admin/moleculas', icono: FlaskConical, texto: 'Moléculas' },
       { id: 'descuentos', to: '/admin/descuentos', icono: Tag, texto: 'Descuentos' },
       { id: 'promociones', to: '/admin/promociones', icono: Megaphone, texto: 'Promociones' },
     ],

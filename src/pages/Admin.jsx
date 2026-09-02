@@ -58,6 +58,7 @@ const TITULOS_SECCION = {
   chat: 'Chat',
   promociones: 'Promociones',
   delivery: 'Delivery',
+  moleculas: 'Moléculas',
 }
 
 // Mapea el segmento de la URL (después de /admin/) al id que ya usa
@@ -79,6 +80,7 @@ const SEGMENTO_A_ID = {
   chat: 'chat',
   promociones: 'promociones',
   delivery: 'delivery',
+  moleculas: 'moleculas',
 }
 
 function Admin() {
@@ -101,6 +103,7 @@ function Admin() {
           <Route path="ordenes" element={<OrdenesAdmin />} />
           <Route path="nueva-orden" element={<NuevaOrdenRapida />} />
           <Route path="productos" element={<ProductosAdmin />} />
+          <Route path="moleculas" element={<MoleculasPanel />} />
           <Route path="descuentos" element={<DescuentosPanel />} />
           <Route path="estado-cuenta" element={<EstadoCuentaAdmin />} />
           <Route path="pagos" element={<PagosAdmin />} />
