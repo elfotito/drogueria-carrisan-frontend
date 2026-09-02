@@ -17,7 +17,7 @@
   margin: 0 auto;
   padding: 20px 24px 60px;
   font-family: 'Inter', sans-serif;
-  background: var(--paper);
+  background: #FBFAF7;
   overflow-x: hidden;
 }
 
@@ -50,29 +50,42 @@
 }
 
 /* ---------------------------------------------------------
-   Layout principal — grid con áreas nombradas
-   Desktop: imagen y buybox arriba una al lado de la otra;
-   buybox ocupa las 3 filas y queda "sticky" mientras el
-   usuario recorre imagen → acordeón → reseñas.
+   Sección principal: galería + info + columna de compra
    --------------------------------------------------------- */
 .detalle-main {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 360px;
-  grid-template-areas:
-    "imagen   buybox"
-    "acordeon buybox"
-    "resenas  buybox";
+  grid-template-columns: minmax(0, 440px) 1fr minmax(280px, 320px);
   gap: 40px;
+  margin-bottom: 48px;
   align-items: start;
-  margin-bottom: 56px;
 }
 
-.detalle-area-imagen { grid-area: imagen; }
-.detalle-area-buybox { grid-area: buybox; min-width: 0; }
-.detalle-area-acordeon { grid-area: acordeon; }
-.detalle-area-resenas { grid-area: resenas; }
+@media (max-width: 1100px) {
+  .detalle-main {
+    grid-template-columns: minmax(0, 420px) 1fr;
+  }
+  .detalle-compra-columna {
+    grid-column: 1 / -1;
+  }
+}
 
-/* Imagen */
+@media (max-width: 860px) {
+  .detalle-main {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .detalle-compra-columna {
+    grid-column: auto;
+  }
+}
+
+/* Galería */
+.detalle-galeria {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 .detalle-imagen-wrapper {
   position: relative;
   background: #F7F6F1;
@@ -82,12 +95,12 @@
   align-items: center;
   justify-content: center;
   padding: 40px;
-  min-height: 400px;
+  min-height: 360px;
 }
 
 .detalle-imagen {
   max-width: 100%;
-  max-height: 400px;
+  max-height: 360px;
   object-fit: contain;
 }
 
@@ -103,24 +116,47 @@
   font-weight: 700;
 }
 
-/* ---------------------------------------------------------
-   Buybox flotante (columna derecha)
-   --------------------------------------------------------- */
-.detalle-buybox-wrapper {
-  position: sticky;
-  top: 96px; /* ajusta según la altura real de tu navbar fija */
+.detalle-miniaturas {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 2px;
 }
 
-.detalle-buybox {
+.detalle-miniatura {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  padding: 0;
+  border: 1.5px solid #E7E5DE;
+  border-radius: 10px;
+  background: #F7F6F1;
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.15s ease;
+}
+
+.detalle-miniatura img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.detalle-miniatura:hover {
+  border-color: #1B4B8F;
+}
+
+.detalle-miniatura.activa {
+  border-color: #1B4B8F;
+  border-width: 2px;
+}
+
+/* Info */
+.detalle-info {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
   min-width: 0;
-  background: #FFFFFF;
-  border: 1px solid #E7E5DE;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 4px 20px rgba(20, 24, 42, 0.06);
 }
 
 .detalle-marca {
@@ -134,7 +170,7 @@
 
 .detalle-titulo {
   font-family: 'Manrope', sans-serif;
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   font-weight: 800;
   color: #14182A;
   margin: 0;
@@ -142,23 +178,29 @@
   overflow-wrap: break-word;
 }
 
-/* Placeholder de estrellas — reemplazar cuando se conecten reseñas reales */
-.detalle-buybox-estrellas {
+/* Rating */
+.detalle-rating {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 0.82rem;
-  color: #A9AC9F;
 }
 
-.detalle-estrellas-icono {
-  color: #D8D6CE;
-  letter-spacing: 2px;
-  font-size: 0.9rem;
+.rating-estrellas {
+  letter-spacing: 1px;
 }
 
-.detalle-estrellas-texto {
-  color: #A9AC9F;
+.estrella-llena {
+  color: #F2A93B;
+}
+
+.estrella-vacia {
+  color: #E7E5DE;
+}
+
+.detalle-rating-texto {
+  font-size: 0.85rem;
+  color: #5B6270;
+  font-weight: 600;
 }
 
 .detalle-disponibilidad {
@@ -179,15 +221,63 @@
   color: #B3261E;
 }
 
-/* Precios */
+.detalle-resumen {
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: #5B6270;
+  margin: 4px 0;
+}
+
+/* Ficha rápida (dentro de la columna de info, no en la sticky) */
+.detalle-ficha-rapida {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid #E7E5DE;
+  margin-top: 4px;
+}
+
+.ficha-rapida-item {
+  display: flex;
+  gap: 8px;
+  font-size: 0.86rem;
+}
+
+.ficha-rapida-label {
+  color: #A9AC9F;
+  font-weight: 700;
+  min-width: 110px;
+}
+
+.ficha-rapida-valor {
+  color: #14182A;
+  font-weight: 600;
+}
+
+/* ---------------------------------------------------------
+   Columna de compra — sticky en desktop
+   --------------------------------------------------------- */
+.detalle-compra-columna {
+  position: sticky;
+  top: 20px;
+}
+
+.detalle-compra-card {
+  background: #FFFFFF;
+  border: 1px solid #E7E5DE;
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .detalle-precios {
   display: flex;
   align-items: baseline;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
-  padding: 16px 0;
-  border-top: 1px solid #E7E5DE;
-  border-bottom: 1px solid #E7E5DE;
 }
 
 .detalle-precio-usd {
@@ -199,17 +289,16 @@
 
 .detalle-precio-usd--consultar {
   font-family: 'Manrope', sans-serif;
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   color: #5B6270;
 }
 
 .detalle-precio-ves {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 1.05rem;
+  font-size: 1rem;
   color: #5B6270;
 }
 
-/* Acciones */
 .detalle-acciones {
   display: flex;
   flex-direction: column;
@@ -219,10 +308,10 @@
 .detalle-cantidad {
   display: flex;
   align-items: center;
-  align-self: flex-start;
   border: 1.5px solid #E7E5DE;
   border-radius: 999px;
   overflow: hidden;
+  width: fit-content;
 }
 
 .detalle-cantidad button {
@@ -255,13 +344,13 @@
 
 .detalle-btn-agregar {
   width: 100%;
-  padding: 14px 28px;
+  padding: 13px 28px;
   background: #1B4B8F;
   color: #FBFAF7;
   border: none;
   border-radius: 999px;
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   cursor: pointer;
   transition: background 0.15s ease;
 }
@@ -278,37 +367,6 @@
 
 .detalle-btn-agregar.agregado {
   background: #0E7C63;
-}
-
-detalle-btn-avisame {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 22px;
-  border-radius: 10px;
-  border: 1.5px solid #0052DC;
-  background: #FFFFFF;
-  color: #0052DC;
-  font-family: 'Inter', sans-serif;
-  font-weight: 700;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-}
-
-.detalle-btn-avisame:hover:not(:disabled) {
-  background: #E9EFFC;
-}
-
-.detalle-btn-avisame--activo {
-  background: #E6F7EC;
-  border-color: #16a34a;
-  color: #16a34a;
-}
-
-.detalle-btn-avisame:disabled {
-  opacity: 0.6;
-  cursor: default;
 }
 
 .detalle-login-aviso {
@@ -328,66 +386,56 @@ detalle-btn-avisame {
 }
 
 .detalle-nota-precio {
-  font-size: 0.72rem;
+  font-size: 0.76rem;
   color: #A9AC9F;
   margin: 0;
 }
 
 /* ---------------------------------------------------------
-   Título de sección genérico (acordeón / reseñas)
+   Tabs: Descripción / Ficha técnica / Composición
    --------------------------------------------------------- */
-.detalle-seccion-titulo {
-  font-family: 'Manrope', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 800;
-  margin: 0 0 16px;
-  color: #14182A;
-}
-
-/* ---------------------------------------------------------
-   Acordeón "Acerca de este producto"
-   --------------------------------------------------------- */
-.detalle-acordeon {
+.detalle-tabs-container {
   border-top: 1px solid #E7E5DE;
-  padding-top: 32px;
+  padding-top: 28px;
+  margin-bottom: 40px;
 }
 
-.detalle-acc-item {
-  border-bottom: 1px solid #E7E5DE;
-}
-
-.detalle-acc-header {
-  width: 100%;
+.detalle-tabs-nav {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 16px 4px;
+  gap: 4px;
+  border-bottom: 1px solid #E7E5DE;
+  margin-bottom: 24px;
+  overflow-x: auto;
+}
+
+.detalle-tab-btn {
+  padding: 10px 20px;
   background: none;
   border: none;
-  cursor: pointer;
+  border-bottom: 2px solid transparent;
   font-family: 'Manrope', sans-serif;
-  font-size: 0.98rem;
+  font-size: 0.92rem;
   font-weight: 700;
-  color: #14182A;
-  text-align: left;
-}
-
-.detalle-acc-flecha {
   color: #5B6270;
-  transition: transform 0.2s ease;
-  flex-shrink: 0;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s ease, border-color 0.15s ease;
 }
 
-.detalle-acc-flecha.abierta {
-  transform: rotate(180deg);
+.detalle-tab-btn:hover {
+  color: #1B4B8F;
 }
 
-.detalle-acc-contenido {
-  padding: 0 4px 20px;
+.detalle-tab-btn.activa {
+  color: #1B4B8F;
+  border-bottom-color: #1B4B8F;
 }
 
-.detalle-acc-grid {
+.detalle-tab-panel {
+  min-height: 100px;
+}
+
+.detalle-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr));
   gap: 12px;
@@ -398,7 +446,7 @@ detalle-btn-avisame {
   flex-direction: column;
   gap: 4px;
   padding: 14px 16px;
-  background: #F7F6F1;
+  background: #FFFFFF;
   border: 1px solid #E7E5DE;
   border-radius: 12px;
   min-width: 0;
@@ -419,10 +467,20 @@ detalle-btn-avisame {
   overflow-wrap: break-word;
 }
 
-.detalle-valor.disponible { color: #0E7C63; }
-.detalle-valor.agotado { color: #B3261E; }
+.detalle-valor.disponible {
+  color: #0E7C63;
+}
 
-.detalle-acc-texto {
+.detalle-valor.agotado {
+  color: #B3261E;
+}
+
+.detalle-descripcion-completa {
+  grid-column: 1 / -1;
+  margin-top: 8px;
+}
+
+.detalle-descripcion-completa p {
   font-size: 0.92rem;
   line-height: 1.7;
   color: #5B6270;
@@ -430,33 +488,68 @@ detalle-btn-avisame {
   overflow-wrap: break-word;
 }
 
-/* ---------------------------------------------------------
-   Reseñas — placeholder
-   --------------------------------------------------------- */
-.detalle-resenas {
-  border-top: 1px solid #E7E5DE;
-  padding-top: 32px;
+/* Tabla de ficha técnica */
+.detalle-tabla-specs {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
 }
 
-.detalle-resenas-placeholder {
+.detalle-tabla-specs tr {
+  border-bottom: 1px solid #E7E5DE;
+}
+
+.detalle-tabla-specs tr:last-child {
+  border-bottom: none;
+}
+
+.detalle-tabla-specs th {
+  text-align: left;
+  padding: 14px 16px 14px 0;
+  width: 220px;
+  min-width: 160px;
+  color: #A9AC9F;
+  font-weight: 700;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  vertical-align: top;
+}
+
+.detalle-tabla-specs td {
+  padding: 14px 0;
+  color: #14182A;
+  line-height: 1.6;
+}
+
+/* Composición */
+.detalle-composicion {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
-  padding: 20px;
-  background: #F7F6F1;
-  border: 1px dashed #D8D6CE;
+  gap: 10px;
+}
+
+.composicion-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  background: #FFFFFF;
+  border: 1px solid #E7E5DE;
   border-radius: 12px;
 }
 
-.detalle-resenas-placeholder .detalle-estrellas-icono {
-  font-size: 1.2rem;
+.composicion-nombre {
+  font-weight: 700;
+  color: #14182A;
+  font-size: 0.95rem;
 }
 
-.detalle-resenas-placeholder p {
-  margin: 0;
+.composicion-concentracion {
+  font-family: 'JetBrains Mono', monospace;
   font-size: 0.88rem;
-  color: #5B6270;
+  color: #1B4B8F;
+  font-weight: 700;
 }
 
 /* ---------------------------------------------------------
@@ -468,7 +561,6 @@ detalle-btn-avisame {
   gap: 40px;
   border-top: 1px solid #E7E5DE;
   padding-top: 36px;
-  padding-bottom: 40px;
   min-width: 0;
 }
 
@@ -477,8 +569,8 @@ detalle-btn-avisame {
    --------------------------------------------------------- */
 .detalle-skeleton {
   display: grid;
-  grid-template-columns: minmax(0, 480px) 1fr;
-  gap: 48px;
+  grid-template-columns: minmax(0, 440px) 1fr;
+  gap: 40px;
 }
 
 @media (max-width: 860px) {
@@ -490,7 +582,7 @@ detalle-btn-avisame {
 .skeleton-imagen {
   background: #EFEEE9;
   border-radius: 16px;
-  min-height: 400px;
+  min-height: 360px;
   position: relative;
   overflow: hidden;
 }
@@ -510,8 +602,14 @@ detalle-btn-avisame {
   overflow: hidden;
 }
 
-.skeleton-titulo { height: 32px; width: 70%; }
-.skeleton-corto { width: 40%; }
+.skeleton-titulo {
+  height: 32px;
+  width: 70%;
+}
+
+.skeleton-corto {
+  width: 40%;
+}
 
 .skeleton-imagen::after,
 .skeleton-line::after {
@@ -557,36 +655,19 @@ detalle-btn-avisame {
 
 /* ---------------------------------------------------------
    Responsive — tablet y móvil
-   Se apila todo en una sola columna y la buybox deja de
-   ser sticky (fluye en el orden natural, justo después
-   de la imagen, como en tu referencia móvil).
    --------------------------------------------------------- */
 @media (max-width: 860px) {
   .detalle-container {
     padding: 16px 16px 48px;
   }
 
-  .detalle-main {
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      "imagen"
-      "buybox"
-      "acordeon"
-      "resenas";
-    gap: 20px;
-  }
-
-  .detalle-buybox-wrapper {
-    position: static;
-  }
-
   .detalle-imagen-wrapper {
     padding: 24px;
-    min-height: 280px;
+    min-height: 260px;
   }
 
   .detalle-imagen {
-    max-height: 260px;
+    max-height: 240px;
   }
 
   .detalle-titulo {
@@ -594,14 +675,35 @@ detalle-btn-avisame {
   }
 
   .detalle-precio-usd {
-    font-size: 1.7rem;
+    font-size: 1.6rem;
   }
 
-  .detalle-buybox {
-    border-radius: 0;
-    border-left: none;
-    border-right: none;
-    box-shadow: none;
-    padding: 0 0 20px;
+  .detalle-compra-columna {
+    position: static;
+  }
+
+  .detalle-tabla-specs th {
+    width: 130px;
+    min-width: 110px;
+    font-size: 0.72rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .detalle-imagen-wrapper {
+    padding: 16px;
+    min-height: 220px;
+  }
+
+  .detalle-tabla-specs th,
+  .detalle-tabla-specs td {
+    display: block;
+    width: 100%;
+    padding: 4px 0;
+  }
+
+  .detalle-tabla-specs tr {
+    display: block;
+    padding: 12px 0;
   }
 }
