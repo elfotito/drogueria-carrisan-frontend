@@ -89,7 +89,7 @@
       "a b b d"
       "a c e d";
     gap: 16px;
-    padding: 32px 24px 0;
+    padding: 32px 0 0;
     border-top: 1px solid rgba(35, 43, 69, 0.08);
   }
 

@@ -187,8 +187,8 @@ function Home() {
           className="home__bloque-a"
           tamano="grande"
           posicionTexto="arriba"
-          titulo="Envío gratis en tu primer pedido"
-          subtitulo="Aplica para compras mayores a $200"
+          titulo="Insumos quirúrgicos para cada procedimiento"
+          subtitulo="Todo el equipamiento que tu quirófano necesita, en un solo pedido"
           textoCta="Comprar ahora"
           link="/catalogo"
         />
@@ -197,40 +197,40 @@ function Home() {
           className="home__bloque-b"
           tamano="mediano"
           posicionTexto="arriba"
-          titulo="Activa tu línea de crédito"
+          titulo="Inyectables con cadena de frío garantizada"
           textoCta="Conocer más"
           estiloCta="enlace"
-          link="/mi-cuenta"
+          link="/ayuda"
         />
         <BloquePromocional
           imagen="https://fqeshthtycmzgyibiurq.supabase.co/storage/v1/object/public/crsnimages/medicamentos.png"
           className="home__bloque-c"
           tamano="pequeno"
           variante="oferta"
-          titulo="Ofertas de la semana"
-          textoCta="Ver ofertas"
-          link="/catalogo"
+          titulo="Encuentra cada presentación que tu farmacia necesita"
+          textoCta="Linea Farmacia"
+          link="/farmacia"
         />
         <BloquePromocional
           imagen="https://fqeshthtycmzgyibiurq.supabase.co/storage/v1/object/public/crsnimages/ampolla.jpg"
           className="home__bloque-e"
           tamano="pequeno"
           variante="nuevo"
-          titulo="Nuevos productos cada semana"
+          titulo="Cada lote, verificado antes de enviarse"
           textoCta="Explorar"
           estiloCta="enlace"
-          link="/catalogo"
+          link="/ayuda"
         />
         <BloquePromocional
           imagen="https://fqeshthtycmzgyibiurq.supabase.co/storage/v1/object/public/crsnimages/repartidor.jpg"
           className="home__bloque-d"
           tamano="grande"
           posicionTexto="arriba"
-          titulo="Todo lo que tu farmacia necesita, a domicilio"
+          titulo="Entregas rápidas y programadas, sin filas ni esperas"
           subtitulo="Recibe tus pedidos donde estés"
           textoCta="Conocer más"
           estiloCta="enlace"
-          link="/catalogo"
+          link="/ayuda"
         />
       </section>
 
