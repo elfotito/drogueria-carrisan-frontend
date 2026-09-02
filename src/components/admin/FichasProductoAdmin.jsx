@@ -118,6 +118,7 @@ function FichaProductoEditor({ producto, onVolver }) {
     unidades_por_presentacion: '',
     condiciones_almacenamiento: '',
   })
+  const [imagenesTexto, setImagenesTexto] = useState('')
 
   useEffect(() => {
     cargarTodo()
@@ -150,6 +151,7 @@ function FichaProductoEditor({ producto, onVolver }) {
           unidades_por_presentacion: resDetalles.value.data.unidades_por_presentacion || '',
           condiciones_almacenamiento: resDetalles.value.data.condiciones_almacenamiento || '',
         })
+        setImagenesTexto((resDetalles.value.data.imagen_secundaria_urls || []).join(', '))
       } else {
         setExisteFicha(false)
       }
@@ -179,6 +181,9 @@ function FichaProductoEditor({ producto, onVolver }) {
       ...form,
       unidades_por_presentacion: form.unidades_por_presentacion
         ? Number(form.unidades_por_presentacion)
+        : null,
+      imagen_secundaria_urls: imagenesTexto
+        ? imagenesTexto.split(',').map((s) => s.trim()).filter(Boolean)
         : null,
     }
 
@@ -334,6 +339,17 @@ function FichaProductoEditor({ producto, onVolver }) {
           <div className="mol-form-group">
             <label>Condiciones de almacenamiento</label>
             <input type="text" value={form.condiciones_almacenamiento} onChange={(e) => handleChange('condiciones_almacenamiento', e.target.value)} placeholder="ej. Conservar entre 15-30°C" />
+          </div>
+
+          <hr className="ficha-divider" />
+
+          <div className="mol-form-group">
+            <label>Imágenes de galería (URLs separadas por coma)</label>
+            <textarea
+              value={imagenesTexto}
+              onChange={(e) => setImagenesTexto(e.target.value)}
+              placeholder="https://.../foto2.jpg, https://.../foto3.jpg"
+            />
           </div>
 
           {error && <p className="mol-error-text">{error}</p>}
