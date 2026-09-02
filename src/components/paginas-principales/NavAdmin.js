@@ -28,6 +28,7 @@ export const NAV_ADMIN = [
       { id: 'nuevaOrden', to: '/admin/nueva-orden', icono: ReceiptText, texto: 'Nueva orden rápida' },
       { id: 'delivery', to: '/admin/delivery', icono: Truck, texto: 'Delivery' },
       { id: 'productos', to: '/admin/productos', icono: Package, texto: 'Productos' },
+      { id: 'moleculas', to" '/admin/moleculas'  texto: 'Moléculas', icono: '🧬' },
       { id: 'descuentos', to: '/admin/descuentos', icono: Tag, texto: 'Descuentos' },
       { id: 'promociones', to: '/admin/promociones', icono: Megaphone, texto: 'Promociones' },
     ],
