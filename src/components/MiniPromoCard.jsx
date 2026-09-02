@@ -6,6 +6,19 @@ function formatUSD(valor) {
   return Number(valor).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
+// Separa parte entera y centavos para formato superíndice: $1⁰⁶
+function PrecioSuperIndice({ valor }) {
+  if (valor == null) return <span>—</span>
+  const partes = Number(valor).toFixed(2).split('.')
+  return (
+    <>
+      <span className="minipromocard__precio-simbolo">$</span>
+      <span className="minipromocard__precio-entero">{partes[0]}</span>
+      <sup className="minipromocard__precio-centavos">{partes[1]}</sup>
+    </>
+  )
+}
+
 function obtenerEtiquetaDescuento(descuento) {
   if (!descuento) return null
   if (descuento.tipo === 'monto') return 'Oferta'
@@ -30,7 +43,9 @@ function MiniPromoCard({ producto }) {
       className="minipromocard"
       onClick={() => navigate(`/producto/${producto.id}`)}
     >
-      {etiqueta && <span className="minipromocard__badge">{etiqueta}</span>}
+      <div className="minipromocard__badge-slot">
+        {etiqueta && <span className="minipromocard__badge">{etiqueta}</span>}
+      </div>
 
       <div className="minipromocard__media">
         <img
@@ -44,11 +59,18 @@ function MiniPromoCard({ producto }) {
       <div className="minipromocard__precios">
         {tieneDescuento ? (
           <>
-            <span className="minipromocard__precio-ahora">${formatUSD(producto.precio_usd)}</span>
-            <span className="minipromocard__precio-original">${formatUSD(producto.precio_original_usd)}</span>
+            <span className="minipromocard__precio-ahora">
+              <span className="minipromocard__precio-ahora-label">Ahora</span>
+              <PrecioSuperIndice valor={producto.precio_usd} />
+            </span>
+            <span className="minipromocard__precio-original">
+              $<span className="minipromocard__precio-original-text">{formatUSD(producto.precio_original_usd)}</span>
+            </span>
           </>
         ) : (
-          <span className="minipromocard__precio-normal">${formatUSD(producto.precio_usd)}</span>
+          <span className="minipromocard__precio-normal">
+            <PrecioSuperIndice valor={producto.precio_usd} />
+          </span>
         )}
       </div>
 

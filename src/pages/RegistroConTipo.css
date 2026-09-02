@@ -3,17 +3,15 @@
    Desktop (>=768px): fila horizontal. Móvil: columna vertical.
    ============================================================ */
 
-/* Esta página necesita más ancho que el resto de Auth.css (440px)
-   para que las 3 tarjetas quepan cómodas en fila en desktop.
-   Se agrega como clase extra sobre .auth-container solo aquí,
-   así el resto de las páginas de auth no se ven afectadas. */
+/* Esta página necesita más ancho que el login (440px)
+   para que las 3 tarjetas quepan cómodas en fila en desktop. */
 .auth-container.registro-tipo-container {
   max-width: 440px;
 }
 
 @media (min-width: 768px) {
   .auth-container.registro-tipo-container {
-    max-width: 920px;
+    max-width: 820px;
   }
 }
 
