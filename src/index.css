@@ -60,6 +60,7 @@ body {
   margin: 0;
   max-width: 100vw;
   background: #ffffff;
+  overflow-x: clip;
 }
 
 #root {

@@ -70,22 +70,26 @@ function FilaExploracion({ titulo, verTodoTo, items }) {
   )
 }
 
-// ── Componente principal ──
-function ExploraCarrusel() {
+// ── Componentes separados: podés colocarlos en distintas partes ──
+function ExploraCategorias() {
   return (
-    <div className="explora-carrusel-wrap">
-      <FilaExploracion
-        titulo="Explorá por categoría"
-        verTodoTo="/catalogo"
-        items={CATEGORIAS}
-      />
-      <FilaExploracion
-        titulo="Explorá por laboratorio"
-        verTodoTo="/catalogo"
-        items={LABORATORIOS}
-      />
-    </div>
+    <FilaExploracion
+      titulo="Explorá por categoría"
+      verTodoTo="/catalogo"
+      items={CATEGORIAS}
+    />
   )
 }
 
-export default ExploraCarrusel
+function ExploraLaboratorios() {
+  return (
+    <FilaExploracion
+      titulo="Explorá por laboratorio"
+      verTodoTo="/catalogo"
+      items={LABORATORIOS}
+    />
+  )
+}
+
+export default ExploraCategorias
+export { ExploraCategorias, ExploraLaboratorios }

@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext'
 import api from '../api/axios'
 import HeroCarrusel from '../components/HeroCarrusel'
 import HomeCarrusel from '../components/HomeCarrusel'
-import ExploraCarrusel from '../components/ExploraCarrusel'
+import { ExploraCategorias, ExploraLaboratorios } from '../components/ExploraCarrusel'
 import SeccionesCarrusel from '../components/SeccionesCarrusel'
 import AdBanner from '../components/AdBanner'
 import AdCard from '../components/AdCard'
@@ -167,8 +167,8 @@ function Home() {
         <HeroCarrusel slides={HERO_SLIDES} intervaloMs={5000} />
       </section>
 
-      {/* ── Explorá por categoría y laboratorio ── */}
-      <ExploraCarrusel />
+      {/* ── Explorá por categoría (colocado justo tras el hero) ── */}
+      <ExploraCategorias />
   
       {/* ── Vitrina: carruseles fijos + ads ── */}
       <div className="home__vitrina">
@@ -243,6 +243,9 @@ function Home() {
           secciones={secciones}
           cargando={cargandoVitrina}
         />
+
+        {/* ── Explorá por laboratorio (sección aparte, más abajo) ── */}
+        <ExploraLaboratorios />
 
         <AdBanner
           titulo="Descuentos de temporada"

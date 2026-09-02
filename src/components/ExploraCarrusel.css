@@ -3,16 +3,10 @@
    Estilo Walmart: imagen cuadrada + nombre debajo
    ============================================================ */
 
-.explora-carrusel-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  padding: 20px 0 0;
-}
-
 /* ---------- Sección individual ---------- */
 .explora-carrusel {
   width: 100%;
+  padding: 20px 0 0;
 }
 
 .explora-carrusel__header {
@@ -136,9 +130,8 @@
 
 /* ---------- Tablet ---------- */
 @media (min-width: 768px) {
-  .explora-carrusel-wrap {
+  .explora-carrusel {
     padding: 28px 0 0;
-    gap: 20px;
   }
 
   .explora-carrusel__titulo {
