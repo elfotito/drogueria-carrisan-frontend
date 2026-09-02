@@ -22,11 +22,7 @@ const TIPOS = [
     clase: 'registro-tipo__card--institucional',
     titulo: 'Usuario Institucional',
     descripcion: 'Clínica, farmacia, centro quirúrgico u otra institución de salud',
-    icono: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-        <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z" />
-      </svg>
-    ),
+    imagen: 'https://fqeshthtycmzgyibiurq.supabase.co/storage/v1/object/public/crsnimages/institucional.jpg',
   },
   {
     id: 'profesional',
@@ -34,11 +30,7 @@ const TIPOS = [
     clase: 'registro-tipo__card--profesional',
     titulo: 'Usuario Profesional de la Salud',
     descripcion: 'Médico, enfermero, fisioterapeuta u otro profesional de la salud',
-    icono: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m3.5-9h-2.5v2.5h-2v-2.5h-2.5v-2h2.5v-2.5h2v2.5h2.5v2z" />
-      </svg>
-    ),
+    imagen: 'https://fqeshthtycmzgyibiurq.supabase.co/storage/v1/object/public/crsnimages/profesionalsalud.jpg',
   },
   {
     id: 'honorifico',
@@ -46,12 +38,7 @@ const TIPOS = [
     clase: 'registro-tipo__card--honorifico',
     titulo: 'Usuario Honorífico',
     descripcion: 'Ya formás parte de nuestra comunidad y tenés un código de invitación',
-    icono: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-        <path d="M12 15a4 4 0 100-8 4 4 0 000 8z" />
-        <path d="M8.21 13.89L7 23l5-3 5 3-1.21-9.12" />
-      </svg>
-    ),
+    imagen: 'https://fqeshthtycmzgyibiurq.supabase.co/storage/v1/object/public/crsnimages/honorifico.jpg',
   },
 ]
 
@@ -102,7 +89,12 @@ function RegistroConTipo() {
                 dentro de este mismo div — el tamaño y las esquinas ya están listos.
               */}
               <div className="registro-tipo__imagen">
-                <span className="registro-tipo__icono">{tipo.icono}</span>
+                <img
+                  src={tipo.imagen}
+                  alt=""
+                  className="registro-tipo__imagen-img"
+                  loading="lazy"
+                />
               </div>
 
               <div className="registro-tipo__cuerpo">

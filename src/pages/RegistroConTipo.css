@@ -105,19 +105,6 @@
   display: block;
 }
 
-.registro-tipo__icono {
-  width: 44px;
-  height: 44px;
-  color: var(--acento);
-  opacity: 0.55;
-}
-
-.registro-tipo__icono svg {
-  width: 100%;
-  height: 100%;
-  stroke-width: 1.5;
-}
-
 /* ---------- Texto ---------- */
 
 .registro-tipo__cuerpo h3 {
