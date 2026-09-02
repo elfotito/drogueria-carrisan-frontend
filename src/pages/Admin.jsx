@@ -16,7 +16,9 @@ import PromocionesAdmin from '../components/admin/PromocionesAdmin'
 import DeliveryAdmin from '../components/admin/DeliveryAdmin'
 import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
 import { NAV_ADMIN } from '../components/paginas-principales/NavAdmin'
+import MoleculasPanel from '../components/admin/MoleculasPanel'
 import './Admin.css'
+
 
 // ---------------------------------------------------------------
 // Admin — migrado a <LayoutPaginaPrincipal> (mismo patrón que
