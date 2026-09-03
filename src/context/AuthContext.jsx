@@ -78,9 +78,6 @@ export function AuthProvider({ children }) {
     if (token && !isTokenValid(token)) {
       setTokenExpirado(true);
       logout();
-      if (!window.location.pathname.startsWith('/login') && !window.location.pathname.startsWith('/')) {
-        window.location.href = '/login?expirado=1';
-      }
     }
   }
 

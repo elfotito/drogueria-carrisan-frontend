@@ -1113,3 +1113,17 @@
   margin-bottom: 0.75rem;
 }
 
+.auth-footer-staff-link {
+  display: block;
+  text-align: center;
+  margin-top: 10px;
+  font-size: 12px;
+  color: #9ca3af;
+  text-decoration: none;
+}
+
+.auth-footer-staff-link:hover {
+  color: #1B4B8F;
+  text-decoration: underline;
+}
+

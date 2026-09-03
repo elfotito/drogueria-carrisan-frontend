@@ -507,8 +507,8 @@ function RegistroInstitucional() {
                   onChange={(e) => setAceptaTerminos(e.target.checked)}
                 />
                 <span>
-                  Acepto el <Link to="/contrato">contrato</Link>, la <Link to="/privacidad">política de privacidad</Link> y
-                  los <Link to="/terminos">términos de uso</Link>
+                  Acepto los <Link to="/terminos">términos de uso</Link>, la <Link to="/privacidad">política de privacidad</Link> y
+                  la <Link to="/terminos">política comercial</Link>
                 </span>
               </label>
               {errores.terminos && <span id="terminos-error" className="registro-error-texto" role="alert">{errores.terminos}</span>}

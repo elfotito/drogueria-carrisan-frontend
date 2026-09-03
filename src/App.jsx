@@ -55,6 +55,13 @@ import SubUsuarios from'./pages/SubUsuarios'
 import Presupuesto from'./pages/Presupuesto'
 import Mantenimiento from './pages/Mantenimiento'
 import AnalyticsVentas from './components/admin/AnalyticsVentas'
+import { StaffAuthProvider } from './context/StaffAuthContext'
+import PrivateRouteStaff from './components/PrivateRouteStaff'
+import PwaScopeSwitcher from './components/PwaScopeSwitcher'
+import StaffLogin from './pages/staff/StaffLogin'
+import StaffDashboard from './pages/staff/StaffDashboard'
+import StaffDespacho from './pages/staff/StaffDespacho'
+import StaffOrdenes from './pages/staff/StaffOrdenes'
 
 
 function LoadingBarBridge() {
@@ -65,7 +72,8 @@ function LoadingBarBridge() {
 
 function App() {
   return (
-    <AuthProvider>
+  <AuthProvider>
+    <StaffAuthProvider>
       <CartProvider>
         <FavoritosProvider>
           <EnvioProvider>
@@ -91,6 +99,10 @@ function App() {
                 <Route path="/orders/:id" element={<PrivateRoute><OrdenDetalle /></PrivateRoute>} />
                 <Route path="/pagos" element={<PrivateRouteSensible><Pagos /></PrivateRouteSensible>} />
                 <Route path="/admin/*" element={<PrivateRoute adminOnly><Admin /></PrivateRoute>} />
+                <Route path="/staff/login" element={<StaffLogin />} />
+                <Route path="/staff/dashboard" element={<PrivateRouteStaff><StaffDashboard /></PrivateRouteStaff>} />
+                <Route path="/staff/despacho" element={<PrivateRouteStaff rolesPermitidos={['despachador', 'administrador', 'admin']}><StaffDespacho /></PrivateRouteStaff>} />
+                <Route path="/staff/ordenes" element={<PrivateRouteStaff rolesPermitidos={['vendedor', 'administrador', 'admin']}><StaffOrdenes /></PrivateRouteStaff>} />
                 <Route path="/quienes-somos" element={<QuienesSomos />} />
                 <Route path="/ayuda" element={<Ayuda />} />
                 <Route path="/contacto" element={<Contacto />} />
@@ -119,13 +131,14 @@ function App() {
                 <Route path="/chat/orden/:ordenId" element={<ChatCentro />} />
                 <Route path="/subusuarios" element={<SubUsuarios />} />
                 <Route path="/presupuesto" element={<Presupuesto />} />
-                <Route path="/analytics" element={<AnalyticsVentas />} />
+                <Route path="/analytics" element={<PrivateRoute adminOnly><AnalyticsVentas /></PrivateRoute>} />
               </Routes>
             </LoadingBarProvider>
           </EnvioProvider>
         </FavoritosProvider>
       </CartProvider>
-    </AuthProvider>
+    </StaffAuthProvider>
+  </AuthProvider>
   )
 }
 

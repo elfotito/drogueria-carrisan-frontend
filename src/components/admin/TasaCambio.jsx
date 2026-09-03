@@ -60,7 +60,6 @@ function TasaCambio() {
     const hoy = ahoraVzla.toDateString()
     
     if (ultimaActualizacion !== hoy) {
-      console.log('🕒 Horario BCV detectado, actualizando tasa automáticamente...')
       obtenerTasaYActualizar()
     }
   }

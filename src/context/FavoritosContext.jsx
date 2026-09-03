@@ -1,10 +1,9 @@
 // src/context/FavoritosContext.jsx
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useAuth } from './AuthContext';
+import api from '../api/axios';
 
 const FavoritosContext = createContext();
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
 export function FavoritosProvider({ children }) {
   const [favoritos, setFavoritos] = useState([]);
@@ -20,16 +19,8 @@ export function FavoritosProvider({ children }) {
 
     try {
       setLoading(true);
-      const response = await fetch(`${API_URL}/favoritos`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setFavoritos(data.favoritos || []);
-      }
+      const { data } = await api.get('/favoritos');
+      setFavoritos(data.favoritos || []);
     } catch (error) {
       console.error('Error al cargar favoritos:', error);
     } finally {
@@ -52,29 +43,20 @@ export function FavoritosProvider({ children }) {
     if (!user || !token) return;
 
     try {
-      const response = await fetch(`${API_URL}/favoritos/toggle`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ producto_id: producto.id })
+      const { data } = await api.post('/favoritos/toggle', {
+        producto_id: producto.id
       });
-
-      if (response.ok) {
-        const data = await response.json();
-        
-        if (data.accion === 'eliminado') {
-          // Quitar de favoritos localmente
-          setFavoritos(prev => prev.filter(fav => fav.id !== producto.id));
-        } else {
-          // Agregar a favoritos localmente con la info del producto
-          setFavoritos(prev => [...prev, {
-            ...producto,
-            favorito_id: data.favorito?.id,
-            favorito_creado: new Date().toISOString()
-          }]);
-        }
+      
+      if (data.accion === 'eliminado') {
+        // Quitar de favoritos localmente
+        setFavoritos(prev => prev.filter(fav => fav.id !== producto.id));
+      } else {
+        // Agregar a favoritos localmente con la info del producto
+        setFavoritos(prev => [...prev, {
+          ...producto,
+          favorito_id: data.favorito?.id,
+          favorito_creado: new Date().toISOString()
+        }]);
       }
     } catch (error) {
       console.error('Error al toggle favorito:', error);

@@ -16,10 +16,6 @@ export function validarPassword(password) {
   return { valido: true, error: '' }
 }
 
-export function formatearPasswordAMayuscula(password) {
-  return password.toUpperCase()
-}
-
 /**
  * RIF Médico: V-1234567 o E-1234567
  * 7-9 dígitos después del prefijo

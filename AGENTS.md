@@ -134,8 +134,9 @@ El Admin.jsx usa rutas anidadas. Componentes en `src/components/admin/`:
 
 ## Errores comunes a evitar
 
-1. **No agregar imports en App.jsx sin verificar** que el componente exista. Hay archivos que existen en src/ pero no estan importados en App.jsx (Landing.jsx, por ejemplo).
+1. **No agregar imports en App.jsx sin verificar** que el componente exista. Landing.jsx esta conectado via RootRedirect.jsx — no confundir con un archivo huerfano.
 2. **El AuthContext exporta `login(email, password)`** que retorna el usuario. No confundir con `login` de React Router.
-3. **Chakra UI Provider esta en main.jsx Y en App.jsx** (Toaster duplicado). No duplicar.
+3. **El Chakra Toaster esta en App.jsx.** No duplicar en main.jsx.
 4. **Los PDFs se generan en el frontend** con jsPDF, no en el backend.
 5. **Las validaciones** estan en src/utils/validadores.js y se reusan en Login y todos los registros.
+6. **La ruta `/analytics` esta protegida** con `<PrivateRoute adminOnly>`. No quitar el guard.

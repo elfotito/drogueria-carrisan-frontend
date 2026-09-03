@@ -35,7 +35,7 @@ function CookieConsent() {
           Usamos cookies para que tu experiencia en Droguería Carrisán sea más dulce
           (y para que el carrito no se te olvide). Puedes aceptarlas o rechazarlas.
         </p>
-        <a href="/politica-privacidad" className="cookie-consent__link">
+        <a href="/privacidad" className="cookie-consent__link">
           Política de privacidad
         </a>
       </div>

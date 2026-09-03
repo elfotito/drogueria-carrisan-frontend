@@ -129,8 +129,6 @@ function OrdenDetalle() {
     api
       .get(`/orders/${id}`)
       .then(({ data }) => {
-        console.log('[OrdenDetalle] orden recibida:', data)
-        console.log('[OrdenDetalle] ordenes_items:', data.ordenes_items)
         setOrden(data)
       })
       .catch((err) => {

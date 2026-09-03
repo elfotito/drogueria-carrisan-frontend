@@ -237,7 +237,7 @@ function Navbar() {
   // Helper: mostrar flecha atrás solo en móvil y en ciertas rutas
   const mostrarBackMovil = RUTAS_CON_BACK_MOVIL_PREFIXES.some(p => location.pathname.startsWith(p))
 
-  if (RUTAS_SIN_NAVBAR.includes(location.pathname)) return null
+  if (RUTAS_SIN_NAVBAR.includes(location.pathname) || location.pathname.startsWith('/staff')) return null
 
   function handleBuscar(e) {
     e.preventDefault()

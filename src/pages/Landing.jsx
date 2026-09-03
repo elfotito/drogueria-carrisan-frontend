@@ -666,7 +666,7 @@ function Landing() {
             className="landing-footer__logo"
           />
           <nav className="landing-footer__nav">
-            <Link to="/landing">
+            <Link to="/">
               Inicio
             </Link>
             <a
@@ -772,7 +772,7 @@ function Landing() {
         <Link to="/cuenta">
           Tu cuenta
         </Link>
-        <Link to="/ordenes">
+        <Link to="/orders">
           Tus pedidos
         </Link>
         <Link to="/ayuda">
@@ -800,7 +800,7 @@ function Landing() {
         <Link to="/privacidad">
           Política de privacidad
         </Link>
-        <Link to="/no-discriminacion">
+        <Link to="/privacidad">
           Aviso de no discriminación
         </Link>
       </div>

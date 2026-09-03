@@ -327,8 +327,6 @@ function Home() {
                 link="/catalogo"
               />
             )}
-            {/* ── Explorá por categoría (colocado justo tras el hero) ── */}
-        <ExploraCategorias />
             <HomeCarrusel
               titulo={seccion.titulo}
               productos={seccion.productos}
