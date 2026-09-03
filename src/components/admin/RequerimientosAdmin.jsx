@@ -218,7 +218,7 @@ function RequerimientosAdmin() {
     setCargando(true)
     try {
       const { data } = await api.get('/requerimientos')
-      setRequerimientos(data)
+      setRequerimientos(Array.isArray(data) ? data : [])
     } catch (err) {
       console.error('Error al cargar requerimientos', err)
     } finally {

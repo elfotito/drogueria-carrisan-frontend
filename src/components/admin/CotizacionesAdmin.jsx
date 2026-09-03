@@ -217,7 +217,7 @@ function CotizacionesAdmin() {
     setCargando(true)
     try {
       const { data } = await api.get('/cotizaciones')
-      setCotizaciones(data)
+      setCotizaciones(Array.isArray(data) ? data : [])
     } catch (err) {
       console.error('Error al cargar cotizaciones', err)
     } finally {

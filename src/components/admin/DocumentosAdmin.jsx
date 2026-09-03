@@ -156,7 +156,7 @@ function DocumentosAdmin() {
     setCargando(true)
     try {
       const { data } = await api.get('/documentos')
-      setSolicitudes(data)
+      setSolicitudes(Array.isArray(data) ? data : [])
     } catch (err) {
       console.error('Error al cargar documentos', err)
     } finally {

@@ -25,7 +25,7 @@ function DeliveryAdmin() {
         api.get('/delivery-tarifas'),
         api.get('/orders/delivery-pendientes'),
       ])
-      setTarifas(resTarifas.data)
+      setTarifas(Array.isArray(resTarifas.data) ? resTarifas.data : [])
       setPendientes(resPendientes.data.pendientes || [])
       setEnviadosRecientes(resPendientes.data.enviadosRecientes || [])
       setError('')

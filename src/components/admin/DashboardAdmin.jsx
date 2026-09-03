@@ -72,12 +72,12 @@ function DashboardAdmin({ onIrA }) {
         api.get('/cotizaciones', { params: { estado: 'pendiente' } }),
         api.get('/requerimientos', { params: { estado: 'pendiente' } }),
       ])
-      setOrdenes(ordenesRes.data)
-      setUsuarios(usuariosRes.data)
-      setClientes(clientesRes.data)
-      setReportesPago(reportesRes.data)
-      setCotizacionesPendientes(cotizacionesRes.data)
-      setRequerimientosPendientes(requerimientosRes.data)
+      setOrdenes(Array.isArray(ordenesRes.data) ? ordenesRes.data : [])
+      setUsuarios(Array.isArray(usuariosRes.data) ? usuariosRes.data : [])
+      setClientes(Array.isArray(clientesRes.data) ? clientesRes.data : [])
+      setReportesPago(Array.isArray(reportesRes.data) ? reportesRes.data : [])
+      setCotizacionesPendientes(Array.isArray(cotizacionesRes.data) ? cotizacionesRes.data : [])
+      setRequerimientosPendientes(Array.isArray(requerimientosRes.data) ? requerimientosRes.data : [])
     } catch (err) {
       setError('No se pudo cargar el resumen del panel')
       console.error(err)
