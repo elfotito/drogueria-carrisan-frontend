@@ -710,3 +710,25 @@
     }
   }
 }
+
+.filtro-molecula-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #c7cbd6;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-family: 'Inter', sans-serif;
+  color: #14182A;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+  margin-top: 12px;
+}
+
+.filtro-molecula-input:focus {
+  border-color: #1B4B8F;
+}
+
+.filtro-molecula-input::placeholder {
+  color: #74767c;
+}
