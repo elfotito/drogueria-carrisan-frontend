@@ -109,7 +109,8 @@ function Home() {
     api
       .get('/products')
       .then((res) => {
-        const activos = res.data.filter((p) => p.activo)
+        const lista = Array.isArray(res.data) ? res.data : (res.data.productos || [])
+        const activos = lista.filter((p) => p.activo)
         setTodosProductos(activos)
         setOfertas(activos.filter((p) => p.descuento_activo).slice(0, 12))
         setSecciones(agruparPorLinea(activos))
