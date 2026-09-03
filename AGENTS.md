@@ -160,9 +160,9 @@ El personal de la empresa (vendedor, despachador, administrador, admin) NO usa e
 | /staff/login | publico | funcional | Login interno (email+password), usa Auth.css |
 | /staff/dashboard | PrivateRouteStaff | funcional | Cards filtradas por rol + boton admin-bridge |
 | /staff/despacho | roles: despachador/admin | funcional | Cola de ordenes 'enviado' + marcar entregado |
-| /staff/ordenes | roles: vendedor/admin | PLACEHOLDER | Pendiente de construir |
+| /staff/ordenes | roles: vendedor/admin | funcional | Crear orden a nombre de un cliente (buscar cliente, tipo de envio + direccion delivery, items, POST /staff/ordenes). CSS propio `StaffOrdenes.css`. |
 
-**Pendiente (StaffOrdenes)**: crear pedido a nombre de un cliente. El backend ya expone los endpoints RBAC-guarded: `GET /staff/clientes?buscar=`, `GET /staff/clientes/:id/direcciones`, `POST /staff/ordenes`. Falta construir: buscador de cliente, selector de direccion, tabla de items/carrito, y el POST que reusa la validacion de credito/stock del checkout (errores estructurados tipo `ErrorOrden`).
+La pagina de crear orden a cliente (StaffOrdenes) usa **staffApi** (no el `api` de clientes) y los endpoints `/staff/*`: `GET /staff/clientes?buscar=`, `GET /staff/clientes/:id/direcciones`, `POST /staff/ordenes`. El campo `creado_por_staff_id` lo agrega el backend, no el frontend. Los errores de validacion llegan estructurados (credito/stock) y se muestran como toast en pantalla.
 
 ## CSS responsive — Auth pages
 
