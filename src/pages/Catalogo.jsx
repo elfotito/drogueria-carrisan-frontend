@@ -43,7 +43,8 @@ function Catalogo() {
   const [soloDisponibles, setSoloDisponibles] = useState(false)
   const [precioMin, setPrecioMin] = useState('')
   const [precioMax, setPrecioMax] = useState('')
-
+  const [moleculaInput, setMoleculaInput] = useState('')
+const [moleculaActiva, setMoleculaActiva] = useState('')
   const [laboratoriosDisponibles, setLaboratoriosDisponibles] = useState([])
   const [formasDisponibles, setFormasDisponibles] = useState([])
 
