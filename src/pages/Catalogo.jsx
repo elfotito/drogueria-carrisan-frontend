@@ -318,6 +318,27 @@ useEffect(() => {
               )}
             </div>
 
+<div className="filtro-seccion">
+  <button className="filtro-accordion-btn" onClick={() => toggleSeccion('molecula')}>
+    <span>Principio activo</span>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+      style={{ transform: seccionesAbiertas.molecula ? 'rotate(180deg)' : 'none' }}>
+      <polyline points="6 9 12 15 18 9"></polyline>
+    </svg>
+  </button>
+  {seccionesAbiertas.molecula && (
+    <div className="filtro-content">
+      <input
+        type="text"
+        placeholder="Ej. Paracetamol, Ibuprofeno..."
+        value={moleculaInput}
+        onChange={(e) => setMoleculaInput(e.target.value)}
+        className="filtro-molecula-input"
+      />
+    </div>
+  )}
+</div>
+
             {/* Laboratorio */}
             <div className="filtro-seccion">
               <button className="filtro-accordion-btn" onClick={() => toggleSeccion('laboratorio')}>
@@ -532,6 +553,27 @@ useEffect(() => {
                 </div>
               )}
             </div>
+
+<div className="filtro-seccion">
+  <button className="filtro-accordion-btn" onClick={() => toggleSeccion('molecula')}>
+    <span>Principio activo</span>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+      style={{ transform: seccionesAbiertas.molecula ? 'rotate(180deg)' : 'none' }}>
+      <polyline points="6 9 12 15 18 9"></polyline>
+    </svg>
+  </button>
+  {seccionesAbiertas.molecula && (
+    <div className="filtro-content">
+      <input
+        type="text"
+        placeholder="Ej. Paracetamol, Ibuprofeno..."
+        value={moleculaInput}
+        onChange={(e) => setMoleculaInput(e.target.value)}
+        className="filtro-molecula-input"
+      />
+    </div>
+  )}
+</div>
 
             {/* Laboratorio */}
             <div className="filtro-seccion">
