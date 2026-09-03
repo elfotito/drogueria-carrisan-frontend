@@ -70,6 +70,11 @@ useEffect(() => {
   return () => window.removeEventListener('resize', handleResize)
 }, [])
 
+useEffect(() => {
+  const t = setTimeout(() => setMoleculaActiva(moleculaInput.trim()), 400)
+  return () => clearTimeout(t)
+}, [moleculaInput])
+
   // ── Metadata de filtros (laboratorios/formas) — un solo fetch ligero ──
   useEffect(() => {
     api
@@ -93,8 +98,9 @@ useEffect(() => {
     if (soloDisponibles) params.disponible = 'true'
     if (precioMin !== '') params.precio_min = precioMin
     if (precioMax !== '') params.precio_max = precioMax
+    if (moleculaActiva) params.molecula = moleculaActiva
     return params
-  }, [searchTerm, sort, categoriaActiva, laboratoriosActivos, formasActivas, soloDisponibles, precioMin, precioMax])
+  }, [searchTerm, sort, categoriaActiva, laboratoriosActivos, formasActivas, soloDisponibles, precioMin, precioMax, moleculaActiva])
 
   // Carga una página determinada. Si `reset` es true, reemplaza la lista
   // (primera página); si es false, agrega al final (infinite scroll).
@@ -127,7 +133,7 @@ useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     cargarPagina({ page: 1, reset: true })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchTerm, sort, categoriaActiva, laboratoriosActivos, formasActivas, soloDisponibles, precioMin, precioMax])
+  }, [searchTerm, sort, categoriaActiva, laboratoriosActivos, formasActivas, soloDisponibles, precioMin, precioMax, moleculaActiva])
 
   // Tasa de cambio ves — global, se carga una sola vez.
   useEffect(() => {
@@ -174,6 +180,7 @@ useEffect(() => {
     setSoloDisponibles(false)
     setPrecioMin('')
     setPrecioMax('')
+    setMoleculaInput('')
   }
 
   function scrollCarrusel(direccion) {
@@ -190,6 +197,7 @@ useEffect(() => {
     soloDisponibles ||
     precioMin !== '' ||
     precioMax !== ''
+    moleculaActiva !== ''
 
   return (
     <div className="catalogo-layout">
