@@ -86,7 +86,25 @@
   color: #232B45;
 }
 
-.staff-dashboard-card-desc {
-  font-size: 13px;
-  color: #6b7280;
+.staff-dashboard-card--boton {
+  border: 1.5px solid #e5e7eb;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.staff-dashboard-card--boton:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.staff-dashboard-error {
+  max-width: 720px;
+  margin: 0 auto 16px;
+  color: #DC2626;
+  background: rgba(220, 38, 38, 0.08);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
 }

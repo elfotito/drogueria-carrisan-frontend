@@ -254,12 +254,13 @@ function Login() {
             <Link to="/terminos">Términos de uso</Link>
             <Link to="/privacidad">Aviso de privacidad</Link>
             <Link to="/contacto">Soporte</Link>
+             <Link to="/staff/login" className="auth-footer-staff-link">
+                                  Acceso de personal
+              </Link>
           </div>
           <span className="auth-footer-rif">RIF J-40068410-2</span>
         </div>
-        <Link to="/staff/login" className="auth-footer-staff-link">
-          Acceso de personal
-        </Link>
+       
         
       </footer>
     </div>
