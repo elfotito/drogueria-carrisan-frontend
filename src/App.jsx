@@ -79,6 +79,7 @@ function App() {
           <EnvioProvider>
             <ScrollToTop />
             <LoadingBarProvider>
+              <PwaScopeSwitcher />
               <Navbar />
               <ScrollToTopFloat />
               <LoadingBarBridge />

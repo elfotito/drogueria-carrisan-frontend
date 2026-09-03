@@ -26,23 +26,28 @@ npm run preview  # Preview del build
 
 ```
 src/
-├── api/axios.js              # Instancia de Axios con interceptores (auth, loading bar, 401 redirect)
+├── api/
+│   ├── axios.js              # Instancia de Axios del CLIENTE (token localStorage 'token')
+│   └── staffAxios.js         # Instancia de Axios del STAFF (token localStorage 'staff_token') — sesion separada
 ├── assets/                   # Imagenes, logos, favicon
 ├── components/               # Componentes reutilizables
 │   ├── admin/                # Componentes del panel admin (~33 archivos)
 │   ├── icons/                # Iconos custom
 │   ├── paginas-principales/  # Layouts de navegacion
 │   ├── registro/             # Stepper, Selectores de estado/ciudad, Turnstile, SubidaArchivos
-│   └── ui/                   # Wrappers de Chakra UI (provider, toaster, tooltip)
+│   ├── ui/                   # Wrappers de Chakra UI (provider, toaster, tooltip)
+│   └── PrivateRouteStaff.jsx # Guard de staff: sesion staff + rolesPermitidos opcional
 ├── config/empresa.js         # Datos estaticos de la empresa
 ├── context/                  # React Contexts
-│   ├── AuthContext.jsx        # JWT + sesion + expiracion
+│   ├── AuthContext.jsx        # CLIENTE: JWT + sesion + expiracion (user.es_admin)
+│   ├── StaffAuthContext.jsx   # STAFF: JWT + sesion separada (staff.rol)
 │   ├── CartContext.jsx        # Carrito de compras
 │   ├── EnvioContext.jsx       # Gestion de envios/direcciones
 │   ├── FavoritosContext.jsx   # Lista de favoritos
 │   └── LoadingBarContext.jsx  # Barra de carga superior
 ├── hooks/                    # Custom hooks (useEsMobile, usePush)
 ├── pages/                    # Paginas (~44 archivos)
+│   └── staff/                # StaffLogin, StaffDashboard, StaffDespacho, StaffOrdenes (+ CSS)
 ├── utils/                    # Helpers (validadores, generadores de PDF, etc.)
 ├── App.jsx                   # Router principal (Routes)
 ├── main.jsx                  # Entry point (BrowserRouter + Provider Chakra)
@@ -52,16 +57,18 @@ src/
 ## Arquitectura de componentes
 
 ### Contexts — Providers en App.jsx (orden de anidamiento)
-1. AuthProvider — JWT, login/logout, user state
-2. CartProvider — carrito de compras
-3. FavoritosProvider — productos favoritos
-4. EnvioProvider — direcciones de envio
-5. LoadingBarProvider — barra de progreso superior
+1. AuthProvider — CLIENTE: JWT, login/logout, user state (user.es_admin)
+2. StaffAuthProvider — STAFF: sesion interna separada (staff.rol)
+3. CartProvider — carrito de compras
+4. FavoritosProvider — productos favoritos
+5. EnvioProvider — direcciones de envio
+6. LoadingBarProvider — barra de progreso superior
 
 ### Rutas protegidas
 - `<PrivateRoute>` — Requiere autenticacion (cualquier usuario logueado)
 - `<PrivateRouteSensible>` — Requiere auth + puede tener restricciones adicionales
 - `<PrivateRoute adminOnly>` — Solo admin
+- `<PrivateRouteStaff>` — Requiere sesion staff (+ `rolesPermitidos` opcional)
 
 ### Registro — 3 formularios independientes
 - `/registro` → RegistroConTipo (selector de tipo)
@@ -124,6 +131,38 @@ El Admin.jsx usa rutas anidadas. Componentes en `src/components/admin/`:
 - Service worker en src/sw.js
 - Workbox para caching (precaching + strategies)
 - Manifest: Drogueria Carrisan, theme #0052DC
+- PWA staff separada: `public/manifest-staff.json` (scope /staff/, start_url /staff/login) + iconos `staff-*.png`
+  - OJO: `PwaScopeSwitcher` (cambia manifest/titulo/icono segun la ruta sea /staff) esta importado en App.jsx pero NO montado — el swap de la PWA staff NO funciona actualmente.
+
+## Autenticacion de personal interno (staff) — Frontend
+
+El personal de la empresa (vendedor, despachador, administrador, admin) NO usa el login de clientes (`/auth/login`). Tiene su propio flujo bajo `/staff` (login separado, como en el backend).
+
+- **Dos sesiones independientes en el mismo navegador** (coexisten sin pisarse):
+  - Cliente: `localStorage.token` + `localStorage.user` → AuthContext, gates con `user.es_admin`
+  - Staff: `localStorage.staff_token` + `localStorage.staff_user` → StaffAuthContext, `staff.rol`
+  - Claves de localStorage, contexts y axios distintos. Nunca mezclar `useAuth` con `useStaffAuth`.
+
+- **API layer**: `src/api/staffAxios.js` es una instancia axios separada que lee `staff_token`. Ante un 401 (excepto en `/staff/login`) limpia la sesion y redirige a `/staff/login?expirado=1`. NO usa la loading bar de `axios.js` (esa barra solo funciona en el cliente).
+
+- **StaffAuthContext** exporta: `{ staff, token, loading, loginStaff, logoutStaff }`. `loginStaff(email,password)` hace POST `/staff/login` y guarda `data.token` + `data.staff`.
+
+- **Guard**: `<PrivateRouteStaff rolesPermitidos={[...]}>` envuelve las paginas staff. Sin `rolesPermitidos` solo exige sesion staff; con roles redirige a `/staff/dashboard` si el `staff.rol` no coincide. El Navbar se oculta en cualquier ruta `/staff/*` (ver Navbar.jsx).
+
+- **Admin bridge** (boton "Administrativo" en StaffDashboard): POST `/staff/admin-bridge` devuelve un JWT de CLIENTE valido (mismo formato que `/auth/login`) para la cuenta `users` cuyo email coincida y tenga `es_admin=true`. El frontend escribe `token` + `user` en localStorage del cliente y hace `window.location.href='/admin'` (recarga completa a proposito — AuthContext ya montado no relee localStorage; un `navigate` no bastaria). El staff debe tener una cuenta cliente con `es_admin=true` con el MISMO email para poder entrar a `/admin`.
+
+- **PWA staff**: ver seccion PWA arriba. El swap requiere montar `<PwaScopeSwitcher/>`.
+
+## Paginas staff (dentro de /staff)
+
+| Ruta | Guard | Estado | Descripcion |
+|------|-------|--------|-------------|
+| /staff/login | publico | funcional | Login interno (email+password), usa Auth.css |
+| /staff/dashboard | PrivateRouteStaff | funcional | Cards filtradas por rol + boton admin-bridge |
+| /staff/despacho | roles: despachador/admin | funcional | Cola de ordenes 'enviado' + marcar entregado |
+| /staff/ordenes | roles: vendedor/admin | PLACEHOLDER | Pendiente de construir |
+
+**Pendiente (StaffOrdenes)**: crear pedido a nombre de un cliente. El backend ya expone los endpoints RBAC-guarded: `GET /staff/clientes?buscar=`, `GET /staff/clientes/:id/direcciones`, `POST /staff/ordenes`. Falta construir: buscador de cliente, selector de direccion, tabla de items/carrito, y el POST que reusa la validacion de credito/stock del checkout (errores estructurados tipo `ErrorOrden`).
 
 ## CSS responsive — Auth pages
 
@@ -140,3 +179,5 @@ El Admin.jsx usa rutas anidadas. Componentes en `src/components/admin/`:
 4. **Los PDFs se generan en el frontend** con jsPDF, no en el backend.
 5. **Las validaciones** estan en src/utils/validadores.js y se reusan en Login y todos los registros.
 6. **La ruta `/analytics` esta protegida** con `<PrivateRoute adminOnly>`. No quitar el guard.
+7. **Staff ≠ cliente.** No mezclar `useAuth`/`api` con `useStaffAuth`/`staffApi`. Usa `staffApi` para endpoints `/staff` y `api` para `/auth` y el resto. Nunca llamar `useAuth().login()` desde una pagina staff (eso seria el login de cliente, no staff).
+8. **PwaScopeSwitcher no esta montado** — no asumas que el swap de manifest staff funciona; requiere montarlo en App.jsx. Al montarlo, verificar que exista el componente (ver Error #1).
