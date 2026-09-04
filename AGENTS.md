@@ -47,7 +47,7 @@ src/
 │   └── LoadingBarContext.jsx  # Barra de carga superior
 ├── hooks/                    # Custom hooks (useEsMobile, usePush)
 ├── pages/                    # Paginas (~44 archivos)
-│   └── staff/                # StaffLogin, StaffDashboard, StaffDespacho, StaffOrdenes (+ CSS)
+│   └── staff/                # StaffLogin, StaffDashboard (panel sin sidebar), StaffAlmacen, StaffContabilidad, StaffDespacho, StaffOrdenes (+ CSS por página)
 ├── utils/                    # Helpers (validadores, generadores de PDF, etc.)
 ├── App.jsx                   # Router principal (Routes)
 ├── main.jsx                  # Entry point (BrowserRouter + Provider Chakra)
@@ -132,11 +132,11 @@ El Admin.jsx usa rutas anidadas. Componentes en `src/components/admin/`:
 - Workbox para caching (precaching + strategies)
 - Manifest: Drogueria Carrisan, theme #0052DC
 - PWA staff separada: `public/manifest-staff.json` (scope /staff/, start_url /staff/login) + iconos `staff-*.png`
-  - OJO: `PwaScopeSwitcher` (cambia manifest/titulo/icono segun la ruta sea /staff) esta importado en App.jsx pero NO montado — el swap de la PWA staff NO funciona actualmente.
+  - `PwaScopeSwitcher` (cambia manifest/titulo/icono segun la ruta sea /staff) esta montado en App.jsx → el swap de PWA staff funciona.
 
 ## Autenticacion de personal interno (staff) — Frontend
 
-El personal de la empresa (vendedor, despachador, administrador, admin) NO usa el login de clientes (`/auth/login`). Tiene su propio flujo bajo `/staff` (login separado, como en el backend).
+El personal de la empresa (vendedor, despachador, almacenista, contabilidad, administrador, director, admin) NO usa el login de clientes (`/auth/login`). Tiene su propio flujo bajo `/staff` (login separado, como en el backend).
 
 - **Dos sesiones independientes en el mismo navegador** (coexisten sin pisarse):
   - Cliente: `localStorage.token` + `localStorage.user` → AuthContext, gates con `user.es_admin`
@@ -149,22 +149,68 @@ El personal de la empresa (vendedor, despachador, administrador, admin) NO usa e
 
 - **Guard**: `<PrivateRouteStaff rolesPermitidos={[...]}>` envuelve las paginas staff. Sin `rolesPermitidos` solo exige sesion staff; con roles redirige a `/staff/dashboard` si el `staff.rol` no coincide. El Navbar se oculta en cualquier ruta `/staff/*` (ver Navbar.jsx).
 
-- **Admin bridge** (boton "Administrativo" en StaffDashboard): POST `/staff/admin-bridge` devuelve un JWT de CLIENTE valido (mismo formato que `/auth/login`) para la cuenta `users` cuyo email coincida y tenga `es_admin=true`. El frontend escribe `token` + `user` en localStorage del cliente y hace `window.location.href='/admin'` (recarga completa a proposito — AuthContext ya montado no relee localStorage; un `navigate` no bastaria). El staff debe tener una cuenta cliente con `es_admin=true` con el MISMO email para poder entrar a `/admin`.
+- **LayoutStaff + NavStaff** (`src/components/staff/`): sidebar persistente (desktop ≥1024px) / drawer móvil. `NavStaff.js` define `ROLES_BRIDGE_ADMIN` (roles `administrador`, `director`, `admin`) y las estructuras de departamentos. Cada ítem se filtra con `item.roles.includes(staff.rol)`. El `director` ve todos los módulos.
+
+- **Categorización por departamentos** (ver sección "Categorización por departamentos (staff)" abajo): el `StaffDashboard` ya NO usa sidebar — es un panel visual standalone con tarjetas de departamento. Las páginas de trabajo (`/staff/almacen`, `/staff/despacho`, `/staff/contabilidad`, `/staff/ordenes`) usan `LayoutDepartamento` (sidebar filtrado al departamento activo, con color propio por depto). `LayoutStaff` queda como legacy sin uso activo.
+
+- **Admin bridge**: POST `/staff/admin-bridge` devuelve un JWT de CLIENTE valido (mismo formato que `/auth/login`) para la cuenta `users` cuyo email coincida y tenga `es_admin=true`. El frontend escribe `token` + `user` en localStorage del cliente y hace `window.location.href='/admin'` (recarga completa a proposito — AuthContext ya montado no relee localStorage; un `navigate` no bastaria). El staff debe tener una cuenta cliente con `es_admin=true` con el MISMO email para poder entrar a `/admin`. El botón aparece en el dashboard (tarjeta "Panel administrativo") y también en el nav de `LayoutDepartamento` (grupo "Administración").
 
 - **PWA staff**: ver seccion PWA arriba. El swap requiere montar `<PwaScopeSwitcher/>`.
 
+## Categorización por departamentos (staff)
+
+Desde 2026-09-04 el módulo staff se organiza en **3 departamentos**: `finanzas`, `comercial` y `logistica`. Cada departamento tiene color, icono y descripción propios; los módulos se agrupan bajo su departamento, y el sidebar solo muestra los módulos del departamento en el que estás.
+
+### Estructura de datos — `src/components/staff/NavStaff.js`
+
+- `DEPARTAMENTOS` — metadata visual de los 3 deptos: `{ id, nombre, descripcion, color, colorStrong, colorLight, icono }`. Lo usa el `StaffDashboard` para renderizar las tarjetas.
+  - **Finanzas** → `#0D9373` (verde/teal), icono `Landmark`
+  - **Comercial** → `#2563EB` (azul), icono `TrendingUp`
+  - **Logística** → `#D97706` (naranja), icono `Truck`
+- `MODULOS` — objeto `{ finanzas: [...], comercial: [...], logistica: [...] }`. Cada depto es un array de grupos con `{ titulo, items: [{ id, to, icono, texto, roles }] }`. **Aquí se agregan los módulos NUEVOS** (ej. crédito y cobranza en finanzas, proveedores en comercial, inventario en logística); cada item declara a qué roles es visible.
+- `ROLES_BRIDGE_ADMIN` = `['administrador', 'director', 'admin']` — ven el botón al panel `/admin`.
+- `NAV_STAFF` — array legacy "aplanado" (General + todos los grupos), usado solo por `LayoutStaff` (sin uso activo).
+
+### Páginas y layouts
+
+| Pieza | Archivos | Comportamiento |
+|-------|----------|----------------|
+| **StaffDashboard** (`/staff/dashboard`) | `pages/staff/StaffDashboard.jsx` + `.css` | **Standalone, SIN sidebar.** Header con brand + usuario + logout, hero con gradiente corporativo (#1B4B8F) y tarjetas de departamento (un `Link` por depto → navega al **primer módulo accesible** del depto). Cada tarjeta lista chips con los módulos visibles para el rol. Tarjeta "Panel administrativo" aparte (solo roles bridge). |
+| **StaffDepartamento** (`/staff/finanzas` · `/staff/comercial` · `/staff/logistica`) | `pages/staff/StaffDepartamento.jsx` + `.css` | Hub/landing del depto. Reutiliza `LayoutDepartamento` (sin módulo activo) y muestra su hero (icono + nombre + color vía `--ldep-*`) + tarjetas de los módulos visibles para el rol (usa el campo `desc` de cada item). Sin módulos visibles → `<Navigate>` al dashboard. Los `Link` del `StaffDashboard` apuntan a estos hubs. |
+| **LayoutDepartamento** | `components/staff/LayoutDepartamento.jsx` + `.css` | `<LayoutDepartamento departamento="logistica" activo="almacen" titulo="...">`. Sidebar del depto (solo sus módulos, filtrados por rol) + header de depto (icono + nombre) + "Volver al dashboard" + botón bridge en el nav. Inyecta las variables CSS `--ldep-color`, `--ldep-color-strong`, `--ldep-color-soft` desde `DEPARTAMENTOS`. Drawer móvil igual que el LayoutStaff original. |
+
+### Rutas (sin cambios de path)
+
+| Ruta | Layout | Departamento |
+|------|--------|--------------|
+| `/staff/dashboard` | ninguno (standalone) | — |
+| `/staff/finanzas` | LayoutDepartamento (`activo=""`) | Hub Finanzas |
+| `/staff/comercial` | LayoutDepartamento (`activo=""`) | Hub Comercial |
+| `/staff/logistica` | LayoutDepartamento (`activo=""`) | Hub Logística |
+| `/staff/almacen` | LayoutDepartamento | `logistica` (`activo="almacen"`) |
+| `/staff/despacho` | LayoutDepartamento | `logistica` (`activo="despacho"`) |
+| `/staff/ordenes` | LayoutDepartamento | `comercial` (`activo="ordenes"`) |
+| `/staff/contabilidad` | LayoutDepartamento | `finanzas` (`activo="contabilidad"`) |
+
+**Regla:** las páginas de trabajo usan `LayoutDepartamento` (nunca `LayoutStaff`). El `activo` del layout debe coincidir con el `id` del item en `MODULOS` para marcar el link activo del sidebar. Los roles finos por submódulo se definen en el campo `roles` de cada item (aún en evolución).
+
 ## Paginas staff (dentro de /staff)
 
-| Ruta | Guard | Estado | Descripcion |
-|------|-------|--------|-------------|
-| /staff/login | publico | funcional | Login interno (email+password), usa Auth.css |
-| /staff/dashboard | PrivateRouteStaff | funcional | Cards filtradas por rol + boton admin-bridge |
-| /staff/despacho | roles: despachador/admin | funcional | Cola de ordenes 'enviado' + marcar entregado |
-| /staff/ordenes | roles: vendedor/admin | funcional | Crear orden a nombre de un cliente (buscar cliente, tipo de envio + direccion delivery, items, POST /staff/ordenes). CSS propio `StaffOrdenes.css`. |
+| Ruta | Guard | Departamento | Estado | Descripcion |
+|------|-------|--------------|--------|-------------|
+| /staff/login | publico | — | funcional | Login interno (email+password), usa Auth.css |
+| /staff/registro | publico | — | funcional | Registro de personal con código de invitación staff (`StaffRegistro.jsx` + `StaffRegistro.css`): verifica el código via `/auth/verificar-codigo {tipo:'staff'}`, formula (email, nombre, password, Turnstile), POST `/staff/registro` → auto-login (iniciarSesionConDatos) → /staff/dashboard |
+| /staff/dashboard | PrivateRouteStaff | — | funcional | Panel visual standalone (sin sidebar): tarjetas de departamento + boton admin-bridge (`StaffDashboard.css`) |
+| /staff/almacen | roles: almacenista/administrador/director/admin | Logística | funcional | **2 tabs**: "Por revisar" (cola `pedido_creado`; stepper +/− de cantidades, toggle "Anular (agotado)" con nota, total recalculado en vivo; "Aprobar pedido"/"Cancelar pedido" con confirmación) y "Por preparar" (cola `procesando`+`preparando`; dirección/agencia, items anulados tachados; "Marcar como enviado"/"Cancelar" con confirmación) (`StaffAlmacen.css`) |
+| /staff/contabilidad | roles: contabilidad/administrador/director/admin | Finanzas | funcional | Estado de cuenta, pagos, facturas, reportes de pago en sub-tabs + tab **"Por cobrar"** (`StaffContabilidad.css`) |
+| /staff/despacho | roles: despachador/administrador/director/admin | Logística | funcional | Cola de ordenes 'enviado' + marcar entregado |
+| /staff/ordenes | roles: vendedor/administrador/director/admin | Comercial | funcional | Crear orden a nombre de un cliente (buscar cliente, tipo de envio + direccion delivery, items, POST /staff/ordenes). CSS propio `StaffOrdenes.css`. |
 
-**Plan de módulos staff por rol (incl. rol `preparador`, estadísticas separadas, proveedores):** ver `analisis/plan-modulos-staff-por-rol.md` (raíz del repo). Principio: los endpoints NUEVOS de operación van bajo `/staff/*` (sesión staff); el panel `/admin` queda solo para el dueño vía bridge.
+**Plan de módulos staff por rol (el módulo de aprobación/confirmación de órdenes YA está implementado — ver `analisis/2026-09-04-aprobacion-ordenes-almacenista-*.md`):** ver `analisis/plan-modulos-staff-por-rol.md` (raíz del repo). Hubs por departamento ✅ (`analisis/plan-paginas-staff-departamentos.md`). **Inventario ⏸️ aplazado** hasta definir el flujo de trabajo en la empresa. Siguientes: Fase 2 Comercial (presupuestos, proveedores/compras), Fase 3 Finanzas (crédito y cobranza, cuentas por cobrar/pagar, tesorería), Fase 4 (precios, promociones, marketing — solo gestión). Los módulos nuevos se agregan como items en `MODULOS`. Principio: los endpoints NUEVOS de operación van bajo `/staff/*` (sesión staff); el panel `/admin` queda solo para el dueño vía bridge.
 
 La pagina de crear orden a cliente (StaffOrdenes) usa **staffApi** (no el `api` de clientes) y los endpoints `/staff/*`: `GET /staff/clientes?buscar=`, `GET /staff/clientes/:id/direcciones`, `POST /staff/ordenes`. El campo `creado_por_staff_id` lo agrega el backend, no el frontend. Los errores de validacion llegan estructurados (credito/stock) y se muestran como toast en pantalla.
+
+`StaffAlmacen.jsx` y `StaffContabilidad.jsx` también usan **staffApi** (`/staff/almacen/*` y `/staff/contabilidad/*`). Patrón compartido: helpers de formato (`formatUSD`, `formatFecha`) definidos al inicio del archivo, tabs con estado local en el componente padre, y un subcomponente por tab (`TabPorRevisar`, `TabPorPreparar`, `TabPorCobrar`, etc.) que recibe `ordenes` y un `onRecargar`. Los "cancelar"/"destructivos" usan `window.confirm` (mismo patrón que el resto del staff). CSS plain por página.
 
 ## CSS responsive — Auth pages
 

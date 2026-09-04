@@ -41,13 +41,20 @@ export function StaffAuthProvider({ children }) {
     setLoading(false);
   }, [token]);
 
+  // Guarda una sesión staff ya autenticada ({ token, staff }). Lo usa el
+  // login y también el registro staff (el backend devuelve token+staff y
+  // así se evita un doble POST).
+  function iniciarSesionConDatos({ token, staff }) {
+    localStorage.setItem('staff_token', token);
+    localStorage.setItem('staff_user', JSON.stringify(staff));
+    setToken(token);
+    setStaff(staff);
+    return staff;
+  }
+
   async function loginStaff(email, password) {
     const { data } = await staffApi.post('/staff/login', { email, password });
-    localStorage.setItem('staff_token', data.token);
-    localStorage.setItem('staff_user', JSON.stringify(data.staff));
-    setToken(data.token);
-    setStaff(data.staff);
-    return data.staff;
+    return iniciarSesionConDatos(data);
   }
 
   function logoutStaff() {
@@ -58,7 +65,7 @@ export function StaffAuthProvider({ children }) {
   }
 
   return (
-    <StaffAuthContext.Provider value={{ staff, token, loading, loginStaff, logoutStaff }}>
+    <StaffAuthContext.Provider value={{ staff, token, loading, loginStaff, logoutStaff, iniciarSesionConDatos }}>
       {children}
     </StaffAuthContext.Provider>
   );

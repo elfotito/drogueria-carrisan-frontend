@@ -12,6 +12,8 @@ import {
   IconButton,
   Input,
   HStack,
+  Select,
+  ButtonGroup,
 } from '@chakra-ui/react'
 import {
   Plus,
@@ -25,6 +27,18 @@ import api from '../../api/axios'
 import { toaster } from '../ui/toaster'
 
 const AZUL = '#0052DC'
+
+const ROLES_STAFF = [
+  { valor: 'vendedor', etiqueta: 'Vendedor' },
+  { valor: 'despachador', etiqueta: 'Despachador' },
+  { valor: 'almacenista', etiqueta: 'Almacenista' },
+  { valor: 'contabilidad', etiqueta: 'Contabilidad' },
+  { valor: 'administrador', etiqueta: 'Administrador' },
+  { valor: 'director', etiqueta: 'Director' },
+  { valor: 'admin', etiqueta: 'Admin' },
+]
+
+const ETIQUETA_ROL = Object.fromEntries(ROLES_STAFF.map((r) => [r.valor, r.etiqueta]))
 
 function formatoFecha(iso) {
   if (!iso) return '—'
@@ -40,6 +54,8 @@ function GestionCodigos() {
   const [cargando, setCargando] = useState(true)
   const [generando, setGenerando] = useState(false)
   const [cantidad, setCantidad] = useState(1)
+  const [tipo, setTipo] = useState('honorifico')
+  const [rolStaff, setRolStaff] = useState('vendedor')
   const [copiado, setCopiado] = useState(null)
 
   const cargarDatos = useCallback(async () => {
@@ -68,7 +84,11 @@ function GestionCodigos() {
   async function generarCodigos() {
     setGenerando(true)
     try {
-      const { data } = await api.post('/admin/codigos-invitacion', { cantidad })
+      const { data } = await api.post('/admin/codigos-invitacion', {
+        cantidad,
+        tipo,
+        rol_staff: tipo === 'staff' ? rolStaff : undefined,
+      })
       const nuevos = data.codigos || []
       await cargarDatos()
       toaster.create({
@@ -135,7 +155,7 @@ function GestionCodigos() {
     <Box maxW="1000px">
       <Box mb={6}>
         <Heading as="h2" size="lg" mb={1}>🔑 Gestionar códigos</Heading>
-        <Text color="gray.600">Genera y administra códigos de invitación honorífica</Text>
+        <Text color="gray.600">Genera y administra códigos de invitación (honorífica y staff)</Text>
       </Box>
 
       {/* Tarjetas de estadísticas */}
@@ -161,9 +181,44 @@ function GestionCodigos() {
           <Text fontWeight="600" fontSize="md">Generar código de invitación</Text>
         </HStack>
         <Text color="gray.500" fontSize="sm" mb={4}>
-          Los códigos son alfanuméricos de 6 caracteres, de un solo uso y expiran a las 48 horas.
+          Los códigos son alfanuméricos de 6 caracteres, de un solo uso y expiran a las 48 horas. Los de
+          tipo Staff además fijan el rol con el que la persona queda registrada.
         </Text>
         <Flex gap={3} align="end" wrap="wrap">
+          <Box>
+            <Text fontSize="sm" color="gray.600" mb={1}>Tipo</Text>
+            <ButtonGroup size="sm" isAttached>
+              <Button
+                variant={tipo === 'honorifico' ? 'solid' : 'outline'}
+                colorScheme={tipo === 'honorifico' ? 'teal' : 'gray'}
+                onClick={() => setTipo('honorifico')}
+              >
+                Honorífico
+              </Button>
+              <Button
+                variant={tipo === 'staff' ? 'solid' : 'outline'}
+                colorScheme={tipo === 'staff' ? 'blue' : 'gray'}
+                onClick={() => setTipo('staff')}
+              >
+                Staff
+              </Button>
+            </ButtonGroup>
+          </Box>
+          {tipo === 'staff' && (
+            <Box>
+              <Text fontSize="sm" color="gray.600" mb={1}>Rol del personal</Text>
+              <Select
+                value={rolStaff}
+                onChange={(e) => setRolStaff(e.target.value)}
+                width="180px"
+                aria-label="Rol del personal"
+              >
+                {ROLES_STAFF.map((r) => (
+                  <option key={r.valor} value={r.valor}>{r.etiqueta}</option>
+                ))}
+              </Select>
+            </Box>
+          )}
           <Box>
             <Text fontSize="sm" color="gray.600" mb={1}>Cantidad</Text>
             <Input
@@ -209,6 +264,7 @@ function GestionCodigos() {
                 <Table.Row>
                   <Table.ColumnHeader>Código</Table.ColumnHeader>
                   <Table.ColumnHeader>Estado</Table.ColumnHeader>
+                  <Table.ColumnHeader>Tipo</Table.ColumnHeader>
                   <Table.ColumnHeader>Creado</Table.ColumnHeader>
                   <Table.ColumnHeader>Expira</Table.ColumnHeader>
                   <Table.ColumnHeader>Usado por</Table.ColumnHeader>
@@ -236,6 +292,13 @@ function GestionCodigos() {
                         {estado === 'activo' && <Badge colorScheme="green">Activo</Badge>}
                         {estado === 'usado' && <Badge colorScheme="gray">Usado</Badge>}
                         {estado === 'expirado' && <Badge colorScheme="red">Expirado</Badge>}
+                      </Table.Cell>
+                      <Table.Cell>
+                        {c.tipo === 'staff' ? (
+                          <Badge colorScheme="blue">Staff · {ETIQUETA_ROL[c.rol_staff] || c.rol_staff}</Badge>
+                        ) : (
+                          <Badge colorScheme="teal" variant="subtle">Honorífico</Badge>
+                        )}
                       </Table.Cell>
                       <Table.Cell>
                         <Text fontSize="sm">{formatoFecha(c.fecha_creacion)}</Text>

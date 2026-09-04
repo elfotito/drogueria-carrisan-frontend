@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import staffApi from '../../api/staffAxios'
-import LayoutStaff from '../../components/staff/LayoutStaff'
+import LayoutDepartamento from '../../components/staff/LayoutDepartamento'
 import './StaffContabilidad.css'
 
 function formatUSD(valor) {
@@ -14,6 +14,7 @@ function formatFecha(fecha) {
 
 const TABS = [
   { id: 'clientes', texto: 'Clientes' },
+  { id: 'por-cobrar', texto: 'Por cobrar' },
   { id: 'pagos', texto: 'Pagos' },
   { id: 'facturas', texto: 'Facturas' },
   { id: 'reportes', texto: 'Reportes de pago' },
@@ -623,13 +624,97 @@ function TabReportes() {
 }
 
 // ------------------------------------------------------------------
+// Pestaña: Por cobrar (órdenes contado en 'procesando')
+// ------------------------------------------------------------------
+function TabPorCobrar() {
+  const [ordenes, setOrdenes] = useState([])
+  const [cargando, setCargando] = useState(true)
+  const [error, setError] = useState('')
+  const [procesando, setProcesando] = useState(null)
+
+  async function cargar() {
+    setCargando(true)
+    setError('')
+    try {
+      const { data } = await staffApi.get('/staff/contabilidad/ordenes-procesando')
+      setOrdenes(data)
+    } catch (err) {
+      setError(err.response?.data?.error || 'No se pudieron cargar las órdenes por cobrar')
+    } finally {
+      setCargando(false)
+    }
+  }
+
+  useEffect(() => {
+    cargar()
+  }, [])
+
+  async function cancelar(orden) {
+    if (!window.confirm(`¿Cancelar la orden #${orden.id} de ${orden.users?.nombre || 'cliente'}? El cliente ya no podrá pagarla.`)) return
+    setProcesando(orden.id)
+    try {
+      await staffApi.patch(`/staff/contabilidad/ordenes/${orden.id}/cancelar`)
+      await cargar()
+    } catch (err) {
+      setError(err.response?.data?.error || 'No se pudo cancelar la orden')
+    } finally {
+      setProcesando(null)
+    }
+  }
+
+  return (
+    <div>
+      {error && <p style={{ color: '#DC2626', marginBottom: 8 }}>{error}</p>}
+      {cargando && <p>Cargando...</p>}
+      {!cargando && ordenes.length === 0 && <p>No hay órdenes contado pendientes de pago.</p>}
+      {!cargando && ordenes.length > 0 && (
+        <div className="stf-tabla-wrap">
+          <table className="stf-tabla">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Cliente</th>
+                <th>Total USD</th>
+                <th>Estado pago</th>
+                <th>Fecha</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {ordenes.map((o) => (
+                <tr key={o.id}>
+                  <td>#{o.id}</td>
+                  <td>{o.users?.nombre || `#${o.usuario_id}`}</td>
+                  <td>${formatUSD(o.total_usd)}</td>
+                  <td>{o.estado_pago === 'reportado' ? 'Pago reportado' : 'Esperando pago'}</td>
+                  <td>{formatFecha(o.created_at)}</td>
+                  <td>
+                    <button
+                      className="stf-btn stf-btn--small stf-btn--danger"
+                      onClick={() => cancelar(o)}
+                      disabled={procesando === o.id}
+                    >
+                      {procesando === o.id ? 'Cancelando...' : 'Cancelar pedido'}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ------------------------------------------------------------------
 // Página principal de contabilidad (sub-pestañas)
 // ------------------------------------------------------------------
 function StaffContabilidad() {
   const [tab, setTab] = useState('clientes')
 
   return (
-    <LayoutStaff activo="contabilidad" titulo="Estado de cuenta, pagos y facturas">
+    <LayoutDepartamento departamento="finanzas" activo="contabilidad" titulo="Estado de cuenta, pagos y facturas">
       <div className="stf-tabs">
         {TABS.map((t) => (
           <button
@@ -644,11 +729,12 @@ function StaffContabilidad() {
 
       <div className="stf-tab-content">
         {tab === 'clientes' && <TabClientes />}
+        {tab === 'por-cobrar' && <TabPorCobrar />}
         {tab === 'pagos' && <TabPagos />}
         {tab === 'facturas' && <TabFacturas />}
         {tab === 'reportes' && <TabReportes />}
       </div>
-    </LayoutStaff>
+    </LayoutDepartamento>
   )
 }
 

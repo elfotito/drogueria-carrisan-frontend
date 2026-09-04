@@ -59,11 +59,13 @@ import { StaffAuthProvider } from './context/StaffAuthContext'
 import PrivateRouteStaff from './components/PrivateRouteStaff'
 import PwaScopeSwitcher from './components/PwaScopeSwitcher'
 import StaffLogin from './pages/staff/StaffLogin'
+import StaffRegistro from './pages/staff/StaffRegistro'
 import StaffDashboard from './pages/staff/StaffDashboard'
 import StaffDespacho from './pages/staff/StaffDespacho'
 import StaffOrdenes from './pages/staff/StaffOrdenes'
 import StaffAlmacen from './pages/staff/StaffAlmacen'
 import StaffContabilidad from './pages/staff/StaffContabilidad'
+import StaffDepartamento from './pages/staff/StaffDepartamento'
 
 
 function LoadingBarBridge() {
@@ -103,7 +105,11 @@ function App() {
                 <Route path="/pagos" element={<PrivateRouteSensible><Pagos /></PrivateRouteSensible>} />
                 <Route path="/admin/*" element={<PrivateRoute adminOnly><Admin /></PrivateRoute>} />
                 <Route path="/staff/login" element={<StaffLogin />} />
+                <Route path="/staff/registro" element={<StaffRegistro />} />
                 <Route path="/staff/dashboard" element={<PrivateRouteStaff><StaffDashboard /></PrivateRouteStaff>} />
+                <Route path="/staff/finanzas" element={<PrivateRouteStaff><StaffDepartamento departamento="finanzas" /></PrivateRouteStaff>} />
+                <Route path="/staff/comercial" element={<PrivateRouteStaff><StaffDepartamento departamento="comercial" /></PrivateRouteStaff>} />
+                <Route path="/staff/logistica" element={<PrivateRouteStaff><StaffDepartamento departamento="logistica" /></PrivateRouteStaff>} />
                 <Route path="/staff/despacho" element={<PrivateRouteStaff rolesPermitidos={['despachador', 'administrador', 'director', 'admin']}><StaffDespacho /></PrivateRouteStaff>} />
                 <Route path="/staff/ordenes" element={<PrivateRouteStaff rolesPermitidos={['vendedor', 'administrador', 'director', 'admin']}><StaffOrdenes /></PrivateRouteStaff>} />
                 <Route path="/staff/almacen" element={<PrivateRouteStaff rolesPermitidos={['almacenista', 'administrador', 'director', 'admin']}><StaffAlmacen /></PrivateRouteStaff>} />

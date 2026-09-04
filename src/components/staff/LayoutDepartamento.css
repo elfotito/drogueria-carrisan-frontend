@@ -1,0 +1,430 @@
+/* =================================================================
+   LAYOUT DEPARTAMENTO — sidebar departamental de staff (/staff/*)
+   Muestra SOLO los módulos del departamento activo, con su color
+   propio. El color se inyecta con --ldep-color en el contenedor.
+   ================================================================= */
+
+.ldep-root,
+.ldep-root *,
+.ldep-root *::before,
+.ldep-root *::after {
+  box-sizing: border-box;
+}
+
+:root {
+  --ldep-drawer-w: min(300px, 84vw);
+}
+
+.ldep-root {
+  --ldep-color: #2563EB;
+  --ldep-color-strong: #1d4ed8;
+  --ldep-color-soft: #eef4fd;
+  --ldep-bg: #f1f5f9;
+  --ldep-surface: #ffffff;
+  --ldep-border: #e5e7eb;
+  --ldep-text: #1e293b;
+  --ldep-text-muted: #64748b;
+
+  position: relative;
+  background: var(--ldep-bg);
+  min-height: 100vh;
+  max-width: 100vw;
+  overflow-x: clip;
+  font-family: 'Figtree', 'Inter', system-ui, -apple-system, sans-serif;
+  color: var(--ldep-text);
+}
+
+/* Contenedor empujable: en móvil el drawer lo desplaza a la derecha */
+.ldep-shift {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background: var(--ldep-bg);
+  transform-origin: left center;
+  transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1), border-radius 0.28s ease;
+  will-change: transform;
+}
+
+.ldep-shift__catcher {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  background: rgba(15, 23, 42, 0.4);
+  cursor: pointer;
+  border: 0;
+  padding: 0;
+}
+
+.ldep-container {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 32px 24px 96px;
+}
+
+.ldep-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+  width: 100%;
+  min-width: 0;
+}
+
+/* -----------------------------------------------------------------
+   Sidebar — desktop/tablet
+   ----------------------------------------------------------------- */
+.ldep-sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.ldep-sidebar__sticky {
+  position: sticky;
+  top: 90px;
+  background: var(--ldep-surface);
+  border: 1px solid var(--ldep-border);
+  border-radius: 16px;
+  padding: 20px 14px 22px;
+  box-shadow: 0 2px 14px rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+}
+
+.ldep-sidebar__sticky::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--ldep-color), var(--ldep-color-strong));
+}
+
+.ldep-sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 8px 16px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid var(--ldep-border);
+}
+
+.ldep-sidebar__brand-icono {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: var(--ldep-color-soft);
+  color: var(--ldep-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ldep-sidebar__brand-nombre {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--ldep-color);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.ldep-sidebar__brand-sub {
+  font-size: 12px;
+  color: var(--ldep-text-muted);
+  margin: 2px 0 0;
+  text-transform: capitalize;
+}
+
+.ldep-sidebar__volver {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ldep-text);
+  text-decoration: none;
+  padding: 8px 10px;
+  border-radius: 9px;
+  margin-bottom: 10px;
+  transition: background 0.12s ease;
+}
+
+.ldep-sidebar__volver:hover {
+  background: var(--ldep-color-soft);
+  color: var(--ldep-color-strong);
+}
+
+/* -----------------------------------------------------------------
+   Navegación
+   ----------------------------------------------------------------- */
+.ldep-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ldep-nav__grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ldep-nav__grupo-titulo {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ldep-text-muted);
+  padding: 0 10px 6px;
+}
+
+.ldep-nav__link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 10px;
+  border-radius: 9px;
+  color: var(--ldep-text);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.ldep-nav__link:hover {
+  background: var(--ldep-color-soft);
+  color: var(--ldep-color-strong);
+}
+
+.ldep-nav__link--activo {
+  background: var(--ldep-color);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.ldep-nav__link--activo:hover {
+  background: var(--ldep-color-strong);
+  color: #fff;
+}
+
+.ldep-nav__chevron {
+  margin-left: auto;
+}
+
+.ldep-nav__vacio {
+  font-size: 13px;
+  color: var(--ldep-text-muted);
+  padding: 0 10px;
+}
+
+.ldep-nav__bridge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 11px;
+  border: 1.5px solid var(--ldep-color);
+  background: transparent;
+  color: var(--ldep-color);
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.ldep-nav__bridge:hover {
+  background: var(--ldep-color);
+  color: #fff;
+}
+
+.ldep-nav__bridge:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* -----------------------------------------------------------------
+   Main
+   ----------------------------------------------------------------- */
+.ldep-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.ldep-main__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
+
+.ldep-main__titulo {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--ldep-text);
+  margin: 0;
+}
+
+/* -----------------------------------------------------------------
+   Barra superior — SOLO móvil/tablet (<1024px)
+   ----------------------------------------------------------------- */
+.ldep-topbar {
+  display: none;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding: 12px 16px;
+  background: var(--ldep-surface);
+  border-bottom: 1px solid var(--ldep-border);
+}
+
+.ldep-topbar__depto-icono {
+  color: var(--ldep-color);
+}
+
+.ldep-topbar__menu-btn {
+  background: transparent;
+  border: 0;
+  color: var(--ldep-text);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.ldep-topbar__titulo {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ldep-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* -----------------------------------------------------------------
+   Drawer — móvil/tablet
+   ----------------------------------------------------------------- */
+.ldep-drawer-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: var(--ldep-drawer-w);
+  background: var(--ldep-surface);
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(-100%);
+  transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  border-right: 1px solid var(--ldep-border);
+}
+
+.ldep-drawer-panel--abierto {
+  transform: translateX(0);
+}
+
+.ldep-drawer-panel__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  border-bottom: 1px solid var(--ldep-border);
+}
+
+.ldep-drawer-panel__quien {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.ldep-drawer-panel__avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--ldep-color);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.ldep-drawer-panel__nombre {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ldep-text);
+  margin: 0;
+  text-transform: capitalize;
+}
+
+.ldep-drawer-panel__rol {
+  font-size: 12px;
+  color: var(--ldep-text-muted);
+  text-transform: capitalize;
+  margin: 2px 0 0;
+}
+
+.ldep-drawer-panel__cerrar {
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  color: var(--ldep-text-muted);
+  padding: 4px;
+}
+
+.ldep-drawer-panel__scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px;
+}
+
+.ldep-drawer-panel__pie {
+  padding: 14px;
+  border-top: 1px solid var(--ldep-border);
+}
+
+.ldep-drawer-panel__logout {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1.5px solid var(--ldep-border);
+  background: #fff;
+  color: #DC2626;
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* -----------------------------------------------------------------
+   Responsive
+   ----------------------------------------------------------------- */
+@media (min-width: 1024px) {
+  .ldep-topbar {
+    display: none;
+  }
+}
+
+@media (max-width: 1023px) {
+  .ldep-topbar {
+    display: flex;
+  }
+  .ldep-sidebar {
+    display: none;
+  }
+  .ldep-container {
+    padding: 20px 16px 80px;
+  }
+  .ldep-body {
+    display: block;
+  }
+}

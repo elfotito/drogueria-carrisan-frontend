@@ -1,0 +1,158 @@
+/* =================================================================
+   STAFF DEPARTAMENTO — hub / landing de cada departamento de staff
+   Reutiliza las variables --ldep-* que inyecta LayoutDepartamento
+   (color del depto activo).
+   ================================================================= */
+
+.sdpto-hero {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 28px 30px;
+  border-radius: 18px;
+  background: var(--ldep-color-soft, #eef4fd);
+  border: 1px solid var(--ldep-border, #e5e7eb);
+  margin-bottom: 24px;
+}
+
+.sdpto-hero__icono {
+  width: 62px;
+  height: 62px;
+  flex-shrink: 0;
+  border-radius: 16px;
+  background: var(--ldep-color, #2563EB);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 22px -10px var(--ldep-color, #2563EB);
+}
+
+.sdpto-hero__nombre {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--ldep-color-strong, #1d4ed8);
+  letter-spacing: -0.01em;
+}
+
+.sdpto-hero__desc {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: var(--ldep-text-muted, #64748b);
+  line-height: 1.45;
+}
+
+/* -----------------------------------------------------------------
+   Grid de módulos
+   ----------------------------------------------------------------- */
+.sdpto-grid {
+  display: grid;
+  gap: 16px;
+}
+
+@media (min-width: 640px) {
+  .sdpto-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+}
+
+.sdpto-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 22px 22px 20px;
+  border-radius: 16px;
+  background: var(--ldep-surface, #ffffff);
+  border: 1.5px solid var(--ldep-border, #e5e7eb);
+  text-decoration: none;
+  color: var(--ldep-text, #1e293b);
+  overflow: hidden;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+}
+
+.sdpto-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--ldep-color, #2563EB), var(--ldep-color-strong, #1d4ed8));
+  opacity: 0;
+  transition: opacity 0.16s ease;
+}
+
+.sdpto-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--ldep-color, #2563EB);
+  box-shadow: 0 14px 28px -14px rgba(15, 23, 42, 0.2);
+}
+
+.sdpto-card:hover::before {
+  opacity: 1;
+}
+
+.sdpto-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.sdpto-card__icono {
+  width: 46px;
+  height: 46px;
+  border-radius: 13px;
+  background: var(--ldep-color-soft, #eef4fd);
+  color: var(--ldep-color, #2563EB);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sdpto-card__flecha {
+  color: var(--ldep-color, #2563EB);
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 0.16s ease, transform 0.16s ease;
+}
+
+.sdpto-card:hover .sdpto-card__flecha {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.sdpto-card__titulo {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--ldep-text, #1e293b);
+}
+
+.sdpto-card__desc {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ldep-text-muted, #64748b);
+}
+
+/* -----------------------------------------------------------------
+   Móvil
+   ----------------------------------------------------------------- */
+@media (max-width: 480px) {
+  .sdpto-hero {
+    padding: 22px 20px;
+    align-items: flex-start;
+  }
+
+  .sdpto-hero__icono {
+    width: 52px;
+    height: 52px;
+  }
+
+  .sdpto-hero__icono svg {
+    width: 28px;
+  }
+}

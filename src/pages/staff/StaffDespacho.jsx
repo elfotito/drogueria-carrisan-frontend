@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import staffApi from '../../api/staffAxios'
-import LayoutStaff from '../../components/staff/LayoutStaff'
+import LayoutDepartamento from '../../components/staff/LayoutDepartamento'
 import './StaffPlaceholder.css'
 
 function StaffDespacho() {
@@ -39,7 +39,7 @@ function StaffDespacho() {
   }
 
   return (
-    <LayoutStaff activo="despacho" titulo="Envíos por despachar">
+    <LayoutDepartamento departamento="logistica" activo="despacho" titulo="Envíos por despachar">
     <div className="staff-placeholder">
       <h1>Envíos por despachar</h1>
 
@@ -77,7 +77,7 @@ function StaffDespacho() {
         </div>
       ))}
     </div>
-    </LayoutStaff>
+    </LayoutDepartamento>
   )
 }
 

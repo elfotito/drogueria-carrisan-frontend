@@ -93,3 +93,220 @@
   opacity: 0.6;
   cursor: default;
 }
+
+.staff-almacen-tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 12px;
+}
+
+.staff-almacen-tab {
+  padding: 9px 16px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 999px;
+  background: #fff;
+  color: #4b5563;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+}
+
+.staff-almacen-tab:hover {
+  border-color: #1B4B8F;
+  color: #1B4B8F;
+}
+
+.staff-almacen-tab.is-active {
+  background: #1B4B8F;
+  border-color: #1B4B8F;
+  color: #fff;
+}
+
+.staff-almacen-tab-contador {
+  font-size: 11px;
+  font-weight: 700;
+  background: #fff;
+  color: #1B4B8F;
+  border-radius: 999px;
+  padding: 1px 8px;
+}
+
+.staff-almacen-tab.is-active .staff-almacen-tab-contador {
+  background: #12A594;
+  color: #fff;
+}
+
+.staff-almacen-badge--credito {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.staff-almacen-badge--contado {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.staff-almacen-item--anulado {
+  text-decoration: line-through;
+  color: #9ca3af;
+}
+
+.staff-almacen-item-agotado {
+  text-decoration: none;
+  font-weight: 700;
+  color: #DC2626;
+}
+
+.staff-almacen-acciones {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.staff-almacen-acciones .staff-almacen-btn {
+  flex: 1 1 140px;
+  margin-top: 0;
+}
+
+.staff-almacen-btn--danger {
+  background: #fff;
+  color: #DC2626;
+  border-color: #DC2626;
+}
+
+.staff-almacen-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(35, 43, 69, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 100;
+  overflow-y: auto;
+}
+
+.staff-almacen-modal-content {
+  background: #fff;
+  border-radius: 14px;
+  padding: 24px;
+  width: 100%;
+  max-width: 520px;
+}
+
+.staff-almacen-modal-titulo {
+  margin: 0 0 4px;
+  color: #232B45;
+}
+
+.staff-almacen-editor {
+  margin: 14px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.staff-almacen-editor-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.staff-almacen-editor-item.is-anulado {
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.staff-almacen-editor-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.staff-almacen-editor-info strong {
+  color: #232B45;
+}
+
+.staff-almacen-editor-info span {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.staff-almacen-editor-controles {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.staff-almacen-stepper-btn {
+  width: 30px;
+  height: 30px;
+  border: 1.5px solid #1B4B8F;
+  background: #fff;
+  color: #1B4B8F;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.staff-almacen-stepper-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.staff-almacen-stepper-val {
+  font-weight: 700;
+  color: #232B45;
+  min-width: 24px;
+  text-align: center;
+}
+
+.staff-almacen-btn-anular {
+  margin-left: auto;
+  border: 1.5px solid #DC2626;
+  background: #fff;
+  color: #DC2626;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.staff-almacen-btn-anular.is-anulado {
+  background: #DC2626;
+  color: #fff;
+}
+
+.staff-almacen-nota {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 9px;
+  font-size: 13px;
+  font-family: inherit;
+  color: #232B45;
+}
+
+.staff-almacen-total {
+  font-size: 15px;
+  color: #374151;
+  margin: 0 0 12px;
+}
+
+.staff-almacen-total-aviso {
+  font-size: 13px;
+  color: #b45309;
+}

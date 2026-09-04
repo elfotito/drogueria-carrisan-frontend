@@ -1,117 +1,411 @@
-.staff-dashboard-header {
+/* =================================================================
+   STAFF DASHBOARD — panel visual de entrada al módulo staff
+   Standalone (sin sidebar): solo tarjetas de departamentos.
+   ================================================================= */
+
+.sd-wrap,
+.sd-wrap *,
+.sd-wrap *::before,
+.sd-wrap *::after {
+  box-sizing: border-box;
+}
+
+.sd-wrap {
+  --sd-bg: #f4f6fb;
+  --sd-surface: #ffffff;
+  --sd-border: #e5e7eb;
+  --sd-text: #0f172a;
+  --sd-text-muted: #64748b;
+
+  min-height: 100vh;
+  max-width: 100vw;
+  overflow-x: hidden;
+  background:
+    radial-gradient(1200px 500px at 85% -10%, rgba(37, 99, 235, 0.07), transparent 60%),
+    radial-gradient(900px 400px at -10% 20%, rgba(13, 147, 115, 0.06), transparent 55%),
+    var(--sd-bg);
+  font-family: 'Figtree', 'Inter', system-ui, -apple-system, sans-serif;
+  color: var(--sd-text);
+}
+
+/* -----------------------------------------------------------------
+   Barra superior
+   ----------------------------------------------------------------- */
+.sd-topbar {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 26px;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px clamp(16px, 4vw, 40px);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--sd-border);
+  position: sticky;
+  top: 0;
+  z-index: 20;
 }
 
-.staff-dashboard-saludo {
-  font-size: 20px;
+.sd-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sd-brand__logo {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: linear-gradient(135deg, #1B4B8F, #2563EB);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sd-brand__nombre {
+  font-size: 16px;
+  font-weight: 800;
+  color: #1B4B8F;
+}
+
+.sd-usuario {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sd-usuario__avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1B4B8F, #12A594);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-weight: 700;
-  color: #232B45;
-  margin: 0;
+  font-size: 16px;
 }
 
-.staff-dashboard-rol {
-  margin: 2px 0 0;
-  font-size: 13px;
-  color: #6b7280;
+.sd-usuario__texto {
+  text-align: right;
+  line-height: 1.2;
+}
+
+.sd-usuario__nombre {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--sd-text);
   text-transform: capitalize;
 }
 
-.staff-dashboard-logout {
-  border: 1.5px solid #e5e7eb;
-  background: white;
-  color: #6b7280;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
+.sd-usuario__rol {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--sd-text-muted);
+  text-transform: capitalize;
+}
+
+.sd-logout {
+  border: 1.5px solid var(--sd-border);
+  background: #fff;
+  color: #64748b;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
   cursor: pointer;
-}
-
-.staff-dashboard-logout:hover {
-  border-color: #DC2626;
-  color: #DC2626;
-}
-
-.staff-dashboard-grupo {
-  margin-bottom: 28px;
-}
-
-.staff-dashboard-grupo-titulo {
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: #6b7280;
-  margin: 0 0 12px;
-}
-
-.staff-dashboard-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 14px;
-}
-
-@media (min-width: 560px) {
-  .staff-dashboard-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-.staff-dashboard-card {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  background: white;
-  border: 1.5px solid #e5e7eb;
-  border-radius: 14px;
-  padding: 20px;
-  text-decoration: none;
+  align-items: center;
+  justify-content: center;
   transition: all 0.15s ease;
 }
 
-.staff-dashboard-card:hover {
-  border-color: #1B4B8F;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(27, 75, 143, 0.12);
+.sd-logout:hover {
+  border-color: #DC2626;
+  color: #DC2626;
+  background: rgba(220, 38, 38, 0.05);
 }
 
-.staff-dashboard-card-icono {
-  color: #1B4B8F;
-  margin-bottom: 2px;
+/* -----------------------------------------------------------------
+   Hero
+   ----------------------------------------------------------------- */
+.sd-hero {
+  position: relative;
+  margin: 28px clamp(16px, 4vw, 40px) 8px;
+  padding: 44px clamp(20px, 5vw, 56px);
+  border-radius: 22px;
+  background: linear-gradient(120deg, #1B4B8F 0%, #2563EB 55%, #2b6ce5 100%);
+  color: #fff;
+  overflow: hidden;
+  box-shadow: 0 18px 40px -18px rgba(27, 75, 143, 0.55);
 }
 
-.staff-dashboard-card-icono--emoji {
-  font-size: 26px;
-  color: inherit;
+.sd-hero__glow {
+  position: absolute;
+  top: -60%;
+  right: -10%;
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(18, 165, 148, 0.45), transparent 70%);
+  pointer-events: none;
 }
 
-.staff-dashboard-card-titulo {
-  font-size: 16px;
+.sd-hero__content {
+  position: relative;
+  z-index: 1;
+}
+
+.sd-hero__eyebrow {
+  margin: 0 0 8px;
+  font-size: 12px;
   font-weight: 700;
-  color: #232B45;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.8;
 }
 
-.staff-dashboard-card--boton {
-  border: 1.5px solid #e5e7eb;
-  font-family: inherit;
-  text-align: left;
+.sd-hero__titulo {
+  margin: 0;
+  font-size: clamp(24px, 4vw, 34px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.sd-hero__titulo span {
+  color: #7fe9d6;
+}
+
+.sd-hero__sub {
+  margin: 8px 0 0;
+  font-size: 15px;
+  opacity: 0.85;
+}
+
+/* -----------------------------------------------------------------
+   Grid de departamentos
+   ----------------------------------------------------------------- */
+.sd-main {
+  padding: 0 clamp(16px, 4vw, 40px) 48px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.sd-grid {
+  display: grid;
+  gap: 18px;
+  margin-top: 20px;
+}
+
+@media (min-width: 640px) {
+  .sd-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+}
+
+.sd-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--sd-surface);
+  border: 1.5px solid var(--sd-border);
+  border-radius: 18px;
+  padding: 24px 24px 20px;
+  text-decoration: none;
+  color: var(--sd-text);
+  overflow: hidden;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.sd-card__fondo {
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--sd-card-color-soft), transparent 72%);
+  opacity: 0.9;
+  pointer-events: none;
+  transition: transform 0.25s ease;
+}
+
+.sd-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--sd-card-color);
+  box-shadow: 0 16px 32px -14px rgba(15, 23, 42, 0.18);
+}
+
+.sd-card:hover .sd-card__fondo {
+  transform: scale(1.25);
+}
+
+.sd-card__cab {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.sd-card__icono {
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
+  background: var(--sd-card-color-soft);
+  color: var(--sd-card-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sd-card__flecha {
+  color: var(--sd-card-color);
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.sd-card:hover .sd-card__flecha {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.sd-card__nombre {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--sd-card-color);
+}
+
+.sd-card__desc {
+  margin: 0;
+  font-size: 13px;
+  color: var(--sd-text-muted);
+  line-height: 1.45;
+}
+
+.sd-card__menu {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.sd-card__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--sd-text);
+  background: var(--sd-card-color-soft);
+  padding: 5px 9px;
+  border-radius: 999px;
+}
+
+/* -----------------------------------------------------------------
+   Tarjeta admin (bridge)
+   ----------------------------------------------------------------- */
+.sd-admin {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 22px;
+  padding: 18px 22px;
+  border-radius: 16px;
+  border: 1.5px dashed #cbd5e1;
+  background: linear-gradient(120deg, #f8fafc, #eef2ff);
+}
+
+.sd-admin__info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sd-admin__icono {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: #1e293b;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sd-admin__titulo {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.sd-admin__sub {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--sd-text-muted);
+}
+
+.sd-admin__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  background: #1e293b;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 10px 18px;
+  border-radius: 10px;
   cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
 }
 
-.staff-dashboard-card--boton:disabled {
+.sd-admin__btn:hover {
+  background: #334155;
+  transform: translateY(-1px);
+}
+
+.sd-admin__btn:disabled {
   opacity: 0.6;
   cursor: default;
+  transform: none;
 }
 
-.staff-dashboard-error {
-  margin: 0 0 16px;
+/* -----------------------------------------------------------------
+   Error
+   ----------------------------------------------------------------- */
+.sd-error {
+  margin: 16px clamp(16px, 4vw, 40px) 0;
   color: #DC2626;
   background: rgba(220, 38, 38, 0.08);
   border: 1px solid rgba(220, 38, 38, 0.2);
-  border-radius: 8px;
+  border-radius: 10px;
   padding: 10px 14px;
   font-size: 14px;
+}
+
+/* -----------------------------------------------------------------
+   Móvil
+   ----------------------------------------------------------------- */
+@media (max-width: 480px) {
+  .sd-usuario__texto {
+    display: none;
+  }
+
+  .sd-hero {
+    padding: 32px 22px;
+  }
+
+  .sd-admin {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .sd-admin__btn {
+    justify-content: center;
+  }
 }

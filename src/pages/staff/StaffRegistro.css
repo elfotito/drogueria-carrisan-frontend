@@ -1,0 +1,33 @@
+.staff-registro-rol {
+  font-size: 0.9rem;
+  color: rgba(20, 24, 42, 0.7);
+  text-align: center;
+  margin: 4px 0 18px;
+}
+
+.staff-registro-rol-badge {
+  display: inline-block;
+  background: #eef4ff;
+  color: #1B4B8F;
+  font-weight: 600;
+  padding: 3px 12px;
+  border-radius: 999px;
+  margin-left: 6px;
+  border: 1px solid #d6e4ff;
+}
+
+.staff-registro-cambiar {
+  background: none;
+  border: none;
+  color: #1B4B8F;
+  font-size: 0.8rem;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-left: 10px;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+}
+
+.staff-registro-cambiar:hover {
+  color: #0052DC;
+}

@@ -1,15 +1,17 @@
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
+import { LogOut, ShieldCheck, ArrowRight, Landmark } from 'lucide-react'
 import { useStaffAuth } from '../../context/StaffAuthContext'
 import staffApi from '../../api/staffAxios'
-import LayoutStaff from '../../components/staff/LayoutStaff'
-import { NAV_STAFF, ROLES_BRIDGE_ADMIN } from '../../components/staff/NavStaff'
+import { DEPARTAMENTOS, MODULOS, ROLES_BRIDGE_ADMIN } from '../../components/staff/NavStaff'
 import './StaffDashboard.css'
 
 const ICONOS_MAPA = {}
-for (const grupo of NAV_STAFF) {
-  for (const item of grupo.items) {
-    ICONOS_MAPA[item.id] = item.icono
+for (const depto of DEPARTAMENTOS) {
+  for (const grupo of MODULOS[depto.id] || []) {
+    for (const item of grupo.items) {
+      ICONOS_MAPA[item.id] = item.icono
+    }
   }
 }
 
@@ -21,13 +23,17 @@ function StaffDashboard() {
 
   const puedeBridge = ROLES_BRIDGE_ADMIN.includes(rol)
 
-  // Módulos visibles según el rol, agrupados por su grupo de nav.
-  const modulos = NAV_STAFF
-    .map((grupo) => ({
-      titulo: grupo.titulo,
-      items: grupo.items.filter((item) => item.roles.includes(rol)),
-    }))
-    .filter((grupo) => grupo.items.length > 0)
+  // Departamentos con módulos visibles para el rol (para filtrar tarjetas).
+  const departamentos = DEPARTAMENTOS
+    .map((depto) => {
+      const modulos = (MODULOS[depto.id] || [])
+        .flatMap((grupo) => grupo.items)
+        .filter((item) => item.roles.includes(rol))
+      return { ...depto, modulos }
+    })
+    .filter((depto) => depto.modulos.length > 0)
+
+  const iniciales = (staff?.nombre || staff?.email || '?').trim().charAt(0).toUpperCase()
 
   async function entrarAAdmin() {
     setErrorBridge('')
@@ -44,55 +50,96 @@ function StaffDashboard() {
   }
 
   return (
-    <LayoutStaff activo="dashboard" titulo="Dashboard">
-      <header className="staff-dashboard-header">
-        <div>
-          <p className="staff-dashboard-saludo">Hola, {staff?.nombre}</p>
-          <p className="staff-dashboard-rol">{rol}</p>
+    <div className="sd-wrap">
+      <header className="sd-topbar">
+        <div className="sd-brand">
+          <span className="sd-brand__logo"><Landmark size={20} /></span>
+          <span className="sd-brand__nombre">Drogueria Carrisan</span>
         </div>
-        <button className="staff-dashboard-logout" onClick={logoutStaff}>
-          Salir
-        </button>
+        <div className="sd-usuario">
+          <span className="sd-usuario__avatar">{iniciales}</span>
+          <div className="sd-usuario__texto">
+            <p className="sd-usuario__nombre">{staff?.nombre || 'Staff'}</p>
+            <p className="sd-usuario__rol">{rol}</p>
+          </div>
+          <button className="sd-logout" onClick={logoutStaff} aria-label="Cerrar sesión">
+            <LogOut size={17} />
+          </button>
+        </div>
       </header>
 
-      {errorBridge && <p className="staff-dashboard-error">{errorBridge}</p>}
+      <div className="sd-hero">
+        <div className="sd-hero__glow" aria-hidden="true" />
+        <div className="sd-hero__content">
+          <p className="sd-hero__eyebrow">Panel interno</p>
+          <h1 className="sd-hero__titulo">
+            Hola, <span>{staff?.nombre?.split(' ')[0] || 'Staff'}</span>
+          </h1>
+          <p className="sd-hero__sub">Elige un departamento para comenzar tu jornada.</p>
+        </div>
+      </div>
 
-      {modulos.map((grupo) => (
-        <section key={grupo.titulo} className="staff-dashboard-grupo">
-          <h2 className="staff-dashboard-grupo-titulo">{grupo.titulo}</h2>
-          <div className="staff-dashboard-grid">
-            {grupo.items.map((item) => {
-              const Icono = ICONOS_MAPA[item.id]
-              return (
-                <Link key={item.id} to={item.to} className="staff-dashboard-card">
-                  {Icono && <Icono size={26} className="staff-dashboard-card-icono" />}
-                  <span className="staff-dashboard-card-titulo">{item.texto}</span>
-                </Link>
-              )
-            })}
-          </div>
-        </section>
-      ))}
+      {errorBridge && <p className="sd-error">{errorBridge}</p>}
 
-      {puedeBridge && (
-        <section className="staff-dashboard-grupo">
-          <h2 className="staff-dashboard-grupo-titulo">Administración</h2>
-          <div className="staff-dashboard-grid">
+      <main className="sd-main">
+        <div className="sd-grid">
+          {departamentos.map((depto) => {
+            const Icono = depto.icono
+            return (
+              <Link
+                key={depto.id}
+                to={`/staff/${depto.id}`}
+                className="sd-card"
+                style={{
+                  '--sd-card-color': depto.color,
+                  '--sd-card-color-soft': depto.colorLight,
+                }}
+              >
+                <div className="sd-card__fondo" aria-hidden="true" />
+                <div className="sd-card__cab">
+                  <span className="sd-card__icono"><Icono size={26} /></span>
+                  <ArrowRight size={18} className="sd-card__flecha" />
+                </div>
+                <h2 className="sd-card__nombre">{depto.nombre}</h2>
+                <p className="sd-card__desc">{depto.descripcion}</p>
+                <div className="sd-card__menu">
+                  {depto.modulos.map((m) => {
+                    const IconoModulo = ICONOS_MAPA[m.id]
+                    return (
+                      <span key={m.id} className="sd-card__chip">
+                        {IconoModulo && <IconoModulo size={13} />}
+                        {m.texto}
+                      </span>
+                    )
+                  })}
+                </div>
+              </Link>
+            )
+          })}
+        </div>
+
+        {puedeBridge && (
+          <div className="sd-admin">
+            <div className="sd-admin__info">
+              <span className="sd-admin__icono"><ShieldCheck size={20} /></span>
+              <div>
+                <p className="sd-admin__titulo">Panel administrativo</p>
+                <p className="sd-admin__sub">Gestión global de la plataforma</p>
+              </div>
+            </div>
             <button
               type="button"
-              className="staff-dashboard-card staff-dashboard-card--boton"
+              className="sd-admin__btn"
               onClick={entrarAAdmin}
               disabled={entrandoAAdmin}
             >
-              <span className="staff-dashboard-card-icono staff-dashboard-card-icono--emoji">⚙️</span>
-              <span className="staff-dashboard-card-titulo">
-                {entrandoAAdmin ? 'Entrando...' : 'Panel administrativo'}
-              </span>
+              {entrandoAAdmin ? 'Entrando...' : 'Entrar'}
+              {!entrandoAAdmin && <ArrowRight size={16} />}
             </button>
           </div>
-        </section>
-      )}
-    </LayoutStaff>
+        )}
+      </main>
+    </div>
   )
 }
 

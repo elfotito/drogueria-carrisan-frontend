@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Search, Plus, Minus, X } from 'lucide-react'
 import staffApi from '../../api/staffAxios'
-import LayoutStaff from '../../components/staff/LayoutStaff'
+import LayoutDepartamento from '../../components/staff/LayoutDepartamento'
 import './StaffOrdenes.css'
 
 function formatUSD(valor) {
@@ -202,7 +202,7 @@ function StaffOrdenes() {
   }
 
   return (
-    <LayoutStaff activo="ordenes" titulo="Crear orden a cliente">
+    <LayoutDepartamento departamento="comercial" activo="ordenes" titulo="Crear orden a cliente">
     <div className="so-page">
       {mensaje && (
         <div className={`so-mensaje so-mensaje--${mensaje.tipo}`}>{mensaje.texto}</div>
@@ -378,7 +378,7 @@ function StaffOrdenes() {
         </div>
       )}
     </div>
-    </LayoutStaff>
+    </LayoutDepartamento>
   )
 }
 
