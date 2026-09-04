@@ -62,6 +62,8 @@ import StaffLogin from './pages/staff/StaffLogin'
 import StaffDashboard from './pages/staff/StaffDashboard'
 import StaffDespacho from './pages/staff/StaffDespacho'
 import StaffOrdenes from './pages/staff/StaffOrdenes'
+import StaffAlmacen from './pages/staff/StaffAlmacen'
+import StaffContabilidad from './pages/staff/StaffContabilidad'
 
 
 function LoadingBarBridge() {
@@ -102,8 +104,10 @@ function App() {
                 <Route path="/admin/*" element={<PrivateRoute adminOnly><Admin /></PrivateRoute>} />
                 <Route path="/staff/login" element={<StaffLogin />} />
                 <Route path="/staff/dashboard" element={<PrivateRouteStaff><StaffDashboard /></PrivateRouteStaff>} />
-                <Route path="/staff/despacho" element={<PrivateRouteStaff rolesPermitidos={['despachador', 'administrador', 'admin']}><StaffDespacho /></PrivateRouteStaff>} />
-                <Route path="/staff/ordenes" element={<PrivateRouteStaff rolesPermitidos={['vendedor', 'administrador', 'admin']}><StaffOrdenes /></PrivateRouteStaff>} />
+                <Route path="/staff/despacho" element={<PrivateRouteStaff rolesPermitidos={['despachador', 'administrador', 'director', 'admin']}><StaffDespacho /></PrivateRouteStaff>} />
+                <Route path="/staff/ordenes" element={<PrivateRouteStaff rolesPermitidos={['vendedor', 'administrador', 'director', 'admin']}><StaffOrdenes /></PrivateRouteStaff>} />
+                <Route path="/staff/almacen" element={<PrivateRouteStaff rolesPermitidos={['almacenista', 'administrador', 'director', 'admin']}><StaffAlmacen /></PrivateRouteStaff>} />
+                <Route path="/staff/contabilidad" element={<PrivateRouteStaff rolesPermitidos={['contabilidad', 'administrador', 'director', 'admin']}><StaffContabilidad /></PrivateRouteStaff>} />
                 <Route path="/quienes-somos" element={<QuienesSomos />} />
                 <Route path="/ayuda" element={<Ayuda />} />
                 <Route path="/contacto" element={<Contacto />} />

@@ -654,7 +654,7 @@ function TabComprarDeNuevo({ tasaVes }) {
         }
       }
 
-      const idsUnicos = Array.from(conteoPorProducto.keys())
+      const idsUnicos = Array.from(conteoPorProducto.keys()).filter(Boolean)
 
       if (idsUnicos.length === 0) {
         setProductos([])

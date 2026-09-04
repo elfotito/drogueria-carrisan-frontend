@@ -1,0 +1,95 @@
+.staff-almacen-grupo {
+  margin-bottom: 28px;
+}
+
+.staff-almacen-grupo-titulo {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #6b7280;
+  margin: 0 0 12px;
+}
+
+.staff-almacen-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  background: white;
+}
+
+.staff-almacen-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.staff-almacen-card-titulo {
+  font-size: 15px;
+  font-weight: 700;
+  color: #232B45;
+  margin: 0;
+}
+
+.staff-almacen-card-cliente {
+  margin: 6px 0 0;
+  font-size: 14px;
+  color: #4b5563;
+}
+
+.staff-almacen-card-meta {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.staff-almacen-card ul {
+  margin: 10px 0;
+  padding-left: 18px;
+  font-size: 14px;
+  color: #374151;
+}
+
+.staff-almacen-badge {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.staff-almacen-badge--procesando {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.staff-almacen-badge--preparando {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.staff-almacen-btn {
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px 14px;
+  border: 1.5px solid #1B4B8F;
+  background: #fff;
+  color: #1B4B8F;
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.staff-almacen-btn--principal {
+  background: #1B4B8F;
+  color: #fff;
+}
+
+.staff-almacen-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}

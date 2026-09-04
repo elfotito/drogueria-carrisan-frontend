@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
 import staffApi from '../../api/staffAxios'
+import LayoutStaff from '../../components/staff/LayoutStaff'
 import './StaffPlaceholder.css'
 
 function StaffDespacho() {
@@ -39,8 +39,8 @@ function StaffDespacho() {
   }
 
   return (
+    <LayoutStaff activo="despacho" titulo="Envíos por despachar">
     <div className="staff-placeholder">
-      <Link to="/staff/dashboard" className="staff-placeholder-back">← Volver</Link>
       <h1>Envíos por despachar</h1>
 
       {cargando && <p>Cargando...</p>}
@@ -77,6 +77,7 @@ function StaffDespacho() {
         </div>
       ))}
     </div>
+    </LayoutStaff>
   )
 }
 
