@@ -148,7 +148,7 @@ function App() {
                 <Route path="/staff/login" element={<StaffLogin />} />
                 <Route path="/staff/registro" element={<StaffRegistro />} />
                 <Route path="/staff/dashboard" element={<PrivateRouteStaff><StaffDashboard /></PrivateRouteStaff>} />
-                <RutasStaff />
+                {RutasStaff()}
                 <Route path="/quienes-somos" element={<QuienesSomos />} />
                 <Route path="/ayuda" element={<Ayuda />} />
                 <Route path="/contacto" element={<Contacto />} />

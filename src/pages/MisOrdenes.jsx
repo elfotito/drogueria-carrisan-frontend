@@ -4,33 +4,21 @@ import { useAuth } from '../context/AuthContext'
 import { Link, useNavigate } from 'react-router-dom'
 import { Package, Truck, Store, Boxes, ArrowRight } from 'lucide-react'
 import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
+import { getEtapas, getEstadoConfig, getLabelEstado, normalizarEstado, ESTADOS_ORDEN } from '../config/estadosOrden'
 import './MisOrdenes.css'
 
-// Etapas del ciclo de vida de una orden, en orden cronológico.
-// El estado de PAGO (pagado/cancelado/etc.) vive en Estado de Cuenta, no acá:
-// esta pantalla solo refleja el avance operativo del pedido, que asigna el
-// administrador manualmente a medida que lo va procesando.
-const ETAPAS_ORDEN = [
-  { id: 'pendiente_verificacion', label: 'Pendiente por verificar' },
-  { id: 'verificado', label: 'Verificado' },
-  { id: 'enviado', label: 'Enviado' },
-  { id: 'entregado', label: 'Entregado' },
-]
-
-const ESTADOS_CONFIG = {
-  pedido_creado: { label: 'Pedido Creado', clase: 'mo-badge--pedido_creado' },
-  procesando: { label: 'Procesando', clase: 'mo-badge--procesando' },
-  preparando: { label: 'Preparando', clase: 'mo-badge--preparando' },
-  enviado: { label: 'Enviado', clase: 'mo-badge--enviado' },
-  entregado: { label: 'Entregado', clase: 'mo-badge--entregado' },
-  cancelado: { label: 'Cancelado', clase: 'mo-badge--cancelado' },
+// Badge de estado. Labels vienen de la ÚNICA fuente de verdad
+// (src/config/estadosOrden.js); la clase CSS local es solo un hook de
+// presentación ligado al id del estado (normalizado para estados legacy).
+function getEstadoBadge(estado) {
+  const normalizado = normalizarEstado(estado)
+  const cfg = getEstadoConfig(normalizado)
+  if (!cfg) return { label: estado || 'Desconocido', clase: 'mo-badge--neutro' }
+  return { label: getLabelEstado(normalizado, { rol: 'cliente' }), clase: `mo-badge--${normalizado}` }
 }
 
-const ESTADO_FALLBACK = { label: null, clase: 'mo-badge--neutro' }
-
-function getEstadoConfig(estado) {
-  return ESTADOS_CONFIG[estado] || { ...ESTADO_FALLBACK, label: estado }
-}
+// Órdenes viejas sin tipo_envio se tratan como delivery (línea histórica).
+const fulfillmentDe = (orden) => orden?.tipo_envio || 'delivery'
 
 function OrdenCardSkeleton() {
   return (
@@ -43,19 +31,21 @@ function OrdenCardSkeleton() {
   )
 }
 
-// Indicador visual de avance (puntos conectados). Si el estado de la orden
-// no está en ETAPAS_ORDEN (por ejemplo, uno legado), no se muestra —
-// el badge de arriba sigue funcionando igual gracias al fallback.
-function ProgresoOrden({ estado }) {
-  const pasoActual = ETAPAS_ORDEN.findIndex((e) => e.id === estado)
+// Indicador visual de avance (puntos conectados), derivado del fulfillment
+// method (ver getEtapas en estadosOrden.js). Si el estado de la orden no
+// pertenece a esa línea (p.ej. cancelado o uno legacy), no se muestra —
+// el badge de arriba sigue funcionando igual.
+function ProgresoOrden({ orden }) {
+  const etapas = getEtapas(fulfillmentDe(orden))
+  const pasoActual = etapas.findIndex((e) => e.id === normalizarEstado(orden.estado))
   if (pasoActual === -1) return null
 
   return (
     <div className="mo-progreso">
-      {ETAPAS_ORDEN.map((etapa, i) => (
+      {etapas.map((etapa, i) => (
         <div className="mo-progreso__paso" key={etapa.id}>
           <span className={`mo-progreso__punto ${i <= pasoActual ? 'mo-progreso__punto--activo' : ''}`} />
-          {i < ETAPAS_ORDEN.length - 1 && (
+          {i < etapas.length - 1 && (
             <span className={`mo-progreso__linea ${i < pasoActual ? 'mo-progreso__linea--activa' : ''}`} />
           )}
         </div>
@@ -65,7 +55,7 @@ function ProgresoOrden({ estado }) {
 }
 
 function OrdenCard({ orden, esAdmin, onVerDetalle }) {
-  const estadoConfig = getEstadoConfig(orden.estado)
+  const estadoBadge = getEstadoBadge(orden.estado)
   const fecha = new Date(orden.created_at).toLocaleDateString('es-VE', {
     day: '2-digit',
     month: 'short',
@@ -97,10 +87,10 @@ function OrdenCard({ orden, esAdmin, onVerDetalle }) {
           <p className="mo-card__numero">Orden #{orden.id}</p>
           <p className="mo-card__fecha">{fecha}</p>
         </div>
-        <span className={`mo-badge ${estadoConfig.clase}`}>{estadoConfig.label}</span>
+        <span className={`mo-badge ${estadoBadge.clase}`}>{estadoBadge.label}</span>
       </div>
 
-      <ProgresoOrden estado={orden.estado} />
+      <ProgresoOrden orden={orden} />
 
       <div className="mo-card__envio">
         <envioInfo.Icono size={16} />
@@ -148,10 +138,11 @@ function MisOrdenes() {
   }, [])
 
   // Tabs dinámicos: "Todos" + un tab por cada estado que exista realmente
-  // en las órdenes cargadas, ordenados según el ciclo de vida (ETAPAS_ORDEN).
+  // en las órdenes cargadas (legacy normalizados al set actual), ordenados
+  // según el ciclo de vida (orden de ESTADOS_ORDEN en estadosOrden.js).
   const tabs = useMemo(() => {
-    const estadosPresentes = [...new Set(ordenes.map((o) => o.estado))]
-    const ordenEtapas = ETAPAS_ORDEN.map((e) => e.id)
+    const estadosPresentes = [...new Set(ordenes.map((o) => normalizarEstado(o.estado)))]
+    const ordenEtapas = Object.keys(ESTADOS_ORDEN).filter((id) => !ESTADOS_ORDEN[id].legacy)
 
     const tabsEstados = estadosPresentes
       .sort((a, b) => {
@@ -164,8 +155,8 @@ function MisOrdenes() {
       })
       .map((estado) => ({
         id: estado,
-        label: getEstadoConfig(estado).label,
-        count: ordenes.filter((o) => o.estado === estado).length,
+        label: getEstadoBadge(estado).label,
+        count: ordenes.filter((o) => normalizarEstado(o.estado) === estado).length,
       }))
 
     return [{ id: 'todos', label: 'Todos', count: ordenes.length }, ...tabsEstados]
@@ -173,7 +164,7 @@ function MisOrdenes() {
 
   const ordenesFiltradas = useMemo(() => {
     if (filtroEstado === 'todos') return ordenes
-    return ordenes.filter((o) => o.estado === filtroEstado)
+    return ordenes.filter((o) => normalizarEstado(o.estado) === filtroEstado)
   }, [ordenes, filtroEstado])
 
   // Cuántas órdenes propias (no aplica a la vista admin) están esperando

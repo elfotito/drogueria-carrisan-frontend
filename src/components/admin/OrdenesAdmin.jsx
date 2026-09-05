@@ -4,18 +4,29 @@ import OrdenDetalleModal from '../OrdenDetalleModal'
 import { useEsMobile } from '../../hooks/useEsMobile'
 import TableroKanbanOrdenes from './TableroKanbanOrdenes'
 import TableroSwipeOrdenes from './TableroSwipeOrdenes'
+import { ESTADOS_ORDEN, normalizarEstado } from '../../config/estadosOrden'
 import './OrdenesAdmin.css'
 
 const ITEMS_POR_PAGINA = 10
-const ESTADOS = ['pedido_creado', 'procesando', 'preparando', 'enviado', 'entregado', 'cancelado']
 
-const ESTADO_COLORES = {
-  pedido_creado: { color: '#f59e0b', bg: '#fef3c7', label: 'Pedido Creado' },
-  procesando: { color: '#3b82f6', bg: '#dbeafe', label: 'Procesando' },
-  preparando: { color: '#8b5cf6', bg: '#ede9fe', label: 'Preparando' },
-  enviado: { color: '#06b6d4', bg: '#cffafe', label: 'Enviado' },
-  entregado: { color: '#10b981', bg: '#d1fae5', label: 'Entregado' },
-  cancelado: { color: '#ef4444', bg: '#fee2e2', label: 'Cancelado' }
+// Estados operativos del pipeline actual (sin legacy) — labels/colores vienen
+// de la fuente única (src/config/estadosOrden.js).
+const ESTADOS = Object.keys(ESTADOS_ORDEN).filter((id) => !ESTADOS_ORDEN[id].legacy)
+
+const ESTADO_COLORES = Object.fromEntries(
+  ESTADOS.map((id) => [id, {
+    color: ESTADOS_ORDEN[id].color,
+    bg: ESTADOS_ORDEN[id].bg,
+    label: ESTADOS_ORDEN[id].label,
+  }])
+)
+
+// Visual de un estado para filas/badges/selects. Estados legacy se
+// normalizan al id actual para que el color/label siempre resuelva.
+function estadoVisual(estado) {
+  const id = normalizarEstado(estado)
+  const cfg = ESTADO_COLORES[id]
+  return { id, color: cfg?.color, bg: cfg?.bg, label: cfg?.label || estado }
 }
 
 function OrdenesAdmin() {
@@ -85,7 +96,7 @@ function OrdenesAdmin() {
       o.users?.nombre || 'N/A',
       o.users?.email || 'N/A',
       o.total_usd,
-      ESTADO_COLORES[o.estado]?.label || o.estado,
+      estadoVisual(o.estado).label,
       new Date(o.created_at).toLocaleString('es-VE'),
       o.items?.length || 0
     ])
@@ -114,9 +125,9 @@ function OrdenesAdmin() {
       )
     }
 
-    // Filtro por estado
+    // Filtro por estado (compara normalizado para incluir órdenes legacy)
     if (filtroEstado !== 'todos') {
-      resultado = resultado.filter(o => o.estado === filtroEstado)
+      resultado = resultado.filter(o => normalizarEstado(o.estado) === filtroEstado)
     }
 
     // Filtro por fecha
@@ -187,11 +198,12 @@ function OrdenesAdmin() {
     }
   }
 
-  // Estadísticas
+  // Estadísticas (estados comparados normalizados: legacy 'pendiente' cuenta
+  // como pedido_creado, 'finalizado'/'entregado' como entregado).
   const estadisticas = useMemo(() => {
     const total = ordenes.length
-    const pendientes = ordenes.filter(o => o.estado === 'pendiente').length
-    const finalizadas = ordenes.filter(o => ['finalizado', 'entregado'].includes(o.estado)).length
+    const pendientes = ordenes.filter(o => ['pedido_creado', 'preparando'].includes(normalizarEstado(o.estado))).length
+    const finalizadas = ordenes.filter(o => ['entregado', 'retirado'].includes(normalizarEstado(o.estado))).length
     const totalUSD = ordenes.reduce((sum, o) => sum + Number(o.total_usd), 0)
 
     return { total, pendientes, finalizadas, totalUSD }
@@ -370,8 +382,10 @@ function OrdenesAdmin() {
                   </td>
                 </tr>
               ) : (
-                ordenesPaginadas.map((orden) => (
-                  <tr key={orden.id} className={`orden-row estado-${orden.estado}`}>
+                ordenesPaginadas.map((orden) => {
+                  const visual = estadoVisual(orden.estado)
+                  return (
+                  <tr key={orden.id} className={`orden-row estado-${visual.id}`}>
                     <td className="orden-id">
                       <span className="id-badge">#{orden.id}</span>
                     </td>
@@ -391,12 +405,12 @@ function OrdenesAdmin() {
                     </td>
                     <td>
                       <select
-                        value={orden.estado}
+                        value={visual.id}
                         onChange={(e) => handleCambiarEstado(orden.id, e.target.value)}
                         className="estado-select"
                         style={{
-                          '--estado-color': ESTADO_COLORES[orden.estado]?.color,
-                          '--estado-bg': ESTADO_COLORES[orden.estado]?.bg
+                          '--estado-color': visual.color,
+                          '--estado-bg': visual.bg
                         }}
                       >
                         {ESTADOS.map(estado => (
@@ -440,7 +454,8 @@ function OrdenesAdmin() {
                       </div>
                     </td>
                   </tr>
-                ))
+                  )
+                })
               )}
             </tbody>
           </table>
@@ -453,18 +468,20 @@ function OrdenesAdmin() {
               <p>No se encontraron órdenes</p>
             </div>
           ) : (
-            ordenesPaginadas.map((orden) => (
-              <div key={orden.id} className={`orden-card estado-${orden.estado}`}>
+            ordenesPaginadas.map((orden) => {
+              const visual = estadoVisual(orden.estado)
+              return (
+              <div key={orden.id} className={`orden-card estado-${visual.id}`}>
                 <div className="card-header">
                   <span className="orden-id">#{orden.id}</span>
                   <span
                     className="estado-badge"
                     style={{
-                      backgroundColor: ESTADO_COLORES[orden.estado]?.bg,
-                      color: ESTADO_COLORES[orden.estado]?.color
+                      backgroundColor: visual.bg,
+                      color: visual.color
                     }}
                   >
-                    {ESTADO_COLORES[orden.estado]?.label || orden.estado}
+                    {visual.label}
                   </span>
                 </div>
 
@@ -493,7 +510,7 @@ function OrdenesAdmin() {
                   </div>
 
                   <select
-                    value={orden.estado}
+                    value={visual.id}
                     onChange={(e) => handleCambiarEstado(orden.id, e.target.value)}
                     className="estado-select-card"
                   >
@@ -517,7 +534,8 @@ function OrdenesAdmin() {
                   </button>
                 </div>
               </div>
-            ))
+              )
+            })
           )}
         </div>
       ) : (

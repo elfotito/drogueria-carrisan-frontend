@@ -1,4 +1,5 @@
 import { useMemo, useRef, useState } from 'react'
+import { normalizarEstado } from '../../config/estadosOrden'
 import './TableroSwipeOrdenes.css'
 
 // ---------------------------------------------------------------
@@ -8,21 +9,48 @@ import './TableroSwipeOrdenes.css'
 // scroll de la página). Mismo contrato de props y mismo endpoint
 // atrás (onCambiarEstado) que TableroKanbanOrdenes.
 //
+// ORDER STATUS ≠ FULFILLMENT METHOD: el siguiente/anterior estado se
+// calcula POR ORDEN según su tipo_envio (retiro vs delivery), no de
+// forma global — una orden de retiro avanza a listo_para_retiro, una
+// de delivery a enviado. Las transiciones inválidas las bloquea el
+// backend igualmente.
+//
 // 'cancelado' no aparece acá por la misma razón que en desktop:
 // no es un paso del flujo, vive en el modal de detalle.
 // ---------------------------------------------------------------
 
-const ORDEN_ESTADOS = ['pedido_creado', 'procesando', 'preparando', 'enviado', 'entregado']
+const FLUJO_RETIRO = ['pedido_creado', 'preparando', 'listo_para_retiro', 'retirado']
+const FLUJO_ENVIO = ['pedido_creado', 'preparando', 'enviado', 'entregado']
+
+// Tabs del tablero: todos los estados de trabajo de ambas líneas.
+const TAB_ESTADOS = ['pedido_creado', 'preparando', 'enviado', 'listo_para_retiro', 'entregado', 'retirado']
 const UMBRAL_SWIPE = 90
+
+const flujoDe = (orden) => (orden.tipo_envio === 'retiro' ? FLUJO_RETIRO : FLUJO_ENVIO)
+
+function siguienteDe(orden, estado) {
+  const flujo = flujoDe(orden)
+  const i = flujo.indexOf(estado)
+  return i >= 0 ? flujo[i + 1] : undefined
+}
+
+function anteriorDe(orden, estado) {
+  const flujo = flujoDe(orden)
+  const i = flujo.indexOf(estado)
+  return i >= 0 ? flujo[i - 1] : undefined
+}
 
 function formatUSD(valor) {
   return `$${Number(valor || 0).toFixed(2)}`
 }
 
-function TarjetaOrdenSwipe({ orden, estadoSiguiente, estadoAnterior, estadoColores, onCambiarEstado, onAbrir }) {
+function TarjetaOrdenSwipe({ orden, estadoColores, onCambiarEstado, onAbrir }) {
   const [dx, setDx] = useState(0)
   const arrastrando = useRef(false)
   const inicioX = useRef(0)
+
+  const estadoSiguiente = siguienteDe(orden, orden.estado)
+  const estadoAnterior = anteriorDe(orden, orden.estado)
 
   function handlePointerDown(e) {
     arrastrando.current = true
@@ -80,30 +108,26 @@ function TarjetaOrdenSwipe({ orden, estadoSiguiente, estadoAnterior, estadoColor
 }
 
 export default function TableroSwipeOrdenes({ ordenes, estadoColores, onCambiarEstado, onAbrirOrden }) {
-  const [tabActiva, setTabActiva] = useState(ORDEN_ESTADOS[0])
+  const [tabActiva, setTabActiva] = useState(TAB_ESTADOS[0])
 
   const conteoPorEstado = useMemo(() => {
     const mapa = {}
-    ORDEN_ESTADOS.forEach((estado) => {
-      mapa[estado] = ordenes.filter((o) => o.estado === estado).length
+    TAB_ESTADOS.forEach((estado) => {
+      mapa[estado] = ordenes.filter((o) => normalizarEstado(o.estado) === estado).length
     })
     return mapa
   }, [ordenes])
 
   const ordenesDeLaTab = useMemo(() => {
     return ordenes
-      .filter((o) => o.estado === tabActiva)
+      .filter((o) => normalizarEstado(o.estado) === tabActiva)
       .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
   }, [ordenes, tabActiva])
-
-  const indiceActivo = ORDEN_ESTADOS.indexOf(tabActiva)
-  const estadoSiguiente = ORDEN_ESTADOS[indiceActivo + 1]
-  const estadoAnterior = ORDEN_ESTADOS[indiceActivo - 1]
 
   return (
     <div className="swipe-tablero">
       <div className="swipe-tabs">
-        {ORDEN_ESTADOS.map((estado) => (
+        {TAB_ESTADOS.map((estado) => (
           <button
             key={estado}
             type="button"
@@ -125,8 +149,6 @@ export default function TableroSwipeOrdenes({ ordenes, estadoColores, onCambiarE
             <TarjetaOrdenSwipe
               key={orden.id}
               orden={orden}
-              estadoSiguiente={estadoSiguiente}
-              estadoAnterior={estadoAnterior}
               estadoColores={estadoColores}
               onCambiarEstado={onCambiarEstado}
               onAbrir={onAbrirOrden}

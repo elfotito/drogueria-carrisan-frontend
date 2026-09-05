@@ -1,21 +1,26 @@
 import { useState, useEffect, useMemo } from 'react'
 import api from '../../api/axios'
 import OrdenDetalleModal from '../OrdenDetalleModal'
+import { ESTADOS_ORDEN, normalizarEstado } from '../../config/estadosOrden'
 import './DashboardAdmin.css'
 
-const ESTADOS = ['pedido_creado', 'procesando', 'preparando', 'enviado', 'entregado', 'cancelado']
+// Estados operativos del pipeline actual (sin legacy) — labels/colores vienen
+// de la fuente única (src/config/estadosOrden.js).
+const ESTADOS = Object.keys(ESTADOS_ORDEN).filter((id) => !ESTADOS_ORDEN[id].legacy)
 
-const ESTADO_COLORES = {
-  pedido_creado: { color: '#f59e0b', bg: '#fef3c7', label: 'Pedido Creado' },
-  procesando: { color: '#3b82f6', bg: '#dbeafe', label: 'Procesando' },
-  preparando: { color: '#8b5cf6', bg: '#ede9fe', label: 'Preparando' },
-  enviado: { color: '#06b6d4', bg: '#cffafe', label: 'Enviado' },
-  entregado: { color: '#10b981', bg: '#d1fae5', label: 'Entregado' },
-  cancelado: { color: '#ef4444', bg: '#fee2e2', label: 'Cancelado' }
-}
+// Labels legibles (neutrales de la fuente única); el rol admin usa el id técnico
+// en pantallas de detalle/troubleshooting.
+const ESTADO_COLORES = Object.fromEntries(
+  ESTADOS.map((id) => [id, {
+    color: ESTADOS_ORDEN[id].color,
+    bg: ESTADOS_ORDEN[id].bg,
+    label: ESTADOS_ORDEN[id].label,
+  }])
+)
 
-// Estados que todavía requieren acción del admin (aún no salió ni se entregó)
-const ESTADOS_PENDIENTES_ACCION = ['pedido_creado', 'procesando', 'preparando']
+// Estados que todavía requieren acción del admin (aún no salió ni se entregó).
+// Se comparan normalizados para que los legacy (p.ej. procesando→preparando) cuenten.
+const ESTADOS_PENDIENTES_ACCION = ['pedido_creado', 'preparando']
 
 function formatUSD(valor) {
   return `$${Number(valor || 0).toFixed(2)}`
@@ -118,7 +123,7 @@ function DashboardAdmin({ onIrA }) {
       return f.getFullYear() === hoy.getFullYear() && f.getMonth() === hoy.getMonth()
     }
 
-    const pendientesAccion = ordenes.filter(o => ESTADOS_PENDIENTES_ACCION.includes(o.estado)).length
+    const pendientesAccion = ordenes.filter(o => ESTADOS_PENDIENTES_ACCION.includes(normalizarEstado(o.estado))).length
 
     const ventasMes = ordenes
       .filter(o => o.estado !== 'cancelado' && esDelMes(o.created_at))
@@ -137,7 +142,7 @@ function DashboardAdmin({ onIrA }) {
   const distribucionEstados = useMemo(() => {
     return ESTADOS.map(estado => ({
       estado,
-      cantidad: ordenes.filter(o => o.estado === estado).length,
+      cantidad: ordenes.filter(o => normalizarEstado(o.estado) === estado).length,
       ...ESTADO_COLORES[estado]
     }))
   }, [ordenes])
@@ -274,6 +279,8 @@ function DashboardAdmin({ onIrA }) {
           ) : (
             <ul className="dash-lista">
               {ordenesRecientes.map(orden => {
+                const estId = normalizarEstado(orden.estado)
+                const estColor = ESTADO_COLORES[estId] || { bg: '#f1f5f9', color: '#64748b' }
                 const vencida = orden.fecha_vencimiento &&
                   new Date(orden.fecha_vencimiento) < new Date() &&
                   orden.estado !== 'cancelado' &&
@@ -293,11 +300,11 @@ function DashboardAdmin({ onIrA }) {
                         <span
                           className="dash-estado-badge"
                           style={{
-                            backgroundColor: ESTADO_COLORES[orden.estado]?.bg,
-                            color: ESTADO_COLORES[orden.estado]?.color
+                            backgroundColor: estColor.bg,
+                            color: estColor.color
                           }}
                         >
-                          {ESTADO_COLORES[orden.estado]?.label || orden.estado}
+                          {estColor.label || estId}
                         </span>
                         <span className="dash-orden-total">{formatUSD(orden.total_usd)}</span>
                       </div>

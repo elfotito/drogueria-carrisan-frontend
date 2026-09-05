@@ -236,13 +236,21 @@ function TabPorRevisar({ ordenes, onRecargar }) {
 }
 
 // ------------------------------------------------------------------
-// Tab 2: Por preparar — ver dirección + cantidades finales, enviar / cancelar
+// Tab 2: Por preparar — ver dirección/tipo, marcar enviado o listo para retiro,
+// cancelar. Backend valida fulfillment y pago.
 // ------------------------------------------------------------------
 function TabPorPreparar({ ordenes, onRecargar }) {
   const [procesando, setProcesando] = useState(null)
 
   if (ordenes.length === 0) {
     return <p>No hay pedidos por preparar.</p>
+  }
+
+  function etiquetaEnvio(orden) {
+    const t = orden.tipo_envio
+    if (t === 'delivery') return 'Delivery'
+    if (t === 'envio_nacional') return 'Envío nacional'
+    return 'Retiro en tienda'
   }
 
   function direccion(orden) {
@@ -254,13 +262,29 @@ function TabPorPreparar({ ordenes, onRecargar }) {
     return 'Retiro en tienda'
   }
 
-  async function enviar(orden) {
+  function esRetiro(orden) {
+    return orden.tipo_envio === 'retiro'
+  }
+
+  async function marcarEnviado(orden) {
     setProcesando(orden.id)
     try {
       await staffApi.patch(`/staff/almacen/${orden.id}/enviado`)
       await onRecargar()
     } catch (err) {
       alert(err.response?.data?.error || 'No se pudo marcar como enviado')
+    } finally {
+      setProcesando(null)
+    }
+  }
+
+  async function marcarListoParaRetiro(orden) {
+    setProcesando(orden.id)
+    try {
+      await staffApi.patch(`/staff/almacen/${orden.id}/listo-para-retiro`)
+      await onRecargar()
+    } catch (err) {
+      alert(err.response?.data?.error || 'No se pudo marcar como listo para retiro')
     } finally {
       setProcesando(null)
     }
@@ -286,8 +310,11 @@ function TabPorPreparar({ ordenes, onRecargar }) {
           <div className="staff-almacen-card-head">
             <p className="staff-almacen-card-titulo">
               Orden #{orden.id} — ${formatUSD(orden.total_usd)}
-              <span className="staff-almacen-badge staff-almacen-badge--preparando">preparando</span>
+              <span className="staff-almacen-badge staff-almacen-badge--preparando">{etiquetaEnvio(orden)}</span>
             </p>
+            {orden.forma_pago === 'contado' && orden.estado_pago !== 'verificado' && (
+              <span className="staff-almacen-badge staff-almacen-badge--credito">Pendiente de pago</span>
+            )}
           </div>
           <p className="staff-almacen-card-cliente">
             {orden.users?.nombre} {orden.users?.telefono ? `— ${orden.users.telefono}` : ''}
@@ -304,9 +331,23 @@ function TabPorPreparar({ ordenes, onRecargar }) {
             ))}
           </ul>
           <div className="staff-almacen-acciones">
-            <button className="staff-almacen-btn staff-almacen-btn--principal" onClick={() => enviar(orden)} disabled={procesando === orden.id}>
-              {procesando === orden.id ? 'Enviando...' : 'Marcar como enviado'}
-            </button>
+            {esRetiro(orden) ? (
+              <button
+                className="staff-almacen-btn staff-almacen-btn--principal"
+                onClick={() => marcarListoParaRetiro(orden)}
+                disabled={procesando === orden.id}
+              >
+                {procesando === orden.id ? 'Procesando...' : 'Marcar listo para retiro'}
+              </button>
+            ) : (
+              <button
+                className="staff-almacen-btn staff-almacen-btn--principal"
+                onClick={() => marcarEnviado(orden)}
+                disabled={procesando === orden.id}
+              >
+                {procesando === orden.id ? 'Enviando...' : 'Marcar como enviado'}
+              </button>
+            )}
             <button className="staff-almacen-btn staff-almacen-btn--danger" onClick={() => cancelar(orden)} disabled={procesando === orden.id}>
               Cancelar
             </button>

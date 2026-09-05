@@ -3,6 +3,7 @@ import {
   DndContext, DragOverlay, PointerSensor, useSensor, useSensors, closestCorners,
   useDroppable, useDraggable,
 } from '@dnd-kit/core'
+import { normalizarEstado } from '../../config/estadosOrden'
 import './TableroKanbanOrdenes.css'
 
 // ---------------------------------------------------------------
@@ -16,14 +17,16 @@ import './TableroKanbanOrdenes.css'
 // 'cancelado' no es columna acá — es una acción aparte del modal.
 //
 // Fila 1: 'pedido_creado' sola, ancho completo, bandeja de entrada.
-// Fila 2: 'procesando' | 'preparando' | 'enviado', trabajo en curso.
-// 'entregado' es módulo aparte (droppable, resumen, no lista tarjetas).
+// Fila 2: 'preparando' | 'enviado' | 'listo_para_retiro', trabajo en curso.
+// 'entregado'/'retirado' son módulo/resumen aparte (droppable, no lista).
+// Las transiciones que no correspondan a su fulfillment las bloquea el
+// backend (REGLA: el backend obliga, ver AGENTS.md raíz).
 // ---------------------------------------------------------------
 
 const FILA_SUPERIOR = ['pedido_creado']
-const FILA_INFERIOR = ['procesando', 'preparando', 'enviado']
-const ESTADO_TERMINAL = 'entregado'
-const COLUMNAS = [...FILA_SUPERIOR, ...FILA_INFERIOR, ESTADO_TERMINAL]
+const FILA_INFERIOR = ['preparando', 'enviado', 'listo_para_retiro']
+const ESTADOS_TERMINALES_ENTREGA = ['entregado', 'retirado']
+const COLUMNAS = [...FILA_SUPERIOR, ...FILA_INFERIOR, ...ESTADOS_TERMINALES_ENTREGA]
 
 function formatUSD(valor) {
   return `$${Number(valor || 0).toFixed(2)}`
@@ -110,7 +113,7 @@ export default function TableroKanbanOrdenes({ ordenes, estadoColores, onCambiar
       label: estadoColores[estado]?.label || estado,
       color: estadoColores[estado]?.color,
       ordenes: ordenes
-        .filter((o) => o.estado === estado)
+        .filter((o) => normalizarEstado(o.estado) === estado)
         .sort((a, b) => new Date(b.created_at) - new Date(a.created_at)),
     }))
   }, [ordenes, estadoColores])
@@ -122,14 +125,14 @@ export default function TableroKanbanOrdenes({ ordenes, estadoColores, onCambiar
   }, [columnas])
 
   const resumenEntregado = useMemo(() => {
-    const ordenesEntregadas = ordenes.filter((o) => o.estado === ESTADO_TERMINAL)
+    const ordenesEntregadas = ordenes.filter((o) => ESTADOS_TERMINALES_ENTREGA.includes(normalizarEstado(o.estado)))
     return {
       cantidad: ordenesEntregadas.length,
       totalUsd: ordenesEntregadas.reduce((sum, o) => sum + Number(o.total_usd || 0), 0),
     }
   }, [ordenes])
 
-  const { setNodeRef: setNodeRefEntregado, isOver: isOverEntregado } = useDroppable({ id: ESTADO_TERMINAL })
+  const { setNodeRef: setNodeRefEntregado, isOver: isOverEntregado } = useDroppable({ id: 'entregado' })
 
   function handleDragStart(event) {
     const orden = event.active.data.current?.orden
@@ -187,8 +190,8 @@ export default function TableroKanbanOrdenes({ ordenes, estadoColores, onCambiar
         </div>
 
         <ModuloEntregado
-          label={estadoColores[ESTADO_TERMINAL]?.label || 'Entregado'}
-          color={estadoColores[ESTADO_TERMINAL]?.color}
+          label="Entregado / Retirado"
+          color={estadoColores['entregado']?.color}
           cantidad={resumenEntregado.cantidad}
           totalUsd={resumenEntregado.totalUsd}
           isOver={isOverEntregado}

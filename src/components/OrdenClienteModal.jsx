@@ -1,23 +1,6 @@
 import { X, Package } from 'lucide-react'
+import { getEtapas, getLabelEstado, normalizarEstado } from '../config/estadosOrden'
 import './OrdenClienteModal.css'
-
-const PASOS = ['pedido_creado', 'procesando', 'preparando', 'enviado', 'entregado']
-
-const LABELS = {
-  pedido_creado: 'Pedido creado',
-  procesando: 'Procesando',
-  preparando: 'Preparando',
-  enviado: 'Enviado',
-  entregado: 'Entregado',
-  cancelado: 'Cancelado',
-}
-
-const LEGACY = {
-  pendiente: 'pedido_creado',
-  confirmado: 'procesando',
-  en_preparacion: 'preparando',
-  finalizado: 'entregado',
-}
 
 function formatUSD(valor) {
   return Number(valor || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
@@ -26,9 +9,11 @@ function formatUSD(valor) {
 export default function OrdenClienteModal({ orden, onClose }) {
   if (!orden) return null
 
-  const estadoNormalizado = LEGACY[orden.estado] || orden.estado
+  const fulfillment = orden.tipo_envio || 'delivery'
+  const etapas = getEtapas(fulfillment)
+  const estadoNormalizado = normalizarEstado(orden.estado)
   const esCancelada = estadoNormalizado === 'cancelado'
-  const pasoActual = PASOS.indexOf(estadoNormalizado)
+  const pasoActual = etapas.findIndex((e) => e.id === estadoNormalizado)
   const items = orden.items || orden.ordenes_items || orden.productos || []
 
   return (
@@ -53,13 +38,15 @@ export default function OrdenClienteModal({ orden, onClose }) {
         ) : (
           <div className="ocm-progreso">
             <div className="ocm-progreso-dots">
-              {PASOS.map((paso, i) => (
-                <div key={paso} className={`ocm-dot ${i <= pasoActual ? 'ocm-dot--activo' : ''} ${i === pasoActual ? 'ocm-dot--actual' : ''}`} />
+              {etapas.map((etapa, i) => (
+                <div key={etapa.id} className={`ocm-dot ${i <= pasoActual ? 'ocm-dot--activo' : ''} ${i === pasoActual ? 'ocm-dot--actual' : ''}`} />
               ))}
             </div>
             <p className="ocm-progreso-label">
-              {LABELS[estadoNormalizado] || orden.estado}
-              <span className="ocm-progreso-contador"> · Paso {pasoActual + 1} de {PASOS.length}</span>
+              {getLabelEstado(estadoNormalizado, { rol: 'cliente', fulfillmentMethod: fulfillment })}
+              {pasoActual >= 0 && (
+                <span className="ocm-progreso-contador"> · Paso {pasoActual + 1} de {etapas.length}</span>
+              )}
             </p>
           </div>
         )}

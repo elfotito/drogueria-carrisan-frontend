@@ -4,54 +4,10 @@ import api from '../api/axios'
 import { useCart } from '../context/CartContext'
 import './OrdenDetalle.css'
 import { MessageCircle } from 'lucide-react'
+import { getEtapas, getEstadoConfig, getLabelEstado, normalizarEstado } from '../config/estadosOrden'
 
-
-// ---------------------------------------------------------
-// Pipeline de estados — debe coincidir con el backend
-// (ordenes.controller.js: ESTADOS_VALIDOS). Las descripciones de
-// 'pedido_creado' y 'procesando' se ajustan según forma_pago porque
-// el paso de pago solo existe para órdenes de contado.
-// ---------------------------------------------------------
-function getEtapas(formaPago) {
-  return [
-    {
-      id: 'pedido_creado',
-      label: 'Pedido Creado',
-      desc: 'Recibimos tu pedido y estamos verificando disponibilidad y cantidades.',
-    },
-    {
-      id: 'procesando',
-      label: 'Procesando',
-      desc: formaPago === 'credito'
-        ? 'Tu pedido pasará a preparación usando tu línea de crédito.'
-        : 'Confirmamos tu pedido. Ya puedes proceder con el pago.',
-    },
-    {
-      id: 'preparando',
-      label: 'Preparando',
-      desc: 'Estamos empacando tu pedido. Ya no se pueden hacer cambios a la dirección de entrega.',
-    },
-    {
-      id: 'enviado',
-      label: 'Enviado',
-      desc: 'Tu pedido salió de nuestro almacén rumbo a destino.',
-    },
-    {
-      id: 'entregado',
-      label: 'Entregado',
-      desc: 'Tu pedido fue entregado con éxito.',
-    },
-  ]
-}
-
-const ESTADOS_CONFIG = {
-  pedido_creado: { label: 'Pedido Creado', color: '#f59e0b', bg: '#fef3c7' },
-  procesando: { label: 'Procesando', color: '#3b82f6', bg: '#dbeafe' },
-  preparando: { label: 'Preparando', color: '#8b5cf6', bg: '#ede9fe' },
-  enviado: { label: 'Enviado', color: '#06b6d4', bg: '#cffafe' },
-  entregado: { label: 'Entregado', color: '#10b981', bg: '#d1fae5' },
-  cancelado: { label: 'Cancelado', color: '#ef4444', bg: '#fee2e2' },
-}
+// Órdenes viejas sin tipo_envio se tratan como delivery (línea histórica).
+const fulfillmentDe = (orden) => orden?.tipo_envio || 'delivery'
 
 function formatUSD(valor) {
   return Number(valor || 0).toLocaleString('en-US', {
@@ -69,10 +25,10 @@ function formatFecha(fecha) {
   })
 }
 
-function Timeline({ estadoActual, historial, formaPago }) {
-  const etapas = getEtapas(formaPago)
-  const cancelada = estadoActual === 'cancelado'
-  const indiceActual = etapas.findIndex((e) => e.id === estadoActual)
+function Timeline({ estadoActual, historial, tipo_envio }) {
+  const etapas = getEtapas(tipo_envio || 'delivery')
+  const cancelada = normalizarEstado(estadoActual) === 'cancelado'
+  const indiceActual = etapas.findIndex((e) => e.id === normalizarEstado(estadoActual))
 
   return (
     <div className="od-timeline">
@@ -173,7 +129,10 @@ function OrdenDetalle() {
     )
   }
 
-  const estadoConfig = ESTADOS_CONFIG[orden.estado] || { label: orden.estado, color: '#64748b', bg: '#f1f5f9' }
+  const estadoNormalizado = normalizarEstado(orden.estado)
+  const fulfillmentDeOrden = fulfillmentDe(orden)
+  const estadoConfig = getEstadoConfig(estadoNormalizado) || { color: '#64748b', bg: '#f1f5f9' }
+  const estadoLabel = getLabelEstado(estadoNormalizado, { rol: 'cliente', fulfillmentMethod: fulfillmentDeOrden })
   const items = orden.ordenes_items || []
   const historial = orden.historial || []
 
@@ -198,7 +157,7 @@ function OrdenDetalle() {
             className="od-badge"
             style={{ backgroundColor: estadoConfig.bg, color: estadoConfig.color }}
           >
-            {estadoConfig.label}
+            {estadoLabel}
           </span>
         </div>
 
@@ -210,7 +169,7 @@ function OrdenDetalle() {
 
         {/* Timeline */}
         <section className="od-seccion">
-          <Timeline estadoActual={orden.estado} historial={historial} formaPago={orden.forma_pago} />
+          <Timeline estadoActual={orden.estado} historial={historial} tipo_envio={orden.tipo_envio} />
         </section>
 
         {/* Productos */}

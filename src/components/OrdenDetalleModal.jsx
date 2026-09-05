@@ -1,32 +1,10 @@
 import { useMemo, useState, useEffect } from 'react'
+import { getEstadoConfig, normalizarEstado } from '../config/estadosOrden'
 import './OrdenDetalleModal.css'
 
 // Estados en los que ya no tiene sentido editar productos — la orden
-// está cerrada (entregada) o muerta (cancelada).
-const ESTADOS_NO_EDITABLES = ['entregado', 'cancelado']
-
-// Mismos 4 estados operativos definidos en MisOrdenes.jsx — pagado/cancelado
-// no viven acá, se gestionan en Estado de Cuenta.
-const ESTADOS_CONFIG = {
-  pedido_creado: { label: 'Pedido Creado', color: '#f59e0b', bg: '#fef3c7' },
-  procesando: { label: 'Procesando', color: '#3b82f6', bg: '#dbeafe' },
-  preparando: { label: 'Preparando', color: '#8b5cf6', bg: '#ede9fe' },
-  enviado: { label: 'Enviado', color: '#06b6d4', bg: '#cffafe' },
-  entregado: { label: 'Entregado', color: '#10b981', bg: '#d1fae5' },
-  cancelado: { label: 'Cancelado', color: '#ef4444', bg: '#fee2e2' }
-}
-
-const ESTADOS_LEGACY = {
-  pendiente: 'pedido_creado',
-  confirmado: 'procesando',
-  en_preparacion: 'preparando',
-  finalizado: 'entregado'
-}
-
-function getEstadoConfig(estado) {
-  const normalizado = ESTADOS_LEGACY[estado] || estado
-  return ESTADOS_CONFIG[normalizado] || { label: estado || 'Desconocido', color: '#64748b', bg: '#f1f5f9' }
-}
+// está cerrada (entregada/retirada) o muerta (cancelada).
+const ESTADOS_NO_EDITABLES = ['entregado', 'retirado', 'cancelado']
 
 function formatUSD(valor) {
   return Number(valor || 0).toLocaleString('en-US', {
@@ -158,7 +136,8 @@ function OrdenDetalleModal({ orden, onClose, onCambiarEstado, estados, estadoCol
 
   if (!orden) return null
 
-  const estadoConfig = getEstadoConfig(orden.estado)
+  const estadoNormalizado = normalizarEstado(orden.estado)
+  const estadoConfig = getEstadoConfig(estadoNormalizado) || { label: estadoNormalizado, color: '#64748b', bg: '#f1f5f9' }
   const items = itemsOrden
 
   return (
@@ -189,9 +168,7 @@ function OrdenDetalleModal({ orden, onClose, onCambiarEstado, estados, estadoCol
               })}
             </p>
           </div>
-          {/* Antes: className={`odm-badge ${estadoConfig.clase}`} — estadoConfig.clase
-              nunca existió, así que el badge siempre caía en el estilo por defecto.
-              Ahora el color/fondo se aplica directo desde ESTADOS_CONFIG. */}
+          {/* Color/fondo y label vienen de src/config/estadosOrden.js (fuente única). */}
           <span
             className="odm-badge"
             style={{ color: estadoConfig.color, background: estadoConfig.bg }}
@@ -259,7 +236,7 @@ function OrdenDetalleModal({ orden, onClose, onCambiarEstado, estados, estadoCol
               <span className="odm-section-icon">🛒</span>
               Productos ({items.length})
             </h3>
-            {onGuardarItems && !editandoItems && !ESTADOS_NO_EDITABLES.includes(orden.estado) && (
+            {onGuardarItems && !editandoItems && !ESTADOS_NO_EDITABLES.includes(estadoNormalizado) && (
               <button className="odm-editar-btn" onClick={iniciarEdicion}>
                 Editar productos
               </button>
@@ -384,13 +361,13 @@ function OrdenDetalleModal({ orden, onClose, onCambiarEstado, estados, estadoCol
                 Actualizar Estado
               </h3>
               <select
-                value={orden.estado}
+                value={estadoNormalizado}
                 onChange={(e) => onCambiarEstado(orden.id, e.target.value)}
                 className="odm-estado-select"
               >
                 {estados.map(estado => (
                   <option key={estado} value={estado}>
-                    {estadoColores?.[estado]?.label || getEstadoConfig(estado).label}
+                    {estadoColores?.[estado]?.label || getEstadoConfig(estado)?.label || estado}
                   </option>
                 ))}
               </select>

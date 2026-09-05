@@ -163,6 +163,8 @@
 .mo-badge--preparando { background: #e0e7ff; color: #4338ca; }
 .mo-badge--enviado { background: var(--mo-accent-light); color: var(--mo-accent); }
 .mo-badge--entregado { background: #dcfce7; color: #15803d; }
+.mo-badge--listo_para_retiro { background: #cffafe; color: #0e7490; }
+.mo-badge--retirado { background: #dcfce7; color: #15803d; }
 .mo-badge--cancelado { background: #fee2e2; color: #dc2626; }
 .mo-badge--neutro { background: #f1f0eb; color: var(--mo-text-muted); }
 

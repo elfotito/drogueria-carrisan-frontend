@@ -13,8 +13,9 @@ function formatFecha(fecha) {
 }
 
 // ------------------------------------------------------------------
-// Órdenes por cancelar: cola de órdenes contado en 'procesando' que
-// no se pagaron. Cancelar aquí evita que queden colgadas por cobrar.
+// Órdenes por cancelar: cola de órdenes CONTADO sin pago verificado
+// (estado 'preparando' o legacy 'procesando'). Cancelar aquí evita que
+// queden colgadas por cobrar.
 // ------------------------------------------------------------------
 function StaffOrdenesPorCancelar() {
   const [ordenes, setOrdenes] = useState([])

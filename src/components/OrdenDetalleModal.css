@@ -136,7 +136,7 @@
 }
 
 /* ---------- Badge de estado ----------
-   El color se aplica inline desde ESTADOS_CONFIG (ver JSX);
+   El color se aplica inline desde getEstadoConfig (ver JSX);
    esta clase solo da la forma. */
 .odm-badge {
   flex-shrink: 0;

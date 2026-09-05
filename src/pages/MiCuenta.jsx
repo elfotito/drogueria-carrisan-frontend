@@ -14,6 +14,7 @@ import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpagin
 import HojaInferior from '../components/HojaInferior'
 import BannerOnboarding from '../components/BannerOnboarding'
 import { NAV_UNIFICADO } from '../components/paginas-principales/NavUnificado'
+import { ESTADOS_ORDEN, getEstadoConfig, getLabelEstado, normalizarEstado } from '../config/estadosOrden'
 import './MiCuenta.css'
 
 // ---------------------------------------------------------------
@@ -37,19 +38,17 @@ const ETIQUETAS_ENVIO = {
   retiro: 'Retiro en tienda',
 }
 
-// Config visual + reseña de cada estado de orden (mismos ids que MisOrdenes.jsx:
-// pedido_creado, procesando, preparando, enviado, entregado, cancelado)
-const ESTADOS_ORDEN = {
-  pedido_creado: { label: 'Pedido creado', color: '#6b6b7a', bg: '#f1f1ea', resena: 'Esperando confirmación de pago' },
-  procesando: { label: 'Procesando', color: '#d97706', bg: '#fff7ed', resena: 'Verificando tu pago' },
-  preparando: { label: 'Preparando', color: '#0052DC', bg: '#eaf0ff', resena: 'Preparando la orden para despacho' },
-  enviado: { label: 'Enviado', color: '#12A594', bg: '#e7f8f5', resena: 'En camino a tu dirección' },
-  entregado: { label: 'Entregado', color: '#15803d', bg: '#f0fdf4', resena: 'Orden lista para retiro' },
-  cancelado: { label: 'Cancelado', color: '#dc2626', bg: '#fef2f2', resena: 'Esta orden fue cancelada' },
-}
-
+// Visual de un estado: label para el cliente, color/bg y reseña — leídos de la
+// fuente única src/config/estadosOrden.js (estados legacy normalizados al set actual).
 function getEstadoOrden(estado) {
-  return ESTADOS_ORDEN[estado] || { label: estado, color: '#6b6b7a', bg: '#f1f1ea', resena: '' }
+  const normalizado = normalizarEstado(estado)
+  const cfg = getEstadoConfig(normalizado)
+  return {
+    label: getLabelEstado(normalizado, { rol: 'cliente' }),
+    color: cfg?.color || '#6b6b7a',
+    bg: cfg?.bg || '#f1f1ea',
+    resena: cfg?.descripcion || '',
+  }
 }
 
 const MESES_CORTOS = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic']
@@ -73,11 +72,14 @@ function calcularGastoMensual(ordenes) {
 }
 
 // Distribución por estado de las órdenes que todavía están "en curso"
-// (ni entregadas ni canceladas) — para la barra apilada de "Pedidos activos".
-const ORDEN_ETAPAS = ['pedido_creado', 'procesando', 'preparando', 'enviado']
+// (ni entregadas/retiradas ni canceladas) — para la barra apilada de "Pedidos activos".
+const ORDEN_ETAPAS = Object.keys(ESTADOS_ORDEN)
+  .filter((id) => !ESTADOS_ORDEN[id].legacy && !ESTADOS_ORDEN[id].esTerminal)
+
+const ESTADOS_CERRADOS = new Set(['entregado', 'retirado', 'cancelado'])
 
 function calcularPedidosActivos(ordenes) {
-  const activas = ordenes.filter((o) => !['entregado', 'cancelado'].includes(o.estado))
+  const activas = ordenes.filter((o) => !ESTADOS_CERRADOS.has(o.estado))
   const conteos = ORDEN_ETAPAS.map((estado) => ({
     estado,
     ...getEstadoOrden(estado),
