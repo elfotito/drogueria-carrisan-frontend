@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import staffApi from '../../api/staffAxios'
 import LayoutDepartamento from '../../components/staff/LayoutDepartamento'
+import StaffTabs from '../../components/staff/StaffTabs'
 import './StaffAlmacen.css'
 
 function formatUSD(valor) {
@@ -43,18 +44,11 @@ function StaffAlmacen() {
 
   return (
     <LayoutDepartamento departamento="logistica" activo="almacen" titulo="Almacén — pedidos">
-      <div className="staff-almacen-tabs">
-        {TABS.map((t) => (
-          <button
-            key={t.id}
-            className={`staff-almacen-tab ${tab === t.id ? 'is-active' : ''}`}
-            onClick={() => setTab(t.id)}
-          >
-            {t.texto}
-            {contador(t.id) > 0 && <span className="staff-almacen-tab-contador">{contador(t.id)}</span>}
-          </button>
-        ))}
-      </div>
+      <StaffTabs
+        tabs={TABS.map((t) => ({ ...t, contador: contador(t.id) }))}
+        activo={tab}
+        onChange={setTab}
+      />
 
       {cargando && <p>Cargando...</p>}
       {error && <p style={{ color: '#DC2626' }}>{error}</p>}

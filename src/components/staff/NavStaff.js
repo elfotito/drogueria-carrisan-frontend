@@ -10,7 +10,7 @@
 // ---------------------------------------------------------------
 import {
   LayoutDashboard, PackageCheck, ClipboardList, ShoppingCart,
-  Wallet, Landmark, TrendingUp, Truck,
+  Wallet, Landmark, TrendingUp, Truck, Receipt, Banknote, CalendarX2,
 } from 'lucide-react'
 
 const ROLES_TODOS = ['vendedor', 'despachador', 'almacenista', 'contabilidad', 'administrador', 'director', 'admin']
@@ -58,11 +58,35 @@ export const MODULOS = {
       titulo: 'Finanzas',
       items: [
         {
-          id: 'contabilidad',
-          to: '/staff/contabilidad',
+          id: 'ventas',
+          to: '/staff/ventas',
+          icono: Receipt,
+          texto: 'Ventas y facturación',
+          desc: 'Emite y anula facturas, notas de crédito y débito',
+          roles: ['contabilidad', 'administrador', 'director', 'admin'],
+        },
+        {
+          id: 'cuentas-por-cobrar',
+          to: '/staff/cuentas-por-cobrar',
+          icono: Banknote,
+          texto: 'Cuentas por cobrar',
+          desc: 'Clientes con línea de crédito y su estado de cuenta',
+          roles: ['contabilidad', 'administrador', 'director', 'admin'],
+        },
+        {
+          id: 'pagos',
+          to: '/staff/pagos',
           icono: Wallet,
-          texto: 'Estado de cuenta, pagos y facturas',
-          desc: 'Clientes, abonos, facturación y verificación de pagos',
+          texto: 'Pagos',
+          desc: 'Registra abonos y verifica reportes de pago',
+          roles: ['contabilidad', 'administrador', 'director', 'admin'],
+        },
+        {
+          id: 'ordenes-por-cancelar',
+          to: '/staff/ordenes-por-cancelar',
+          icono: CalendarX2,
+          texto: 'Órdenes por cancelar',
+          desc: 'Órdenes contado sin pagar que hay que cancelar',
           roles: ['contabilidad', 'administrador', 'director', 'admin'],
         },
       ],

@@ -61,17 +61,58 @@ import PwaScopeSwitcher from './components/PwaScopeSwitcher'
 import StaffLogin from './pages/staff/StaffLogin'
 import StaffRegistro from './pages/staff/StaffRegistro'
 import StaffDashboard from './pages/staff/StaffDashboard'
-import StaffDespacho from './pages/staff/StaffDespacho'
-import StaffOrdenes from './pages/staff/StaffOrdenes'
-import StaffAlmacen from './pages/staff/StaffAlmacen'
-import StaffContabilidad from './pages/staff/StaffContabilidad'
 import StaffDepartamento from './pages/staff/StaffDepartamento'
+import StaffModuloPlaceholder from './pages/staff/StaffModuloPlaceholder'
+import { STAFF_PAGINAS } from './pages/staff/STAFF_PAGINAS'
+import { DEPARTAMENTOS, MODULOS } from './components/staff/NavStaff'
 
 
 function LoadingBarBridge() {
   const bar = useLoadingBar()
   useEffect(() => { registerLoadingBar(bar) }, [bar])
   return <TopLoadingBar />
+}
+
+// ---------------------------------------------------------------
+// Rutas staff generadas desde la fuente única de verdad
+// (DEPARTAMENTOS + MODULOS en NavStaff.js):
+//   - Hub de cada departamento: /staff/<depto.id>
+//   - Página de cada módulo: /staff/<item.to> con el guard de su
+//     rol (item.roles). Si el módulo no tiene página registrada en
+//     STAFF_PAGINAS, cae en StaffModuloPlaceholder ("en construcción").
+// Agregar un módulo nuevo = agregarlo a MODULOS (+STAFF_PAGINAS si
+// tiene página real). Nada más que cambiar aquí.
+// ---------------------------------------------------------------
+function RutasStaff() {
+  const rutas = []
+  for (const depto of DEPARTAMENTOS) {
+    rutas.push(
+      <Route
+        key={`hub-${depto.id}`}
+        path={`/staff/${depto.id}`}
+        element={<PrivateRouteStaff><StaffDepartamento departamento={depto.id} /></PrivateRouteStaff>}
+      />
+    )
+  }
+  for (const [deptoId, grupos] of Object.entries(MODULOS)) {
+    for (const grupo of grupos) {
+      for (const item of grupo.items) {
+        const Pagina = STAFF_PAGINAS[item.id] || StaffModuloPlaceholder
+        rutas.push(
+          <Route
+            key={item.id}
+            path={item.to}
+            element={
+              <PrivateRouteStaff rolesPermitidos={item.roles}>
+                <Pagina departamento={deptoId} activo={item.id} titulo={item.texto} descripcion={item.desc} />
+              </PrivateRouteStaff>
+            }
+          />
+        )
+      }
+    }
+  }
+  return rutas
 }
 
 function App() {
@@ -107,13 +148,7 @@ function App() {
                 <Route path="/staff/login" element={<StaffLogin />} />
                 <Route path="/staff/registro" element={<StaffRegistro />} />
                 <Route path="/staff/dashboard" element={<PrivateRouteStaff><StaffDashboard /></PrivateRouteStaff>} />
-                <Route path="/staff/finanzas" element={<PrivateRouteStaff><StaffDepartamento departamento="finanzas" /></PrivateRouteStaff>} />
-                <Route path="/staff/comercial" element={<PrivateRouteStaff><StaffDepartamento departamento="comercial" /></PrivateRouteStaff>} />
-                <Route path="/staff/logistica" element={<PrivateRouteStaff><StaffDepartamento departamento="logistica" /></PrivateRouteStaff>} />
-                <Route path="/staff/despacho" element={<PrivateRouteStaff rolesPermitidos={['despachador', 'administrador', 'director', 'admin']}><StaffDespacho /></PrivateRouteStaff>} />
-                <Route path="/staff/ordenes" element={<PrivateRouteStaff rolesPermitidos={['vendedor', 'administrador', 'director', 'admin']}><StaffOrdenes /></PrivateRouteStaff>} />
-                <Route path="/staff/almacen" element={<PrivateRouteStaff rolesPermitidos={['almacenista', 'administrador', 'director', 'admin']}><StaffAlmacen /></PrivateRouteStaff>} />
-                <Route path="/staff/contabilidad" element={<PrivateRouteStaff rolesPermitidos={['contabilidad', 'administrador', 'director', 'admin']}><StaffContabilidad /></PrivateRouteStaff>} />
+                <RutasStaff />
                 <Route path="/quienes-somos" element={<QuienesSomos />} />
                 <Route path="/ayuda" element={<Ayuda />} />
                 <Route path="/contacto" element={<Contacto />} />

@@ -1,0 +1,48 @@
+.staff-tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 12px;
+}
+
+.staff-tab {
+  padding: 9px 16px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 999px;
+  background: #fff;
+  color: #4b5563;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+}
+
+.staff-tab:hover {
+  border-color: var(--ldep-color, #1B4B8F);
+  color: var(--ldep-color, #1B4B8F);
+}
+
+.staff-tab--activo {
+  background: var(--ldep-color, #1B4B8F);
+  border-color: var(--ldep-color, #1B4B8F);
+  color: #fff;
+}
+
+.staff-tab__contador {
+  font-size: 11px;
+  font-weight: 700;
+  background: #fff;
+  color: var(--ldep-color, #1B4B8F);
+  border-radius: 999px;
+  padding: 1px 8px;
+}
+
+.staff-tab--activo .staff-tab__contador {
+  background: var(--ldep-color-strong, #12A594);
+  color: #fff;
+}

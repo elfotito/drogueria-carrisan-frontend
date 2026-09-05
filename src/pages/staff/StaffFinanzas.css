@@ -1,35 +1,6 @@
-.stf-tabs {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin-bottom: 22px;
-  border-bottom: 1px solid #e5e7eb;
-  padding-bottom: 12px;
-}
-
-.stf-tab {
-  padding: 9px 16px;
-  border: 1.5px solid #e5e7eb;
-  border-radius: 999px;
-  background: #fff;
-  color: #4b5563;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.stf-tab:hover {
-  border-color: #1B4B8F;
-  color: #1B4B8F;
-}
-
-.stf-tab--activo {
-  background: #1B4B8F;
-  border-color: #1B4B8F;
-  color: #fff;
-}
-
+/* Estilos compartidos de los módulos de Finanzas del staff
+   (Ventas, Cuentas por cobrar, Pagos, Órdenes por cancelar).
+   Heredado de StaffContabilidad.css. */
 .stf-subtitulo {
   font-size: 15px;
   font-weight: 700;
