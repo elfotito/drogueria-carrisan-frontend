@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import staffApi from '../api/staffAxios';
 
@@ -9,37 +9,31 @@ function isTokenValid(token) {
   try {
     const decoded = jwtDecode(token);
     return decoded.exp * 1000 > Date.now();
-  } catch (e) {
+  } catch {
     return false;
   }
 }
 
 export function StaffAuthProvider({ children }) {
   const [token, setToken] = useState(() => localStorage.getItem('staff_token'));
-  const [staff, setStaff] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (token && isTokenValid(token)) {
+  const [staff, setStaff] = useState(() => {
+    if (!token) return null;
+    if (!isTokenValid(token)) {
+      localStorage.removeItem('staff_token');
+      localStorage.removeItem('staff_user');
+      return null;
+    }
+    try {
       const guardado = localStorage.getItem('staff_user');
       if (guardado) {
-        try {
-          setStaff(JSON.parse(guardado));
-        } catch (e) {
-          setStaff(jwtDecode(token));
-        }
-      } else {
-        setStaff(jwtDecode(token));
+        try { return JSON.parse(guardado); } catch { return jwtDecode(token); }
       }
-    } else {
-      if (token) {
-        localStorage.removeItem('staff_token');
-        localStorage.removeItem('staff_user');
-      }
-      setStaff(null);
+      return jwtDecode(token);
+    } catch {
+      return null;
     }
-    setLoading(false);
-  }, [token]);
+  });
+  const [loading] = useState(false);
 
   // Guarda una sesión staff ya autenticada ({ token, staff }). Lo usa el
   // login y también el registro staff (el backend devuelve token+staff y

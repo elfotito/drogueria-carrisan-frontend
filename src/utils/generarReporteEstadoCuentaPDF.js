@@ -76,7 +76,7 @@ export default async function generarReporteEstadoCuentaPDF({
   y = dibujarTablaMovimientos(doc, facturas, pagos, y)
 
   if (ordenes.length > 0) {
-    y = dibujarOrdenesPendientes(doc, ordenes, y)
+    dibujarOrdenesPendientes(doc, ordenes, y)
   }
 
   dibujarPiePagina(doc)

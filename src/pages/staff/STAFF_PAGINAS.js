@@ -16,6 +16,11 @@ import StaffVentas from './StaffVentas'
 import StaffCuentasPorCobrar from './StaffCuentasPorCobrar'
 import StaffPagos from './StaffPagos'
 import StaffOrdenesPorCancelar from './StaffOrdenesPorCancelar'
+import StaffCotizaciones from './StaffCotizaciones'
+import StaffRequerimientos from './StaffRequerimientos'
+import StaffDocumentos from './StaffDocumentos'
+import StaffPromociones from './StaffPromociones'
+import StaffDirecciones from './StaffDirecciones'
 
 export const STAFF_PAGINAS = {
   almacen: StaffAlmacen,
@@ -25,4 +30,9 @@ export const STAFF_PAGINAS = {
   'cuentas-por-cobrar': StaffCuentasPorCobrar,
   pagos: StaffPagos,
   'ordenes-por-cancelar': StaffOrdenesPorCancelar,
+  cotizaciones: StaffCotizaciones,
+  requerimientos: StaffRequerimientos,
+  documentos: StaffDocumentos,
+  promociones: StaffPromociones,
+  direcciones: StaffDirecciones,
 }

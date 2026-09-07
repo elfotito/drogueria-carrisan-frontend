@@ -106,6 +106,9 @@ function MenuDrawer({ isOpen, onClose, user, onLogout }) {
           <NavLink to="/quienes-somos" className={linkClase} onClick={onClose}>
             Quiénes Somos
           </NavLink>
+          <NavLink to="/registro-inhrr" className={linkClase} onClick={onClose}>
+            Registro sanitario (INHRR)
+          </NavLink>
           <NavLink to="/ayuda" className={linkClase} onClick={onClose}>
             Preguntas Frecuentes
           </NavLink>

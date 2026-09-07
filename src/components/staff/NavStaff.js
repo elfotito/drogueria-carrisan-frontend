@@ -11,6 +11,7 @@
 import {
   LayoutDashboard, PackageCheck, ClipboardList, ShoppingCart,
   Wallet, Landmark, TrendingUp, Truck, Receipt, Banknote, CalendarX2,
+  MessagesSquare, PackageSearch, FileText, Megaphone, MapPin,
 } from 'lucide-react'
 
 const ROLES_TODOS = ['vendedor', 'despachador', 'almacenista', 'contabilidad', 'administrador', 'director', 'admin']
@@ -104,6 +105,38 @@ export const MODULOS = {
           desc: 'Arma pedidos a nombre de un cliente y confirma el envío',
           roles: ['vendedor', 'administrador', 'director', 'admin'],
         },
+        {
+          id: 'cotizaciones',
+          to: '/staff/cotizaciones',
+          icono: MessagesSquare,
+          texto: 'Cotizaciones',
+          desc: 'Responde solicitudes de precio de los clientes',
+          roles: ['vendedor', 'administrador', 'director', 'admin'],
+        },
+        {
+          id: 'requerimientos',
+          to: '/staff/requerimientos',
+          icono: PackageSearch,
+          texto: 'Requerimientos',
+          desc: 'Asigna producto y precio a los requerimientos de los clientes',
+          roles: ['vendedor', 'administrador', 'director', 'admin'],
+        },
+        {
+          id: 'documentos',
+          to: '/staff/documentos',
+          icono: FileText,
+          texto: 'Documentos de clientes',
+          desc: 'Aprueba o rechaza los documentos que suben los clientes',
+          roles: ['vendedor', 'administrador', 'director', 'admin'],
+        },
+        {
+          id: 'promociones',
+          to: '/staff/promociones',
+          icono: Megaphone,
+          texto: 'Promociones',
+          desc: 'Crea y edita plantillas de promociones (sin envío masivo)',
+          roles: ['vendedor', 'administrador', 'director', 'admin'],
+        },
       ],
     },
   ],
@@ -125,6 +158,14 @@ export const MODULOS = {
           icono: ClipboardList,
           texto: 'Envíos por despachar',
           desc: 'Cola de envíos en ruta y entregas confirmadas',
+          roles: ['despachador', 'administrador', 'director', 'admin'],
+        },
+        {
+          id: 'direcciones',
+          to: '/staff/direcciones',
+          icono: MapPin,
+          texto: 'Direcciones de clientes',
+          desc: 'Direcciones de envío registradas por los clientes',
           roles: ['despachador', 'administrador', 'director', 'admin'],
         },
       ],
@@ -149,4 +190,5 @@ export const NAV_STAFF = [
 ]
 
 // Roles que pueden usar el bridge al panel administrativo del dueño.
-export const ROLES_BRIDGE_ADMIN = ['administrador', 'director', 'admin']
+// Solo el rol 'admin' (el dueño) tiene acceso.
+export const ROLES_BRIDGE_ADMIN = ['admin']

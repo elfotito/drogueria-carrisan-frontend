@@ -17,5 +17,23 @@ export default defineConfig([
       globals: globals.browser,
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
+    rules: {
+      'react-refresh/only-export-components': [
+        'error',
+        {
+          allowExportNames: [
+            'useColorMode',
+            'useColorModeValue',
+            'toaster',
+            'useLoadingBar',
+            'useCart',
+            'useAuth',
+            'useEnvio',
+            'useFavoritos',
+            'useStaffAuth',
+          ],
+        },
+      ],
+    },
   },
 ])

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Box,
   Heading,
@@ -12,7 +12,8 @@ import {
   Spinner,
   Text,
   Flex,
-  Input
+  Input,
+  Button
 } from '@chakra-ui/react';
 import {
   ResponsiveContainer,
@@ -59,29 +60,26 @@ export default function AnalyticsVentas() {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
 
-  const cargarDatos = useCallback(async () => {
-    setCargando(true);
-    setError(null);
-    try {
-      const token = localStorage.getItem('token');
-      const params = new URLSearchParams({ desde, hasta, agrupacion });
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/admin/analytics/ventas?${params}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (!res.ok) throw new Error('Error al cargar la analítica');
-      const data = await res.json();
-      setDatos(data);
-    } catch (err) {
-      console.error(err);
-      setError('No se pudo cargar la analítica de ventas.');
-    } finally {
-      setCargando(false);
-    }
-  }, [desde, hasta, agrupacion]);
-
   useEffect(() => {
-    cargarDatos();
-  }, [cargarDatos]);
+    let activo = true;
+    const token = localStorage.getItem('token');
+    const params = new URLSearchParams({ desde, hasta, agrupacion });
+    fetch(`${import.meta.env.VITE_API_URL}/admin/analytics/ventas?${params}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error('Error al cargar la analítica');
+        return res.json();
+      })
+      .then((data) => { if (activo) setDatos(data); })
+      .catch((err) => {
+        if (!activo) return;
+        console.error(err);
+        setError('No se pudo cargar la analítica de ventas.');
+      })
+      .finally(() => { if (activo) setCargando(false); });
+    return () => { activo = false };
+  }, [desde, hasta, agrupacion]);
 
 const COLUMNAS_VENTAS = [
   { header: 'Período', key: 'periodo' },
@@ -93,6 +91,8 @@ const COLUMNAS_VENTAS = [
   ...p,
   total: formatoUsd(p.total)
 })) || [];
+
+  const serieParaGrafico = (datos?.serie || []).map((p) => ({ etiqueta: p.periodo, total: p.total }));
 
   return (
     <Box p={{ base: 4, md: 8 }}>

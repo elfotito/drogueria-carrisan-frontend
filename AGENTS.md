@@ -100,6 +100,7 @@ Cada formulario de registro es un archivo JSX autonomo con su propio estado loca
 |--------|------|-------|-------------|
 | Home | /home | Si | Dashboard del usuario con carruseles, ofertas, etc. |
 | Catalogo | /catalogo | No | Catalogo de productos con busqueda y filtros |
+| RegistroInhrr | /registro-inhrr | No | Consulta publica del registro sanitario INHRR (medicamentos, hospitalarios, misceláneos) con filtros por categoría/forma/laboratorio/molécula/ATC. Ficha por SKU con datos completos del registro. |
 | ProductoDetalle | /producto/:id | No | Detalle de producto individual |
 | Carrito | /carrito | Si | Carrito de compras + checkout |
 | MisOrdenes | /orders | Si | Historial de pedidos |
@@ -149,7 +150,7 @@ El personal de la empresa (vendedor, despachador, almacenista, contabilidad, adm
 
 - **Guard**: `<PrivateRouteStaff rolesPermitidos={[...]}>` envuelve las paginas staff. Sin `rolesPermitidos` solo exige sesion staff; con roles redirige a `/staff/dashboard` si el `staff.rol` no coincide. El Navbar se oculta en cualquier ruta `/staff/*` (ver Navbar.jsx).
 
-- **LayoutStaff + NavStaff** (`src/components/staff/`): sidebar persistente (desktop ≥1024px) / drawer móvil. `NavStaff.js` define `ROLES_BRIDGE_ADMIN` (roles `administrador`, `director`, `admin`) y las estructuras de departamentos. Cada ítem se filtra con `item.roles.includes(staff.rol)`. El `director` ve todos los módulos.
+- **LayoutStaff + NavStaff** (`src/components/staff/`): sidebar persistente (desktop ≥1024px) / drawer móvil. `NavStaff.js` define `ROLES_BRIDGE_ADMIN` (solo rol `admin` — el dueño) y las estructuras de departamentos. Cada ítem se filtra con `item.roles.includes(staff.rol)`. El `director` ve todos los módulos.
 
 - **Categorización por departamentos** (ver sección "Categorización por departamentos (staff)" abajo): el `StaffDashboard` ya NO usa sidebar — es un panel visual standalone con tarjetas de departamento. Las páginas de trabajo (`/staff/almacen`, `/staff/despacho`, `/staff/ventas`, `/staff/cuentas-por-cobrar`, `/staff/pagos`, `/staff/ordenes-por-cancelar`, `/staff/ordenes`) usan `LayoutDepartamento` (sidebar filtrado al departamento activo, con color propio por depto). `LayoutStaff` queda como legacy sin uso activo.
 
@@ -168,7 +169,7 @@ Desde 2026-09-04 el módulo staff se organiza en **3 departamentos**: `finanzas`
   - **Comercial** → `#2563EB` (azul), icono `TrendingUp`
   - **Logística** → `#D97706` (naranja), icono `Truck`
 - `MODULOS` — objeto `{ finanzas: [...], comercial: [...], logistica: [...] }`. Cada depto es un array de grupos con `{ titulo, items: [{ id, to, icono, texto, roles }] }`. **Aquí se agregan los módulos NUEVOS** (ej. crédito y cobranza en finanzas, proveedores en comercial, inventario en logística); cada item declara a qué roles es visible.
-- `ROLES_BRIDGE_ADMIN` = `['administrador', 'director', 'admin']` — ven el botón al panel `/admin`.
+- `ROLES_BRIDGE_ADMIN` = `['admin']` — solo el dueño ve el botón al panel `/admin`.
 - `NAV_STAFF` — array legacy "aplanado" (General + todos los grupos), usado solo por `LayoutStaff` (sin uso activo).
 
 ### Páginas y layouts
@@ -218,8 +219,15 @@ Desde 2026-09-04 el módulo staff se organiza en **3 departamentos**: `finanzas`
 | /staff/ordenes-por-cancelar | roles: contabilidad/administrador/director/admin | Finanzas | funcional | Cola de órdenes contado en `preparando` (o legacy `procesando`) sin pago verificado; botón "Cancelar pedido" (antiguo tab "Por cobrar") (`StaffFinanzas.css`) |
 | /staff/despacho | roles: despachador/administrador/director/admin | Logística | funcional | Cola de ordenes 'enviado' + marcar entregado |
 | /staff/ordenes | roles: vendedor/administrador/director/admin | Comercial | funcional | Crear orden a nombre de un cliente (buscar cliente, tipo de envio + direccion delivery, items, POST /staff/ordenes). CSS propio `StaffOrdenes.css`. |
+| /staff/cotizaciones | roles: vendedor/administrador/director/admin | Comercial | funcional | Migrado de `CotizacionesAdmin`: Kanban pendientes/cotizadas/rechazadas + responder con precio (`PATCH /staff/cotizaciones/:id/responder|rechazar`). El backend registra `staff_id` (auditoría) |
+| /staff/requerimientos | roles: vendedor/administrador/director/admin | Comercial | funcional | Migrado de `RequerimientosAdmin`: Kanban pendientes/respondidos + asignar producto/precio o rechazar items (`PATCH /staff/requerimientos/:id/responder`). El backend registra `staff_id` (auditoría) |
+| /staff/documentos | roles: vendedor/administrador/director/admin | Comercial | funcional | Migrado de `DocumentosAdmin`: Kanban pendientes/aprobadas/rechazadas de documentos de clientes (RIF, referencias, etc.); aprobar/rechazar. El backend registra `staff_id` (auditoría) |
+| /staff/promociones | roles: vendedor/administrador/director/admin | Comercial | funcional | Versión limitada de `PromocionesAdmin` (endpoints `/staff/promociones/*` — nomenclatura unificada): crear/editar/eliminar plantillas + historial. **SIN envío masivo** (queda solo en `/admin`) |
+| /staff/direcciones | roles: despachador/administrador/director/admin | Logística | funcional | Direcciones de envío de clientes (las que el cliente gestiona en `/direcciones`) + direcciones de un cliente (`GET /staff/direcciones/cliente/:id`) para planificar despachos |
 
-**Plan de módulos staff por rol (el módulo de aprobación/confirmación de órdenes YA está implementado — ver `analisis/2026-09-04-aprobacion-ordenes-almacenista-*.md`):** ver `analisis/plan-modulos-staff-por-rol.md` (raíz del repo). Hubs por departamento ✅ (`analisis/plan-paginas-staff-departamentos.md`). **Inventario ⏸️ aplazado** hasta definir el flujo de trabajo en la empresa. Siguientes: Fase 2 Comercial (presupuestos, proveedores/compras), Fase 3 Finanzas (crédito y cobranza, cuentas por cobrar/pagar, tesorería), Fase 4 (precios, promociones, marketing — solo gestión). Los módulos nuevos se agregan como items en `MODULOS`. Principio: los endpoints NUEVOS de operación van bajo `/staff/*` (sesión staff); el panel `/admin` queda solo para el dueño vía bridge.
+**Migración Admin → Staff (IMPLEMENTADA — 2026-09-07):** los 5 módulos de la tabla de arriba (cotizaciones, requerimientos, documentos, promociones, direcciones) están **funcionales**. Las UIs se copiaron/adaptaron de `src/components/admin/` (mismos patrones Kanban `kb-*`, modales `odm-*`) pero sobre **staffApi** y endpoints **NUEVOS `/staff/*`** (sesión staff, `verifyStaffJWT` + `checkRolStaff`). NO se reutiliza `api` de clientes ni los endpoints admin. El panel `/admin` queda completo solo para el dueño vía bridge. La auditoría de acciones staff la registra el backend con `staff_id` (migración `015_staff_auditoria.sql`, ejecutar a mano en Supabase). Detalle en el AGENTS del backend.
+
+**Plan de módulos staff por rol (el módulo de aprobación/confirmación de órdenes YA está implementado — ver `analisis/2026-09-04-aprobacion-ordenes-almacenista-*.md`):** ver `analisis/plan-modulos-staff-por-rol.md` (raíz del repo). Hubs por departamento ✅ (`analisis/plan-paginas-staff-departamentos.md`). **Migración Admin → Staff ✅ implementada** (los 5 módulos de la tabla de arriba están funcionales). **Inventario ⏸️ aplazado** hasta definir el flujo de trabajo en la empresa. Siguientes: Fase 2 Comercial (presupuestos, proveedores/compras), Fase 3 Finanzas (crédito y cobranza, cuentas por cobrar/pagar, tesorería), Fase 4 (precios, promociones, marketing — solo gestión). Los módulos nuevos se agregan como items en `MODULOS`. Principio: los endpoints NUEVOS de operación van bajo `/staff/*` (sesión staff); el panel `/admin` queda solo para el dueño vía bridge y sus funcionalidades se migran a staff con sesión y endpoints propios.
 
 La pagina de crear orden a cliente (StaffOrdenes) usa **staffApi** (no el `api` de clientes) y los endpoints `/staff/*`: `GET /staff/clientes?buscar=`, `GET /staff/clientes/:id/direcciones`, `POST /staff/ordenes`. El campo `creado_por_staff_id` lo agrega el backend, no el frontend. Los errores de validacion llegan estructurados (credito/stock) y se muestran como toast en pantalla.
 

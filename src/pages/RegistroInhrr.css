@@ -1,0 +1,494 @@
+/* =========================================================
+   RegistroInhrr.css — Página pública de consulta del registro
+   sanitario INHRR (/registro-inhrr).
+   Reutiliza clases de Catalogo.css (layout, filtros, grilla).
+   Paleta: #0052DC azul / #1B4B8F azul oscuro / #12A594 teal /
+           #232B45 gris oscuro / #FBFAF7 paper.
+   ========================================================= */
+
+/* HERO */
+.inhrr-hero {
+  background: linear-gradient(145deg, #0052dc, #1a1a3a);
+  color: #fff;
+  padding: 56px 20px 44px;
+}
+
+.inhrr-hero__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.inhrr-hero__tag {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #aee9df;
+  background: rgba(18, 165, 148, 0.18);
+  border: 1px solid rgba(18, 165, 148, 0.45);
+  border-radius: 999px;
+  padding: 5px 14px;
+  margin-bottom: 18px;
+}
+
+.inhrr-hero__title {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: clamp(26px, 4vw, 40px);
+  line-height: 1.1;
+  margin: 0 0 12px;
+}
+
+.inhrr-hero__desc {
+  font-family: 'Source Serif 4', serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 720px;
+  margin: 0 0 26px;
+}
+
+.inhrr-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  border-radius: 999px;
+  padding: 6px 8px 6px 18px;
+  max-width: 720px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.inhrr-search__icon {
+  font-size: 16px;
+  opacity: 0.55;
+}
+
+.inhrr-search input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-family: 'Figtree', sans-serif;
+  font-size: 15px;
+  color: #232b45;
+  background: transparent;
+  padding: 9px 0;
+  min-width: 0;
+}
+
+.inhrr-search input::placeholder {
+  color: #8a93a6;
+}
+
+.inhrr-search__clear {
+  border: none;
+  background: #eef1f6;
+  color: #232b45;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.inhrr-search__clear:hover {
+  background: #dfe4ec;
+}
+
+/* HEADER DE RESULTADOS */
+.inhrr-header {
+  max-width: 1260px;
+  margin: 0 auto;
+  padding: 28px 20px 16px;
+}
+
+.inhrr-pagina-info {
+  font-family: 'Figtree', sans-serif;
+  font-size: 14px;
+  color: #1b4b8f;
+  font-weight: 700;
+  background: #eaf1fb;
+  border-radius: 8px;
+  padding: 6px 12px;
+}
+
+/* FILTROS — chevron del acordeón */
+.filtro-chevron {
+  font-size: 14px;
+  color: #6b7280;
+  transition: transform 0.2s ease;
+  display: inline-block;
+}
+
+.filtro-content--abierto {
+  padding-top: 10px;
+}
+
+.inhrr-pills-cat {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.inhrr-pill-cat {
+  text-transform: none;
+  text-align: left;
+}
+
+/* SELECT de filtros */
+.inhrr-select {
+  width: 100%;
+  border: 1px solid #dfe4ec;
+  border-radius: 10px;
+  padding: 9px 10px;
+  font-family: 'Figtree', sans-serif;
+  font-size: 14px;
+  color: #232b45;
+  background: #fff;
+  outline: none;
+}
+
+.inhrr-select:focus {
+  border-color: #0052dc;
+}
+
+/* SKELETON */
+.inhrr-skeleton {
+  height: 230px;
+  border-radius: 14px;
+  background: linear-gradient(100deg, #eef1f6 40%, #f7f9fc 50%, #eef1f6 60%);
+  background-size: 200% 100%;
+  animation: inhrr-shimmer 1.2s infinite linear;
+}
+
+@keyframes inhrr-shimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+/* CARDS */
+.inhrr-card {
+  background: #fff;
+  border: 1px solid #e6eaf2;
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.inhrr-card:hover {
+  box-shadow: 0 12px 28px rgba(27, 75, 143, 0.12);
+  transform: translateY(-2px);
+}
+
+.inhrr-card__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.inhrr-card__cat {
+  font-family: 'Figtree', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  border-radius: 999px;
+  padding: 4px 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.inhrr-card__sku {
+  font-family: 'Karla', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: #1b4b8f;
+  background: #eaf1fb;
+  border-radius: 6px;
+  padding: 3px 8px;
+  white-space: nowrap;
+}
+
+.inhrr-card__nombre {
+  font-family: 'Source Serif 4', serif;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: #232b45;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 3.05em;
+}
+
+.inhrr-card__meta {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.inhrr-card__meta li {
+  font-family: 'Figtree', sans-serif;
+  font-size: 13px;
+  color: #4b5563;
+  line-height: 1.4;
+}
+
+.inhrr-card__meta li span {
+  color: #8a93a6;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-right: 6px;
+}
+
+.inhrr-card__mols {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: auto;
+}
+
+.inhrr-mol-chip {
+  font-family: 'Figtree', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #0f766e;
+  background: #e6f6f3;
+  border: 1px solid #b8e3dd;
+  border-radius: 999px;
+  padding: 3px 10px;
+}
+
+.inhrr-card__sinmol {
+  font-family: 'Figtree', sans-serif;
+  font-size: 12px;
+  color: #8a93a6;
+  font-style: italic;
+  margin: 0;
+  margin-top: auto;
+}
+
+.inhrr-card__btn {
+  border: none;
+  background: #1b4b8f;
+  color: #fff;
+  font-family: 'Figtree', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 9px 12px;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.2s ease;
+}
+
+.inhrr-card__btn:hover {
+  background: #0052dc;
+}
+
+/* PAGINACIÓN */
+.inhrr-paginacion {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin: 30px 0 10px;
+}
+
+.inhrr-paginacion button {
+  font-family: 'Figtree', sans-serif;
+  font-size: 14px;
+  color: #1b4b8f;
+  background: #fff;
+  border: 1px solid #dfe4ec;
+  border-radius: 8px;
+  padding: 7px 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.inhrr-paginacion button:hover:not(:disabled) {
+  border-color: #0052dc;
+  background: #eaf1fb;
+}
+
+.inhrr-paginacion button.activa {
+  background: #1b4b8f;
+  border-color: #1b4b8f;
+  color: #fff;
+}
+
+.inhrr-paginacion button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.inhrr-paginacion__sep {
+  color: #8a93a6;
+  padding: 0 2px;
+}
+
+/* MODAL FICHA */
+.inhrr-ficha-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 26, 46, 0.6);
+  z-index: 1200;
+  backdrop-filter: blur(2px);
+}
+
+.inhrr-ficha {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(720px, 94vw);
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 16px;
+  z-index: 1201;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  padding: 26px 28px;
+}
+
+.inhrr-ficha__close {
+  position: sticky;
+  top: 0;
+  margin-left: auto;
+  display: block;
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 50%;
+  background: #eef1f6;
+  color: #232b45;
+  font-size: 15px;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.inhrr-ficha__close:hover {
+  background: #dfe4ec;
+}
+
+.inhrr-ficha__cargando {
+  font-family: 'Figtree', sans-serif;
+  color: #6b7280;
+  text-align: center;
+  padding: 40px 0;
+}
+
+.inhrr-ficha__content {
+  margin-top: -8px;
+}
+
+.inhrr-ficha__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.inhrr-ficha__nombre {
+  font-family: 'Source Serif 4', serif;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #232b45;
+  margin: 0 0 18px;
+}
+
+.inhrr-ficha__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px 20px;
+  margin: 0 0 20px;
+}
+
+.inhrr-ficha__item {
+  border-bottom: 1px solid #eef1f6;
+  padding-bottom: 8px;
+}
+
+.inhrr-ficha__item dt {
+  font-family: 'Figtree', sans-serif;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #8a93a6;
+  margin-bottom: 4px;
+}
+
+.inhrr-ficha__item dd {
+  font-family: 'Figtree', sans-serif;
+  font-size: 14px;
+  color: #232b45;
+  margin: 0;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.inhrr-ficha__mols {
+  margin-bottom: 18px;
+}
+
+.inhrr-ficha__mols h3 {
+  font-family: 'Figtree', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1b4b8f;
+  margin: 0 0 10px;
+}
+
+.inhrr-mol-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.inhrr-ficha__nota {
+  font-family: 'Source Serif 4', serif;
+  font-size: 13px;
+  font-style: italic;
+  color: #6b7280;
+  line-height: 1.6;
+  background: #f6f8fb;
+  border-left: 3px solid #12a594;
+  border-radius: 0 10px 10px 0;
+  padding: 12px 14px;
+  margin: 0;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .inhrr-hero {
+    padding: 38px 16px 32px;
+  }
+
+  .inhrr-ficha {
+    width: 100%;
+    max-height: 100vh;
+    border-radius: 16px 16px 0 0;
+    inset: auto 0 0 0;
+    padding: 20px;
+  }
+
+  .inhrr-ficha__grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -30,8 +30,14 @@ export function FavoritosProvider({ children }) {
 
   // Cargar al iniciar sesión o cambiar usuario
   useEffect(() => {
-    cargarFavoritos();
-  }, [cargarFavoritos]);
+    if (!user || !token) return
+    let activo = true
+    api.get('/favoritos')
+      .then(({ data }) => { if (activo) setFavoritos(data.favoritos || []) })
+      .catch((error) => { if (activo) console.error('Error al cargar favoritos:', error) })
+      .finally(() => { if (activo) setLoading(false) })
+    return () => { activo = false }
+  }, [user, token])
 
   // Verificar si un producto es favorito
   const esFavorito = (productoId) => {
@@ -64,7 +70,7 @@ export function FavoritosProvider({ children }) {
   };
 
   const value = {
-    favoritos,
+    favoritos: user && token ? favoritos : [],
     loading,
     esFavorito,
     toggleFavorito,

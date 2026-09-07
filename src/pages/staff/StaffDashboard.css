@@ -127,6 +127,33 @@
   background: rgba(220, 38, 38, 0.05);
 }
 
+.sd-bridge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 0;
+  background: #1e293b;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 9px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+  white-space: nowrap;
+}
+
+.sd-bridge:hover {
+  background: #334155;
+  transform: translateY(-1px);
+}
+
+.sd-bridge:disabled {
+  opacity: 0.6;
+  cursor: default;
+  transform: none;
+}
+
 /* -----------------------------------------------------------------
    Hero
    ----------------------------------------------------------------- */
@@ -306,76 +333,6 @@
 }
 
 /* -----------------------------------------------------------------
-   Tarjeta admin (bridge)
-   ----------------------------------------------------------------- */
-.sd-admin {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-top: 22px;
-  padding: 18px 22px;
-  border-radius: 16px;
-  border: 1.5px dashed #cbd5e1;
-  background: linear-gradient(120deg, #f8fafc, #eef2ff);
-}
-
-.sd-admin__info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.sd-admin__icono {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
-  background: #1e293b;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.sd-admin__titulo {
-  margin: 0;
-  font-size: 15px;
-  font-weight: 700;
-}
-
-.sd-admin__sub {
-  margin: 2px 0 0;
-  font-size: 12px;
-  color: var(--sd-text-muted);
-}
-
-.sd-admin__btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  border: 0;
-  background: #1e293b;
-  color: #fff;
-  font-size: 14px;
-  font-weight: 700;
-  padding: 10px 18px;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background 0.15s ease, transform 0.15s ease;
-}
-
-.sd-admin__btn:hover {
-  background: #334155;
-  transform: translateY(-1px);
-}
-
-.sd-admin__btn:disabled {
-  opacity: 0.6;
-  cursor: default;
-  transform: none;
-}
-
-/* -----------------------------------------------------------------
    Error
    ----------------------------------------------------------------- */
 .sd-error {
@@ -398,14 +355,5 @@
 
   .sd-hero {
     padding: 32px 22px;
-  }
-
-  .sd-admin {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .sd-admin__btn {
-    justify-content: center;
   }
 }

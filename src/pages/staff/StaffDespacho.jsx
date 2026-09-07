@@ -9,21 +9,13 @@ function StaffDespacho() {
   const [error, setError] = useState('')
   const [procesando, setProcesando] = useState(null)
 
-  async function cargarCola() {
-    setCargando(true)
-    setError('')
-    try {
-      const { data } = await staffApi.get('/staff/despacho')
-      setOrdenes(data)
-    } catch (err) {
-      setError(err.response?.data?.error || 'No se pudo cargar la cola de despacho')
-    } finally {
-      setCargando(false)
-    }
-  }
-
   useEffect(() => {
-    cargarCola()
+    let activo = true
+    staffApi.get('/staff/despacho')
+      .then(({ data }) => { if (activo) setOrdenes(data) })
+      .catch((err) => { if (activo) setError(err.response?.data?.error || 'No se pudo cargar la cola de despacho') })
+      .finally(() => { if (activo) setCargando(false) })
+    return () => { activo = false }
   }, [])
 
   async function marcarEntregado(id) {

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import api from '../api/axios';
 
@@ -10,47 +10,37 @@ function isTokenValid(token) {
     const decoded = jwtDecode(token);
     const expiraEn = decoded.exp * 1000;
     return expiraEn > Date.now();
-  } catch (e) {
+  } catch {
     return false;
   }
 }
 
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(() => localStorage.getItem('token'));
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [tokenExpirado, setTokenExpirado] = useState(false);
-
-  useEffect(() => {
-    if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        const yaVencio = decoded.exp * 1000 < Date.now();
-
-        if (yaVencio) {
-          setTokenExpirado(true);
-        } else {
-          const savedUser = localStorage.getItem('user');
-          if (savedUser) {
-            try {
-              const parsedUser = JSON.parse(savedUser);
-              setUser(parsedUser);
-            } catch (e) {
-              console.error('Error parsing user:', e);
-              setUser(decoded);
-            }
-          } else {
-            setUser(decoded);
-          }
-          setTokenExpirado(false);
-        }
-      } catch (err) {
-        console.error('Token inválido:', err);
-        setTokenExpirado(true);
+  const [user, setUser] = useState(() => {
+    if (!token) return null;
+    try {
+      const decoded = jwtDecode(token);
+      if (decoded.exp * 1000 < Date.now()) return null;
+      const savedUser = localStorage.getItem('user');
+      if (savedUser) {
+        try { return JSON.parse(savedUser); } catch { return decoded; }
       }
+      return decoded;
+    } catch {
+      return null;
     }
-    setLoading(false);
-  }, [token]);
+  });
+  const [tokenExpirado, setTokenExpirado] = useState(() => {
+    if (!token) return false;
+    try {
+      const decoded = jwtDecode(token);
+      return decoded.exp * 1000 < Date.now();
+    } catch {
+      return true;
+    }
+  });
+  const [loading] = useState(false);
 
   async function login(email, password) {
     const { data } = await api.post('/auth/login', { email, password });
@@ -80,10 +70,6 @@ export function AuthProvider({ children }) {
       logout();
     }
   }
-
-  useEffect(() => {
-    refreshTokenIfNeeded();
-  }, [token]);
 
   const value = { user, token, login, logout, refreshTokenIfNeeded, loading, tokenExpirado };
 

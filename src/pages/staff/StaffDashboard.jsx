@@ -62,6 +62,19 @@ function StaffDashboard() {
             <p className="sd-usuario__nombre">{staff?.nombre || 'Staff'}</p>
             <p className="sd-usuario__rol">{rol}</p>
           </div>
+          {puedeBridge && (
+            <button
+              type="button"
+              className="sd-bridge"
+              onClick={entrarAAdmin}
+              disabled={entrandoAAdmin}
+              aria-label="Panel administrativo"
+              title="Panel administrativo"
+            >
+              <ShieldCheck size={17} />
+              <span>{entrandoAAdmin ? 'Entrando...' : 'Admin'}</span>
+            </button>
+          )}
           <button className="sd-logout" onClick={logoutStaff} aria-label="Cerrar sesión">
             <LogOut size={17} />
           </button>
@@ -117,27 +130,6 @@ function StaffDashboard() {
             )
           })}
         </div>
-
-        {puedeBridge && (
-          <div className="sd-admin">
-            <div className="sd-admin__info">
-              <span className="sd-admin__icono"><ShieldCheck size={20} /></span>
-              <div>
-                <p className="sd-admin__titulo">Panel administrativo</p>
-                <p className="sd-admin__sub">Gestión global de la plataforma</p>
-              </div>
-            </div>
-            <button
-              type="button"
-              className="sd-admin__btn"
-              onClick={entrarAAdmin}
-              disabled={entrandoAAdmin}
-            >
-              {entrandoAAdmin ? 'Entrando...' : 'Entrar'}
-              {!entrandoAAdmin && <ArrowRight size={16} />}
-            </button>
-          </div>
-        )}
       </main>
     </div>
   )

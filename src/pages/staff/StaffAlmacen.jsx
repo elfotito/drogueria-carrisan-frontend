@@ -37,7 +37,24 @@ function StaffAlmacen() {
   }
 
   useEffect(() => {
-    cargarTodo()
+    let activo = true
+    Promise.all([
+      staffApi.get('/staff/almacen/revisar'),
+      staffApi.get('/staff/almacen/preparar'),
+    ])
+      .then(([r, p]) => {
+        if (activo) {
+          setRevisar(r.data)
+          setPreparar(p.data)
+        }
+      })
+      .catch((err) => {
+        if (activo) setError(err.response?.data?.error || 'No se pudo cargar el almacén')
+      })
+      .finally(() => {
+        if (activo) setCargando(false)
+      })
+    return () => { activo = false }
   }, [])
 
   const contador = (idTab) => (idTab === 'revisar' ? revisar.length : preparar.length)

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Box, Table, Spinner, Text, Flex, Button, Input
 } from '@chakra-ui/react';
@@ -8,7 +8,6 @@ import {
 import { exportToExcel, exportToPdf } from '../utils/exportUtils';
 
 const AZUL = '#0052DC';
-const INDIGO = '#1A1A3A';
 
 const COLUMNAS = [
   { header: 'Producto', key: 'nombre' },
@@ -37,26 +36,26 @@ export default function EstadisticasProductos() {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
 
-  const cargarDatos = useCallback(async () => {
-    setCargando(true);
-    setError(null);
-    try {
-      const token = localStorage.getItem('token');
-      const params = new URLSearchParams({ desde, hasta, limite: '10' });
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/admin/analytics/productos?${params}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (!res.ok) throw new Error('Error al cargar');
-      setProductos(await res.json());
-    } catch (err) {
-      console.error(err);
-      setError('No se pudo cargar el top de productos.');
-    } finally {
-      setCargando(false);
-    }
+  useEffect(() => {
+    let activo = true;
+    const token = localStorage.getItem('token');
+    const params = new URLSearchParams({ desde, hasta, limite: '10' });
+    fetch(`${import.meta.env.VITE_API_URL}/admin/analytics/productos?${params}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error('Error al cargar');
+        return res.json();
+      })
+      .then((data) => { if (activo) setProductos(data); })
+      .catch((err) => {
+        if (!activo) return;
+        console.error(err);
+        setError('No se pudo cargar el top de productos.');
+      })
+      .finally(() => { if (activo) setCargando(false); });
+    return () => { activo = false };
   }, [desde, hasta]);
-
-  useEffect(() => { cargarDatos(); }, [cargarDatos]);
 
   const filasParaExportar = productos.map(p => ({
     ...p,

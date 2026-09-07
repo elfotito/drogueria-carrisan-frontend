@@ -22,19 +22,6 @@ function StaffCuentasPorCobrar() {
   const [clienteActivo, setClienteActivo] = useState(null)
   const [detalle, setDetalle] = useState(null)
 
-  async function cargarClientes() {
-    setCargando(true)
-    setError('')
-    try {
-      const { data } = await staffApi.get('/staff/contabilidad/clientes')
-      setClientes(data)
-    } catch (err) {
-      setError(err.response?.data?.error || 'No se pudo cargar el resumen de clientes')
-    } finally {
-      setCargando(false)
-    }
-  }
-
   async function verDetalle(cliente) {
     setError('')
     setDetalle(null)
@@ -48,7 +35,12 @@ function StaffCuentasPorCobrar() {
   }
 
   useEffect(() => {
-    cargarClientes()
+    let activo = true
+    staffApi.get('/staff/contabilidad/clientes')
+      .then(({ data }) => { if (activo) setClientes(data) })
+      .catch((err) => { if (activo) setError(err.response?.data?.error || 'No se pudo cargar el resumen de clientes') })
+      .finally(() => { if (activo) setCargando(false) })
+    return () => { activo = false }
   }, [])
 
   if (clienteActivo) {

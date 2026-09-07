@@ -55,7 +55,7 @@ export default async function generarComprobantePagoPDF({ pago, cliente }) {
   y = dibujarDetalles(doc, pago, y)
 
   if (pago.pago_facturas?.length > 0) {
-    y = dibujarFacturasAplicadas(doc, pago.pago_facturas, y)
+    dibujarFacturasAplicadas(doc, pago.pago_facturas, y)
   }
 
   dibujarPiePagina(doc)

@@ -73,7 +73,7 @@ export default async function generarFacturaPDF({ factura, cliente }) {
   y = dibujarTotal(doc, factura, items, y)
 
   if (factura.nota) {
-    y = dibujarNota(doc, factura.nota, y)
+    dibujarNota(doc, factura.nota, y)
   }
 
   dibujarPiePagina(doc)
