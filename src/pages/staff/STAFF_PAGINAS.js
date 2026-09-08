@@ -20,6 +20,7 @@ import StaffCotizaciones from './StaffCotizaciones'
 import StaffRequerimientos from './StaffRequerimientos'
 import StaffDocumentos from './StaffDocumentos'
 import StaffPromociones from './StaffPromociones'
+import StaffPrecios from './StaffPrecios'
 import StaffDirecciones from './StaffDirecciones'
 
 export const STAFF_PAGINAS = {
@@ -34,5 +35,6 @@ export const STAFF_PAGINAS = {
   requerimientos: StaffRequerimientos,
   documentos: StaffDocumentos,
   promociones: StaffPromociones,
+  precios: StaffPrecios,
   direcciones: StaffDirecciones,
 }

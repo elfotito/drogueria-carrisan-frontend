@@ -1,4 +1,6 @@
 import { Box, Heading, Tabs } from '@chakra-ui/react';
+import { useState, useEffect } from 'react';
+import api from '../../api/axios';
 import AnalyticsVentas from './AnalyticsVentas';
 import EstadosCuentaClientes from './EstadosCuentaClientes';
 import EstadisticasProductos from './EstadisticasProductos';
@@ -6,6 +8,14 @@ import EstadisticasProductos from './EstadisticasProductos';
 const INDIGO = '#1A1A3A';
 
 export default function AnalyticsPage() {
+  const [stats, setStats] = useState(null);
+
+  useEffect(() => {
+    api.get('/products/stats')
+      .then((res) => setStats(res.data))
+      .catch((err) => console.error('Error al cargar stats de productos:', err));
+  }, []);
+
   return (
     <Box p={{ base: 4, md: 8 }}>
       <Heading size="lg" color={INDIGO} mb={6}>
@@ -26,7 +36,7 @@ export default function AnalyticsPage() {
           <EstadosCuentaClientes />
         </Tabs.Content>
         <Tabs.Content value="productos">
-          <EstadisticasProductos />
+          <EstadisticasProductos stats={stats} />
         </Tabs.Content>
       </Tabs.Root>
     </Box>

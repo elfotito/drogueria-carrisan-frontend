@@ -13,6 +13,11 @@ export function CartProvider({ children }) {
   }, [items])
 
   function addItem(producto, cantidad = 1) {
+    // Productos sin precio ("consultar precio") no entran al carrito:
+    // se piden por requerimiento hasta que el dueño fije precio.
+    if (producto.precio_usd == null || Number(producto.precio_usd) <= 0) {
+      return
+    }
     setItems((prev) => {
       const existente = prev.find((item) => item.producto.id === producto.id)
       if (existente) {

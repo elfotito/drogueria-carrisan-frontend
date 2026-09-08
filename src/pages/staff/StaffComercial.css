@@ -951,4 +951,32 @@
   .promo-admin__modal-row {
     grid-template-columns: 1fr;
   }
-}
+}/* ===== Modulo Precios (/staff/precios) ===== */
+.sp-page { display: flex; flex-direction: column; gap: 12px; }
+.sp-toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.sp-input, .sp-select { padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.85rem; }
+.sp-input--buscar { min-width: 220px; }
+.sp-check { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; cursor: pointer; white-space: nowrap; }
+.sp-resumen { font-size: 0.85rem; color: #475569; }
+.sp-error { color: #b91c1c; font-size: 0.85rem; }
+.sp-loading { padding: 24px; text-align: center; color: #64748b; }
+.sp-table-wrap { overflow-x: auto; }
+.sp-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+.sp-table th, .sp-table td { padding: 8px 10px; border-bottom: 1px solid #e2e8f0; text-align: left; vertical-align: top; }
+.sp-sortable { cursor: pointer; user-select: none; }
+.sp-nombre { min-width: 200px; }
+.sp-mol { font-size: 0.75rem; color: #64748b; }
+.sp-badge { display: inline-block; background: #eef2ff; color: #3730a3; border-radius: 4px; padding: 2px 6px; font-size: 0.75rem; }
+.sp-precio { min-width: 120px; }
+.sp-precio-btn { background: transparent; border: 1px dashed #cbd5e1; border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 0.85rem; }
+.sp-precio-btn:hover { border-color: var(--ldep-color, #2563EB); color: var(--ldep-color, #2563EB); }
+.sp-input-inline { width: 90px; padding: 4px 6px; border: 1px solid var(--ldep-color, #2563EB); border-radius: 4px; font-size: 0.85rem; }
+.sp-paginacion { display: flex; gap: 6px; align-items: center; justify-content: center; }
+.sp-paginacion button { padding: 4px 10px; border: 1px solid #cbd5e1; border-radius: 4px; background: #fff; cursor: pointer; }
+.sp-paginacion button:disabled { opacity: 0.5; cursor: default; }
+.sp-lote { position: sticky; bottom: 0; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; box-shadow: 0 -2px 8px rgba(0,0,0,0.04); }
+.sp-select--modo { min-width: 140px; }
+.sp-input--lote { width: 110px; }
+.sp-btn-aplicar { background: var(--ldep-color, #2563EB); color: #fff; border: none; border-radius: 6px; padding: 8px 16px; font-weight: 600; cursor: pointer; }
+.sp-btn-aplicar:disabled { opacity: 0.6; cursor: default; }
+.sp-hint { font-size: 0.75rem; color: #64748b; }

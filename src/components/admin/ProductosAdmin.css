@@ -613,3 +613,29 @@
   .cards-grid { grid-template-columns: 1fr; }
   .btn-pagina { min-width: 28px; height: 28px; padding: 0 0.35rem; }
 }
+
+.precio-input-inline {
+  width: 90px;
+  padding: 4px 6px;
+  border: 1px solid #0052DC;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+.precio-cell__btn {
+  background: transparent;
+  border: 1px dashed #cbd5e1;
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: #1e293b;
+}
+.precio-cell__btn:hover { border-color: #0052DC; color: #0052DC; }
+.filter-check {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  cursor: pointer;
+}

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import api from '../api/axios'
 import { useCart } from '../context/CartContext'
 import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
@@ -6,16 +7,16 @@ import { NAV_UNIFICADO } from '../components/paginas-principales/NavUnificado'
 import { Plus, Trash2 } from 'lucide-react'
 import './Requerimientos.css'
 
-function filaVacia() {
-  return { nombre_solicitado: '', cantidad: 1, nota_usuario: '' }
+function filaVacia(nombre = '') {
+  return { nombre_solicitado: nombre, cantidad: 1, nota_usuario: '' }
 }
 
 function formatUSD(valor) {
   return Number(valor).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
-function FormularioRequerimiento({ onEnviado }) {
-  const [filas, setFilas] = useState([filaVacia()])
+function FormularioRequerimiento({ onEnviado, productoInicial }) {
+  const [filas, setFilas] = useState(() => (productoInicial ? [filaVacia(productoInicial)] : [filaVacia()]))
   const [enviando, setEnviando] = useState(false)
   const [error, setError] = useState('')
 
@@ -155,11 +156,14 @@ function RequerimientoCard({ requerimiento, onAgregar, yaEnCarrito }) {
 function Requerimientos() {
   const [requerimientos, setRequerimientos] = useState([])
   const [cargando, setCargando] = useState(true)
-  const [mostrarForm, setMostrarForm] = useState(false)
+  const [searchParams] = useSearchParams()
+  const productoInicial = searchParams.get('producto') || null
+  const [mostrarForm, setMostrarForm] = useState(Boolean(productoInicial))
   const { items, addItem } = useCart()
 
   useEffect(() => {
     cargar()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   async function cargar() {
@@ -203,7 +207,7 @@ function Requerimientos() {
             <div className="req-nueva__tabs">
               <button className="req-nueva__tab req-nueva__tab--activo">Lista manual</button>
             </div>
-            <FormularioRequerimiento onEnviado={handleEnviado} />
+            <FormularioRequerimiento onEnviado={handleEnviado} productoInicial={productoInicial} />
           </div>
         )}
 

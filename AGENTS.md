@@ -116,6 +116,14 @@ Cada formulario de registro es un archivo JSX autonomo con su propio estado loca
 | Cotizaciones | /mis-solicitudes/cotizaciones | Si | Solicitudes de cotizacion |
 | Presupuesto | /presupuesto | Si | Presupuesto/requerimiento rapido |
 
+## Catálogo INHRR → tienda (IMPLEMENTADO — 2026-09-07)
+
+Los **7,416 productos INHRR** (`productos_catalogo`) entraron a `productos` como **"consultar precio"** (`precio_usd=null`, `disponible=false`, foto placeholder) → **7,356 importadas** (script backend `scripts/importar-tienda.mjs`, idempotente). El comprador los pide por requerimiento hasta que tengan precio; al fijar precio (>0) se vuelven comprables y avisan ("avísame cuando llegue"). Diseño y fases F1–F4 en el **AGENTS.md raíz**. **QA funcional pendiente** (próxima sesión): `analisis/plan-qa-catalogo-tienda-precios.md`. Implementado en este repo:
+
+- **F2 — UX tienda**: `components/ProductCard.jsx` (sin precio → botón **"Consultar"** → `/producto/:id` en ambas variantes; CSS `.pcard__btn-consultar`), `pages/ProductoDetalle.jsx` (CTA **"Solicitar precio"** → `/mis-solicitudes/requerimientos?producto=<nombre>`), **`pages/Requerimientos.jsx` acepta `?producto=`** (pre-llena la primera fila y abre el formulario), guard en `context/CartContext.jsx` (`addItem` ignora productos sin precio).
+- **F3 — Admin**: `components/admin/ProductosAdmin.jsx` con **paginación server-side (20/pág) + filtros** (disponible, "Solo sin precio", línea, forma, laboratorio dinámico, búsqueda, sort) + celda de precio editable inline + **Importar Precios (XLSX)** → `POST /products/precios-bulk`. `components/admin/EstadisticasProductos.jsx` + `AnalyticsPage.jsx` consumen `GET /products/stats`.
+- **F4 — Staff Comercial**: página **`pages/staff/StaffPrecios.jsx`** (con CSS `.sp-*` en `pages/staff/StaffComercial.css`) registrada en `components/staff/NavStaff.js` (`MODULOS.comercial`, item `id:'precios'`, icono `BadgeDollarSign`) y en `pages/staff/STAFF_PAGINAS.js` → ruta `/staff/precios`, hub y sidebar aparecen solos. Grid con filtros (buscar, línea, forma, laboratorio, grupo ATC) + edición inline + lote (fijo/±/%). Usa `staffApi` + `LayoutDepartamento departamento="comercial" activo="precios"` y endpoints `/staff/precios/*` (NUNCA `api` de cliente).
+
 ## Paginas admin (dentro de /admin)
 
 El Admin.jsx usa rutas anidadas. Componentes en `src/components/admin/`:

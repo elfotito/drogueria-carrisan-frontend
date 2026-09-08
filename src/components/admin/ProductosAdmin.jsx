@@ -1,4 +1,5 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
+import * as XLSX from 'xlsx'
 import api from '../../api/axios'
 import ProductoForm from './ProductoForm'
 import ProductoCard from './ProductoCard'
@@ -6,16 +7,21 @@ import EstadisticasProductos from './EstadisticasProductos'
 import './ProductosAdmin.css'
 
 const LINEAS = ['Linea Hospitalaria', 'Linea Farmacia', 'Material Medico']
-const FORMAS = ['Ampollas', 'Tabletas', 'Jarabes']
-const ITEMS_POR_PAGINA = 10
+const ITEMS_POR_PAGINA = 20
 
 function ProductosAdmin() {
   const [productos, setProductos] = useState([])
   const [marcas, setMarcas] = useState([])
+  const [laboratoriosDisponibles, setLaboratoriosDisponibles] = useState([])
+  const [formasDisponibles, setFormasDisponibles] = useState([])
+  const [stats, setStats] = useState(null)
   const [busqueda, setBusqueda] = useState('')
   const [filtroLinea, setFiltroLinea] = useState('')
   const [filtroForma, setFiltroForma] = useState('')
+  const [filtroLaboratorio, setFiltroLaboratorio] = useState('')
   const [filtroDisponible, setFiltroDisponible] = useState('todos') // todos, disponible, no-disponible
+  const [filtroSinPrecio, setFiltroSinPrecio] = useState(false)
+  const [total, setTotal] = useState(0)
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
   const [productoEnEdicion, setProductoEnEdicion] = useState(null)
@@ -23,28 +29,68 @@ function ProductosAdmin() {
   const [vista, setVista] = useState('tabla') // tabla o cards
   const [paginaActual, setPaginaActual] = useState(1)
   const [productoAEliminar, setProductoAEliminar] = useState(null)
-  const [ordenarPor, setOrdenarPor] = useState('nombre')
-  const [ordenDireccion, setOrdenDireccion] = useState('asc')
+  const [sort, setSort] = useState('nombre_asc')
+  const [precioEditando, setPrecioEditando] = useState({ id: null, valor: '' })
+  const [recarga, setRecarga] = useState(0)
+
+  const params = new URLSearchParams()
+  if (busqueda) params.set('search', busqueda)
+  if (filtroLinea) params.set('linea', filtroLinea)
+  if (filtroForma) params.set('forma', filtroForma)
+  if (filtroLaboratorio) params.set('laboratorio', filtroLaboratorio)
+  if (filtroDisponible === 'disponible') params.set('disponible', 'true')
+  if (filtroDisponible === 'no-disponible') params.set('disponible', 'false')
+  if (filtroSinPrecio) params.set('sin_precio', 'true')
+  params.set('sort', sort)
+  params.set('page', String(paginaActual))
+  params.set('limit', String(ITEMS_POR_PAGINA))
 
   useEffect(() => {
-    cargarDatos()
-  }, [])
+    // Sin setState síncrono en el cuerpo del efecto (regla de los
+    // hooks de React): el spinner inicial sale de `cargando: true`,
+    // y al cambiar filtros la lista anterior queda visible hasta
+    // que llega la respuesta.
+    let activo = true
+    api.get(`/products?${params.toString()}`)
+      .then((res) => {
+        if (!activo) return
+        setProductos(res.data.productos || res.data)
+        setTotal(res.data.total != null ? res.data.total : (res.data.length || 0))
+      })
+      .catch((err) => {
+        if (!activo) return
+        setError('No se pudieron cargar los productos')
+        console.error(err)
+      })
+      .finally(() => { if (activo) setCargando(false) })
+    return () => { activo = false }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [busqueda, filtroLinea, filtroForma, filtroLaboratorio, filtroDisponible, filtroSinPrecio, sort, paginaActual, recarga])
 
-  async function cargarDatos() {
-    try {
-      setCargando(true)
-      const [resProductos, resMarcas] = await Promise.all([
-        api.get('/products'),
-        api.get('/marcas'),
-      ])
-      setProductos(resProductos.data)
-      setMarcas(resMarcas.data)
-    } catch (err) {
-      setError('No se pudieron cargar los productos')
-      console.error(err)
-    } finally {
-      setCargando(false)
-    }
+  useEffect(() => {
+    Promise.all([
+      api.get('/products/stats'),
+      api.get('/marcas'),
+      api.get('/products/metadata'),
+    ])
+      .then(([rStats, rMarcas, rMeta]) => {
+        setStats(rStats.data)
+        setMarcas(rMarcas.data)
+        setLaboratoriosDisponibles(rMeta.data.laboratorios || [])
+        setFormasDisponibles(rMeta.data.formas || [])
+      })
+      .catch((err) => console.error('Error al cargar metadata admin:', err))
+  }, [recarga])
+
+  function recargar() {
+    setRecarga((r) => r + 1)
+  }
+
+  // Cambia un filtro y vuelve a la página 1 (evita quedar en una página
+  // vacía tras filtrar). Se llama desde los onChange, no desde un efecto.
+  function cambiarFiltro(setter, valor) {
+    if (paginaActual !== 1) setPaginaActual(1)
+    setter(valor)
   }
 
   function abrirNuevo() {
@@ -64,16 +110,31 @@ function ProductosAdmin() {
 
   async function handleGuardado() {
     cerrarForm()
-    await cargarDatos()
+    recargar()
   }
 
   async function eliminarProducto(id) {
     try {
       await api.delete(`/products/${id}`)
       setProductoAEliminar(null)
-      await cargarDatos()
+      recargar()
     } catch (err) {
       setError('Error al eliminar el producto')
+      console.error(err)
+    }
+  }
+
+  async function guardarPrecioInline(id) {
+    const valor = precioEditando.valor
+    setPrecioEditando({ id: null, valor: '' })
+    const precio = Number(valor)
+    if (!Number.isFinite(precio) || precio < 0) return
+    try {
+      await api.patch(`/products/${id}`, { precio_usd: precio })
+      setError('')
+      recargar()
+    } catch (err) {
+      setError('Error al guardar el precio')
       console.error(err)
     }
   }
@@ -89,85 +150,28 @@ function ProductosAdmin() {
     setMostrarForm(true)
   }
 
-  // Filtros y búsqueda
-  const productosFiltrados = useMemo(() => {
-    return productos
-      .filter((producto) => {
-        const texto = busqueda.toLowerCase()
-        const coincideTexto =
-          !texto ||
-          producto.nombre_comercial?.toLowerCase().includes(texto) ||
-          producto.marcas?.nombre?.toLowerCase().includes(texto) ||
-          producto.laboratorio?.toLowerCase().includes(texto) ||
-          producto.molecula?.toLowerCase().includes(texto)
-
-        const coincideLinea = !filtroLinea || producto.linea === filtroLinea
-        const coincideForma = !filtroForma || producto.forma === filtroForma
-        const coincideDisponible = 
-          filtroDisponible === 'todos' ||
-          (filtroDisponible === 'disponible' && producto.disponible) ||
-          (filtroDisponible === 'no-disponible' && !producto.disponible)
-
-        return coincideTexto && coincideLinea && coincideForma && coincideDisponible
-      })
-      .sort((a, b) => {
-        let valorA, valorB
-        
-        switch(ordenarPor) {
-          case 'nombre':
-            valorA = a.nombre_comercial?.toLowerCase()
-            valorB = b.nombre_comercial?.toLowerCase()
-            break
-          case 'precio':
-            valorA = Number(a.precio_usd)
-            valorB = Number(b.precio_usd)
-            break
-          case 'marca':
-            valorA = a.marcas?.nombre?.toLowerCase()
-            valorB = b.marcas?.nombre?.toLowerCase()
-            break
-          default:
-            valorA = a.nombre_comercial?.toLowerCase()
-            valorB = b.nombre_comercial?.toLowerCase()
-        }
-
-        if (valorA < valorB) return ordenDireccion === 'asc' ? -1 : 1
-        if (valorA > valorB) return ordenDireccion === 'asc' ? 1 : -1
-        return 0
-      })
-  }, [productos, busqueda, filtroLinea, filtroForma, filtroDisponible, ordenarPor, ordenDireccion])
-
-  // Paginación
-  const totalPaginas = Math.ceil(productosFiltrados.length / ITEMS_POR_PAGINA)
-  const productosPaginados = productosFiltrados.slice(
-    (paginaActual - 1) * ITEMS_POR_PAGINA,
-    paginaActual * ITEMS_POR_PAGINA
-  )
-
-  // Reset página cuando cambian filtros
-  useEffect(() => {
-    setPaginaActual(1)
-  }, [busqueda, filtroLinea, filtroForma, filtroDisponible])
-
   function toggleOrden(campo) {
-    if (ordenarPor === campo) {
-      setOrdenDireccion(prev => prev === 'asc' ? 'desc' : 'asc')
-    } else {
-      setOrdenarPor(campo)
-      setOrdenDireccion('asc')
-    }
+    const asc = `${campo}_asc`
+    const desc = `${campo}_desc`
+    if (sort === asc) setSort(desc)
+    else if (sort === desc) setSort(asc)
+    else setSort(asc)
+    if (paginaActual !== 1) setPaginaActual(1)
   }
+
+  const totalPaginas = Math.max(1, Math.ceil(total / ITEMS_POR_PAGINA))
+  const productosPaginados = productos
 
   function exportarCSV() {
     const headers = ['Nombre Comercial', 'Marca', 'Laboratorio', 'País', 'Línea', 'Forma', 'Precio USD', 'Disponible']
-    const rows = productosFiltrados.map(p => [
+    const rows = productos.map(p => [
       p.nombre_comercial,
       p.marcas?.nombre,
       p.laboratorio,
       p.pais_origen,
       p.linea,
       p.forma,
-      p.precio_usd,
+      p.precio_usd ?? '',
       p.disponible ? 'Sí' : 'No'
     ])
     
@@ -179,6 +183,30 @@ function ProductosAdmin() {
     a.download = 'productos.csv'
     a.click()
     window.URL.revokeObjectURL(url)
+  }
+
+  function handleArchivoPrecios(e) {
+    const file = e.target.files?.[0]
+    e.target.value = ''
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = async (ev) => {
+      try {
+        const wb = XLSX.read(ev.target.result, { type: 'array' })
+        const hoja = wb.Sheets[wb.SheetNames[0]]
+        const filas = XLSX.utils.sheet_to_json(hoja) // { Nombre, Precio ... } según header del archivo
+        const items = filas
+          .map((f) => ({ id: Number(f['ID'] ?? f['Producto ID'] ?? f['Id']), precio_usd: Number(f['Precio'] ?? f['Precio USD'] ?? f['precio_usd']) }))
+          .filter((i) => Number.isFinite(i.id) && Number.isFinite(i.precio_usd))
+        await api.post('/products/precios-bulk', { items })
+        setError('')
+        recargar()
+      } catch (err) {
+        setError('Error al importar precios: ' + (err.response?.data?.error || err.message))
+        console.error(err)
+      }
+    }
+    reader.readAsArrayBuffer(file)
   }
 
   if (cargando) {
@@ -194,7 +222,7 @@ function ProductosAdmin() {
     return (
       <div className="error-container">
         <div className="error-message">{error}</div>
-        <button onClick={cargarDatos} className="btn-reintentar">
+        <button onClick={recargar} className="btn-reintentar">
           Reintentar
         </button>
       </div>
@@ -211,6 +239,16 @@ function ProductosAdmin() {
             <button onClick={exportarCSV} className="btn-exportar" title="Exportar a CSV">
               📥 Exportar
             </button>
+            <label htmlFor="precios-file" className="btn-exportar" title="Importar precios desde Excel/CSV (columnas esperadas: ID, Precio)">
+              📥 Importar Precios
+            </label>
+            <input
+              id="precios-file"
+              type="file"
+              accept=".csv,.xlsx,.xls"
+              style={{ display: 'none' }}
+              onChange={handleArchivoPrecios}
+            />
             <button onClick={abrirNuevo} className="btn-agregar">
               + Nuevo Producto
             </button>
@@ -219,7 +257,7 @@ function ProductosAdmin() {
       </div>
 
       {/* Estadísticas */}
-      <EstadisticasProductos productos={productos} />
+      <EstadisticasProductos stats={stats} />
 
       {/* Toolbar */}
       <div className="toolbar">
@@ -230,14 +268,14 @@ function ProductosAdmin() {
               type="text"
               placeholder="Buscar productos..."
               value={busqueda}
-              onChange={(e) => setBusqueda(e.target.value)}
+              onChange={(e) => cambiarFiltro(setBusqueda, e.target.value)}
               className="search-input"
             />
           </div>
 
           <select 
             value={filtroLinea} 
-            onChange={(e) => setFiltroLinea(e.target.value)}
+            onChange={(e) => cambiarFiltro(setFiltroLinea, e.target.value)}
             className="filter-select"
           >
             <option value="">Todas las líneas</option>
@@ -248,24 +286,44 @@ function ProductosAdmin() {
 
           <select 
             value={filtroForma} 
-            onChange={(e) => setFiltroForma(e.target.value)}
+            onChange={(e) => cambiarFiltro(setFiltroForma, e.target.value)}
             className="filter-select"
           >
             <option value="">Todas las formas</option>
-            {FORMAS.map((f) => (
+            {formasDisponibles.map((f) => (
               <option key={f} value={f}>{f}</option>
+            ))}
+          </select>
+
+          <select
+            value={filtroLaboratorio}
+            onChange={(e) => cambiarFiltro(setFiltroLaboratorio, e.target.value)}
+            className="filter-select"
+          >
+            <option value="">Todos los laboratorios</option>
+            {laboratoriosDisponibles.map((l) => (
+              <option key={l} value={l}>{l}</option>
             ))}
           </select>
 
           <select 
             value={filtroDisponible} 
-            onChange={(e) => setFiltroDisponible(e.target.value)}
+            onChange={(e) => cambiarFiltro(setFiltroDisponible, e.target.value)}
             className="filter-select"
           >
             <option value="todos">Todos</option>
             <option value="disponible">Disponibles</option>
             <option value="no-disponible">No disponibles</option>
           </select>
+
+          <label className="filter-check">
+            <input
+              type="checkbox"
+              checked={filtroSinPrecio}
+              onChange={(e) => cambiarFiltro(setFiltroSinPrecio, e.target.checked)}
+            />
+            Solo sin precio
+          </label>
         </div>
 
         <div className="toolbar-actions">
@@ -290,8 +348,9 @@ function ProductosAdmin() {
 
       {/* Contador */}
       <div className="resultados-info">
-        Mostrando {productosPaginados.length} de {productosFiltrados.length} productos
-        {busqueda && ` (filtrados de ${productos.length} totales)`}
+        Mostrando {productosPaginados.length} de {total} productos
+        {busqueda && ' (filtrados por búsqueda)'}
+        {filtroSinPrecio && ' — sin precio'}
       </div>
 
       {/* Contenido principal */}
@@ -302,15 +361,15 @@ function ProductosAdmin() {
               <tr>
                 <th className="col-img">Imagen</th>
                 <th onClick={() => toggleOrden('nombre')} className="sortable">
-                  Nombre Comercial {ordenarPor === 'nombre' && (ordenDireccion === 'asc' ? '↑' : '↓')}
+                  Nombre Comercial {sort === 'nombre_asc' ? '↑' : sort === 'nombre_desc' ? '↓' : ''}
                 </th>
                 <th onClick={() => toggleOrden('marca')} className="sortable">
-                  Marca {ordenarPor === 'marca' && (ordenDireccion === 'asc' ? '↑' : '↓')}
+                  Marca {sort === 'marca_asc' ? '↑' : sort === 'marca_desc' ? '↓' : ''}
                 </th>
                 <th>Laboratorio</th>
                 <th>Línea/Forma</th>
                 <th onClick={() => toggleOrden('precio')} className="sortable">
-                  Precio USD {ordenarPor === 'precio' && (ordenDireccion === 'asc' ? '↑' : '↓')}
+                  Precio USD {sort === 'precio_asc' ? '↑' : sort === 'precio_desc' ? '↓' : ''}
                 </th>
                 <th>Estado</th>
                 <th>Acciones</th>
@@ -343,7 +402,34 @@ function ProductosAdmin() {
                     <span className="badge badge-linea">{producto.linea || '-'}</span>
                     <span className="badge badge-forma">{producto.forma || '-'}</span>
                   </td>
-                  <td className="precio-cell">${Number(producto.precio_usd).toFixed(2)}</td>
+                  <td className="precio-cell">
+                    {precioEditando.id === producto.id ? (
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        autoFocus
+                        className="precio-input-inline"
+                        value={precioEditando.valor}
+                        onChange={(e) => setPrecioEditando({ id: producto.id, valor: e.target.value })}
+                        onBlur={() => guardarPrecioInline(producto.id)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') guardarPrecioInline(producto.id)
+                          if (e.key === 'Escape') setPrecioEditando({ id: null, valor: '' })
+                        }}
+                      />
+                    ) : (
+                      <button
+                        className="precio-cell__btn"
+                        onClick={() => setPrecioEditando({ id: producto.id, valor: producto.precio_usd != null ? String(producto.precio_usd) : '' })}
+                        title="Editar precio"
+                      >
+                        {producto.precio_usd != null
+                          ? `$${Number(producto.precio_usd).toFixed(2)}`
+                          : 'Sin precio'}
+                      </button>
+                    )}
+                  </td>
                   <td>
                     <div className="estado-badges">
                       <span className={`estado-badge ${producto.disponible ? 'disponible' : 'no-disponible'}`}>

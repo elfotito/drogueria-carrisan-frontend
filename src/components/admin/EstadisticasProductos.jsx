@@ -1,13 +1,25 @@
 import './EstadisticasProductos.css'
 
-function EstadisticasProductos({ productos }) {
-  const stats = {
-    total: productos.length,
-    disponibles: productos.filter(p => p.disponible && p.activo).length,
-    lineas: [...new Set(productos.map(p => p.linea).filter(Boolean))].length,
-    precioPromedio: productos.length > 0 
-      ? (productos.reduce((sum, p) => sum + Number(p.precio_usd), 0) / productos.length).toFixed(2)
-      : 0
+function EstadisticasProductos({ productos, stats }) {
+  let datos
+  if (stats) {
+    datos = {
+      total: stats.total,
+      disponibles: stats.disponibles,
+      lineas: (stats.lineas || []).length,
+      precioPromedio: stats.precioPromedio,
+    }
+  } else {
+    const lista = productos || []
+    const conPrecio = lista.filter((p) => p.precio_usd != null && Number(p.precio_usd) > 0)
+    datos = {
+      total: lista.length,
+      disponibles: lista.filter((p) => p.disponible && p.activo).length,
+      lineas: new Set(lista.map((p) => p.linea).filter(Boolean)).size,
+      precioPromedio: conPrecio.length
+        ? (conPrecio.reduce((s, p) => s + Number(p.precio_usd), 0) / conPrecio.length).toFixed(2)
+        : '0.00',
+    }
   }
 
   return (
@@ -15,31 +27,28 @@ function EstadisticasProductos({ productos }) {
       <div className="stat-card">
         <div className="stat-icon">📦</div>
         <div className="stat-info">
-          <div className="stat-valor">{stats.total}</div>
+          <div className="stat-valor">{datos.total}</div>
           <div className="stat-label">Total Productos</div>
         </div>
       </div>
-      
       <div className="stat-card">
         <div className="stat-icon">✅</div>
         <div className="stat-info">
-          <div className="stat-valor">{stats.disponibles}</div>
+          <div className="stat-valor">{datos.disponibles}</div>
           <div className="stat-label">Disponibles</div>
         </div>
       </div>
-      
       <div className="stat-card">
         <div className="stat-icon">📊</div>
         <div className="stat-info">
-          <div className="stat-valor">{stats.lineas}</div>
+          <div className="stat-valor">{datos.lineas}</div>
           <div className="stat-label">Líneas</div>
         </div>
       </div>
-      
       <div className="stat-card">
         <div className="stat-icon">💵</div>
         <div className="stat-info">
-          <div className="stat-valor">${stats.precioPromedio}</div>
+          <div className="stat-valor">${datos.precioPromedio}</div>
           <div className="stat-label">Precio Promedio</div>
         </div>
       </div>

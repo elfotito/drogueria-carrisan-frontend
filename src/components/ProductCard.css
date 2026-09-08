@@ -403,6 +403,31 @@
   transform: scale(0.97);
 }
 
+/* Botón: consultar precio (producto sin precio asignado) */
+.pcard__btn-consultar {
+  border: 1px solid #1B4B8F;
+  border-radius: 999px;
+  background: #FFFFFF;
+  color: #1B4B8F;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 7px 20px;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.pcard__btn-consultar:hover {
+  background: #EEF2FF;
+}
+
+.pcard__btn-consultar:active {
+  transform: scale(0.97);
+}
+
+.pcard__btn-consultar--horizontal {
+  padding: 6px 18px;
+}
+
 /* Contador (− N +) */
 .pcard__contador {
   display: flex;

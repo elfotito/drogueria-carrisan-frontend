@@ -79,6 +79,10 @@ function ProductoDetalle() {
   const { addItem } = useCart()
   const { user } = useAuth()
 
+  // Producto sin precio ("consultar precio"): no se agrega al carrito,
+  // se solicita por requerimiento (pre-llenado con ?producto=<nombre>).
+  const sinPrecio = producto ? (producto.precio_usd == null || Number(producto.precio_usd) <= 0) : false
+
   const [producto, setProducto] = useState(null)
   const [detalles, setDetalles] = useState(null)
   const [moleculas, setMoleculas] = useState([])
@@ -316,6 +320,19 @@ function ProductoDetalle() {
                   disabled={!user}
                 >
                   {agregado ? '✓ Agregado' : 'Agregar al carrito'}
+                </button>
+              </div>
+            )}
+
+            {sinPrecio && (
+              <div className="detalle-acciones">
+                <button
+                  className="detalle-btn-solicitar-precio"
+                  onClick={() =>
+                    navigate(`/mis-solicitudes/requerimientos?producto=${encodeURIComponent(producto.nombre_comercial)}`)
+                  }
+                >
+                  Solicitar precio
                 </button>
               </div>
             )}

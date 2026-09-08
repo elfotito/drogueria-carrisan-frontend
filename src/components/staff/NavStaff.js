@@ -11,7 +11,7 @@
 import {
   LayoutDashboard, PackageCheck, ClipboardList, ShoppingCart,
   Wallet, Landmark, TrendingUp, Truck, Receipt, Banknote, CalendarX2,
-  MessagesSquare, PackageSearch, FileText, Megaphone, MapPin,
+  MessagesSquare, PackageSearch, FileText, Megaphone, MapPin, BadgeDollarSign,
 } from 'lucide-react'
 
 const ROLES_TODOS = ['vendedor', 'despachador', 'almacenista', 'contabilidad', 'administrador', 'director', 'admin']
@@ -135,6 +135,14 @@ export const MODULOS = {
           icono: Megaphone,
           texto: 'Promociones',
           desc: 'Crea y edita plantillas de promociones (sin envío masivo)',
+          roles: ['vendedor', 'administrador', 'director', 'admin'],
+        },
+        {
+          id: 'precios',
+          to: '/staff/precios',
+          icono: BadgeDollarSign,
+          texto: 'Precios',
+          desc: 'Fija precios del catálogo con filtros (línea, forma, laboratorio, ATC)',
           roles: ['vendedor', 'administrador', 'director', 'admin'],
         },
       ],

@@ -112,6 +112,10 @@ function ProductCard({ producto, tasaVes, variante = 'vertical' }) {
   const tieneDescuento = producto.precio_original_usd != null && producto.descuento_activo
   const etiquetaDescuento = tieneDescuento ? obtenerEtiquetaDescuento(producto.descuento_activo) : null
 
+  // Producto sin precio ("consultar precio"): no se puede agregar al
+  // carrito; la CTA llevará a la ficha para solicitarlo por requerimiento.
+  const sinPrecio = producto.precio_usd == null || Number(producto.precio_usd) <= 0
+
   const badgeSocial = producto.badge_social || null
   const favorito = esFavorito(producto.id)
 
@@ -232,7 +236,14 @@ function ProductCard({ producto, tasaVes, variante = 'vertical' }) {
               )}
             </div>
 
-            {(mostrarContador || cantidad > 0) ? (
+            {sinPrecio ? (
+              <button
+                className="pcard__btn-consultar pcard__btn-consultar--horizontal"
+                onClick={(e) => { e.stopPropagation(); navigate(`/producto/${producto.id}`) }}
+              >
+                Consultar
+              </button>
+            ) : (mostrarContador || cantidad > 0) ? (
               <div className="pcard__contador">
                 <button className="contador-btn" onClick={handleRestar} aria-label="Quitar uno">−</button>
                 <span className="contador-cantidad">{cantidad}</span>
@@ -378,7 +389,14 @@ function ProductCard({ producto, tasaVes, variante = 'vertical' }) {
             </button>
           )}
 
-          {(mostrarContador || cantidad > 0) ? (
+          {sinPrecio ? (
+            <button
+              className="pcard__btn-consultar"
+              onClick={(e) => { e.stopPropagation(); navigate(`/producto/${producto.id}`) }}
+            >
+              Consultar
+            </button>
+          ) : (mostrarContador || cantidad > 0) ? (
             <div className="pcard__contador">
               <button className="contador-btn" onClick={handleRestar} aria-label="Quitar uno">−</button>
               <span className="contador-cantidad">{cantidad}</span>
