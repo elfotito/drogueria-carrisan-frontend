@@ -79,10 +79,6 @@ function ProductoDetalle() {
   const { addItem } = useCart()
   const { user } = useAuth()
 
-  // Producto sin precio ("consultar precio"): no se agrega al carrito,
-  // se solicita por requerimiento (pre-llenado con ?producto=<nombre>).
-  const sinPrecio = producto ? (producto.precio_usd == null || Number(producto.precio_usd) <= 0) : false
-
   const [producto, setProducto] = useState(null)
   const [detalles, setDetalles] = useState(null)
   const [moleculas, setMoleculas] = useState([])
@@ -95,6 +91,10 @@ function ProductoDetalle() {
   const [carruseles, setCarruseles] = useState([])
   const [imagenActiva, setImagenActiva] = useState(0)
   const [tabActiva, setTabActiva] = useState('descripcion')
+
+  // Producto sin precio ("consultar precio"): no se agrega al carrito,
+  // se solicita por requerimiento (pre-llenado con ?producto=<nombre>).
+  const sinPrecio = producto ? (producto.precio_usd == null || Number(producto.precio_usd) <= 0) : false
 
   useEffect(() => {
     cargarProducto()
