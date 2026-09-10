@@ -58,28 +58,58 @@ function GestionCodigos() {
   const [rolStaff, setRolStaff] = useState('vendedor')
   const [copiado, setCopiado] = useState(null)
 
-  const cargarDatos = useCallback(async () => {
+  // Fetch puro (sin setState) — reutilizable desde el efecto y los handlers.
+  const obtenerDatos = useCallback(async () => {
+    const [listaRes, statsRes] = await Promise.all([
+      api.get('/admin/codigos-invitacion'),
+      api.get('/admin/codigos-invitacion/estadisticas'),
+    ])
+    return {
+      codigos: listaRes.data.codigos || [],
+      estadisticas: statsRes.data,
+    }
+  }, [])
+
+  // Carga inicial: el setState ocurre SOLO en callbacks asíncronos (.then/.finally),
+  // nunca en el cuerpo síncrono del efecto (regla react-hooks/set-state-in-effect).
+  useEffect(() => {
+    let activo = true
+    obtenerDatos()
+      .then(({ codigos, estadisticas }) => {
+        if (!activo) return
+        setCodigos(codigos)
+        setEstadisticas(estadisticas)
+      })
+      .catch(() => {
+        if (!activo) return
+        toaster.create({
+          title: 'Error',
+          description: 'No se pudieron cargar los códigos',
+          type: 'error',
+        })
+      })
+      .finally(() => {
+        if (activo) setCargando(false)
+      })
+    return () => {
+      activo = false
+    }
+  }, [obtenerDatos])
+
+  // Recarga tras generar/eliminar/refrescar (desde handlers, no desde el efecto).
+  async function recargar() {
     try {
-      const [listaRes, statsRes] = await Promise.all([
-        api.get('/admin/codigos-invitacion'),
-        api.get('/admin/codigos-invitacion/estadisticas'),
-      ])
-      setCodigos(listaRes.data.codigos || [])
-      setEstadisticas(statsRes.data)
+      const datos = await obtenerDatos()
+      setCodigos(datos.codigos)
+      setEstadisticas(datos.estadisticas)
     } catch {
       toaster.create({
         title: 'Error',
         description: 'No se pudieron cargar los códigos',
         type: 'error',
       })
-    } finally {
-      setCargando(false)
     }
-  }, [])
-
-  useEffect(() => {
-    cargarDatos()
-  }, [cargarDatos])
+  }
 
   async function generarCodigos() {
     setGenerando(true)
@@ -90,7 +120,7 @@ function GestionCodigos() {
         rol_staff: tipo === 'staff' ? rolStaff : undefined,
       })
       const nuevos = data.codigos || []
-      await cargarDatos()
+      await recargar()
       toaster.create({
         title: 'Códigos generados',
         description: nuevos.length === 1
@@ -112,7 +142,7 @@ function GestionCodigos() {
   async function eliminarCodigo(id) {
     try {
       await api.delete(`/admin/codigos-invitacion/${id}`)
-      await cargarDatos()
+      await recargar()
       toaster.create({
         title: 'Código eliminado',
         type: 'success',
@@ -243,7 +273,7 @@ function GestionCodigos() {
             aria-label="Actualizar"
             icon={<RefreshCcw size={18} />}
             variant="outline"
-            onClick={cargarDatos}
+            onClick={recargar}
           />
         </Flex>
       </Box>
