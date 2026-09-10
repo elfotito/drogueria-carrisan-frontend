@@ -27,6 +27,7 @@ const COLUMNAS = [
       { texto: 'Quiénes Somos', to: '/quienes-somos' },
       { texto: 'Catálogo', to: '/catalogo' },
       { texto: 'Registro sanitario (INHRR)', to: '/registro-inhrr' },
+      { texto: 'Vademécum clínico', to: '/vademecum' },
       { texto: 'Términos y Condiciones', to: '/terminos' },
       { texto: 'Privacidad', to: '/privacidad' },
     ],

@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext'
 import HomeCarrusel from '../components/HomeCarrusel'
 import { agruparPorLinea } from '../utils/agruparPorLinea'
 import BottomNav from '../components/BottomNav'
+import SECCIONES_FICHA from '../config/seccionesFicha'
 import './ProductoDetalle.css'
 
 // Cuántos carruseles mostrar al final de la página (elegidos al azar del pool).
@@ -91,6 +92,10 @@ function ProductoDetalle() {
   const [carruseles, setCarruseles] = useState([])
   const [imagenActiva, setImagenActiva] = useState(0)
   const [tabActiva, setTabActiva] = useState('descripcion')
+  // Fichas clínicas por molécula (id -> { ficha_tecnica|null }), cargadas en paralelo.
+  const [fichasClinicas, setFichasClinicas] = useState({})
+  const [cargandoFichas, setCargandoFichas] = useState(false)
+  const [moleculaAbierta, setMoleculaAbierta] = useState(null)
 
   // Producto sin precio ("consultar precio"): no se agrega al carrito,
   // se solicita por requerimiento (pre-llenado con ?producto=<nombre>).
@@ -119,6 +124,31 @@ function ProductoDetalle() {
       setMoleculas(m || [])
       setTasaVes(resTasa.data.usd_a_ves)
       setError('')
+      setMoleculaAbierta(null)
+
+      // Fichas clínicas de cada molécula (vademécum CIMA) — carga en paralelo.
+      // Es un extra: si falla una molécula, las demás siguen.
+      if (m && m.length > 0) {
+        setCargandoFichas(true)
+        const ids = m.map((mol) => mol.moleculas_referencias?.id).filter(Boolean)
+        const unicos = [...new Set(ids)]
+        const entradas = await Promise.all(
+          unicos.map(async (molId) => {
+            try {
+              const { data } = await api.get(`/moleculas/moleculas/${molId}`)
+              return [molId, { ficha_tecnica: data.ficha_tecnica || null, nombre: data.nombre || null }]
+            } catch (err) {
+              console.error(`No se pudo cargar la ficha clínica de la molécula ${molId}:`, err)
+              return [molId, { ficha_tecnica: null, nombre: null }]
+            }
+          })
+        )
+        setFichasClinicas(Object.fromEntries(entradas))
+        setCargandoFichas(false)
+      } else {
+        setFichasClinicas({})
+        setCargandoFichas(false)
+      }
 
       // Valoraciones: si falla, no tumbamos la página, solo no se muestra rating
       try {
@@ -461,16 +491,25 @@ function ProductoDetalle() {
 
           {tabActiva === 'composicion' && (
             <div className="detalle-composicion">
-              {moleculas.map((m, i) => (
-                <div key={i} className="composicion-item">
-                  <span className="composicion-nombre">{m.moleculas_referencias?.nombre}</span>
-                  {m.concentracion && (
-                    <span className="composicion-concentracion">
-                      {m.concentracion} {m.unidad_concentracion}
-                    </span>
-                  )}
-                </div>
-              ))}
+              {moleculas.map((m, i) => {
+                const ref = m.moleculas_referencias
+                return (
+                  <div key={i} className="composicion-item">
+                    {ref && ref.id ? (
+                      <Link className="composicion-nombre composicion-nombre--link" to={`/vademecum/${ref.id}`}>
+                        {ref.nombre}
+                      </Link>
+                    ) : (
+                      <span className="composicion-nombre">{ref?.nombre || 'Molécula'}</span>
+                    )}
+                    {m.concentracion && (
+                      <span className="composicion-concentracion">
+                        {m.concentracion} {m.unidad_concentracion}
+                      </span>
+                    )}
+                  </div>
+                )
+              })}
               <p className="detalle-nota-precio" style={{ marginTop: '16px' }}>
                 * Consulta siempre con un profesional de la salud antes de usar cualquier medicamento.
               </p>
@@ -478,6 +517,86 @@ function ProductoDetalle() {
           )}
         </div>
       </div>
+
+      {/* Ficha clínica por molécula (vademécum CIMA) */}
+      {tieneComposicion && (
+        <section className="detalle-ficha-clinica">
+          <div className="detalle-ficha-clinica__head">
+            <h2 className="detalle-ficha-clinica__titulo">Ficha clínica</h2>
+            {cargandoFichas && <span className="detalle-ficha-clinica__estado">Consultando…</span>}
+          </div>
+          {Object.keys(fichasClinicas).length > 0 ? (
+            <div className="detalle-ficha-clinica__items">
+              {moleculas.map((m, i) => {
+                const ref = m.moleculas_referencias
+                const molId = ref?.id
+                const ficha = fichasClinicas[molId]
+                const abierta = moleculaAbierta === molId
+                return (
+                  <div key={i} className={`detalle-ficha-clinica__item ${abierta ? 'abierta' : ''}`}>
+                    <div className="detalle-ficha-clinica__row">
+                      <button
+                        type="button"
+                        className="detalle-ficha-clinica__toggle"
+                        onClick={() => setMoleculaAbierta(abierta ? null : molId)}
+                      >
+                        <span className="detalle-ficha-clinica__nombre">{ref?.nombre || 'Molécula'}</span>
+                        {m.concentracion && (
+                          <span className="detalle-ficha-clinica__concentracion">
+                            {m.concentracion} {m.unidad_concentracion}
+                          </span>
+                        )}
+                        <span
+                          className="filtro-chevron"
+                          style={{ transform: abierta ? 'rotate(180deg)' : 'none' }}
+                        >
+                          ⌄
+                        </span>
+                      </button>
+                      {molId && (
+                        <Link className="detalle-ficha-clinica__enlace" to={`/vademecum/${molId}`}>
+                          Ver en Vademécum
+                        </Link>
+                      )}
+                    </div>
+                    {abierta && (
+                      <div className="detalle-ficha-clinica__body">
+                        {!ficha?.ficha_tecnica ? (
+                          <p className="detalle-ficha-clinica__vacio">
+                            Ficha en revisión — aún no disponible para esta molécula.
+                          </p>
+                        ) : (
+                          SECCIONES_FICHA.map(({ clave, etiqueta, icono }) => {
+                            const texto = ficha.ficha_tecnica[clave]
+                            if (!texto) return null
+                            return (
+                              <div key={clave} className="detalle-ficha-clinica__seccion">
+                                <h3 className="detalle-ficha-clinica__seccion-titulo">
+                                  {icono} {etiqueta}
+                                </h3>
+                                <p className="detalle-ficha-clinica__texto">{texto}</p>
+                              </div>
+                            )
+                          })
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          ) : (
+            !cargandoFichas && (
+              <p className="detalle-ficha-clinica__vacio">
+                Sin ficha clínica disponible para este producto.
+              </p>
+            )
+          )}
+          <p className="detalle-ficha-clinica__fuente">
+            Información farmacológica de referencia (AEMPS - CIMA). No sustituye la consulta con un profesional de la salud.
+          </p>
+        </section>
+      )}
 
       {/* Carruseles relacionados */}
       {carruseles.length > 0 && (

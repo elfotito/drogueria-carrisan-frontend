@@ -563,11 +563,180 @@
   font-size: 0.95rem;
 }
 
+.composicion-nombre--link {
+  color: #0052DC;
+  text-decoration: none;
+}
+
+.composicion-nombre--link:hover {
+  text-decoration: underline;
+}
+
 .composicion-concentracion {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.88rem;
   color: #1B4B8F;
   font-weight: 700;
+}
+
+/* ---------------------------------------------------------
+   Ficha clínica por molécula (vademécum CIMA)
+   --------------------------------------------------------- */
+.detalle-ficha-clinica {
+  margin-top: 8px;
+  padding: 32px 0;
+  border-top: 1px solid #E7E5DE;
+}
+
+.detalle-ficha-clinica__head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.detalle-ficha-clinica__titulo {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #14182A;
+  margin: 0;
+}
+
+.detalle-ficha-clinica__estado {
+  font-family: 'Figtree', sans-serif;
+  font-size: 0.8rem;
+  color: #8A93A6;
+}
+
+.detalle-ficha-clinica__items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.detalle-ficha-clinica__item {
+  border: 1px solid #E7E5DE;
+  border-radius: 12px;
+  background: #FFFFFF;
+  overflow: hidden;
+}
+
+.detalle-ficha-clinica__item.abierta {
+  border-color: #0052DC;
+}
+
+.detalle-ficha-clinica__row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 6px 6px 10px;
+}
+
+.detalle-ficha-clinica__row:hover {
+  background: #F7F8FA;
+}
+
+.detalle-ficha-clinica__toggle {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: none;
+  background: transparent;
+  padding: 8px 0;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  min-width: 0;
+}
+
+.detalle-ficha-clinica__nombre {
+  flex: 1;
+  font-weight: 700;
+  color: #14182A;
+  font-size: 0.95rem;
+}
+
+.detalle-ficha-clinica__concentracion {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82rem;
+  color: #1B4B8F;
+  font-weight: 700;
+}
+
+.detalle-ficha-clinica__enlace {
+  font-family: 'Figtree', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #0052DC;
+  text-decoration: none;
+  white-space: nowrap;
+  border: 1px solid #0052DC;
+  border-radius: 999px;
+  padding: 5px 12px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.detalle-ficha-clinica__enlace:hover {
+  background: #0052DC;
+  color: #fff;
+}
+
+.detalle-ficha-clinica__body {
+  padding: 0 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.detalle-ficha-clinica__vacio {
+  font-family: 'Figtree', sans-serif;
+  font-size: 0.85rem;
+  color: #8A93A6;
+  background: #F7F8FA;
+  border: 1px dashed #D5DBE6;
+  border-radius: 10px;
+  padding: 14px;
+  margin: 0;
+}
+
+.detalle-ficha-clinica__seccion {
+  border-left: 3px solid #12A594;
+  padding-left: 12px;
+}
+
+.detalle-ficha-clinica__seccion-titulo {
+  font-family: 'Figtree', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #0D9373;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 4px;
+}
+
+.detalle-ficha-clinica__texto {
+  font-family: 'Source Serif 4', serif;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: #4A5166;
+  margin: 0;
+  white-space: pre-line;
+}
+
+.detalle-ficha-clinica__fuente {
+  font-family: 'Figtree', sans-serif;
+  font-size: 0.75rem;
+  color: #8A93A6;
+  margin: 14px 2px 0;
+}
+
+@media (max-width: 640px) {
+  .detalle-ficha-clinica__concentracion,
+  .detalle-ficha-clinica__enlace {
+    display: none;
+  }
 }
 
 /* ---------------------------------------------------------

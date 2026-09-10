@@ -101,8 +101,8 @@ Cada formulario de registro es un archivo JSX autonomo con su propio estado loca
 | Home | /home | Si | Dashboard del usuario con carruseles, ofertas, etc. |
 | Catalogo | /catalogo | No | Catalogo de productos con busqueda y filtros |
 | RegistroInhrr | /registro-inhrr | No | Consulta publica del registro sanitario INHRR (medicamentos, hospitalarios, misceláneos) con filtros por categoría/forma/laboratorio/molécula/ATC. Ficha por SKU con datos completos del registro. |
-| Vademecum (PENDIENTE) | /vademecum | No | **PENDIENTE DE CREAR (Task F)** — buscador por molécula + ficha clínica CIMA. Contrato listo: `GET /moleculas/moleculas/:id` enriquece molécula + árbol ATC + `ficha_tecnica` + productos paginados. Ver sección "Vademécum clínico" abajo. |
-| ProductoDetalle | /producto/:id | No | Detalle de producto individual. **Bloques de moléculas + ficha clínica PENDIENTES** (ver sección "Vademécum clínico" abajo). |
+| Vademecum (IMPLEMENTADO — 2026-09-10) | /vademecum · /vademecum/:id | No | **Task F completa** — buscador por molécula (`GET /moleculas/moleculas?search=`) + ficha clínica CIMA (acordeones de `ficha_tecnica`, fallback "Ficha en revisión") + breadcrumb ATC (`atc_arbol`) + productos INHRR paginados + botón **"Buscar en Catálogo"** → `/catalogo?molecula=<nombre>`. Enlaces en `Footer.jsx` y `MenuDrawer.jsx`. Secciones de ficha compartidas en `src/config/seccionesFicha.js`. |
+| ProductoDetalle | /producto/:id | No | Detalle de producto individual. **Bloques de ficha clínica IMPLEMENTADOS (2026-09-10)**: tab "Composición" enlaza cada molécula a `/vademecum/:id`; sección **"Ficha clínica"** (acordeón por molécula, cargada en paralelo) debajo de los tabs y antes de los carruseles, con referencia AEMPS-CIMA. |
 | Carrito | /carrito | Si | Carrito de compras + checkout |
 | MisOrdenes | /orders | Si | Historial de pedidos |
 | OrdenDetalle | /orders/:id | Si | Detalle de un pedido |
@@ -157,18 +157,18 @@ Respuesta (ruta pública, IEEE sin auth, ✅ verificado 2026-09-10 contra servid
 
 Query params de paginación (solo afectan `productos`): `?pagina=1&por_pagina=50` (máx 100). `atc_arbol` vacío `[]` si la molécula no tiene ATC. 404 con `{ error: 'Molécula no encontrada' }` si el id no existe.
 
-### Qué falta en el frontend (próxima sesión, plan ya define)
+### Qué falta en el frontend (IMPLEMENTADO — 2026-09-10)
 
-1. **Página NUEVA de vademécum = buscador por molécula + ficha clínica** (Task del plan, "Vademécum por molécula"):
-   - Ruta nueva (sugerida `/vademecum`), público sin auth, misma mecánica de búsqueda que `/registro-inhrr` (usa `GET /moleculas/moleculas?search=` → RPC `buscar_moleculas`, tolerante a typos).
-   - Resultado de búsqueda → ficha de la molécula (`GET /moleculas/moleculas/:id`): nombre + sinónimos + árbol ATC (breadcrumb de `atc_arbol`) + **ficha clínica** (`ficha_tecnica`: indicaciones, posología, contraindicaciones, advertencias, interacciones, embarazo/lactancia, efectos adversos, sobredosis — siempre con fallback "Ficha en revisión / no disponible" si `null`) + lista de productos (`productos`, con paginación) enlazando al catálogo filtrado por esa molécula.
-   - **NADA de fichas por producto**: el vademécum NO es fichas de producto (regla del plan).
-   - Sugerencia de acceso: enlace en `Footer.jsx` / `MenuDrawer.jsx` junto al existente "Registro sanitario (INHRR)".
-2. **ProductoDetalle.jsx — bloques de moléculas y ficha clínica** (Task F):
-   - La página YA consume `GET /moleculas/products/:id/completo` (`ProductoDetalle.jsx:112`) que devuelve `moleculas: [{ concentracion, unidad_concentracion, moleculas_referencias: { id, nombre, sinonimos, atc_id } }]`. Falta mostrar:
-     - **"Referencias de molécula(s)"**: nombre de cada una (+ su ATC si se quiere). Cada referencia puede enlazar a la ficha de vademécum.
-     - **"Ficha clínica"**: por cada molécula, cargar `GET /moleculas/moleculas/:id` (paralelo) y mostrar secciones de `ficha_tecnica` cuando exista; `null` → "Sin ficha disponible".
-   - Presentación sugerida: acordeón/tabs por molécula (2da pestaña "Ficha clínica" o bloque al final del detalle).
+1. **Página de vademécum = buscador por molécula + ficha clínica** ✅ (`src/pages/Vademecum.jsx` + `Vademecum.css`):
+   - Rutas `/vademecum` (buscador) y `/vademecum/:id` (ficha), públicas sin auth.
+   - Búsqueda `GET /moleculas/moleculas?search=` (RPC `buscar_moleculas`, debounce 350ms); resultados → ficha por id.
+   - Ficha: nombre + `nombre_generico_en` + sinónimos + breadcrumb ATC (`atc_arbol`, niveles 1→5) + **ficha clínica** (acordeones por sección de `ficha_tecnica`; `null` → "Ficha en revisión — aún no disponible") + lista de productos INHRR **paginada** (`?pagina=&por_pagina=25`) + botón **"Buscar en Catálogo"** → `/catalogo?molecula=<nombre>`.
+   - **NADA de fichas por producto** en el vademécum (regla del plan). Acceso: `Footer.jsx` y `MenuDrawer.jsx` (junto a "Registro sanitario (INHRR)").
+   - Secciones de ficha compartidas: `src/config/seccionesFicha.js` (SECCIONES_FICHA — claves = columnas de `moleculas_ficha_tecnica`).
+2. **ProductoDetalle.jsx — bloques de moléculas y ficha clínica** ✅:
+   - Tab "Composición": cada molécula (`moleculas_referencias.nombre`) es `<Link>` a `/vademecum/:id` (CSS `.composicion-nombre--link`).
+   - Sección **"Ficha clínica"** (`detalle-ficha-clinica__*`): acordeón con un item por molécula (toggle + concentración + link "Ver en Vademécum"); al abrir muestra las secciones de `ficha_tecnica` (via `GET /moleculas/moleculas/:id` en paralelo, guardadas en `fichasClinicas` por `molId`); `ficha_tecnica` null → "Ficha en revisión". Va debajo del bloque de tabs y antes de los carruseles (sección propia, dejaría espacio a un carrusel futuro). Nota de fuente AEMPS-CIMA al pie.
+   - `id` de la molécula viene de `moleculas_referencias.id` (el producto devuelve `moleculas` en `GET /moleculas/products/:id/completo`); las fichas se cargan con los ids únicos.
 
 ## Catálogo INHRR → tienda (IMPLEMENTADO — 2026-09-07)
 

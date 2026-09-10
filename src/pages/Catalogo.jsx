@@ -24,6 +24,7 @@ function Catalogo() {
   const searchTerm = searchParams.get('search') || ''
   const categoriaParam = searchParams.get('categoria') || ''
   const laboratorioParam = searchParams.get('laboratorio') || ''
+  const moleculaParam = searchParams.get('molecula') || ''
 
   const [productos, setProductos] = useState([])
   const [total, setTotal] = useState(0)
@@ -43,8 +44,8 @@ function Catalogo() {
   const [soloDisponibles, setSoloDisponibles] = useState(false)
   const [precioMin, setPrecioMin] = useState('')
   const [precioMax, setPrecioMax] = useState('')
-  const [moleculaInput, setMoleculaInput] = useState('')
-const [moleculaActiva, setMoleculaActiva] = useState('')
+  const [moleculaInput, setMoleculaInput] = useState(moleculaParam)
+const [moleculaActiva, setMoleculaActiva] = useState(moleculaParam)
   const [laboratoriosDisponibles, setLaboratoriosDisponibles] = useState([])
   const [formasDisponibles, setFormasDisponibles] = useState([])
 
@@ -54,6 +55,7 @@ const [moleculaActiva, setMoleculaActiva] = useState('')
     forma: false,
     disponibilidad: false,
     precio: false,
+    molecula: moleculaParam !== '',
   })
 
   const carruselRef = useRef(null)

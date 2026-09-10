@@ -109,6 +109,9 @@ function MenuDrawer({ isOpen, onClose, user, onLogout }) {
           <NavLink to="/registro-inhrr" className={linkClase} onClick={onClose}>
             Registro sanitario (INHRR)
           </NavLink>
+          <NavLink to="/vademecum" className={linkClase} onClick={onClose}>
+            Vademécum clínico
+          </NavLink>
           <NavLink to="/ayuda" className={linkClase} onClick={onClose}>
             Preguntas Frecuentes
           </NavLink>
