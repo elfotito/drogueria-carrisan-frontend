@@ -101,7 +101,8 @@ Cada formulario de registro es un archivo JSX autonomo con su propio estado loca
 | Home | /home | Si | Dashboard del usuario con carruseles, ofertas, etc. |
 | Catalogo | /catalogo | No | Catalogo de productos con busqueda y filtros |
 | RegistroInhrr | /registro-inhrr | No | Consulta publica del registro sanitario INHRR (medicamentos, hospitalarios, misceláneos) con filtros por categoría/forma/laboratorio/molécula/ATC. Ficha por SKU con datos completos del registro. |
-| ProductoDetalle | /producto/:id | No | Detalle de producto individual |
+| Vademecum (PENDIENTE) | /vademecum | No | **PENDIENTE DE CREAR (Task F)** — buscador por molécula + ficha clínica CIMA. Contrato listo: `GET /moleculas/moleculas/:id` enriquece molécula + árbol ATC + `ficha_tecnica` + productos paginados. Ver sección "Vademécum clínico" abajo. |
+| ProductoDetalle | /producto/:id | No | Detalle de producto individual. **Bloques de moléculas + ficha clínica PENDIENTES** (ver sección "Vademécum clínico" abajo). |
 | Carrito | /carrito | Si | Carrito de compras + checkout |
 | MisOrdenes | /orders | Si | Historial de pedidos |
 | OrdenDetalle | /orders/:id | Si | Detalle de un pedido |
@@ -115,6 +116,59 @@ Cada formulario de registro es un archivo JSX autonomo con su propio estado loca
 | Ofertas | /ofertas | Si | Ofertas especiales |
 | Cotizaciones | /mis-solicitudes/cotizaciones | Si | Solicitudes de cotizacion |
 | Presupuesto | /presupuesto | Si | Presupuesto/requerimiento rapido |
+
+## Vademécum clínico — ficha de molécula (BACKEND LISTO, frontend PENDIENTE — Task F)
+
+Contexto: el vademécum explica por **molécula** (ficha clínica CIMA); el INHRR es solo registro sanitario. El backend enriqueció `GET /moleculas/moleculas/:id` (2026-09-10) — **contrato listo para consumir**, ver "Contrato del endpoint" abajo. Detalle completo y conteos en el AGENTS raíz (sección vademécum clínico) y en `analisis/plan-analisis-vademecum-clinico.md`.
+
+### Contrato del endpoint enriquecido `GET /moleculas/moleculas/:id`
+
+Respuesta (ruta pública, IEEE sin auth, ✅ verificado 2026-09-10 contra servidor real):
+
+```jsonc
+{
+  "id": 1,
+  "atc_id": 18,
+  "nombre": "Paracetamol",
+  "nombre_generico_en": "Acetaminophen",
+  "sinonimos": ["..."],           // array; vacío si no hay
+  "descripcion": null,             // SIEMPRE null hoy (no inventar — plan aparte cuando el dueño traiga los textos)
+  "atc_clasificaciones": { "id": 18, "nivel": 5, "codigo": "N02BE01", "nombre": "Paracetamol", "padre_id": 17, "padre": { /* nivel 4, encadenado hasta nivel 1 */ } },
+  "atc_arbol": [                   // cadena plana ALCANZABLE ascendente nivel 1 -> nivel 5:
+    { "id": 10, "codigo": "N",     "nombre": "SISTEMA NERVIOSO", "nivel": 1 },
+    { "id": 15, "codigo": "N02",   "nombre": "ANALGESICOS",      "nivel": 2 },
+    { "id": 16, "codigo": "N02B",  "nombre": "OTROS ANALGESICOS Y ANTIPIRETICOS", "nivel": 3 },
+    { "id": 17, "codigo": "N02BE", "nombre": "Anilidas",         "nivel": 4 },
+    { "id": 18, "codigo": "N02BE01","nombre": "Paracetamol",     "nivel": 5 }
+  ],
+  "ficha_tecnica": {               // null si la molécula NO tiene ficha CIMA (hay ~250 así)
+    "molecula_id": 1, "cima_nregistro": "47178", "fuente": "AEMPS - CIMA (España)",
+    "indicaciones_terapeuticas": "texto HTML limpiado…",
+    "posologia": "…", "contraindicaciones": "…", "advertencias": "…",
+    "interacciones": "…", "embarazo_lactancia": "…", "efectos_adversos": "…",
+    "sobredosis": "…", "updated_at": "…"
+  },
+  "productos": [                   // productos del catálogo INHRR que usan la molécula (PAGINADOS)
+    { "sku": "ME23799", "ef": "E.F.…", "nombre": "TACHIPIRIN 250 mg SUPOSITORIOS", "forma": "SUPOSITORIOS", "categoria": "ME", "laboratorio": "…" }
+  ],
+  "paginacion": { "total": 14, "pagina": 1, "por_pagina": 50, "total_paginas": 1 }
+}
+```
+
+Query params de paginación (solo afectan `productos`): `?pagina=1&por_pagina=50` (máx 100). `atc_arbol` vacío `[]` si la molécula no tiene ATC. 404 con `{ error: 'Molécula no encontrada' }` si el id no existe.
+
+### Qué falta en el frontend (próxima sesión, plan ya define)
+
+1. **Página NUEVA de vademécum = buscador por molécula + ficha clínica** (Task del plan, "Vademécum por molécula"):
+   - Ruta nueva (sugerida `/vademecum`), público sin auth, misma mecánica de búsqueda que `/registro-inhrr` (usa `GET /moleculas/moleculas?search=` → RPC `buscar_moleculas`, tolerante a typos).
+   - Resultado de búsqueda → ficha de la molécula (`GET /moleculas/moleculas/:id`): nombre + sinónimos + árbol ATC (breadcrumb de `atc_arbol`) + **ficha clínica** (`ficha_tecnica`: indicaciones, posología, contraindicaciones, advertencias, interacciones, embarazo/lactancia, efectos adversos, sobredosis — siempre con fallback "Ficha en revisión / no disponible" si `null`) + lista de productos (`productos`, con paginación) enlazando al catálogo filtrado por esa molécula.
+   - **NADA de fichas por producto**: el vademécum NO es fichas de producto (regla del plan).
+   - Sugerencia de acceso: enlace en `Footer.jsx` / `MenuDrawer.jsx` junto al existente "Registro sanitario (INHRR)".
+2. **ProductoDetalle.jsx — bloques de moléculas y ficha clínica** (Task F):
+   - La página YA consume `GET /moleculas/products/:id/completo` (`ProductoDetalle.jsx:112`) que devuelve `moleculas: [{ concentracion, unidad_concentracion, moleculas_referencias: { id, nombre, sinonimos, atc_id } }]`. Falta mostrar:
+     - **"Referencias de molécula(s)"**: nombre de cada una (+ su ATC si se quiere). Cada referencia puede enlazar a la ficha de vademécum.
+     - **"Ficha clínica"**: por cada molécula, cargar `GET /moleculas/moleculas/:id` (paralelo) y mostrar secciones de `ficha_tecnica` cuando exista; `null` → "Sin ficha disponible".
+   - Presentación sugerida: acordeón/tabs por molécula (2da pestaña "Ficha clínica" o bloque al final del detalle).
 
 ## Catálogo INHRR → tienda (IMPLEMENTADO — 2026-09-07)
 
