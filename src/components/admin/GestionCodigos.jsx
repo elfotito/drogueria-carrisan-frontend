@@ -12,7 +12,7 @@ import {
   IconButton,
   Input,
   HStack,
-  Select,
+  NativeSelect,
   ButtonGroup,
 } from '@chakra-ui/react'
 import {
@@ -237,16 +237,18 @@ function GestionCodigos() {
           {tipo === 'staff' && (
             <Box>
               <Text fontSize="sm" color="gray.600" mb={1}>Rol del personal</Text>
-              <Select
-                value={rolStaff}
-                onChange={(e) => setRolStaff(e.target.value)}
-                width="180px"
-                aria-label="Rol del personal"
-              >
-                {ROLES_STAFF.map((r) => (
-                  <option key={r.valor} value={r.valor}>{r.etiqueta}</option>
-                ))}
-              </Select>
+              <NativeSelect.Root size="sm" width="180px">
+                <NativeSelect.Field
+                  value={rolStaff}
+                  onChange={(e) => setRolStaff(e.target.value)}
+                  aria-label="Rol del personal"
+                >
+                  {ROLES_STAFF.map((r) => (
+                    <option key={r.valor} value={r.valor}>{r.etiqueta}</option>
+                  ))}
+                </NativeSelect.Field>
+                <NativeSelect.Indicator />
+              </NativeSelect.Root>
             </Box>
           )}
           <Box>
