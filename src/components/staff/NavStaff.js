@@ -10,7 +10,7 @@
 // ---------------------------------------------------------------
 import {
   LayoutDashboard, PackageCheck, ClipboardList, ShoppingCart,
-  Wallet, Landmark, TrendingUp, Truck, Receipt, Banknote, CalendarX2,
+  Landmark, TrendingUp, Truck, Receipt, Banknote, CalendarX2,
   MessagesSquare, PackageSearch, FileText, Megaphone, MapPin, BadgeDollarSign,
   Shield,
 } from 'lucide-react'
@@ -76,19 +76,11 @@ export const MODULOS = {
           roles: ['contabilidad', 'administrador', 'director', 'admin'],
         },
         {
-          id: 'pagos',
-          to: '/staff/pagos',
-          icono: Wallet,
-          texto: 'Pagos',
-          desc: 'Registra abonos y verifica reportes de pago',
-          roles: ['contabilidad', 'administrador', 'director', 'admin'],
-        },
-        {
           id: 'ordenes-por-cancelar',
           to: '/staff/ordenes-por-cancelar',
           icono: CalendarX2,
-          texto: 'Órdenes por cancelar',
-          desc: 'Órdenes contado sin pagar que hay que cancelar',
+          texto: 'En espera de pago',
+          desc: 'Órdenes de contado sin pago confirmado — cancelar y liberar stock',
           roles: ['contabilidad', 'administrador', 'director', 'admin'],
         },
         {
@@ -96,7 +88,15 @@ export const MODULOS = {
           to: '/staff/credito',
           icono: Shield,
           texto: 'Crédito y cobranza',
-          desc: 'Gestiona líneas de crédito, aging y cobranza',
+          desc: 'Línea de crédito de todos los clientes: cobros, reportes por verificar, aging y cobranza',
+          roles: ['contabilidad', 'administrador', 'director', 'admin'],
+        },
+        {
+          id: 'tesoreria',
+          to: '/staff/tesoreria',
+          icono: Banknote,
+          texto: 'Tesorería',
+          desc: 'Reportes de ingresos y egresos manuales del período',
           roles: ['contabilidad', 'administrador', 'director', 'admin'],
         },
       ],

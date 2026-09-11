@@ -13,7 +13,7 @@ function formatFecha(fecha) {
 }
 
 // ------------------------------------------------------------------
-// Órdenes por cancelar: cola de órdenes CONTADO sin pago verificado
+// En espera de pago: cola de órdenes CONTADO sin pago verificado
 // (estado 'preparando' o legacy 'procesando'). Cancelar aquí evita que
 // queden colgadas por cobrar.
 // ------------------------------------------------------------------
@@ -54,7 +54,7 @@ function StaffOrdenesPorCancelar() {
   }
 
   return (
-    <LayoutDepartamento departamento="finanzas" activo="ordenes-por-cancelar" titulo="Órdenes por cancelar">
+    <LayoutDepartamento departamento="finanzas" activo="ordenes-por-cancelar" titulo="En espera de pago">
       {error && <p style={{ color: '#DC2626', marginBottom: 8 }}>{error}</p>}
       {cargando && <p>Cargando...</p>}
       {!cargando && ordenes.length === 0 && <p>No hay órdenes contado pendientes de pago.</p>}

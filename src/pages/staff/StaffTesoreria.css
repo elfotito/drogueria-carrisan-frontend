@@ -1,0 +1,145 @@
+/* StaffTesoreria.css — estilos del módulo tesorería (prefijo .st-) */
+
+/* Resumen cards */
+.st-resumen-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.st-resumen-card {
+  background: var(--ldep-color-soft, #f0fdf4);
+  border-radius: 10px;
+  padding: 16px;
+  text-align: center;
+}
+.st-resumen-card__label {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+.st-resumen-card__valor {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--ldep-color-strong, #065f46);
+}
+.st-resumen-card__valor--negativo {
+  color: #dc2626;
+}
+
+/* Tabla día por día */
+.st-tabla-dia {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+.st-tabla-dia th {
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 2px solid var(--ldep-color, #0D9373);
+  font-weight: 600;
+}
+.st-tabla-dia td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+.st-tabla-dia tr:hover {
+  background: var(--ldep-color-soft, #f0fdf4);
+}
+.st-saldo-positivo { color: #065f46; font-weight: 600; }
+.st-saldo-negativo { color: #dc2626; font-weight: 600; }
+
+/* Formulario egreso */
+.st-form-egreso {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+  margin-bottom: 24px;
+  background: #f9fafb;
+  padding: 16px;
+  border-radius: 10px;
+}
+.st-form-egreso label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #374151;
+  flex: 1;
+  min-width: 140px;
+}
+.st-form-egreso input,
+.st-form-egreso select {
+  margin-top: 4px;
+  padding: 8px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.88rem;
+}
+
+/* Lista de egresos */
+.st-egreso-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border-bottom: 1px solid #f3f4f6;
+}
+.st-egreso-item:nth-child(even) {
+  background: #f9fafb;
+}
+.st-egreso-item__datos {
+  flex: 1;
+}
+.st-egreso-item__categoria {
+  font-size: 0.75rem;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.st-egreso-item__concepto {
+  font-weight: 500;
+}
+.st-egreso-item__monto {
+  font-weight: 700;
+  color: #dc2626;
+  white-space: nowrap;
+  margin-left: 12px;
+}
+.st-egreso-item__fecha {
+  font-size: 0.78rem;
+  color: #9ca3af;
+}
+.st-egreso-item__borrar {
+  background: none;
+  border: none;
+  color: #dc2626;
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 0 6px;
+  opacity: 0.6;
+}
+.st-egreso-item__borrar:hover {
+  opacity: 1;
+}
+
+/* Filtros fecha */
+.st-filtros-fecha {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.st-filtros-fecha label {
+  font-size: 0.8rem;
+  color: #374151;
+  font-weight: 500;
+}
+.st-filtros-fecha input {
+  padding: 6px 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}

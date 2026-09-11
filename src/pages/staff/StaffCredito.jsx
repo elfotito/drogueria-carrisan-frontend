@@ -19,9 +19,10 @@ const TIPOS_NOTA = [
 ]
 
 const TABS = [
-  { id: 'vencidos', texto: 'Vencidos' },
+  { id: 'clientes', texto: 'Clientes' },
+  { id: 'cobros', texto: 'Cobros' },
+  { id: 'por-verificar', texto: 'Por verificar' },
   { id: 'notas', texto: 'Notas de cobranza' },
-  { id: 'seguimientos', texto: 'Próximos seguimientos' },
 ]
 
 function AgingBadge({ monto, label }) {
@@ -37,8 +38,289 @@ function AgingBadge({ monto, label }) {
   )
 }
 
+// ------------------------------------------------------------------
+// Tab: Cobros (registrar abono + historial) — migrado de StaffPagos
+// ------------------------------------------------------------------
+function TabCobros() {
+  const [pagos, setPagos] = useState([])
+  const [cargando, setCargando] = useState(true)
+  const [error, setError] = useState('')
+  const [nuevo, setNuevo] = useState({ usuario_id: '', monto: '', tipo: 'abono', detalle: '' })
+  const [guardando, setGuardando] = useState(false)
+
+  async function cargarPagos() {
+    setCargando(true)
+    try {
+      const { data } = await staffApi.get('/staff/contabilidad/pagos')
+      setPagos(data)
+    } catch (err) {
+      setError(err.response?.data?.error || 'No se pudieron cargar los pagos')
+    } finally {
+      setCargando(false)
+    }
+  }
+
+  async function registrarPago(e) {
+    e.preventDefault()
+    setError('')
+    setGuardando(true)
+    try {
+      await staffApi.post('/staff/contabilidad/pagos', {
+        usuario_id: nuevo.usuario_id,
+        monto: Number(nuevo.monto),
+        tipo: nuevo.tipo,
+        detalle: nuevo.detalle || undefined,
+      })
+      setNuevo({ usuario_id: '', monto: '', tipo: 'abono', detalle: '' })
+      await cargarPagos()
+    } catch (err) {
+      setError(err.response?.data?.error || 'No se pudo registrar el pago')
+    } finally {
+      setGuardando(false)
+    }
+  }
+
+  useEffect(() => {
+    cargarPagos()
+  }, [])
+
+  return (
+    <div>
+      <h3 className="stf-subtitulo">Registrar abono</h3>
+      <form className="stf-form" onSubmit={registrarPago}>
+        <div className="stf-form-row">
+          <input
+            className="stf-input"
+            placeholder="ID del cliente (usuario)"
+            value={nuevo.usuario_id}
+            onChange={(e) => setNuevo({ ...nuevo, usuario_id: e.target.value })}
+            required
+          />
+          <input
+            className="stf-input"
+            placeholder="Monto USD"
+            type="number"
+            step="0.01"
+            value={nuevo.monto}
+            onChange={(e) => setNuevo({ ...nuevo, monto: e.target.value })}
+            required
+          />
+          <select className="stf-input" value={nuevo.tipo} onChange={(e) => setNuevo({ ...nuevo, tipo: e.target.value })}>
+            <option value="abono">Abono</option>
+            <option value="contado">Contado</option>
+            <option value="reporte_cliente">Reporte de cliente</option>
+          </select>
+          <input
+            className="stf-input"
+            placeholder="Detalle (opcional)"
+            value={nuevo.detalle}
+            onChange={(e) => setNuevo({ ...nuevo, detalle: e.target.value })}
+          />
+          <button className="stf-btn stf-btn--primary" type="submit" disabled={guardando}>
+            {guardando ? 'Guardando...' : 'Registrar'}
+          </button>
+        </div>
+      </form>
+
+      {error && <p style={{ color: '#DC2626', marginTop: 8 }}>{error}</p>}
+
+      <h3 className="stf-subtitulo">Historial de pagos</h3>
+      {cargando && <p>Cargando...</p>}
+      {!cargando && (
+        <div className="stf-tabla-wrap">
+          <table className="stf-tabla">
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>Monto</th>
+                <th>Tipo</th>
+                <th>Detalle</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+            <tbody>
+              {pagos.length === 0 ? (
+                <tr><td colSpan="5">Sin pagos registrados</td></tr>
+              ) : (
+                pagos.map((p) => (
+                  <tr key={p.id}>
+                    <td>{p.users?.nombre || `#${p.usuario_id}`}</td>
+                    <td>${formatUSD(p.monto)}</td>
+                    <td>{p.tipo}</td>
+                    <td>{p.detalle || '—'}</td>
+                    <td>{formatFecha(p.created_at)}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ------------------------------------------------------------------
+// Tab: Por verificar (reportes de pago pendientes) — migrado de StaffPagos
+// ------------------------------------------------------------------
+function TabPorVerificar() {
+  const [reportes, setReportes] = useState([])
+  const [cargando, setCargando] = useState(true)
+  const [error, setError] = useState('')
+  const [reporteAbierto, setReporteAbierto] = useState(null)
+  const [accion, setAccion] = useState(null) // 'verificar' | 'rechazar'
+  const [numeroFactura, setNumeroFactura] = useState('')
+  const [notaRechazo, setNotaRechazo] = useState('')
+  const [procesando, setProcesando] = useState(false)
+
+  async function cargarReportes() {
+    setCargando(true)
+    try {
+      const { data } = await staffApi.get('/staff/contabilidad/reportes-pago', {
+        params: { estado: 'pendiente_verificacion' },
+      })
+      setReportes(data)
+    } catch (err) {
+      setError(err.response?.data?.error || 'No se pudieron cargar los reportes')
+    } finally {
+      setCargando(false)
+    }
+  }
+
+  useEffect(() => {
+    cargarReportes()
+  }, [])
+
+  function abrirVerificar(r) { setReporteAbierto(r); setAccion('verificar'); setNumeroFactura('') }
+  function abrirRechazar(r) { setReporteAbierto(r); setAccion('rechazar'); setNotaRechazo('') }
+  function cerrar() { setReporteAbierto(null); setAccion(null); setError('') }
+
+  async function confirmarVerificar() {
+    if (!numeroFactura.trim()) { setError('Debes indicar el número de factura'); return }
+    setProcesando(true); setError('')
+    try {
+      await staffApi.patch(`/staff/contabilidad/reportes-pago/${reporteAbierto.id}/verificar`, {
+        numero_factura: numeroFactura.trim(),
+      })
+      cerrar()
+      await cargarReportes()
+    } catch (err) {
+      setError(err.response?.data?.error || 'No se pudo verificar el pago')
+    } finally {
+      setProcesando(false)
+    }
+  }
+
+  async function confirmarRechazar() {
+    setProcesando(true); setError('')
+    try {
+      await staffApi.patch(`/staff/contabilidad/reportes-pago/${reporteAbierto.id}/rechazar`, {
+        nota_rechazo: notaRechazo.trim() || undefined,
+      })
+      cerrar()
+      await cargarReportes()
+    } catch (err) {
+      setError(err.response?.data?.error || 'No se pudo rechazar el pago')
+    } finally {
+      setProcesando(false)
+    }
+  }
+
+  return (
+    <div>
+      {error && <p style={{ color: '#DC2626', marginBottom: 8 }}>{error}</p>}
+      {cargando && <p>Cargando...</p>}
+      {!cargando && reportes.length === 0 && <p>No hay reportes de pago pendientes de verificar.</p>}
+      {!cargando && reportes.length > 0 && (
+        <div className="stf-tabla-wrap">
+          <table className="stf-tabla">
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>Órdenes</th>
+                <th>Monto USD</th>
+                <th>Monto Bs</th>
+                <th>Fecha</th>
+                <th>Comprobante</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              {reportes.map((r) => (
+                <tr key={r.id}>
+                  <td>{r.users?.nombre || `#${r.usuario_id}`}</td>
+                  <td>{(r.reporte_pago_ordenes || []).map((v) => `#${v.orden_id}`).join(', ')}</td>
+                  <td>${formatUSD(r.monto_usd)}</td>
+                  <td>Bs. {Number(r.monto_bs || 0).toLocaleString('es-VE', { minimumFractionDigits: 2 })}</td>
+                  <td>{formatFecha(r.created_at)}</td>
+                  <td>
+                    {r.url_comprobante ? (
+                      <a href={r.url_comprobante} target="_blank" rel="noreferrer">Ver</a>
+                    ) : '—'}
+                  </td>
+                  <td>
+                    <div className="stf-acciones">
+                      <button className="stf-btn stf-btn--small stf-btn--primary" onClick={() => abrirVerificar(r)}>Verificar</button>
+                      <button className="stf-btn stf-btn--small stf-btn--danger" onClick={() => abrirRechazar(r)}>Rechazar</button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {reporteAbierto && accion === 'verificar' && (
+        <div className="stf-modal" onClick={cerrar}>
+          <div className="stf-modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3>Verificar pago #{reporteAbierto.id}</h3>
+            <p>Creará la factura y el pago automáticamente, y avanzará la(s) orden(es) a "Preparando".</p>
+            <input
+              className="stf-input"
+              value={numeroFactura}
+              onChange={(e) => setNumeroFactura(e.target.value)}
+              placeholder="Número de factura"
+              autoFocus
+            />
+            {error && <p style={{ color: '#DC2626', marginTop: 8 }}>{error}</p>}
+            <div className="stf-acciones" style={{ marginTop: 14 }}>
+              <button className="stf-btn" onClick={cerrar} disabled={procesando}>Cancelar</button>
+              <button className="stf-btn stf-btn--primary" onClick={confirmarVerificar} disabled={procesando}>
+                {procesando ? 'Verificando...' : 'Confirmar y generar factura'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {reporteAbierto && accion === 'rechazar' && (
+        <div className="stf-modal" onClick={cerrar}>
+          <div className="stf-modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3>Rechazar pago #{reporteAbierto.id}</h3>
+            <textarea
+              className="stf-input"
+              value={notaRechazo}
+              onChange={(e) => setNotaRechazo(e.target.value)}
+              placeholder="Motivo (opcional)"
+              rows={3}
+            />
+            {error && <p style={{ color: '#DC2626', marginTop: 8 }}>{error}</p>}
+            <div className="stf-acciones" style={{ marginTop: 14 }}>
+              <button className="stf-btn" onClick={cerrar} disabled={procesando}>Cancelar</button>
+              <button className="stf-btn stf-btn--danger" onClick={confirmarRechazar} disabled={procesando}>
+                {procesando ? 'Rechazando...' : 'Confirmar rechazo'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
 function StaffCredito() {
-  const [tab, setTab] = useState('vencidos')
+  const [tab, setTab] = useState('clientes')
   const [aging, setAging] = useState([])
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
@@ -315,8 +597,8 @@ function StaffCredito() {
 
       {error && <p style={{ color: '#DC2626' }}>{error}</p>}
 
-      {/* Tab VENCIDOS — Aging dashboard */}
-      {tab === 'vencidos' && (
+      {/* Tab CLIENTES — Aging dashboard */}
+      {tab === 'clientes' && (
         <>
           {cargando && <p>Cargando...</p>}
           {!cargando && (
@@ -384,7 +666,13 @@ function StaffCredito() {
         </>
       )}
 
-      {/* Tab NOTAS — Listado global + formulario */}
+      {/* Tab COBROS — registrar abonos + historial */}
+      {tab === 'cobros' && <TabCobros />}
+
+      {/* Tab POR VERIFICAR — reportes de pago pendientes */}
+      {tab === 'por-verificar' && <TabPorVerificar />}
+
+      {/* Tab NOTAS — Listado global + formulario + próximos seguimientos */}
       {tab === 'notas' && (
         <>
           <form className="scr-form-nota-global" onSubmit={crearNota}>
@@ -433,46 +721,44 @@ function StaffCredito() {
             ))}
             {notas.length === 0 && <p style={{ color: '#6B7280' }}>Sin notas de cobranza</p>}
           </div>
-        </>
-      )}
 
-      {/* Tab SEGUIMIENTOS — Próximos follow-ups */}
-      {tab === 'seguimientos' && (
-        <div className="stf-tabla-wrap">
-          <table className="stf-tabla">
-            <thead>
-              <tr>
-                <th>Cliente</th>
-                <th>Fecha seguimiento</th>
-                <th>Tipo</th>
-                <th>Nota</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {notas
-                .filter((n) => n.fecha_seguimiento)
-                .sort((a, b) => new Date(a.fecha_seguimiento) - new Date(b.fecha_seguimiento))
-                .map((n) => (
-                  <tr key={n.id}>
-                    <td>{n.users?.nombre || `Cliente #${n.usuario_id}`}</td>
-                    <td style={{
-                      color: new Date(n.fecha_seguimiento) < new Date() ? '#DC2626' : 'inherit',
-                      fontWeight: new Date(n.fecha_seguimiento) < new Date() ? 600 : 400,
-                    }}>
-                      {formatFecha(n.fecha_seguimiento)}
-                    </td>
-                    <td>{TIPOS_NOTA.find(t => t.id === n.tipo)?.texto || n.tipo}</td>
-                    <td style={{ maxWidth: 300, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{n.nota}</td>
-                    <td>
-                      <button className="stf-btn stf-btn--small" onClick={() => cargarDetalle(n.usuario_id)}>Ver cliente</button>
-                    </td>
-                  </tr>
-                ))
-              }
-            </tbody>
-          </table>
-        </div>
+          <h3 className="stf-subtitulo">Próximos seguimientos</h3>
+          <div className="stf-tabla-wrap">
+            <table className="stf-tabla">
+              <thead>
+                <tr>
+                  <th>Cliente</th>
+                  <th>Fecha seguimiento</th>
+                  <th>Tipo</th>
+                  <th>Nota</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {notas
+                  .filter((n) => n.fecha_seguimiento)
+                  .sort((a, b) => new Date(a.fecha_seguimiento) - new Date(b.fecha_seguimiento))
+                  .map((n) => (
+                    <tr key={n.id}>
+                      <td>{n.users?.nombre || `Cliente #${n.usuario_id}`}</td>
+                      <td style={{
+                        color: new Date(n.fecha_seguimiento) < new Date() ? '#DC2626' : 'inherit',
+                        fontWeight: new Date(n.fecha_seguimiento) < new Date() ? 600 : 400,
+                      }}>
+                        {formatFecha(n.fecha_seguimiento)}
+                      </td>
+                      <td>{TIPOS_NOTA.find(t => t.id === n.tipo)?.texto || n.tipo}</td>
+                      <td style={{ maxWidth: 300, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{n.nota}</td>
+                      <td>
+                        <button className="stf-btn stf-btn--small" onClick={() => cargarDetalle(n.usuario_id)}>Ver cliente</button>
+                      </td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
     </LayoutDepartamento>
   )
