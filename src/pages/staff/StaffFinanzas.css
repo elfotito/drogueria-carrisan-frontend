@@ -203,3 +203,141 @@
 .stf-modal-content .stf-input {
   width: 100%;
 }
+
+.stf-btn--success {
+  background: #16A34A;
+  border-color: #16A34A;
+  color: #fff;
+}
+.stf-btn--success:hover { background: #15803D; border-color: #15803D; }
+
+/* ---------------------------------------------------------------
+   Crédito y Cobranza — scr-* (staff credito)
+   --------------------------------------------------------------- */
+
+.scr-detalle-header {
+  margin-bottom: 16px;
+}
+.scr-detalle-header h3 { margin: 0 0 4px; }
+.scr-detalle-header span { font-size: 0.85rem; color: #6B7280; margin-right: 12px; }
+
+.scr-bloqueo-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: #F9FAFB;
+  border: 1px solid #E5E7EB;
+  margin: 12px 0;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.scr-aging-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 8px 0 16px;
+}
+
+.scr-aging-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border: 1px solid;
+}
+
+.scr-form-recordatorio,
+.scr-form-nota,
+.scr-form-nota-global {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 8px 0 16px;
+}
+
+.scr-form-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.scr-form-row input,
+.scr-form-row select {
+  padding: 6px 10px;
+  border: 1px solid #D1D5DB;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.scr-form-recordatorio textarea,
+.scr-form-nota textarea,
+.scr-form-nota-global textarea,
+.scr-form-nota input[type="date"],
+.scr-form-nota select {
+  padding: 8px 10px;
+  border: 1px solid #D1D5DB;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  resize: vertical;
+}
+
+.scr-notas-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.scr-nota-card {
+  padding: 12px;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  background: #FAFAFA;
+}
+
+.scr-nota-header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.scr-nota-tipo {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  background: #EFF6FF;
+  color: #2563EB;
+}
+
+.scr-nota-cliente {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.scr-nota-fecha {
+  font-size: 0.82rem;
+  color: #6B7280;
+  margin-left: auto;
+}
+
+.scr-nota-card p {
+  margin: 4px 0;
+  font-size: 0.9rem;
+}
+
+.scr-nota-seguimiento {
+  font-size: 0.82rem;
+  color: #CA8A04;
+}
+
+.scr-nota-staff {
+  font-size: 0.78rem;
+  color: #9CA3AF;
+  margin-left: 8px;
+}

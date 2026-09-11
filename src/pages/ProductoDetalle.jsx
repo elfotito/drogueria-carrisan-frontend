@@ -97,6 +97,11 @@ function ProductoDetalle() {
   const [cargandoFichas, setCargandoFichas] = useState(false)
   const [moleculaAbierta, setMoleculaAbierta] = useState(null)
 
+  // "Avísame cuando llegue" — suscripción del cliente a productos sin precio.
+  // Ternario: null = consultando, false = no suscrito, true = suscrito.
+  const [suscripcion, setSuscripcion] = useState(null)
+  const [togglendo, setTogglendo] = useState(false)
+
   // Producto sin precio ("consultar precio"): no se agrega al carrito,
   // se solicita por requerimiento (pre-llenado con ?producto=<nombre>).
   const sinPrecio = producto ? (producto.precio_usd == null || Number(producto.precio_usd) <= 0) : false
@@ -109,9 +114,23 @@ function ProductoDetalle() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id])
 
+  // Carga el estado de la suscripción "avísame" cuando hay sesión y el producto no tiene precio
+  useEffect(() => {
+    if (!user || !producto || !sinPrecio) return
+    let activo = true
+    api
+      .get(`/products/${producto.id}/avisame`)
+      .then((res) => activo && setSuscripcion(Boolean(res.data.suscrito)))
+      .catch(() => activo && setSuscripcion(false))
+    return () => {
+      activo = false
+    }
+  }, [user, producto, sinPrecio])
+
   async function cargarProducto() {
     setCargando(true)
     setCarruseles([])
+    setSuscripcion(null)
     try {
       const [resCompleto, resTasa] = await Promise.all([
         api.get(`/moleculas/products/${id}/completo`),
@@ -181,6 +200,24 @@ function ProductoDetalle() {
     addItem(producto, cantidad)
     setAgregado(true)
     setTimeout(() => setAgregado(false), 2000)
+  }
+
+  async function toggleAvisame() {
+    if (!user || !producto || suscripcion === null || togglendo) return
+    setTogglendo(true)
+    try {
+      if (suscripcion) {
+        await api.delete(`/products/${producto.id}/avisame`)
+        setSuscripcion(false)
+      } else {
+        await api.post(`/products/${producto.id}/avisame`)
+        setSuscripcion(true)
+      }
+    } catch (err) {
+      console.error('No se pudo actualizar la suscripción de disponibilidad', err)
+    } finally {
+      setTogglendo(false)
+    }
   }
 
   if (cargando) {
@@ -364,6 +401,20 @@ function ProductoDetalle() {
                 >
                   Solicitar precio
                 </button>
+
+                {user && (
+                  <button
+                    className={`detalle-btn-avisame ${suscripcion ? 'suscrito' : ''}`}
+                    onClick={toggleAvisame}
+                    disabled={suscripcion === null || togglendo}
+                  >
+                    {suscripcion === null || togglendo
+                      ? 'Consultando…'
+                      : suscripcion
+                        ? '✓ Te avisaremos'
+                        : 'Avísame cuando llegue'}
+                  </button>
+                )}
               </div>
             )}
 

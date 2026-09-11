@@ -387,6 +387,37 @@
   background: #0B6350;
 }
 
+/* "Avísame cuando llegue" — suscripción de disponibilidad de productos sin precio */
+.detalle-btn-avisame {
+  width: 100%;
+  padding: 11px 28px;
+  margin-top: 10px;
+  background: transparent;
+  color: #1B4B8F;
+  border: 1.5px solid #1B4B8F;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.detalle-btn-avisame:hover:not(:disabled) {
+  background: #1B4B8F;
+  color: #FBFAF7;
+}
+
+.detalle-btn-avisame:disabled {
+  border-color: #D8D6CE;
+  color: #8B8D85;
+  cursor: not-allowed;
+}
+
+.detalle-btn-avisame.suscrito {
+  border-color: #0E7C63;
+  color: #0E7C63;
+}
+
 .detalle-login-aviso {
   font-size: 0.85rem;
   color: #5B6270;

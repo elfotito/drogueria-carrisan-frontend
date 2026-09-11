@@ -306,6 +306,7 @@ function Carrito() {
   const [tasaVes, setTasaVes] = useState(null)
   const [saldoDisponible, setSaldoDisponible] = useState(null)
   const [ordenesVencidas, setOrdenesVencidas] = useState(0)
+  const [creditoBloqueado, setCreditoBloqueado] = useState(false)
   const [formaPago, setFormaPago] = useState('contado')
   const [error, setError] = useState('')
   const [envioExpandido, setEnvioExpandido] = useState(false)
@@ -336,6 +337,7 @@ function Carrito() {
       .then((res) => {
         setSaldoDisponible(res.data.resumen.saldo)
         setOrdenesVencidas(res.data.resumen.cantidad_ordenes_vencidas || 0)
+        setCreditoBloqueado(res.data.resumen.credito_bloqueado || false)
       })
       .catch(() => setSaldoDisponible(null))
   }, [user?.id])
@@ -431,7 +433,7 @@ function Carrito() {
   // alcanzar (o aparece una orden vencida), volvemos automáticamente a
   // 'contado' para no dejar seleccionada una opción que el backend
   // rechazaría.
-  const creditoDisponible = saldoDisponible !== null && saldoDisponible >= totalConEnvio && ordenesVencidas === 0
+  const creditoDisponible = saldoDisponible !== null && saldoDisponible >= totalConEnvio && ordenesVencidas === 0 && !creditoBloqueado
 
   useEffect(() => {
     if (formaPago === 'credito' && !creditoDisponible) {
@@ -487,6 +489,17 @@ function Carrito() {
             {totalVes && <span className="cart-summary__total-ves">Bs. {formatVES(totalVes)}</span>}
           </div>
         </div>
+
+        {creditoBloqueado && (
+          <div className="cart-alerta-vencidas">
+            <span className="cart-alerta-vencidas__icono">⚠️</span>
+            <div>
+              <strong>Tu línea de crédito está suspendida</strong>
+              <p>No puedes pagar a crédito hasta que la empresa regularice tu cuenta. Podés seguir comprando de contado.</p>
+              <Link to="/ayuda" className="cart-alerta-vencidas__link">Contactar a la empresa →</Link>
+            </div>
+          </div>
+        )}
 
         {ordenesVencidas > 0 && (
           <div className="cart-alerta-vencidas">

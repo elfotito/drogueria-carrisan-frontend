@@ -12,6 +12,7 @@ import {
   LayoutDashboard, PackageCheck, ClipboardList, ShoppingCart,
   Wallet, Landmark, TrendingUp, Truck, Receipt, Banknote, CalendarX2,
   MessagesSquare, PackageSearch, FileText, Megaphone, MapPin, BadgeDollarSign,
+  Shield,
 } from 'lucide-react'
 
 const ROLES_TODOS = ['vendedor', 'despachador', 'almacenista', 'contabilidad', 'administrador', 'director', 'admin']
@@ -62,8 +63,8 @@ export const MODULOS = {
           id: 'ventas',
           to: '/staff/ventas',
           icono: Receipt,
-          texto: 'Ventas y facturación',
-          desc: 'Emite y anula facturas, notas de crédito y débito',
+          texto: 'Facturación',
+          desc: 'Emite facturas, recibos, notas de crédito y débito',
           roles: ['contabilidad', 'administrador', 'director', 'admin'],
         },
         {
@@ -88,6 +89,14 @@ export const MODULOS = {
           icono: CalendarX2,
           texto: 'Órdenes por cancelar',
           desc: 'Órdenes contado sin pagar que hay que cancelar',
+          roles: ['contabilidad', 'administrador', 'director', 'admin'],
+        },
+        {
+          id: 'credito',
+          to: '/staff/credito',
+          icono: Shield,
+          texto: 'Crédito y cobranza',
+          desc: 'Gestiona líneas de crédito, aging y cobranza',
           roles: ['contabilidad', 'administrador', 'director', 'admin'],
         },
       ],
