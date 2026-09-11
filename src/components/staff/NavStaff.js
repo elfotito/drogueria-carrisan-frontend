@@ -144,7 +144,7 @@ export const MODULOS = {
           icono: Megaphone,
           texto: 'Promociones',
           desc: 'Crea y edita plantillas de promociones (sin envío masivo)',
-          roles: ['vendedor', 'administrador', 'director', 'admin'],
+          roles: ['administrador', 'director', 'admin'],
         },
         {
           id: 'precios',
@@ -152,7 +152,7 @@ export const MODULOS = {
           icono: BadgeDollarSign,
           texto: 'Precios',
           desc: 'Fija precios del catálogo con filtros (línea, forma, laboratorio, ATC)',
-          roles: ['vendedor', 'administrador', 'director', 'admin'],
+          roles: ['administrador', 'director', 'admin'],
         },
       ],
     },
