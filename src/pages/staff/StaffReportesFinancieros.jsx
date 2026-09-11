@@ -74,7 +74,6 @@ export default function StaffReportesFinancieros() {
     return d.toISOString().slice(0, 10)
   }
   const fechasHastaMes = () => {
-    const [y, m] = anioMes.split('-').map(Number)
     return `${anioMes}-${diasEnMes(anioMes)}`
   }
 
