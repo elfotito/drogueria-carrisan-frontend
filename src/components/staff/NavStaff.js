@@ -12,7 +12,7 @@ import {
   LayoutDashboard, PackageCheck, ClipboardList, ShoppingCart,
   Landmark, TrendingUp, Truck, Receipt, Banknote, CalendarX2,
   MessagesSquare, PackageSearch, FileText, Megaphone, MapPin, BadgeDollarSign,
-  Shield,
+  Shield, BarChart3,
 } from 'lucide-react'
 
 const ROLES_TODOS = ['vendedor', 'despachador', 'almacenista', 'contabilidad', 'administrador', 'director', 'admin']
@@ -97,6 +97,14 @@ export const MODULOS = {
           icono: Banknote,
           texto: 'Tesorería',
           desc: 'Reportes de ingresos y egresos manuales del período',
+          roles: ['contabilidad', 'administrador', 'director', 'admin'],
+        },
+        {
+          id: 'reportes-financieros',
+          to: '/staff/reportes-financieros',
+          icono: BarChart3,
+          texto: 'Reportes financieros',
+          desc: 'Informe mensual consolidado: ventas, crédito, cobros, facturación y egresos',
           roles: ['contabilidad', 'administrador', 'director', 'admin'],
         },
       ],
