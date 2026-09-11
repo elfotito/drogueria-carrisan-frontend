@@ -9,6 +9,7 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, Legend,
 } from 'recharts'
 import './StaffFinanzas.css'
+import './StaffTesoreria.css'
 import './StaffReportesFinancieros.css'
 
 const TABS = [
