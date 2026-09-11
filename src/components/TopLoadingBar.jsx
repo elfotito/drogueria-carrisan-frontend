@@ -13,23 +13,31 @@ function TopLoadingBar() {
   const shouldShowLoadingBar = !excludedRoutes.includes(location.pathname)
 
   useEffect(() => {
+    // Desktop = fila principal + barra secundaria; móvil/tablet solo la principal.
+    // Re-medir en cada cambio de ruta porque el navbar aparece/desaparece
+    // (login, registro, staff) y las alturas difieren por breakpoint.
     function medirNavbar() {
-      const nav = document.querySelector('.navbar-container')
-      if (nav) setNavHeight(nav.offsetHeight)
+      const main = document.querySelector('.navbar__main')
+      if (!main) return
+      const secondary = document.querySelector('.navbar__secondary')
+      setNavHeight(main.offsetHeight + (secondary ? secondary.offsetHeight : 0))
     }
 
     medirNavbar()
     window.addEventListener('resize', medirNavbar)
 
     const observer = new ResizeObserver(medirNavbar)
-    const nav = document.querySelector('.navbar-container')
-    if (nav) observer.observe(nav)
+    const targets = [
+      document.querySelector('.navbar__main'),
+      document.querySelector('.navbar__secondary'),
+    ].filter(Boolean)
+    targets.forEach((el) => observer.observe(el))
 
     return () => {
       window.removeEventListener('resize', medirNavbar)
       observer.disconnect()
     }
-  }, [])
+  }, [location.pathname])
 
   if (!isLoading || !shouldShowLoadingBar) return null
 
