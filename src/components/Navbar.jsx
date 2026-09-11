@@ -142,6 +142,8 @@ function Navbar() {
   const panelRef = useRef(null)
   const deptosRef = useRef(null)
   const mobilePanelRef = useRef(null)
+  const debounceRef = useRef(null)
+  const busquedaEnviadaRef = useRef(false)
 
   // useEffect para manejar clicks fuera de los paneles
   useEffect(() => {
@@ -204,9 +206,13 @@ function Navbar() {
       return
     }
 
-    const debounce = setTimeout(async () => {
+    busquedaEnviadaRef.current = false
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(async () => {
+      if (busquedaEnviadaRef.current) return
       try {
         const { data } = await api.get(`/products?search=${encodeURIComponent(busqueda)}&limit=5`)
+        if (busquedaEnviadaRef.current) return
         setSugerencias(data.slice(0, 5))
         setMostrarSugerencias(true)
       } catch (err) {
@@ -214,7 +220,9 @@ function Navbar() {
       }
     }, 300)
 
-    return () => clearTimeout(debounce)
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+    }
   }, [busqueda])
 
   // Cargar direcciones guardadas del usuario al montar
@@ -243,12 +251,18 @@ function Navbar() {
     e.preventDefault()
     const termino = busqueda.trim()
     if (termino) {
+      // Marcar que ya se envió la búsqueda: aborta el debounce pendiente y
+      // descarta cualquier respuesta tardía que pueda reabrir el dropdown.
+      busquedaEnviadaRef.current = true
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+      setSugerencias([])
       setMostrarSugerencias(false)
       navigate(`/catalogo?search=${encodeURIComponent(termino)}`)
     }
   }
 
   function handleSugerenciaClick(producto) {
+    busquedaEnviadaRef.current = true
     setMostrarSugerencias(false)
     setBusqueda('')
     navigate(`/producto/${producto.id}`)
