@@ -169,7 +169,6 @@ function TabPorVerificar() {
   const [error, setError] = useState('')
   const [reporteAbierto, setReporteAbierto] = useState(null)
   const [accion, setAccion] = useState(null) // 'verificar' | 'rechazar'
-  const [numeroFactura, setNumeroFactura] = useState('')
   const [notaRechazo, setNotaRechazo] = useState('')
   const [procesando, setProcesando] = useState(false)
 
@@ -191,17 +190,14 @@ function TabPorVerificar() {
     cargarReportes()
   }, [])
 
-  function abrirVerificar(r) { setReporteAbierto(r); setAccion('verificar'); setNumeroFactura('') }
+  function abrirVerificar(r) { setReporteAbierto(r); setAccion('verificar') }
   function abrirRechazar(r) { setReporteAbierto(r); setAccion('rechazar'); setNotaRechazo('') }
   function cerrar() { setReporteAbierto(null); setAccion(null); setError('') }
 
   async function confirmarVerificar() {
-    if (!numeroFactura.trim()) { setError('Debes indicar el número de factura'); return }
     setProcesando(true); setError('')
     try {
-      await staffApi.patch(`/staff/contabilidad/reportes-pago/${reporteAbierto.id}/verificar`, {
-        numero_factura: numeroFactura.trim(),
-      })
+      await staffApi.patch(`/staff/contabilidad/reportes-pago/${reporteAbierto.id}/verificar`)
       cerrar()
       await cargarReportes()
     } catch (err) {
@@ -275,19 +271,15 @@ function TabPorVerificar() {
         <div className="stf-modal" onClick={cerrar}>
           <div className="stf-modal-content" onClick={(e) => e.stopPropagation()}>
             <h3>Verificar pago #{reporteAbierto.id}</h3>
-            <p>Creará la factura y el pago automáticamente, y avanzará la(s) orden(es) a "Preparando".</p>
-            <input
-              className="stf-input"
-              value={numeroFactura}
-              onChange={(e) => setNumeroFactura(e.target.value)}
-              placeholder="Número de factura"
-              autoFocus
-            />
+            <p>
+              Se confirmará el pago y se avanzará la(s) orden(es) a "Preparando". La factura o recibo
+              de cobro se genera aparte en Facturación.
+            </p>
             {error && <p style={{ color: '#DC2626', marginTop: 8 }}>{error}</p>}
             <div className="stf-acciones" style={{ marginTop: 14 }}>
               <button className="stf-btn" onClick={cerrar} disabled={procesando}>Cancelar</button>
               <button className="stf-btn stf-btn--primary" onClick={confirmarVerificar} disabled={procesando}>
-                {procesando ? 'Verificando...' : 'Confirmar y generar factura'}
+                {procesando ? 'Verificando...' : 'Confirmar pago'}
               </button>
             </div>
           </div>
