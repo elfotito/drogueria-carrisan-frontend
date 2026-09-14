@@ -11,7 +11,7 @@
 import {
   LayoutDashboard, PackageCheck, ClipboardList, ShoppingCart,
   Landmark, TrendingUp, Truck, Receipt, Banknote, CalendarX2,
-  MessagesSquare, PackageSearch, Megaphone, MapPin, BadgeDollarSign, Users,
+  Inbox, FileText, Megaphone, MapPin, BadgeDollarSign, Users,
   Shield, BarChart3,
 } from 'lucide-react'
 
@@ -131,19 +131,19 @@ export const MODULOS = {
           roles: ['vendedor', 'administrador', 'director', 'admin'],
         },
         {
-          id: 'cotizaciones',
-          to: '/staff/cotizaciones',
-          icono: MessagesSquare,
-          texto: 'Cotizaciones',
-          desc: 'Responde solicitudes de precio de los clientes',
+          id: 'solicitudes',
+          to: '/staff/solicitudes',
+          icono: Inbox,
+          texto: 'Solicitudes',
+          desc: 'Responde cotizaciones y requerimientos de precio de los clientes',
           roles: ['vendedor', 'administrador', 'director', 'admin'],
         },
         {
-          id: 'requerimientos',
-          to: '/staff/requerimientos',
-          icono: PackageSearch,
-          texto: 'Requerimientos',
-          desc: 'Asigna producto y precio a los requerimientos de los clientes',
+          id: 'presupuestos',
+          to: '/staff/presupuestos',
+          icono: FileText,
+          texto: 'Presupuestos',
+          desc: 'Crea, recotiza y convierte presupuestos en pedidos',
           roles: ['vendedor', 'administrador', 'director', 'admin'],
         },
         {
