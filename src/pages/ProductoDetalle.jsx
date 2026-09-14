@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import api from '../api/axios'
 import { useCart } from '../context/CartContext'
@@ -9,7 +9,6 @@ import BottomNav from '../components/BottomNav'
 import SECCIONES_FICHA from '../config/seccionesFicha'
 import './ProductoDetalle.css'
 
-// Cuántos carruseles mostrar al final de la página (elegidos al azar del pool).
 const CANTIDAD_CARRUSELES = 2
 const MINIMO_POR_CARRUSEL = 4
 
@@ -24,34 +23,41 @@ function barajar(array) {
 
 function elegirCarruseles(producto, otrosActivos, relacionadosPorMolecula) {
   const pool = []
+  const usados = new Set()
 
   if (relacionadosPorMolecula.length >= MINIMO_POR_CARRUSEL) {
-    pool.push({ tipo: 'productos', titulo: 'Mismo principio activo', productos: barajar(relacionadosPorMolecula).slice(0, 12) })
+    const items = barajar(relacionadosPorMolecula).filter((p) => !usados.has(p.id)).slice(0, 12)
+    items.forEach((p) => usados.add(p.id))
+    if (items.length >= MINIMO_POR_CARRUSEL) {
+      pool.push({ titulo: 'Mismo principio activo', productos: items })
+    }
   }
 
-  const mismaLinea = otrosActivos.filter((p) => p.linea && p.linea === producto.linea)
+  const mismaLinea = otrosActivos.filter((p) => p.linea && p.linea === producto.linea && !usados.has(p.id))
   if (mismaLinea.length >= MINIMO_POR_CARRUSEL) {
-    pool.push({ tipo: 'productos', titulo: `Más de ${producto.linea}`, productos: barajar(mismaLinea).slice(0, 12) })
+    mismaLinea.slice(0, 12).forEach((p) => usados.add(p.id))
+    pool.push({ titulo: `Mas de ${producto.linea}`, productos: mismaLinea.slice(0, 12) })
   }
 
-  const mismoLaboratorio = otrosActivos.filter((p) => p.laboratorio && p.laboratorio === producto.laboratorio)
+  const mismoLaboratorio = otrosActivos.filter((p) => p.laboratorio && p.laboratorio === producto.laboratorio && !usados.has(p.id))
   if (mismoLaboratorio.length >= MINIMO_POR_CARRUSEL) {
-    pool.push({ tipo: 'productos', titulo: `Más de ${producto.laboratorio}`, productos: barajar(mismoLaboratorio).slice(0, 12) })
+    mismoLaboratorio.slice(0, 12).forEach((p) => usados.add(p.id))
+    pool.push({ titulo: `Mas de ${producto.laboratorio}`, productos: mismoLaboratorio.slice(0, 12) })
   }
 
-  const ofertas = otrosActivos.filter((p) => p.descuento_activo)
+  const ofertas = otrosActivos.filter((p) => p.descuento_activo && !usados.has(p.id))
   if (ofertas.length >= MINIMO_POR_CARRUSEL) {
-    pool.push({ tipo: 'productos', titulo: 'Ofertas destacadas', productos: barajar(ofertas).slice(0, 12) })
+    ofertas.slice(0, 12).forEach((p) => usados.add(p.id))
+    pool.push({ titulo: 'Ofertas destacadas', productos: ofertas.slice(0, 12) })
   }
 
-  if (otrosActivos.length >= MINIMO_POR_CARRUSEL * 2) {
-    pool.push({ tipo: 'productos', titulo: 'También te puede interesar', productos: barajar(otrosActivos).slice(0, 12) })
+  const restantes = otrosActivos.filter((p) => !usados.has(p.id))
+  if (restantes.length >= MINIMO_POR_CARRUSEL * 2) {
+    restantes.slice(0, 12).forEach((p) => usados.add(p.id))
+    pool.push({ titulo: 'Tambien te puede interesar', productos: restantes.slice(0, 12) })
   }
 
-  // agruparPorLinea ya devuelve carruseles individuales listos para HomeCarrusel
-  // (cada uno con su propio título y link "ver todo"), no un bloque agregado.
-  const seccionesPorLinea = agruparPorLinea(otrosActivos).map((s) => ({
-    tipo: 'productos',
+  const seccionesPorLinea = agruparPorLinea(otrosActivos.filter((p) => !usados.has(p.id))).map((s) => ({
     titulo: s.titulo,
     productos: s.productos,
     verTodoTo: s.verTodoTo,
@@ -61,14 +67,11 @@ function elegirCarruseles(producto, otrosActivos, relacionadosPorMolecula) {
   return barajar(pool).slice(0, CANTIDAD_CARRUSELES)
 }
 
-// Estrellas de rating — solo lectura, usada arriba del título
 function Estrellas({ promedio, tamano = '1rem' }) {
   return (
-    <span className="rating-estrellas" style={{ fontSize: tamano }} aria-hidden="true">
+    <span className="pd-rating-stars" style={{ fontSize: tamano }} aria-label={`${promedio} de 5 estrellas`}>
       {[1, 2, 3, 4, 5].map((n) => (
-        <span key={n} className={n <= Math.round(promedio) ? 'estrella-llena' : 'estrella-vacia'}>
-          ★
-        </span>
+        <span key={n} className={n <= Math.round(promedio) ? 'star-fill' : 'star-empty'}>★</span>
       ))}
     </span>
   )
@@ -92,29 +95,31 @@ function ProductoDetalle() {
   const [carruseles, setCarruseles] = useState([])
   const [imagenActiva, setImagenActiva] = useState(0)
   const [tabActiva, setTabActiva] = useState('descripcion')
-  // Fichas clínicas por molécula (id -> { ficha_tecnica|null }), cargadas en paralelo.
   const [fichasClinicas, setFichasClinicas] = useState({})
   const [cargandoFichas, setCargandoFichas] = useState(false)
   const [moleculaAbierta, setMoleculaAbierta] = useState(null)
-
-  // "Avísame cuando llegue" — suscripción del cliente a productos sin precio.
-  // Ternario: null = consultando, false = no suscrito, true = suscrito.
   const [suscripcion, setSuscripcion] = useState(null)
-  const [togglendo, setTogglendo] = useState(false)
+  const [procesandoToggle, setProcesandoToggle] = useState(false)
 
-  // Producto sin precio ("consultar precio"): no se agrega al carrito,
-  // se solicita por requerimiento (pre-llenado con ?producto=<nombre>).
+  const timerRef = useRef(null)
+  const controllerRef = useRef(null)
+
   const sinPrecio = producto ? (producto.precio_usd == null || Number(producto.precio_usd) <= 0) : false
 
   useEffect(() => {
-    cargarProducto()
-    window.scrollTo(0, 0)
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current)
+    }
+  }, [])
+
+  useEffect(() => {
     setImagenActiva(0)
     setTabActiva('descripcion')
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    setAgregado(false)
+    setMoleculaAbierta(null)
+    window.scrollTo(0, 0)
   }, [id])
 
-  // Carga el estado de la suscripción "avísame" cuando hay sesión y el producto no tiene precio
   useEffect(() => {
     if (!user || !producto || !sinPrecio) return
     let activo = true
@@ -122,19 +127,23 @@ function ProductoDetalle() {
       .get(`/products/${producto.id}/avisame`)
       .then((res) => activo && setSuscripcion(Boolean(res.data.suscrito)))
       .catch(() => activo && setSuscripcion(false))
-    return () => {
-      activo = false
-    }
+    return () => { activo = false }
   }, [user, producto, sinPrecio])
 
-  async function cargarProducto() {
+  const cargarProducto = useCallback(async () => {
+    if (controllerRef.current) controllerRef.current.abort()
+    const controller = new AbortController()
+    controllerRef.current = controller
+
     setCargando(true)
     setCarruseles([])
     setSuscripcion(null)
+    setError('')
+
     try {
       const [resCompleto, resTasa] = await Promise.all([
-        api.get(`/moleculas/products/${id}/completo`),
-        api.get('/prices'),
+        api.get(`/moleculas/products/${id}/completo`, { signal: controller.signal }),
+        api.get('/prices', { signal: controller.signal }),
       ])
 
       const { producto: p, detalles: d, moleculas: m } = resCompleto.data
@@ -142,69 +151,68 @@ function ProductoDetalle() {
       setDetalles(d)
       setMoleculas(m || [])
       setTasaVes(resTasa.data.usd_a_ves)
-      setError('')
-      setMoleculaAbierta(null)
 
-      // Fichas clínicas de cada molécula (vademécum CIMA) — carga en paralelo.
-      // Es un extra: si falla una molécula, las demás siguen.
-      if (m && m.length > 0) {
+      const tieneFichaTecnica = !!d && (
+        d.indicaciones || d.contraindicaciones || d.dosis_recomendada ||
+        d.via_administracion || d.efectos_secundarios || d.precauciones ||
+        d.presentacion || d.registro_sanitario
+      )
+      const tieneComposicion = m && m.length > 0
+      setTabActiva(tieneFichaTecnica ? 'ficha' : tieneComposicion ? 'composicion' : 'descripcion')
+
+      const fichasPromise = (m && m.length > 0) ? (async () => {
         setCargandoFichas(true)
-        const ids = m.map((mol) => mol.moleculas_referencias?.id).filter(Boolean)
-        const unicos = [...new Set(ids)]
-        const entradas = await Promise.all(
-          unicos.map(async (molId) => {
-            try {
-              const { data } = await api.get(`/moleculas/moleculas/${molId}`)
-              return [molId, { ficha_tecnica: data.ficha_tecnica || null, nombre: data.nombre || null }]
-            } catch (err) {
-              console.error(`No se pudo cargar la ficha clínica de la molécula ${molId}:`, err)
-              return [molId, { ficha_tecnica: null, nombre: null }]
-            }
-          })
-        )
+        const ids = [...new Set(m.map((mol) => mol.moleculas_referencias?.id).filter(Boolean))]
+        const entradas = await Promise.all(ids.map(async (molId) => {
+          try {
+            const { data } = await api.get(`/moleculas/moleculas/${molId}`, { signal: controller.signal })
+            return [molId, { ficha_tecnica: data.ficha_tecnica || null }]
+          } catch { return [molId, { ficha_tecnica: null }] }
+        }))
         setFichasClinicas(Object.fromEntries(entradas))
         setCargandoFichas(false)
-      } else {
-        setFichasClinicas({})
-        setCargandoFichas(false)
-      }
+      })() : Promise.resolve()
 
-      // Valoraciones: si falla, no tumbamos la página, solo no se muestra rating
-      try {
-        const resVal = await api.get(`/products/${id}/valoraciones`)
-        setValoraciones(resVal.data)
-      } catch (err) {
-        console.error('No se pudieron cargar las valoraciones', err)
-      }
+      const valoracionesPromise = api
+        .get(`/products/${id}/valoraciones`, { signal: controller.signal })
+        .then((res) => setValoraciones(res.data))
+        .catch(() => {})
 
-      // Carruseles relacionados: mismo criterio, es un "extra"
-      try {
-        const [{ data: todos }, resRelacionados] = await Promise.all([
-          api.get('/products'),
-          api.get(`/moleculas/productos/${id}/relacionados-por-molecula`).catch(() => ({ data: [] })),
-        ])
-        const otrosActivos = todos.filter((prod) => prod.activo && prod.id !== p.id)
-        setCarruseles(elegirCarruseles(p, otrosActivos, resRelacionados.data || []))
-      } catch (err) {
-        console.error('No se pudieron cargar los carruseles relacionados', err)
-      }
+      const carruselesPromise = (async () => {
+        try {
+          const [{ data: todos }, resRel] = await Promise.all([
+            api.get('/products', { signal: controller.signal }),
+            api.get(`/moleculas/productos/${id}/relacionados-por-molecula`, { signal: controller.signal })
+              .catch(() => ({ data: [] })),
+          ])
+          setCarruseles(elegirCarruseles(p, todos.filter((pr) => pr.activo && pr.id !== p.id), resRel.data || []))
+        } catch (err) { console.error('Carruseles:', err) }
+      })()
+
+      await Promise.all([fichasPromise, valoracionesPromise, carruselesPromise])
     } catch (err) {
+      if (err?.name === 'CanceledError') return
       setError('Producto no encontrado')
       console.error(err)
     } finally {
       setCargando(false)
     }
-  }
+  }, [id])
+
+  useEffect(() => {
+    cargarProducto()
+  }, [cargarProducto])
 
   function handleAgregar() {
     addItem(producto, cantidad)
     setAgregado(true)
-    setTimeout(() => setAgregado(false), 2000)
+    if (timerRef.current) clearTimeout(timerRef.current)
+    timerRef.current = setTimeout(() => setAgregado(false), 2000)
   }
 
   async function toggleAvisame() {
-    if (!user || !producto || suscripcion === null || togglendo) return
-    setTogglendo(true)
+    if (!user || !producto || suscripcion === null || procesandoToggle) return
+    setProcesandoToggle(true)
     try {
       if (suscripcion) {
         await api.delete(`/products/${producto.id}/avisame`)
@@ -214,22 +222,36 @@ function ProductoDetalle() {
         setSuscripcion(true)
       }
     } catch (err) {
-      console.error('No se pudo actualizar la suscripción de disponibilidad', err)
+      console.error('No se pudo actualizar la suscripcion de disponibilidad', err)
     } finally {
-      setTogglendo(false)
+      setProcesandoToggle(false)
     }
   }
 
   if (cargando) {
     return (
-      <div className="detalle-container">
-        <div className="detalle-skeleton">
-          <div className="skeleton-imagen" />
-          <div className="skeleton-info">
-            <div className="skeleton-line skeleton-titulo" />
-            <div className="skeleton-line" />
-            <div className="skeleton-line" />
-            <div className="skeleton-line skeleton-corto" />
+      <div className="pd-page">
+        <div className="pd-skeleton">
+          <div className="pd-sk-gallery">
+            <div className="pd-sk-image" />
+            <div className="pd-sk-thumbs">
+              <div className="pd-sk-thumb" />
+              <div className="pd-sk-thumb" />
+              <div className="pd-sk-thumb" />
+            </div>
+          </div>
+          <div className="pd-sk-info">
+            <div className="pd-sk-line pd-sk-brand" />
+            <div className="pd-sk-line pd-sk-title" />
+            <div className="pd-sk-line" />
+            <div className="pd-sk-line pd-sk-short" />
+            <div className="pd-sk-line" />
+            <div className="pd-sk-line pd-sk-short" />
+          </div>
+          <div className="pd-sk-purchase">
+            <div className="pd-sk-line pd-sk-price" />
+            <div className="pd-sk-line" />
+            <div className="pd-sk-btn" />
           </div>
         </div>
       </div>
@@ -238,10 +260,11 @@ function ProductoDetalle() {
 
   if (error || !producto) {
     return (
-      <div className="detalle-container">
-        <div className="detalle-error">
+      <div className="pd-page">
+        <div className="pd-error">
           <h2>Producto no encontrado</h2>
-          <button onClick={() => navigate('/catalogo')}>Volver al catálogo</button>
+          <p>No pudimos encontrar el producto que buscas.</p>
+          <button onClick={() => navigate('/catalogo')}>Volver al catalogo</button>
         </div>
       </div>
     )
@@ -251,7 +274,6 @@ function ProductoDetalle() {
     ? (producto.precio_usd * tasaVes).toFixed(2)
     : null
 
-  // Galería: imagen principal + hasta 4 secundarias (si existen en producto_detalles)
   const galeria = [producto.foto_url, ...(detalles?.imagen_secundaria_urls || [])].filter(Boolean)
 
   const tieneFichaTecnica = !!detalles && (
@@ -262,139 +284,187 @@ function ProductoDetalle() {
   const tieneComposicion = moleculas.length > 0
 
   return (
-    <div className="detalle-container">
-      {/* Breadcrumb */}
-      <nav className="detalle-breadcrumb">
+    <div className="pd-page">
+      <nav className="pd-breadcrumb" aria-label="Breadcrumb">
         <Link to="/">Inicio</Link>
-        <span>›</span>
-        <Link to="/catalogo">Catálogo</Link>
-        <span>›</span>
-        <span className="detalle-breadcrumb__actual">{producto.nombre_comercial}</span>
+        <span className="pd-breadcrumb__sep">/</span>
+        <Link to="/catalogo">Catalogo</Link>
+        <span className="pd-breadcrumb__sep">/</span>
+        <span className="pd-breadcrumb__current">{producto.nombre_comercial}</span>
       </nav>
 
-      {/* Sección superior: Galería + Info + Columna de compra sticky */}
-      <div className="detalle-main">
-        {/* Galería */}
-        <div className="detalle-galeria">
-          <div className="detalle-imagen-wrapper">
+      <div className="pd-hero">
+        <div className="pd-gallery">
+          <div className="pd-gallery__main">
             <img
               src={galeria[imagenActiva] || '/placeholder.png'}
               alt={producto.nombre_comercial}
-              className="detalle-imagen"
+              className="pd-gallery__img"
             />
             {!producto.disponible && (
-              <span className="detalle-no-disponible">No disponible</span>
+              <span className="pd-badge pd-badge--red">No disponible</span>
+            )}
+            {producto.descuento_activo && (
+              <span className="pd-badge pd-badge--gold">
+                -{producto.descuento_activo.valor}%
+              </span>
             )}
           </div>
-
           {galeria.length > 1 && (
-            <div className="detalle-miniaturas">
+            <div className="pd-gallery__thumbs">
               {galeria.map((url, i) => (
                 <button
                   key={i}
-                  className={`detalle-miniatura ${i === imagenActiva ? 'activa' : ''}`}
+                  className={`pd-gallery__thumb ${i === imagenActiva ? 'active' : ''}`}
                   onClick={() => setImagenActiva(i)}
+                  aria-label={`Imagen ${i + 1} de ${galeria.length}`}
                 >
-                  <img src={url} alt={`${producto.nombre_comercial} ${i + 1}`} />
+                  <img src={url} alt="" />
                 </button>
               ))}
             </div>
           )}
         </div>
 
-        {/* Información principal */}
-        <div className="detalle-info">
+        <div className="pd-info">
           {producto.marcas?.nombre && (
-            <p className="detalle-marca">{producto.marcas.nombre}</p>
+            <span className="pd-info__brand">{producto.marcas.nombre}</span>
           )}
 
-          <h1 className="detalle-titulo">{producto.nombre_comercial}</h1>
+          <h1 className="pd-info__title">{producto.nombre_comercial}</h1>
 
           {valoraciones.total > 0 && (
-            <div className="detalle-rating">
+            <div className="pd-info__rating">
               <Estrellas promedio={valoraciones.promedio} />
-              <span className="detalle-rating-texto">
-                {valoraciones.promedio} · {valoraciones.total} {valoraciones.total === 1 ? 'valoración' : 'valoraciones'}
+              <span className="pd-info__rating-text">
+                {valoraciones.promedio} · {valoraciones.total} {valoraciones.total === 1 ? 'valoracion' : 'valoraciones'}
               </span>
             </div>
           )}
 
-          <span className={`detalle-disponibilidad ${producto.disponible ? 'disponible' : 'agotado'}`}>
-            {producto.disponible ? '✓ Disponible' : 'Agotado'}
+          <div className="pd-info__meta">
+            {producto.sku && (
+              <span className="pd-info__sku">SKU: {producto.sku}</span>
+            )}
+            {producto.presentacion && (
+              <span className="pd-info__presentacion">{producto.presentacion}</span>
+            )}
+          </div>
+
+          <span className={`pd-info__availability ${producto.disponible ? 'available' : 'unavailable'}`}>
+            {producto.disponible ? 'Disponible' : 'Agotado'}
           </span>
 
           {producto.descripcion && (
-            <p className="detalle-resumen">{producto.descripcion}</p>
+            <p className="pd-info__desc">{producto.descripcion}</p>
           )}
 
-          {/* Ficha rápida: laboratorio, forma, línea — lo esencial de un vistazo */}
-          <div className="detalle-ficha-rapida">
+          <div className="pd-info__specs">
             {producto.laboratorio && (
-              <div className="ficha-rapida-item">
-                <span className="ficha-rapida-label">Laboratorio</span>
-                <span className="ficha-rapida-valor">{producto.laboratorio}</span>
+              <div className="pd-spec">
+                <span className="pd-spec__label">Laboratorio</span>
+                <span className="pd-spec__value">{producto.laboratorio}</span>
               </div>
             )}
             {producto.forma && (
-              <div className="ficha-rapida-item">
-                <span className="ficha-rapida-label">Forma</span>
-                <span className="ficha-rapida-valor">{producto.forma}</span>
+              <div className="pd-spec">
+                <span className="pd-spec__label">Forma</span>
+                <span className="pd-spec__value">{producto.forma}</span>
               </div>
             )}
-            {detalles?.presentacion && (
-              <div className="ficha-rapida-item">
-                <span className="ficha-rapida-label">Presentación</span>
-                <span className="ficha-rapida-valor">{detalles.presentacion}</span>
+            {producto.linea && (
+              <div className="pd-spec">
+                <span className="pd-spec__label">Linea</span>
+                <span className="pd-spec__value">{producto.linea}</span>
+              </div>
+            )}
+            {producto.pais_origen && (
+              <div className="pd-spec">
+                <span className="pd-spec__label">Origen</span>
+                <span className="pd-spec__value">{producto.pais_origen}</span>
               </div>
             )}
           </div>
+
+          {tieneComposicion && (
+            <div className="pd-info__composition">
+              <span className="pd-info__composition-label">Composicion</span>
+              <div className="pd-info__composition-list">
+                {moleculas.map((m, i) => {
+                  const ref = m.moleculas_referencias
+                  return (
+                    <span key={i} className="pd-chip">
+                      {ref && ref.id ? (
+                        <Link to={`/vademecum/${ref.id}`}>{ref.nombre}</Link>
+                      ) : (
+                        <span>{ref?.nombre || 'Molecula'}</span>
+                      )}
+                      {m.concentracion && (
+                        <span className="pd-chip__detail">{m.concentracion} {m.unidad_concentracion}</span>
+                      )}
+                    </span>
+                  )
+                })}
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Columna de compra — sticky en desktop */}
-        <div className="detalle-compra-columna">
-          <div className="detalle-compra-card">
-            <div className="detalle-precios">
+        <div className="pd-purchase">
+          <div className="pd-purchase__card">
+            <div className="pd-purchase__prices">
               {producto.precio_usd != null ? (
                 <>
-                  <span className="detalle-precio-usd">
+                  {producto.precio_original_usd && (
+                    <span className="pd-purchase__original">
+                      ${Number(producto.precio_original_usd).toFixed(2)}
+                    </span>
+                  )}
+                  <span className="pd-purchase__price">
                     ${Number(producto.precio_usd).toFixed(2)}
                   </span>
                   {precioVes && (
-                    <span className="detalle-precio-ves">Bs. {precioVes}</span>
+                    <span className="pd-purchase__ves">Bs. {precioVes}</span>
                   )}
                 </>
               ) : (
-                <span className="detalle-precio-usd detalle-precio-usd--consultar">Consultar precio</span>
+                <span className="pd-purchase__consultar">Consultar precio</span>
               )}
             </div>
 
             {producto.disponible && (
-              <div className="detalle-acciones">
-                <div className="detalle-cantidad">
+              <div className="pd-purchase__actions">
+                <div className="pd-purchase__qty">
                   <button
                     onClick={() => setCantidad((c) => Math.max(1, c - 1))}
                     disabled={cantidad <= 1}
+                    aria-label="Restar cantidad"
                   >
-                    −
+                    -
                   </button>
-                  <span>{cantidad}</span>
-                  <button onClick={() => setCantidad((c) => c + 1)}>+</button>
+                  <span aria-live="polite">{cantidad}</span>
+                  <button
+                    onClick={() => setCantidad((c) => c + 1)}
+                    aria-label="Sumar cantidad"
+                  >
+                    +
+                  </button>
                 </div>
 
                 <button
-                  className={`detalle-btn-agregar ${agregado ? 'agregado' : ''}`}
+                  className={`pd-purchase__cta ${agregado ? 'added' : ''}`}
                   onClick={handleAgregar}
                   disabled={!user}
                 >
-                  {agregado ? '✓ Agregado' : 'Agregar al carrito'}
+                  {agregado ? 'Agregado' : 'Agregar al carrito'}
                 </button>
               </div>
             )}
 
             {sinPrecio && (
-              <div className="detalle-acciones">
+              <div className="pd-purchase__actions">
                 <button
-                  className="detalle-btn-solicitar-precio"
+                  className="pd-purchase__cta pd-purchase__cta--teal"
                   onClick={() =>
                     navigate(`/mis-solicitudes/requerimientos?producto=${encodeURIComponent(producto.nombre_comercial)}`)
                   }
@@ -404,96 +474,110 @@ function ProductoDetalle() {
 
                 {user && (
                   <button
-                    className={`detalle-btn-avisame ${suscripcion ? 'suscrito' : ''}`}
+                    className={`pd-purchase__btn-outline ${suscripcion ? 'subscribed' : ''}`}
                     onClick={toggleAvisame}
-                    disabled={suscripcion === null || togglendo}
+                    disabled={suscripcion === null || procesandoToggle}
                   >
-                    {suscripcion === null || togglendo
-                      ? 'Consultando…'
+                    {suscripcion === null || procesandoToggle
+                      ? 'Consultando...'
                       : suscripcion
-                        ? '✓ Te avisaremos'
-                        : 'Avísame cuando llegue'}
+                        ? 'Te avisaremos'
+                        : 'Avisame cuando llegue'}
                   </button>
                 )}
               </div>
             )}
 
             {!user && (
-              <p className="detalle-login-aviso">
-                <Link to="/login">Inicia sesión</Link> para comprar
+              <p className="pd-purchase__login">
+                <Link to="/login">Inicia sesion</Link> para comprar
               </p>
             )}
 
-            <p className="detalle-nota-precio">
-              * Los precios mostrados no incluyen IVA. Precios sujetos a cambios sin previo aviso.
+            <p className="pd-purchase__note">
+              * Precios no incluyen IVA. Sujetos a cambios sin previo aviso.
             </p>
           </div>
         </div>
       </div>
 
-      {/* Tabs: Descripción / Ficha técnica / Composición */}
-      <div className="detalle-tabs-container">
-        <div className="detalle-tabs-nav">
+      <div className="pd-tabs">
+        <div className="pd-tabs__nav" role="tablist">
           <button
-            className={`detalle-tab-btn ${tabActiva === 'descripcion' ? 'activa' : ''}`}
+            role="tab"
+            className={`pd-tabs__btn ${tabActiva === 'descripcion' ? 'active' : ''}`}
             onClick={() => setTabActiva('descripcion')}
+            aria-selected={tabActiva === 'descripcion'}
           >
-            Descripción
+            Descripcion
           </button>
           {tieneFichaTecnica && (
             <button
-              className={`detalle-tab-btn ${tabActiva === 'ficha' ? 'activa' : ''}`}
+              role="tab"
+              className={`pd-tabs__btn ${tabActiva === 'ficha' ? 'active' : ''}`}
               onClick={() => setTabActiva('ficha')}
+              aria-selected={tabActiva === 'ficha'}
             >
-              Ficha técnica
+              Ficha tecnica
             </button>
           )}
           {tieneComposicion && (
             <button
-              className={`detalle-tab-btn ${tabActiva === 'composicion' ? 'activa' : ''}`}
+              role="tab"
+              className={`pd-tabs__btn ${tabActiva === 'composicion' ? 'active' : ''}`}
               onClick={() => setTabActiva('composicion')}
+              aria-selected={tabActiva === 'composicion'}
             >
-              Composición
+              Composicion
+            </button>
+          )}
+          {tieneComposicion && (
+            <button
+              role="tab"
+              className={`pd-tabs__btn ${tabActiva === 'fichaclinica' ? 'active' : ''}`}
+              onClick={() => setTabActiva('fichaclinica')}
+              aria-selected={tabActiva === 'fichaclinica'}
+            >
+              Ficha clinica
             </button>
           )}
         </div>
 
-        <div className="detalle-tab-panel">
+        <div className="pd-tabs__panel" role="tabpanel">
           {tabActiva === 'descripcion' && (
-            <div className="detalle-grid">
+            <div className="pd-desc-grid">
               {producto.laboratorio && (
-                <div className="detalle-campo">
-                  <span className="detalle-label">Laboratorio</span>
-                  <span className="detalle-valor">{producto.laboratorio}</span>
+                <div className="pd-desc-card">
+                  <span className="pd-desc-card__label">Laboratorio</span>
+                  <span className="pd-desc-card__value">{producto.laboratorio}</span>
                 </div>
               )}
               {producto.forma && (
-                <div className="detalle-campo">
-                  <span className="detalle-label">Forma farmacéutica</span>
-                  <span className="detalle-valor">{producto.forma}</span>
+                <div className="pd-desc-card">
+                  <span className="pd-desc-card__label">Forma farmaceutica</span>
+                  <span className="pd-desc-card__value">{producto.forma}</span>
                 </div>
               )}
               {producto.linea && (
-                <div className="detalle-campo">
-                  <span className="detalle-label">Línea</span>
-                  <span className="detalle-valor">{producto.linea}</span>
+                <div className="pd-desc-card">
+                  <span className="pd-desc-card__label">Linea</span>
+                  <span className="pd-desc-card__value">{producto.linea}</span>
                 </div>
               )}
               {producto.pais_origen && (
-                <div className="detalle-campo">
-                  <span className="detalle-label">País de origen</span>
-                  <span className="detalle-valor">{producto.pais_origen}</span>
+                <div className="pd-desc-card">
+                  <span className="pd-desc-card__label">Pais de origen</span>
+                  <span className="pd-desc-card__value">{producto.pais_origen}</span>
                 </div>
               )}
-              <div className="detalle-campo">
-                <span className="detalle-label">Disponibilidad</span>
-                <span className={`detalle-valor ${producto.disponible ? 'disponible' : 'agotado'}`}>
+              <div className="pd-desc-card">
+                <span className="pd-desc-card__label">Disponibilidad</span>
+                <span className={`pd-desc-card__value ${producto.disponible ? 'available' : 'unavailable'}`}>
                   {producto.disponible ? 'Disponible' : 'Agotado'}
                 </span>
               </div>
-
               {producto.descripcion && (
-                <div className="detalle-descripcion-completa">
+                <div className="pd-desc-full">
                   <p>{producto.descripcion}</p>
                 </div>
               )}
@@ -501,7 +585,7 @@ function ProductoDetalle() {
           )}
 
           {tabActiva === 'ficha' && detalles && (
-            <table className="detalle-tabla-specs">
+            <table className="pd-specs-table">
               <tbody>
                 {detalles.indicaciones && (
                   <tr><th>Indicaciones</th><td>{detalles.indicaciones}</td></tr>
@@ -510,7 +594,7 @@ function ProductoDetalle() {
                   <tr><th>Dosis recomendada</th><td>{detalles.dosis_recomendada}</td></tr>
                 )}
                 {detalles.via_administracion && (
-                  <tr><th>Vía de administración</th><td>{detalles.via_administracion}</td></tr>
+                  <tr><th>Via de administracion</th><td>{detalles.via_administracion}</td></tr>
                 )}
                 {detalles.contraindicaciones && (
                   <tr><th>Contraindicaciones</th><td>{detalles.contraindicaciones}</td></tr>
@@ -522,10 +606,10 @@ function ProductoDetalle() {
                   <tr><th>Precauciones</th><td>{detalles.precauciones}</td></tr>
                 )}
                 {detalles.presentacion && (
-                  <tr><th>Presentación</th><td>{detalles.presentacion}</td></tr>
+                  <tr><th>Presentacion</th><td>{detalles.presentacion}</td></tr>
                 )}
                 {detalles.unidades_por_presentacion && (
-                  <tr><th>Unidades por presentación</th><td>{detalles.unidades_por_presentacion}</td></tr>
+                  <tr><th>Unidades por presentacion</th><td>{detalles.unidades_por_presentacion}</td></tr>
                 )}
                 {detalles.condiciones_almacenamiento && (
                   <tr><th>Almacenamiento</th><td>{detalles.condiciones_almacenamiento}</td></tr>
@@ -541,117 +625,109 @@ function ProductoDetalle() {
           )}
 
           {tabActiva === 'composicion' && (
-            <div className="detalle-composicion">
+            <div className="pd-composition">
               {moleculas.map((m, i) => {
                 const ref = m.moleculas_referencias
                 return (
-                  <div key={i} className="composicion-item">
+                  <div key={ref?.id || i} className="pd-composition__item">
                     {ref && ref.id ? (
-                      <Link className="composicion-nombre composicion-nombre--link" to={`/vademecum/${ref.id}`}>
+                      <Link className="pd-composition__name pd-composition__name--link" to={`/vademecum/${ref.id}`}>
                         {ref.nombre}
                       </Link>
                     ) : (
-                      <span className="composicion-nombre">{ref?.nombre || 'Molécula'}</span>
+                      <span className="pd-composition__name">{ref?.nombre || 'Molecula'}</span>
                     )}
                     {m.concentracion && (
-                      <span className="composicion-concentracion">
+                      <span className="pd-composition__dose">
                         {m.concentracion} {m.unidad_concentracion}
                       </span>
                     )}
                   </div>
                 )
               })}
-              <p className="detalle-nota-precio" style={{ marginTop: '16px' }}>
+              <p className="pd-composition__disclaimer">
                 * Consulta siempre con un profesional de la salud antes de usar cualquier medicamento.
+              </p>
+            </div>
+          )}
+
+          {tabActiva === 'fichaclinica' && (
+            <div className="pd-clinical">
+              {cargandoFichas && <span className="pd-clinical__loading">Cargando fichas clinicas...</span>}
+
+              {!cargandoFichas && Object.keys(fichasClinicas).length > 0 ? (
+                <div className="pd-clinical__list">
+                  {moleculas.map((m, i) => {
+                    const ref = m.moleculas_referencias
+                    const molId = ref?.id
+                    const ficha = fichasClinicas[molId]
+                    const abierta = moleculaAbierta === molId
+                    return (
+                      <div key={molId || i} className={`pd-clinical__item ${abierta ? 'open' : ''}`}>
+                        <div className="pd-clinical__row">
+                          <button
+                            type="button"
+                            className="pd-clinical__toggle"
+                            onClick={() => setMoleculaAbierta(abierta ? null : molId)}
+                            aria-expanded={abierta}
+                          >
+                            <span className="pd-clinical__name">{ref?.nombre || 'Molecula'}</span>
+                            {m.concentracion && (
+                              <span className="pd-clinical__dose">
+                                {m.concentracion} {m.unidad_concentracion}
+                              </span>
+                            )}
+                            <span className={`pd-clinical__chevron ${abierta ? 'open' : ''}`}>&#9662;</span>
+                          </button>
+                          {molId && (
+                            <Link className="pd-clinical__link" to={`/vademecum/${molId}`}>
+                              Ver en Vademecum
+                            </Link>
+                          )}
+                        </div>
+                        {abierta && (
+                          <div className="pd-clinical__body">
+                            {!ficha?.ficha_tecnica ? (
+                              <p className="pd-clinical__empty">
+                                Ficha en revision - aun no disponible para esta molecula.
+                              </p>
+                            ) : (
+                              SECCIONES_FICHA.map(({ clave, etiqueta, icono }) => {
+                                const texto = ficha.ficha_tecnica[clave]
+                                if (!texto) return null
+                                return (
+                                  <div key={clave} className="pd-clinical__section">
+                                    <h4 className="pd-clinical__section-title">
+                                      {icono} {etiqueta}
+                                    </h4>
+                                    <p className="pd-clinical__section-text">{texto}</p>
+                                  </div>
+                                )
+                              })
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              ) : (
+                !cargandoFichas && (
+                  <p className="pd-clinical__empty">
+                    Sin ficha clinica disponible para este producto.
+                  </p>
+                )
+              )}
+              <p className="pd-clinical__source">
+                Informacion farmacologica de referencia (AEMPS - CIMA). No sustituye la consulta con un profesional de la salud.
               </p>
             </div>
           )}
         </div>
       </div>
 
-      {/* Ficha clínica por molécula (vademécum CIMA) */}
-      {tieneComposicion && (
-        <section className="detalle-ficha-clinica">
-          <div className="detalle-ficha-clinica__head">
-            <h2 className="detalle-ficha-clinica__titulo">Ficha clínica</h2>
-            {cargandoFichas && <span className="detalle-ficha-clinica__estado">Consultando…</span>}
-          </div>
-          {Object.keys(fichasClinicas).length > 0 ? (
-            <div className="detalle-ficha-clinica__items">
-              {moleculas.map((m, i) => {
-                const ref = m.moleculas_referencias
-                const molId = ref?.id
-                const ficha = fichasClinicas[molId]
-                const abierta = moleculaAbierta === molId
-                return (
-                  <div key={i} className={`detalle-ficha-clinica__item ${abierta ? 'abierta' : ''}`}>
-                    <div className="detalle-ficha-clinica__row">
-                      <button
-                        type="button"
-                        className="detalle-ficha-clinica__toggle"
-                        onClick={() => setMoleculaAbierta(abierta ? null : molId)}
-                      >
-                        <span className="detalle-ficha-clinica__nombre">{ref?.nombre || 'Molécula'}</span>
-                        {m.concentracion && (
-                          <span className="detalle-ficha-clinica__concentracion">
-                            {m.concentracion} {m.unidad_concentracion}
-                          </span>
-                        )}
-                        <span
-                          className="filtro-chevron"
-                          style={{ transform: abierta ? 'rotate(180deg)' : 'none' }}
-                        >
-                          ⌄
-                        </span>
-                      </button>
-                      {molId && (
-                        <Link className="detalle-ficha-clinica__enlace" to={`/vademecum/${molId}`}>
-                          Ver en Vademécum
-                        </Link>
-                      )}
-                    </div>
-                    {abierta && (
-                      <div className="detalle-ficha-clinica__body">
-                        {!ficha?.ficha_tecnica ? (
-                          <p className="detalle-ficha-clinica__vacio">
-                            Ficha en revisión — aún no disponible para esta molécula.
-                          </p>
-                        ) : (
-                          SECCIONES_FICHA.map(({ clave, etiqueta, icono }) => {
-                            const texto = ficha.ficha_tecnica[clave]
-                            if (!texto) return null
-                            return (
-                              <div key={clave} className="detalle-ficha-clinica__seccion">
-                                <h3 className="detalle-ficha-clinica__seccion-titulo">
-                                  {icono} {etiqueta}
-                                </h3>
-                                <p className="detalle-ficha-clinica__texto">{texto}</p>
-                              </div>
-                            )
-                          })
-                        )}
-                      </div>
-                    )}
-                  </div>
-                )
-              })}
-            </div>
-          ) : (
-            !cargandoFichas && (
-              <p className="detalle-ficha-clinica__vacio">
-                Sin ficha clínica disponible para este producto.
-              </p>
-            )
-          )}
-          <p className="detalle-ficha-clinica__fuente">
-            Información farmacológica de referencia (AEMPS - CIMA). No sustituye la consulta con un profesional de la salud.
-          </p>
-        </section>
-      )}
-
-      {/* Carruseles relacionados */}
       {carruseles.length > 0 && (
-        <div className="detalle-carruseles">
+        <div className="pd-related">
           {carruseles.map((c, i) => (
             <HomeCarrusel
               key={`${producto.id}-${i}`}
