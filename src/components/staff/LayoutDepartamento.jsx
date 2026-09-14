@@ -100,6 +100,10 @@ function LayoutDepartamento({ departamento, activo, titulo, children }) {
           </button>
         </div>
         <div className="ldep-drawer-panel__scroll">
+          <Link to="/staff/dashboard" className="ldep-drawer-panel__dashboard" onClick={cerrarDrawer}>
+            <LayoutDashboard size={18} />
+            Dashboard
+          </Link>
           <ContenidoNav grupos={grupos} activo={activo} onNavigate={cerrarDrawer} departamento={departamento} puedeBridge={puedeBridge} entrandoAAdmin={entrandoAAdmin} onBridge={entrarAAdmin} />
         </div>
         <div className="ldep-drawer-panel__pie">
@@ -114,6 +118,9 @@ function LayoutDepartamento({ departamento, activo, titulo, children }) {
         {drawerAbierto && <div className="ldep-shift__catcher" onClick={cerrarDrawer} aria-hidden="true" />}
 
         <header className="ldep-topbar">
+          <Link to="/staff/dashboard" className="ldep-topbar__dashboard-btn" aria-label="Ir al dashboard">
+            <LayoutDashboard size={20} />
+          </Link>
           <button type="button" className="ldep-topbar__menu-btn" onClick={() => setDrawerAbierto(true)} aria-label="Abrir menú de departamento">
             <Menu size={22} />
           </button>

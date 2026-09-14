@@ -284,6 +284,25 @@
   color: var(--ldep-color);
 }
 
+.ldep-topbar__dashboard-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  color: var(--ldep-text-muted);
+  padding: 4px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.12s ease, color 0.12s ease;
+  text-decoration: none;
+}
+
+.ldep-topbar__dashboard-btn:hover {
+  background: var(--ldep-color-soft);
+  color: var(--ldep-color-strong);
+}
+
 .ldep-topbar__menu-btn {
   background: transparent;
   border: 0;
@@ -383,6 +402,27 @@
   flex: 1;
   overflow-y: auto;
   padding: 14px;
+}
+
+.ldep-drawer-panel__dashboard {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 12px;
+  border-radius: 10px;
+  color: var(--ldep-text);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  border: 1.5px solid var(--ldep-border);
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.ldep-drawer-panel__dashboard:hover {
+  background: var(--ldep-color-soft);
+  color: var(--ldep-color-strong);
+  border-color: var(--ldep-color);
 }
 
 .ldep-drawer-panel__pie {

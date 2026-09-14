@@ -357,6 +357,12 @@ function StaffLogin() {
                 Registrate con tu código
               </Link>
             </Box>
+            <Box textAlign="center" fontSize="xs" color="gray.400">
+              ¿No sos personal?{' '}
+              <Link to="/login" style={{ color: TEAL, fontWeight: 600 }}>
+                Ir al login de clientes
+              </Link>
+            </Box>
             <Flex align="center" justify="center" gap={1.5} color="gray.400" fontSize="xs">
               <Lock size={12} aria-hidden="true" />
               <Text>Acceso restringido · Uso interno — Drogueria Carrisan</Text>
