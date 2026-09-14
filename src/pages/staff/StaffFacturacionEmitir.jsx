@@ -59,7 +59,7 @@ export default function TabEmitir() {
         const { data } = await staffApi.get('/staff/clientes', {
           params: { buscar: queryCliente.trim() },
         })
-        setResultadosClientes(data)
+        setResultadosClientes(data?.clientes || data || [])
       } catch (err) {
         console.error('Error buscando clientes', err)
         setResultadosClientes([])

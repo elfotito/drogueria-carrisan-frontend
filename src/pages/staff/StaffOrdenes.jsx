@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { Search, Plus, Minus, X } from 'lucide-react'
 import staffApi from '../../api/staffAxios'
 import LayoutDepartamento from '../../components/staff/LayoutDepartamento'
@@ -38,6 +39,21 @@ function StaffOrdenes() {
   const debounceCliente = useRef(null)
   const debounceProducto = useRef(null)
 
+  const [searchParams] = useSearchParams()
+
+  // Pre-seleccionar cliente si viene de la ficha (?cliente=ID)
+  useEffect(() => {
+    const clienteId = searchParams.get('cliente')
+    if (!clienteId) return
+    staffApi.get(`/staff/clientes/${clienteId}/detalle`)
+      .then(({ data }) => {
+        if (data?.cliente) {
+          setCliente(data.cliente)
+        }
+      })
+      .catch(() => {})
+  }, [])
+
   // Búsqueda de clientes (backend: GET /staff/clientes?buscar=)
   useEffect(() => {
     if (debounceCliente.current) clearTimeout(debounceCliente.current)
@@ -53,7 +69,7 @@ function StaffOrdenes() {
         const { data } = await staffApi.get('/staff/clientes', {
           params: { buscar: queryCliente.trim() },
         })
-        setResultadosClientes(data)
+        setResultadosClientes(data?.clientes || data || [])
       } catch (err) {
         console.error('Error buscando clientes', err)
         setResultadosClientes([])

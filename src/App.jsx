@@ -67,6 +67,7 @@ import StaffDepartamento from './pages/staff/StaffDepartamento'
 import StaffModuloPlaceholder from './pages/staff/StaffModuloPlaceholder'
 import { STAFF_PAGINAS } from './pages/staff/STAFF_PAGINAS'
 import { DEPARTAMENTOS, MODULOS } from './components/staff/NavStaff'
+import StaffClienteFicha from './pages/staff/StaffClienteFicha'
 
 
 function LoadingBarBridge() {
@@ -114,6 +115,18 @@ function RutasStaff() {
       }
     }
   }
+  // Ruta manual: ficha de cliente (sub-ruta de /staff/clientes, no generada por MODULOS)
+  rutas.push(
+    <Route
+      key="clientes-ficha"
+      path="/staff/clientes/:id"
+      element={
+        <PrivateRouteStaff rolesPermitidos={['vendedor', 'administrador', 'director', 'admin']}>
+          <StaffClienteFicha />
+        </PrivateRouteStaff>
+      }
+    />
+  )
   return rutas
 }
 

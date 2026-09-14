@@ -1,0 +1,880 @@
+// StaffClienteFicha.jsx
+import { useState, useEffect } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+import { Search, Plus, Minus, X } from 'lucide-react'
+import staffApi from '../../api/staffAxios'
+import LayoutDepartamento from '../../components/staff/LayoutDepartamento'
+import StaffTabs from '../../components/staff/StaffTabs'
+import { normalizarEstado, getEstadoConfig, getLabelEstado, FULFILLMENT_METHODS } from '../../config/estadosOrden'
+import './StaffComercial.css'
+import './StaffTesoreria.css'
+import './StaffClientes.css'
+
+// -----------------------------------------------------------------
+// Helpers
+// -----------------------------------------------------------------
+function formatUSD(v) {
+  return Number(v || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+}
+function formatFecha(f) {
+  if (!f) return '—'
+  return new Date(f).toLocaleDateString('es-VE', { day: '2-digit', month: 'short', year: 'numeric' })
+}
+
+const DOC_LABELS = { rif: 'RIF', estado_cuenta: 'Estado de cuenta', referencia_comercial: 'Referencia comercial', otro: 'Otro documento' }
+
+// -----------------------------------------------------------------
+// Tab: Resumen
+// -----------------------------------------------------------------
+function TabResumen({ cliente, perfil, credito }) {
+  if (!cliente) return <p className="sc-loading">Cargando...</p>
+
+  return (
+    <>
+      {/* Contacto */}
+      <div className="sc-section">
+        <p className="sc-section-title">Datos de contacto</p>
+        <div className="sc-contacto-grid">
+          <div className="sc-contacto-item"><label>Nombre</label><span>{cliente.nombre || '—'}</span></div>
+          <div className="sc-contacto-item"><label>Email</label><span>{cliente.email || '—'}</span></div>
+          <div className="sc-contacto-item"><label>Teléfono</label><span>{cliente.telefono || '—'}</span></div>
+          <div className="sc-contacto-item"><label>RIF / Cédula</label><span>{cliente.rif_cedula || '—'}</span></div>
+          <div className="sc-contacto-item"><label>Tipo</label><span>{cliente.tipo_usuario || '—'}</span></div>
+          <div className="sc-contacto-item"><label>Etiqueta</label><span>{cliente.etiqueta || '—'}</span></div>
+          <div className="sc-contacto-item"><label>Registro</label><span>{formatFecha(cliente.created_at)}</span></div>
+          <div className="sc-contacto-item"><label>Estado</label><span>{cliente.activo ? 'Activo' : 'Inactivo'}</span></div>
+        </div>
+      </div>
+
+      {/* Perfil por tipo */}
+      {perfil && (
+        <div className="sc-section">
+          <p className="sc-section-title">
+            Perfil {cliente.tipo_usuario === 'institucional' ? 'Institucional' : cliente.tipo_usuario === 'profesional' ? 'Profesional' : 'Honorífico'}
+          </p>
+          <div className="sc-perfil-grid">
+            {cliente.tipo_usuario === 'institucional' && <>
+              <div className="sc-perfil-item"><label>Razón social</label><span>{perfil.razon_social || '—'}</span></div>
+              <div className="sc-perfil-item"><label>Nombre comercial</label><span>{perfil.nombre_comercial || '—'}</span></div>
+              <div className="sc-perfil-item"><label>Tipo de institución</label><span>{perfil.tipo_institucion || '—'}</span></div>
+              <div className="sc-perfil-item"><label>RIF</label><span>{perfil.rif || '—'}</span></div>
+              <div className="sc-perfil-item"><label>Dirección fiscal</label><span>{perfil.direccion_fiscal || '—'}</span></div>
+              <div className="sc-perfil-item"><label>Representante</label><span>{perfil.nombre_representante || '—'}</span></div>
+              <div className="sc-perfil-item"><label>Tel. representante</label><span>{perfil.telefono_representante || '—'}</span></div>
+              <div className="sc-perfil-item"><label>Horario</label><span>{perfil.horario_recepcion || '—'}</span></div>
+            </>}
+            {cliente.tipo_usuario === 'profesional' && <>
+              <div className="sc-perfil-item"><label>Profesión</label><span>{perfil.profesion || '—'}</span></div>
+              <div className="sc-perfil-item"><label>Título</label><span>{perfil.titulo || '—'}</span></div>
+              <div className="sc-perfil-item"><label>Nombre</label><span>{perfil.nombre || '—'}</span></div>
+              <div className="sc-perfil-item"><label>Apellido</label><span>{perfil.apellido || '—'}</span></div>
+              <div className="sc-perfil-item"><label>Cédula</label><span>{perfil.numero_cedula || '—'}</span></div>
+              <div className="sc-perfil-item"><label>Especialidad</label><span>{perfil.especialidad || '—'}</span></div>
+              <div className="sc-perfil-item"><label>RIF</label><span>{perfil.rif || '—'}</span></div>
+            </>}
+            {cliente.tipo_usuario === 'honorifico' && <>
+              <div className="sc-perfil-item"><label>Tratamiento</label><span>{perfil.tratamiento || '—'}</span></div>
+              <div className="sc-perfil-item"><label>Nombre</label><span>{perfil.nombre || '—'}</span></div>
+              <div className="sc-perfil-item"><label>Apellido</label><span>{perfil.apellido || '—'}</span></div>
+              <div className="sc-perfil-item"><label>Código de invitación</label><span>{perfil.codigo_invitacion_usado || '—'}</span></div>
+            </>}
+          </div>
+        </div>
+      )}
+
+      {/* Crédito read-only */}
+      {credito && (
+        <div className="sc-section">
+          <p className="sc-section-title">Crédito</p>
+          <div className="sc-credito-cards">
+            <div className="st-resumen-card" style={{ background: '#f0fdf4' }}>
+              <span>Línea de crédito</span>
+              <strong>${formatUSD(credito.linea_credito)}</strong>
+            </div>
+            <div className="st-resumen-card" style={{ background: '#fef2f2' }}>
+              <span>Deuda total</span>
+              <strong style={{ color: credito.deuda_total > 0 ? '#dc2626' : '#111827' }}>${formatUSD(credito.deuda_total)}</strong>
+            </div>
+            <div className="st-resumen-card" style={{ background: credito.deuda_vencida > 0 ? '#fef2f2' : '#f9fafb' }}>
+              <span>Deuda vencida</span>
+              <strong style={{ color: credito.deuda_vencida > 0 ? '#dc2626' : '#111827' }}>${formatUSD(credito.deuda_vencida)}</strong>
+            </div>
+            <div className="st-resumen-card" style={{ background: '#eff6ff' }}>
+              <span>Saldo disponible</span>
+              <strong>${formatUSD(credito.saldo)}</strong>
+            </div>
+          </div>
+          {credito.credito_bloqueado && (
+            <p style={{ marginTop: 10, fontSize: '0.85rem', color: '#dc2626', fontWeight: 600 }}>
+              Crédito bloqueado{credito.credito_bloqueado_motivo ? `: ${credito.credito_bloqueado_motivo}` : ''}
+            </p>
+          )}
+        </div>
+      )}
+    </>
+  )
+}
+
+// -----------------------------------------------------------------
+// Tab: Pedidos
+// -----------------------------------------------------------------
+function TabPedidos({ clienteId }) {
+  const [ordenes, setOrdenes] = useState([])
+  const [cargando, setCargando] = useState(true)
+
+  useEffect(() => {
+    staffApi.get(`/staff/clientes/${clienteId}/ordenes`)
+      .then(({ data }) => setOrdenes(data || []))
+      .catch(() => setOrdenes([]))
+      .finally(() => setCargando(false))
+  }, [clienteId])
+
+  if (cargando) return <p className="sc-loading">Cargando órdenes...</p>
+  if (!ordenes.length) return <p className="sc-vacio">Este cliente no tiene órdenes.</p>
+
+  return (
+    <div className="sc-pedidos-lista">
+      {ordenes.map((o) => {
+        const estadoReal = normalizarEstado(o.estado)
+        const est = getEstadoConfig(estadoReal)
+        const label = getLabelEstado(estadoReal, { rol: 'staff', fulfillmentMethod: o.tipo_envio })
+        const fulfillment = FULFILLMENT_METHODS[o.tipo_envio]
+        return (
+          <div key={o.id} className="sc-pedido-card">
+            <div className="sc-pedido-top">
+              <div>
+                <span className="sc-pedido-id">#{o.id}</span>
+                <span className="sc-pedido-fecha" style={{ marginLeft: 8 }}>{formatFecha(o.created_at)}</span>
+              </div>
+              <span className="sc-pedido-badge" style={{ background: est?.bg, color: est?.color }}>
+                {label}
+              </span>
+            </div>
+            <div className="sc-pedido-items">
+              {(o.ordenes_items || []).map((item, i) => (
+                <div key={i} className={item.anulado ? 'sc-pedido-item-anulado' : ''}>
+                  {item.productos?.nombre_comercial || `Producto #${item.producto_id}`} × {item.cantidad}
+                  {item.anulado && ' (anulado)'}
+                </div>
+              ))}
+            </div>
+            <div className="sc-pedido-footer">
+              <span className="sc-pedido-pago">
+                {fulfillment?.label || o.tipo_envio} · {o.forma_pago === 'credito' ? 'Crédito' : 'Contado'}
+                {o.estado_pago ? ` · Pago: ${o.estado_pago}` : ''}
+              </span>
+              <span className="sc-pedido-total">${formatUSD(o.total_usd)}</span>
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+// -----------------------------------------------------------------
+// Tab: Presupuestos (unificado: presupuestos + cotizaciones + requerimientos)
+// -----------------------------------------------------------------
+function TabPresupuestos({ clienteId }) {
+  const [presupuestos, setPresupuestos] = useState([])
+  const [cotizaciones, setCotizaciones] = useState([])
+  const [requerimientos, setRequerimientos] = useState([])
+  const [cargando, setCargando] = useState(true)
+  const [modal, setModal] = useState(null) // { tipo: 'presupuesto'|'cotizacion'|'requerimiento', data }
+  const [crearModal, setCrearModal] = useState(false)
+
+  useEffect(() => {
+    Promise.all([
+      staffApi.get(`/staff/clientes/${clienteId}/presupuestos`).then(({ data }) => setPresupuestos(data || [])),
+      staffApi.get(`/staff/clientes/${clienteId}/cotizaciones`).then(({ data }) => setCotizaciones(data || [])),
+      staffApi.get(`/staff/clientes/${clienteId}/requerimientos`).then(({ data }) => setRequerimientos(data || [])),
+    ]).catch(() => {}).finally(() => setCargando(false))
+  }, [clienteId])
+
+  async function recotizar(id) {
+    try {
+      await staffApi.post(`/staff/presupuestos/${id}/recotizar`)
+      const { data } = await staffApi.get(`/staff/clientes/${clienteId}/presupuestos`)
+      setPresupuestos(data || [])
+    } catch (err) {
+      window.alert(err.response?.data?.error || 'Error al recotizar')
+    }
+  }
+
+  async function generarPedido(id) {
+    if (!window.confirm('¿Generar pedido desde este presupuesto?')) return
+    try {
+      await staffApi.post(`/staff/presupuestos/${id}/generar-pedido`)
+      const { data } = await staffApi.get(`/staff/clientes/${clienteId}/presupuestos`)
+      setPresupuestos(data || [])
+    } catch (err) {
+      window.alert(err.response?.data?.error || 'Error al generar pedido')
+    }
+  }
+
+  async function responderCotizacion(id, payload) {
+    const { data } = await staffApi.patch(`/staff/cotizaciones/${id}/responder`, payload)
+    setCotizaciones((prev) => prev.map((c) => (c.id === id ? data : c)))
+  }
+
+  async function rechazarCotizacion(id) {
+    const nota = window.prompt('Motivo del rechazo (opcional):') || undefined
+    const { data } = await staffApi.patch(`/staff/cotizaciones/${id}/rechazar`, { nota_admin: nota })
+    setCotizaciones((prev) => prev.map((c) => (c.id === id ? data : c)))
+  }
+
+  async function responderRequerimiento(id, payload) {
+    const { data } = await staffApi.patch(`/staff/requerimientos/${id}/responder`, payload)
+    setRequerimientos((prev) => prev.map((r) => (r.id === id ? data : r)))
+  }
+
+  if (cargando) return <p className="sc-loading">Cargando presupuestos...</p>
+
+  return (
+    <>
+      {/* Presupuestos propios del cliente y del staff */}
+      <div className="sc-subseccion">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+          <p className="sc-subseccion-title" style={{ margin: 0, border: 'none', padding: 0 }}>Presupuestos</p>
+          <button className="sc-btn sc-btn--primary" onClick={() => setCrearModal(true)}>Crear presupuesto</button>
+        </div>
+        {presupuestos.length === 0 ? (
+          <p className="sc-vacio">Sin presupuestos.</p>
+        ) : (
+          <div className="sc-lista-solicitudes">
+            {presupuestos.map((p) => (
+              <div key={p.id} className="sc-solicitud-card" onClick={() => setModal({ tipo: 'presupuesto', data: p })}>
+                <div className="sc-solicitud-info">
+                  <span className="sc-solicitud-id">#{p.numero || p.id}</span>
+                  <span className="sc-solicitud-meta" style={{ marginLeft: 8 }}>{formatFecha(p.fecha_creacion)} · ${formatUSD(p.total_usd)}</span>
+                </div>
+                <div className="sc-solicitud-acciones">
+                  <span className={`sc-badge ${p.estado === 'vigente' ? 'sc-badge--activo' : 'sc-badge--tipo'}`}>{p.estado}</span>
+                  <button onClick={(e) => { e.stopPropagation(); recotizar(p.id) }}>Recotizar</button>
+                  <button onClick={(e) => { e.stopPropagation(); generarPedido(p.id) }}>Generar pedido</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Cotizaciones */}
+      <div className="sc-subseccion">
+        <p className="sc-subseccion-title">Cotizaciones</p>
+        {cotizaciones.length === 0 ? (
+          <p className="sc-vacio">Sin cotizaciones.</p>
+        ) : (
+          <div className="sc-lista-solicitudes">
+            {cotizaciones.map((c) => (
+              <div key={c.id} className="sc-solicitud-card" onClick={() => setModal({ tipo: 'cotizacion', data: c })}>
+                <div className="sc-solicitud-info">
+                  <span className="sc-solicitud-id">#{c.id}</span>
+                  <span className="sc-solicitud-meta" style={{ marginLeft: 8 }}>
+                    {c.productos?.nombre_comercial || 'Producto'} · {formatFecha(c.fecha_solicitud)}
+                  </span>
+                </div>
+                <div className="sc-solicitud-acciones">
+                  <span className={`sc-badge ${c.estado === 'pendiente' ? 'sc-badge--tipo' : c.estado === 'cotizada' ? 'sc-badge--activo' : 'sc-badge--bloqueado'}`}>{c.estado}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Requerimientos */}
+      <div className="sc-subseccion">
+        <p className="sc-subseccion-title">Requerimientos</p>
+        {requerimientos.length === 0 ? (
+          <p className="sc-vacio">Sin requerimientos.</p>
+        ) : (
+          <div className="sc-lista-solicitudes">
+            {requerimientos.map((r) => (
+              <div key={r.id} className="sc-solicitud-card" onClick={() => setModal({ tipo: 'requerimiento', data: r })}>
+                <div className="sc-solicitud-info">
+                  <span className="sc-solicitud-id">#{r.id}</span>
+                  <span className="sc-solicitud-meta" style={{ marginLeft: 8 }}>
+                    {r.requerimiento_items?.length || 0} items · {formatFecha(r.fecha_solicitud)}
+                  </span>
+                </div>
+                <div className="sc-solicitud-acciones">
+                  <span className={`sc-badge ${r.estado === 'pendiente' ? 'sc-badge--tipo' : 'sc-badge--activo'}`}>{r.estado}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Modal Detalle Presupuesto */}
+      {modal?.tipo === 'presupuesto' && (
+        <div className="odm-overlay" onClick={() => setModal(null)}>
+          <div className="odm-content" onClick={(e) => e.stopPropagation()}>
+            <button className="odm-close" onClick={() => setModal(null)}>✕</button>
+            <div className="odm-header">
+              <div>
+                <p className="odm-numero">Presupuesto #{modal.data.numero || modal.data.id}</p>
+                <p className="odm-fecha">{formatFecha(modal.data.fecha_creacion)}</p>
+              </div>
+              <span className="odm-badge" style={{
+                background: modal.data.estado === 'vigente' ? '#d1fae5' : '#f3f4f6',
+                color: modal.data.estado === 'vigente' ? '#059669' : '#6b7280',
+              }}>{modal.data.estado}</span>
+            </div>
+            <p style={{ fontSize: '0.85rem', color: '#6b7280', margin: '8px 0 16px' }}>
+              Expira: {formatFecha(modal.data.fecha_expiracion)} · Total: ${formatUSD(modal.data.total_usd)}
+            </p>
+            <div className="kb-modal-acciones">
+              <button className="kb-btn-rechazar" onClick={() => { setModal(null); recotizar(modal.data.id) }}>Recotizar</button>
+              <button className="kb-btn-responder" onClick={() => { setModal(null); generarPedido(modal.data.id) }}>Generar pedido</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Detalle Cotización */}
+      {modal?.tipo === 'cotizacion' && (
+        <ModalCotizacion
+          cotizacion={modal.data}
+          onClose={() => setModal(null)}
+          onResponder={responderCotizacion}
+          onRechazar={rechazarCotizacion}
+        />
+      )}
+
+      {/* Modal Detalle Requerimiento */}
+      {modal?.tipo === 'requerimiento' && (
+        <ModalRequerimientoDetalle
+          requerimiento={modal.data}
+          onClose={() => setModal(null)}
+          onResponder={responderRequerimiento}
+        />
+      )}
+
+      {/* Modal Crear Presupuesto */}
+      {crearModal && (
+        <ModalCrearPresupuesto
+          clienteId={clienteId}
+          onClose={() => setCrearModal(false)}
+          onCreado={async () => {
+            const { data } = await staffApi.get(`/staff/clientes/${clienteId}/presupuestos`)
+            setPresupuestos(data || [])
+            setCrearModal(false)
+          }}
+        />
+      )}
+    </>
+  )
+}
+
+// -----------------------------------------------------------------
+// Modal: Responder Cotización
+// -----------------------------------------------------------------
+function ModalCotizacion({ cotizacion, onClose, onResponder, onRechazar }) {
+  const [precio, setPrecio] = useState('')
+  const [nota, setNota] = useState('')
+  const [enviando, setEnviando] = useState(false)
+  const [error, setError] = useState('')
+
+  if (!cotizacion) return null
+
+  async function handleResponder() {
+    if (!precio || Number(precio) <= 0) {
+      setError('Ingresa un precio válido')
+      return
+    }
+    setEnviando(true)
+    try {
+      await onResponder(cotizacion.id, { precio_unitario: Number(precio), nota_admin: nota || undefined })
+      onClose()
+    } catch (err) {
+      setError(err.response?.data?.error || 'Error')
+    } finally {
+      setEnviando(false)
+    }
+  }
+
+  return (
+    <div className="odm-overlay" onClick={onClose}>
+      <div className="odm-content" onClick={(e) => e.stopPropagation()}>
+        <button className="odm-close" onClick={onClose}>✕</button>
+        <div className="odm-header">
+          <div>
+            <p className="odm-numero">Cotización #{cotizacion.id}</p>
+            <p className="odm-fecha">{formatFecha(cotizacion.fecha_solicitud)}</p>
+          </div>
+          <span className="odm-badge" style={{
+            background: cotizacion.estado === 'pendiente' ? '#fef3c7' : cotizacion.estado === 'cotizada' ? '#d1fae5' : '#fee2e2',
+            color: cotizacion.estado === 'pendiente' ? '#f59e0b' : cotizacion.estado === 'cotizada' ? '#059669' : '#dc2626',
+          }}>{cotizacion.estado}</span>
+        </div>
+        <p style={{ fontSize: '0.9rem', margin: '12px 0' }}>
+          Producto: <strong>{cotizacion.productos?.nombre_comercial || '—'}</strong>
+        </p>
+        {cotizacion.estado === 'pendiente' && (
+          <div style={{ marginTop: 12 }}>
+            <input
+              type="number"
+              step="0.01"
+              min="0"
+              placeholder="Precio unitario (USD)"
+              value={precio}
+              onChange={(e) => setPrecio(e.target.value)}
+              className="sc-input"
+              style={{ width: '100%', marginBottom: 8, boxSizing: 'border-box' }}
+            />
+            <textarea
+              placeholder="Nota (opcional)"
+              value={nota}
+              onChange={(e) => setNota(e.target.value)}
+              rows={2}
+              className="sc-input"
+              style={{ width: '100%', resize: 'vertical', boxSizing: 'border-box' }}
+            />
+            {error && <p className="kb-error">{error}</p>}
+            <div className="kb-modal-acciones" style={{ marginTop: 10 }}>
+              <button className="kb-btn-rechazar" onClick={() => onRechazar(cotizacion.id)}>Rechazar</button>
+              <button className="kb-btn-responder" onClick={handleResponder} disabled={enviando}>
+                {enviando ? 'Guardando...' : 'Responder'}
+              </button>
+            </div>
+          </div>
+        )}
+        {cotizacion.nota_admin && (
+          <p style={{ marginTop: 12, fontSize: '0.85rem', color: '#6b7280' }}>Nota: {cotizacion.nota_admin}</p>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// -----------------------------------------------------------------
+// Modal: Detalle Requerimiento (responder)
+// -----------------------------------------------------------------
+function ModalRequerimientoDetalle({ requerimiento, onClose, onResponder }) {
+  const [valores, setValores] = useState(() => {
+    const ini = {}
+    if (!requerimiento) return ini
+    requerimiento.requerimiento_items.forEach((item) => {
+      ini[item.id] = { nombre_final: item.nombre_solicitado, precio_unitario: '', rechazado: false }
+    })
+    return ini
+  })
+  const [enviando, setEnviando] = useState(false)
+  const [error, setError] = useState('')
+
+  if (!requerimiento) return null
+  const soloLectura = requerimiento.estado === 'respondido'
+
+  async function handleGuardar() {
+    const items = []
+    const items_rechazados = []
+    for (const item of requerimiento.requerimiento_items) {
+      const v = valores[item.id]
+      if (v.rechazado) { items_rechazados.push(item.id); continue }
+      if (!v.nombre_final.trim() || !v.precio_unitario || Number(v.precio_unitario) <= 0) {
+        setError(`Falta nombre o precio para "${item.nombre_solicitado}" — o márcalo como rechazado`)
+        return
+      }
+      items.push({ id: item.id, nombre_final: v.nombre_final.trim(), precio_unitario: Number(v.precio_unitario) })
+    }
+    setEnviando(true)
+    setError('')
+    try {
+      await onResponder(requerimiento.id, { items, items_rechazados })
+      onClose()
+    } catch (err) {
+      setError(err.response?.data?.error || 'Error al responder')
+    } finally {
+      setEnviando(false)
+    }
+  }
+
+  return (
+    <div className="odm-overlay" onClick={onClose}>
+      <div className="odm-content" onClick={(e) => e.stopPropagation()}>
+        <button className="odm-close" onClick={onClose}>✕</button>
+        <div className="odm-header">
+          <div>
+            <p className="odm-numero">Requerimiento #{requerimiento.id}</p>
+            <p className="odm-fecha">{formatFecha(requerimiento.fecha_solicitud)}</p>
+          </div>
+          <span className="odm-badge" style={{
+            background: soloLectura ? '#d1fae5' : '#fef3c7',
+            color: soloLectura ? '#059669' : '#f59e0b',
+          }}>{soloLectura ? 'Respondido' : 'Pendiente'}</span>
+        </div>
+        <div className="ra-filas" style={{ marginTop: 12 }}>
+          {requerimiento.requerimiento_items.map((item) => (
+            <FilaRequerimiento
+              key={item.id}
+              item={item}
+              valores={valores[item.id] || { nombre_final: '', precio_unitario: '', rechazado: false }}
+              onChange={(v) => setValores((prev) => ({ ...prev, [item.id]: v }))}
+              soloLectura={soloLectura}
+            />
+          ))}
+        </div>
+        {!soloLectura && (
+          <>
+            {error && <p className="kb-error">{error}</p>}
+            <div className="kb-modal-acciones" style={{ marginTop: 10 }}>
+              <button className="kb-btn-responder" style={{ flex: 1 }} onClick={handleGuardar} disabled={enviando}>
+                {enviando ? 'Guardando...' : 'Guardar respuesta'}
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function FilaRequerimiento({ item, valores, onChange, soloLectura }) {
+  const rechazado = valores.rechazado
+  if (soloLectura) {
+    return (
+      <div className="ra-fila ra-fila--lectura">
+        <span className="ra-fila__original">{item.nombre_solicitado} (x{item.cantidad})</span>
+        {item.estado_item === 'listo' && item.productos ? (
+          <span className="ra-fila__resultado ra-fila__resultado--ok">
+            {item.productos.nombre_comercial} — ${formatUSD(item.productos.precio_usd)}
+          </span>
+        ) : (
+          <span className="ra-fila__resultado ra-fila__resultado--rechazado">Rechazado</span>
+        )}
+      </div>
+    )
+  }
+  return (
+    <div className={`ra-fila ${rechazado ? 'ra-fila--rechazada' : ''}`}>
+      <div className="ra-fila__original">
+        <span>{item.nombre_solicitado}</span>
+        <span className="ra-fila__cantidad">x{item.cantidad}</span>
+      </div>
+      <input type="text" placeholder="Nombre final" value={valores.nombre_final}
+        onChange={(e) => onChange({ ...valores, nombre_final: e.target.value })} disabled={rechazado}
+        className="ra-fila__input ra-fila__input--nombre" />
+      <input type="number" step="0.01" min="0" placeholder="Precio" value={valores.precio_unitario}
+        onChange={(e) => onChange({ ...valores, precio_unitario: e.target.value })} disabled={rechazado}
+        className="ra-fila__input ra-fila__input--precio" />
+      <label className="ra-fila__rechazar">
+        <input type="checkbox" checked={rechazado}
+          onChange={(e) => onChange({ ...valores, rechazado: e.target.checked })} />
+        Rechazar
+      </label>
+    </div>
+  )
+}
+
+// -----------------------------------------------------------------
+// Modal: Crear Presupuesto
+// -----------------------------------------------------------------
+function ModalCrearPresupuesto({ clienteId, onClose, onCreado }) {
+  const [query, setQuery] = useState('')
+  const [resultados, setResultados] = useState([])
+  const [buscando, setBuscando] = useState(false)
+  const [filas, setFilas] = useState([])
+  const [creando, setCreando] = useState(false)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    if (query.trim().length < 1) { setResultados([]); return }
+    const t = setTimeout(async () => {
+      setBuscando(true)
+      try {
+        const { data } = await staffApi.get('/products', { params: { search: query.trim() } })
+        setResultados((data || []).slice(0, 8))
+      } catch { setResultados([]) }
+      finally { setBuscando(false) }
+    }, 250)
+    return () => clearTimeout(t)
+  }, [query])
+
+  function agregarProducto(p) {
+    setFilas((prev) => {
+      const ex = prev.find((f) => f.producto_id === p.id)
+      if (ex) return prev.map((f) => f.producto_id === p.id ? { ...f, cantidad: f.cantidad + 1 } : f)
+      return [...prev, { producto_id: p.id, nombre: p.nombre_comercial, cantidad: 1 }]
+    })
+    setQuery('')
+    setResultados([])
+  }
+
+  function cambiarCantidad(pid, delta) {
+    setFilas((prev) => prev.map((f) => f.producto_id === pid ? { ...f, cantidad: f.cantidad + delta } : f).filter((f) => f.cantidad > 0))
+  }
+
+  async function crear() {
+    if (filas.length === 0) { setError('Agrega al menos un producto'); return }
+    setCreando(true)
+    setError('')
+    try {
+      await staffApi.post('/staff/presupuestos', {
+        usuario_id: clienteId,
+        items: filas.map((f) => ({ producto_id: f.producto_id, cantidad: f.cantidad })),
+      })
+      onCreado()
+    } catch (err) {
+      setError(err.response?.data?.error || 'Error al crear presupuesto')
+    } finally {
+      setCreando(false)
+    }
+  }
+
+  return (
+    <div className="sc-modal-overlay" onClick={onClose}>
+      <div className="sc-modal-content" onClick={(e) => e.stopPropagation()}>
+        <button className="sc-modal-close" onClick={onClose}>✕</button>
+        <p className="sc-modal-title">Crear presupuesto</p>
+        <div className="sc-modal-buscador">
+          <Search size={16} />
+          <input type="text" placeholder="Buscar producto..." value={query} onChange={(e) => setQuery(e.target.value)} autoFocus />
+        </div>
+        {buscando && <p style={{ fontSize: '0.85rem', color: '#6b7280' }}>Buscando...</p>}
+        {resultados.map((p) => (
+          <div key={p.id} className="sc-modal-item">
+            <div className="sc-modal-item-info">
+              <div className="sc-modal-item-nombre">{p.nombre_comercial}</div>
+              <div className="sc-modal-item-lab">{p.laboratorio || ''}</div>
+            </div>
+            <button className="sc-modal-item-add" onClick={() => agregarProducto(p)}>
+              <Plus size={14} /> Agregar
+            </button>
+          </div>
+        ))}
+        {filas.length > 0 && (
+          <div className="sc-modal-filas">
+            {filas.map((f) => (
+              <div key={f.producto_id} className="sc-modal-fila">
+                <span className="sc-modal-fila-nombre">{f.nombre}</span>
+                <div className="sc-modal-fila-cantidad">
+                  <button onClick={() => cambiarCantidad(f.producto_id, -1)}><Minus size={12} /></button>
+                  <span>{f.cantidad}</span>
+                  <button onClick={() => cambiarCantidad(f.producto_id, 1)}><Plus size={12} /></button>
+                </div>
+                <button onClick={() => setFilas((prev) => prev.filter((x) => x.producto_id !== f.producto_id))}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9ca3af' }}><X size={14} /></button>
+              </div>
+            ))}
+          </div>
+        )}
+        {error && <p className="sc-modal-error">{error}</p>}
+        <div className="sc-modal-footer">
+          <button className="sc-btn sc-btn--outline" onClick={onClose}>Cancelar</button>
+          <button className="sc-btn sc-btn--primary" onClick={crear} disabled={creando || filas.length === 0}>
+            {creando ? 'Creando...' : `Crear (${filas.length} items)`}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// -----------------------------------------------------------------
+// Tab: Documentos
+// -----------------------------------------------------------------
+function TabDocumentos({ clienteId }) {
+  const [solicitudes, setSolicitudes] = useState([])
+  const [cargando, setCargando] = useState(true)
+  const [seleccionada, setSeleccionada] = useState(null)
+
+  useEffect(() => {
+    staffApi.get('/staff/documentos', { params: { usuario_id: clienteId } })
+      .then(({ data }) => setSolicitudes(Array.isArray(data) ? data : []))
+      .catch(() => setSolicitudes([]))
+      .finally(() => setCargando(false))
+  }, [clienteId])
+
+  async function handleAprobar(id, payload) {
+    const { data } = await staffApi.patch(`/staff/documentos/${id}/aprobar`, payload)
+    setSolicitudes((prev) => prev.map((s) => (s.id === id ? data : s)))
+  }
+
+  async function handleRechazar(id, payload) {
+    const { data } = await staffApi.patch(`/staff/documentos/${id}/rechazar`, payload)
+    setSolicitudes((prev) => prev.map((s) => (s.id === id ? data : s)))
+  }
+
+  if (cargando) return <p className="sc-loading">Cargando documentos...</p>
+  if (!solicitudes.length) return <p className="sc-vacio">Sin solicitudes de documentos.</p>
+
+  return (
+    <>
+      <div className="sc-lista-solicitudes">
+        {solicitudes.map((s) => (
+          <div key={s.id} className="sc-doc-card" onClick={() => setSeleccionada(s)}>
+            <div className="sc-solicitud-info">
+              <span className="sc-solicitud-id">#{s.id}</span>
+              <span className="sc-solicitud-meta" style={{ marginLeft: 8 }}>
+                {DOC_LABELS[s.tipo_documento] || s.tipo_documento} · {formatFecha(s.fecha_solicitud)}
+              </span>
+            </div>
+            <span className={`sc-badge ${s.estado === 'pendiente' ? 'sc-badge--tipo' : s.estado === 'aprobada' ? 'sc-badge--activo' : 'sc-badge--bloqueado'}`}>
+              {s.estado}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {/* Modal Documento — reutiliza patrón de StaffDocumentos */}
+      {seleccionada && (
+        <ModalDocumentoCompacto
+          solicitud={seleccionada}
+          onClose={() => setSeleccionada(null)}
+          onAprobar={handleAprobar}
+          onRechazar={handleRechazar}
+        />
+      )}
+    </>
+  )
+}
+
+function ModalDocumentoCompacto({ solicitud, onClose, onAprobar, onRechazar }) {
+  const [nota, setNota] = useState('')
+  const [enviando, setEnviando] = useState(false)
+  const [error, setError] = useState('')
+
+  if (!solicitud) return null
+
+  async function handleAprobar() {
+    setEnviando(true)
+    try { await onAprobar(solicitud.id, { nota_admin: nota || undefined }); onClose() }
+    catch (err) { setError(err.response?.data?.error || 'Error') }
+    finally { setEnviando(false) }
+  }
+
+  async function handleRechazar() {
+    setEnviando(true)
+    try { await onRechazar(solicitud.id, { nota_admin: nota || undefined }); onClose() }
+    catch (err) { setError(err.response?.data?.error || 'Error') }
+    finally { setEnviando(false) }
+  }
+
+  return (
+    <div className="odm-overlay" onClick={onClose}>
+      <div className="odm-content" onClick={(e) => e.stopPropagation()}>
+        <button className="odm-close" onClick={onClose}>✕</button>
+        <div className="odm-header">
+          <div>
+            <p className="odm-numero">Solicitud #{solicitud.id}</p>
+            <p className="odm-fecha">{formatFecha(solicitud.fecha_solicitud)}</p>
+          </div>
+          <span className="odm-badge" style={{
+            background: solicitud.estado === 'pendiente' ? '#fef3c7' : solicitud.estado === 'aprobada' ? '#d1fae5' : '#fee2e2',
+            color: solicitud.estado === 'pendiente' ? '#f59e0b' : solicitud.estado === 'aprobada' ? '#059669' : '#dc2626',
+          }}>{solicitud.estado}</span>
+        </div>
+        <div className="odm-section" style={{ marginTop: 12 }}>
+          <p className="odm-section-title">{DOC_LABELS[solicitud.tipo_documento]}</p>
+          {solicitud.descripcion && <p className="odm-notas">{solicitud.descripcion}</p>}
+        </div>
+        {solicitud.estado === 'pendiente' && !solicitud.es_automatica && (
+          <div className="odm-section" style={{ marginTop: 12 }}>
+            <textarea placeholder="Nota (opcional)" value={nota} onChange={(e) => setNota(e.target.value)}
+              rows={2} className="odm-estado-select" style={{ resize: 'vertical', marginBottom: 10, width: '100%', boxSizing: 'border-box' }} />
+            {error && <p className="kb-error">{error}</p>}
+            <div className="kb-modal-acciones">
+              <button className="kb-btn-rechazar" onClick={handleRechazar} disabled={enviando}>Rechazar</button>
+              <button className="kb-btn-responder" onClick={handleAprobar} disabled={enviando}>
+                {enviando ? 'Guardando...' : 'Marcar como enviado'}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// -----------------------------------------------------------------
+// Página principal: Ficha del Cliente
+// -----------------------------------------------------------------
+function StaffClienteFicha() {
+  const { id } = useParams()
+  const navigate = useNavigate()
+  const [tab, setTab] = useState('resumen')
+  const [cliente, setCliente] = useState(null)
+  const [perfil, setPerfil] = useState(null)
+  const [credito, setCredito] = useState(null)
+  const [cargando, setCargando] = useState(true)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    let vivo = true
+    staffApi.get(`/staff/clientes/${id}/detalle`)
+      .then(({ data }) => {
+        if (!vivo) return
+        setCliente(data.cliente)
+        setPerfil(data.perfil)
+        setCredito(data.credito)
+      })
+      .catch((err) => {
+        if (!vivo) return
+        setError(err.response?.data?.error || 'Error al cargar cliente')
+      })
+      .finally(() => { if (vivo) setCargando(false) })
+    return () => { vivo = false }
+  }, [id])
+
+  const tabs = [
+    { id: 'resumen', texto: 'Resumen' },
+    { id: 'pedidos', texto: 'Pedidos' },
+    { id: 'presupuestos', texto: 'Presupuestos' },
+    { id: 'documentos', texto: 'Documentos' },
+  ]
+
+  if (cargando) {
+    return (
+      <LayoutDepartamento departamento="comercial" activo="clientes" titulo="Ficha del cliente">
+        <p className="sc-loading">Cargando ficha...</p>
+      </LayoutDepartamento>
+    )
+  }
+
+  if (error) {
+    return (
+      <LayoutDepartamento departamento="comercial" activo="clientes" titulo="Ficha del cliente">
+        <p className="sc-vacio">{error}</p>
+      </LayoutDepartamento>
+    )
+  }
+
+  const iniciales = (cliente?.nombre || '?').trim().charAt(0).toUpperCase()
+
+  return (
+    <LayoutDepartamento departamento="comercial" activo="clientes" titulo={cliente?.nombre || 'Ficha del cliente'}>
+      <div className="sc-ficha">
+        <div className="sc-ficha__header">
+          <div className="sc-avatar">{iniciales}</div>
+          <div className="sc-ficha__info">
+            <h2 className="sc-ficha__nombre">{cliente?.nombre || 'Sin nombre'}</h2>
+            <div className="sc-ficha__badges">
+              <span className="sc-badge sc-badge--tipo">{cliente?.tipo_usuario}</span>
+              {cliente?.etiqueta && <span className="sc-badge sc-badge--tipo">{cliente.etiqueta}</span>}
+              {!cliente?.activo && <span className="sc-badge sc-badge--bloqueado">Inactivo</span>}
+              {credito?.credito_bloqueado && <span className="sc-badge sc-badge--bloqueado">Crédito bloqueado</span>}
+            </div>
+          </div>
+          <div className="sc-ficha__acciones">
+            <button className="sc-btn sc-btn--primary" onClick={() => navigate(`/staff/ordenes?cliente=${id}`)}>
+              Crear orden
+            </button>
+          </div>
+        </div>
+
+        <StaffTabs tabs={tabs} activo={tab} onChange={setTab} />
+
+        <div style={{ paddingTop: 16 }}>
+          {tab === 'resumen' && <TabResumen cliente={cliente} perfil={perfil} credito={credito} />}
+          {tab === 'pedidos' && <TabPedidos clienteId={id} />}
+          {tab === 'presupuestos' && <TabPresupuestos clienteId={id} />}
+          {tab === 'documentos' && <TabDocumentos clienteId={id} />}
+        </div>
+      </div>
+    </LayoutDepartamento>
+  )
+}
+
+export default StaffClienteFicha
