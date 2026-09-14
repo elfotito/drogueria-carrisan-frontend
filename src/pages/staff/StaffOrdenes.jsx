@@ -52,7 +52,7 @@ function StaffOrdenes() {
         }
       })
       .catch(() => {})
-  }, [])
+  }, [searchParams])
 
   // Búsqueda de clientes (backend: GET /staff/clientes?buscar=)
   useEffect(() => {
