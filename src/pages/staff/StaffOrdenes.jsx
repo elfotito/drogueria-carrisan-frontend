@@ -118,8 +118,8 @@ function StaffOrdenes() {
     debounceProducto.current = setTimeout(async () => {
       setBuscandoProductos(true)
       try {
-        const { data } = await staffApi.get('/products', {
-          params: { search: queryProducto.trim() },
+        const { data } = await staffApi.get('/staff/productos', {
+          params: { buscar: queryProducto.trim() },
         })
         setResultadosProductos(data.slice(0, 8))
       } catch (err) {
