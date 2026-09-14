@@ -234,3 +234,18 @@
     align-self: flex-start;
   }
 }
+
+/* Nuevos estilos — acciones puntuales (Task 9) */
+.sd-card__nota { font-size: 12px; color: #B45309; margin: 4px 0 0; }
+.sd-badge-pref { color: #D97706; font-weight: 700; }
+.sd-card__acciones { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+.sd-card__btn { padding: 7px 12px; border-radius: 8px; border: 1px solid #D1D5DB; background: #fff; font-size: 12px; font-weight: 600; cursor: pointer; }
+.sd-card__btn:hover:not(:disabled) { background: #F9FAFB; }
+.sd-card__btn--primario { background: #D97706; border-color: #D97706; color: #fff; }
+.sd-card__meta-agencia { font-size: 12px; color: #6B7280; }
+.sd-modal { position: fixed; inset: 0; background: rgba(17,24,39,0.6); display: flex; align-items: center; justify-content: center; z-index: 60; padding: 16px; }
+.sd-modal-content { background: #fff; border-radius: 12px; max-width: 420px; width: 100%; padding: 18px; }
+.sd-modal-content h3 { margin: 0 0 12px; }
+.sd-modal-content label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 10px; }
+.sd-modal-content input { display: block; width: 100%; margin-top: 4px; padding: 8px; border: 1px solid #D1D5DB; border-radius: 6px; font-size: 14px; font-weight: 400; }
+.sd-modal__acciones { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }

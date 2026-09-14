@@ -117,6 +117,11 @@ export const ESTADOS_ORDEN = {
     id: 'entregado',
     label: 'Entregado',
     labels: {
+      clientePorFulfillment: {
+        delivery: 'Entregado',
+        envio_nacional: 'Entregado a la agencia',
+        retiro: null,
+      },
       cliente: 'Entregado',
       staff: 'Entregado',
       admin: 'entregado',

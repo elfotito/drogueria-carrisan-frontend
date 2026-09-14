@@ -11,7 +11,7 @@
 import {
   LayoutDashboard, PackageCheck, ClipboardList, ShoppingCart,
   Landmark, TrendingUp, Truck, Receipt, Banknote, CalendarX2,
-  MessagesSquare, PackageSearch, FileText, Megaphone, MapPin, BadgeDollarSign,
+  MessagesSquare, PackageSearch, Megaphone, MapPin, BadgeDollarSign, Users,
   Shield, BarChart3,
 } from 'lucide-react'
 
@@ -115,6 +115,14 @@ export const MODULOS = {
       titulo: 'Comercial',
       items: [
         {
+          id: 'clientes',
+          to: '/staff/clientes',
+          icono: Users,
+          texto: 'Clientes',
+          desc: 'Consulta y gestión de clientes',
+          roles: ['vendedor', 'administrador', 'director', 'admin'],
+        },
+        {
           id: 'ordenes',
           to: '/staff/ordenes',
           icono: ShoppingCart,
@@ -136,14 +144,6 @@ export const MODULOS = {
           icono: PackageSearch,
           texto: 'Requerimientos',
           desc: 'Asigna producto y precio a los requerimientos de los clientes',
-          roles: ['vendedor', 'administrador', 'director', 'admin'],
-        },
-        {
-          id: 'documentos',
-          to: '/staff/documentos',
-          icono: FileText,
-          texto: 'Documentos de clientes',
-          desc: 'Aprueba o rechaza los documentos que suben los clientes',
           roles: ['vendedor', 'administrador', 'director', 'admin'],
         },
         {
@@ -170,19 +170,19 @@ export const MODULOS = {
       titulo: 'Logística',
       items: [
         {
-          id: 'almacen',
-          to: '/staff/almacen',
+          id: 'pedidos',
+          to: '/staff/pedidos',
           icono: PackageCheck,
-          texto: 'Preparación de pedidos',
-          desc: 'Revisa, aprueba y prepara las órdenes entrantes',
+          texto: 'Pedidos',
+          desc: 'Pipeline completo: revisa, aprueba, prepara, retiros, incidencias y completadas',
           roles: ['almacenista', 'administrador', 'director', 'admin'],
         },
         {
-          id: 'despacho',
-          to: '/staff/despacho',
+          id: 'envios',
+          to: '/staff/envios',
           icono: ClipboardList,
-          texto: 'Envíos por despachar',
-          desc: 'Cola de envíos en ruta y entregas confirmadas',
+          texto: 'Envíos',
+          desc: 'Cola de pedidos en ruta para el motorizado: dirección, contacto y entrega',
           roles: ['despachador', 'administrador', 'director', 'admin'],
         },
         {
@@ -190,8 +190,8 @@ export const MODULOS = {
           to: '/staff/direcciones',
           icono: MapPin,
           texto: 'Direcciones de clientes',
-          desc: 'Direcciones de envío registradas por los clientes',
-          roles: ['despachador', 'administrador', 'director', 'admin'],
+          desc: 'Direcciones de envío con teléfono, preferida y nota de entrega',
+          roles: ['almacenista', 'administrador', 'director', 'admin'],
         },
       ],
     },
