@@ -175,13 +175,12 @@ function TabPedidos({ clienteId }) {
 // -----------------------------------------------------------------
 // Tab: Presupuestos (unificado: presupuestos + cotizaciones + requerimientos)
 // -----------------------------------------------------------------
-function TabPresupuestos({ clienteId }) {
+function TabPresupuestos({ clienteId, crearModal, setCrearModal }) {
   const [presupuestos, setPresupuestos] = useState([])
   const [cotizaciones, setCotizaciones] = useState([])
   const [requerimientos, setRequerimientos] = useState([])
   const [cargando, setCargando] = useState(true)
   const [modal, setModal] = useState(null) // { tipo: 'presupuesto'|'cotizacion'|'requerimiento', data }
-  const [crearModal, setCrearModal] = useState(false)
 
   useEffect(() => {
     Promise.all([
@@ -800,6 +799,7 @@ function StaffClienteFicha() {
   const [credito, setCredito] = useState(null)
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
+  const [crearModal, setCrearModal] = useState(false)
 
   useEffect(() => {
     let vivo = true
@@ -861,6 +861,15 @@ function StaffClienteFicha() {
             <button className="sc-btn sc-btn--primary" onClick={() => navigate(`/staff/ordenes?cliente=${id}`)}>
               Crear orden
             </button>
+            <button
+              className="sc-btn sc-btn--primary"
+              onClick={() => {
+                setTab('presupuestos')
+                setCrearModal(true)
+              }}
+            >
+              Crear presupuesto
+            </button>
           </div>
         </div>
 
@@ -869,7 +878,7 @@ function StaffClienteFicha() {
         <div style={{ paddingTop: 16 }}>
           {tab === 'resumen' && <TabResumen cliente={cliente} perfil={perfil} credito={credito} />}
           {tab === 'pedidos' && <TabPedidos clienteId={id} />}
-          {tab === 'presupuestos' && <TabPresupuestos clienteId={id} />}
+          {tab === 'presupuestos' && <TabPresupuestos clienteId={id} crearModal={crearModal} setCrearModal={setCrearModal} />}
           {tab === 'documentos' && <TabDocumentos clienteId={id} />}
         </div>
       </div>
