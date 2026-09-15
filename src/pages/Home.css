@@ -39,12 +39,6 @@
 .home__bloque-e { grid-area: e; }
 .home__bloque-d { grid-area: d; }
 
-/* En el bento el grid-area define filas/columnas; anulamos el `span 2` que
-   trae `grande` por defecto para que nunca fuerce filas fuera del template. */
-.home__bloques-promocionales .bloque-promocional--grande {
-  grid-row: auto;
-}
-
 /* ---------- Vitrina: carruseles + ads ---------- */
 .home__vitrina {
   width: 100%;
