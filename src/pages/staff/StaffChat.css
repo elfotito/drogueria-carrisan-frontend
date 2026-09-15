@@ -1,0 +1,364 @@
+/* ---------------------------------------------------------------
+   Comunicaciones (Comercial staff) — centro de mensajes.
+   Clases .scc-* (staff chat comercial). El acento usa el color del
+   departamento que inyecta LayoutDepartamento (--ldep-color, azul).
+   --------------------------------------------------------------- */
+
+.scc {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  height: calc(100vh - 140px);
+  min-height: 420px;
+}
+
+.scc-error {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  background: #fef2f2;
+  color: #b91c1c;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.scc-error__btn {
+  border: none;
+  background: #b91c1c;
+  color: #fff;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.scc-inbox {
+  flex: 1;
+  display: flex;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  min-height: 0;
+}
+
+/* ---------- Lista de conversaciones ---------- */
+.scc-list {
+  width: 320px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #e2e8f0;
+  background: #f8fafc;
+  min-height: 0;
+}
+
+.scc-list__toolbar {
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+  border-bottom: 1px solid #e2e8f0;
+  background: #fff;
+}
+
+.scc-buscar {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f1f5f9;
+  border-radius: 8px;
+  padding: 0 10px;
+}
+
+.scc-buscar__icon {
+  font-size: 13px;
+  opacity: 0.6;
+}
+
+.scc-buscar__input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 8px 0;
+  outline: none;
+  font-size: 14px;
+  color: #0f172a;
+  min-width: 0;
+}
+
+.scc-refrescar {
+  border: none;
+  background: #f1f5f9;
+  border-radius: 8px;
+  width: 36px;
+  font-size: 14px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.scc-refrescar:hover {
+  background: #e2e8f0;
+}
+
+.scc-list__scroll {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.scc-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: none;
+  border-bottom: 1px solid #eef2f7;
+  background: transparent;
+  padding: 12px 14px;
+  cursor: pointer;
+}
+
+.scc-item:hover {
+  background: #f1f5f9;
+}
+
+.scc-item--activo {
+  background: #eff6ff;
+  border-left: 3px solid var(--ldep-color, #2563eb);
+}
+
+.scc-item__cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.scc-item__cliente {
+  font-weight: 600;
+  font-size: 14px;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.scc-item__fecha {
+  font-size: 11px;
+  color: #64748b;
+  flex-shrink: 0;
+}
+
+.scc-item__titulo {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ldep-color-strong, #1d4ed8);
+  margin-top: 2px;
+}
+
+.scc-item__pie {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.scc-item__preview {
+  font-size: 12px;
+  color: #64748b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.scc-item__badge {
+  background: var(--ldep-color, #2563eb);
+  color: #fff;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
+  flex-shrink: 0;
+}
+
+/* ---------- Panel de chat ---------- */
+.scc-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  background: #fff;
+}
+
+.scc-panel__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e2e8f0;
+  background: #fff;
+}
+
+.scc-panel__back {
+  display: none;
+  border: none;
+  background: #f1f5f9;
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  font-size: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.scc-panel__cliente {
+  font-weight: 600;
+  font-size: 15px;
+  color: #0f172a;
+}
+
+.scc-panel__subtitulo {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.scc-panel__mensajes {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+  background: #f8fafc;
+}
+
+.scc-burbuja {
+  max-width: 75%;
+  align-self: flex-start;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px 12px 12px 4px;
+  padding: 8px 12px;
+}
+
+.scc-burbuja--propio {
+  align-self: flex-end;
+  background: var(--ldep-color, #2563eb);
+  border: none;
+  border-radius: 12px 12px 4px 12px;
+  color: #fff;
+}
+
+.scc-burbuja__texto {
+  font-size: 14px;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.scc-burbuja__hora {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.scc-burbuja--propio .scc-burbuja__hora {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.scc-panel__form {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  border-top: 1px solid #e2e8f0;
+  background: #fff;
+}
+
+.scc-panel__input {
+  flex: 1;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  outline: none;
+  min-width: 0;
+}
+
+.scc-panel__input:focus {
+  border-color: var(--ldep-color, #2563eb);
+}
+
+.scc-panel__enviar {
+  border: none;
+  background: var(--ldep-color, #2563eb);
+  color: #fff;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.scc-panel__enviar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.scc-vacio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 24px;
+  color: #64748b;
+  font-size: 14px;
+  text-align: center;
+}
+
+.scc-vacio--panel {
+  flex: 1;
+}
+
+@media (max-width: 768px) {
+  .scc {
+    padding: 10px;
+    height: calc(100vh - 90px);
+  }
+
+  .scc-list {
+    width: 100%;
+    border-right: none;
+  }
+
+  .scc-list--oculto-movil {
+    display: none;
+  }
+
+  .scc-panel__back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .scc-burbuja {
+    max-width: 85%;
+  }
+}

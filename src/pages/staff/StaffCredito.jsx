@@ -20,6 +20,7 @@ const TIPOS_NOTA = [
 
 const TABS = [
   { id: 'clientes', texto: 'Clientes' },
+  { id: 'linea', texto: 'Línea de crédito' },
   { id: 'cobros', texto: 'Cobros' },
   { id: 'por-verificar', texto: 'Por verificar' },
   { id: 'notas', texto: 'Notas de cobranza' },
@@ -304,6 +305,181 @@ function TabPorVerificar() {
                 {procesando ? 'Rechazando...' : 'Confirmar rechazo'}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ------------------------------------------------------------------
+// Tab: Línea de crédito (aprobar / ajustar monto manualmente)
+// ------------------------------------------------------------------
+function TabLinea() {
+  const [clientes, setClientes] = useState([])
+  const [cargando, setCargando] = useState(true)
+  const [error, setError] = useState('')
+  const [buscar, setBuscar] = useState('')
+  const [editando, setEditando] = useState(null)
+  const [monto, setMonto] = useState('')
+  const [motivo, setMotivo] = useState('')
+  const [guardando, setGuardando] = useState(false)
+
+  async function cargar() {
+    setCargando(true)
+    try {
+      const { data } = await staffApi.get('/staff/credito/linea/clientes')
+      setClientes(data)
+    } catch (err) {
+      setError(err.response?.data?.error || 'No se pudieron cargar los clientes')
+    } finally {
+      setCargando(false)
+    }
+  }
+
+  useEffect(() => {
+    cargar()
+  }, [])
+
+  const filtrados = clientes.filter((c) => {
+    const q = buscar.trim().toLowerCase()
+    if (!q) return true
+    return (
+      (c.nombre || '').toLowerCase().includes(q) ||
+      (c.email || '').toLowerCase().includes(q) ||
+      (c.rif_cedula || '').toLowerCase().includes(q)
+    )
+  })
+
+  function abrirEditar(c) {
+    setEditando(c)
+    setMonto(String(c.linea_credito || ''))
+    setMotivo('')
+    setError('')
+  }
+
+  async function guardar(e) {
+    e.preventDefault()
+    const valor = Number(monto)
+    if (!Number.isFinite(valor) || valor < 0) {
+      setError('Ingresa un monto válido (mayor o igual a 0)')
+      return
+    }
+    setGuardando(true)
+    setError('')
+    try {
+      await staffApi.patch(`/staff/credito/linea/clientes/${editando.id}`, {
+        linea_credito: valor,
+        motivo: motivo.trim() || undefined,
+      })
+      setEditando(null)
+      await cargar()
+    } catch (err) {
+      setError(err.response?.data?.error || 'No se pudo guardar la línea de crédito')
+    } finally {
+      setGuardando(false)
+    }
+  }
+
+  return (
+    <div>
+      <div className="scr-form-row" style={{ marginBottom: 12 }}>
+        <input
+          className="stf-input"
+          placeholder="Buscar por nombre, email o RIF/CI..."
+          value={buscar}
+          onChange={(e) => setBuscar(e.target.value)}
+        />
+      </div>
+
+      {error && <p style={{ color: '#DC2626', marginBottom: 8 }}>{error}</p>}
+      {cargando && <p>Cargando...</p>}
+      {!cargando && (
+        <div className="stf-tabla-wrap">
+          <table className="stf-tabla">
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>Línea actual</th>
+                <th>Deuda total</th>
+                <th>Saldo disponible</th>
+                <th>Estado</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtrados.length === 0 ? (
+                <tr><td colSpan="6">Sin clientes</td></tr>
+              ) : (
+                filtrados.map((c) => (
+                  <tr key={c.id}>
+                    <td>
+                      <div className="stf-cliente-cell">
+                        <strong>{c.nombre}</strong>
+                        <span>{c.email}</span>
+                      </div>
+                    </td>
+                    <td>${formatUSD(c.linea_credito)}</td>
+                    <td style={{ color: c.deuda_total > 0 ? '#DC2626' : 'inherit' }}>
+                      ${formatUSD(c.deuda_total)}
+                    </td>
+                    <td>${formatUSD(c.saldo_disponible)}</td>
+                    <td>
+                      {c.credito_bloqueado
+                        ? <span style={{ color: '#DC2626', fontWeight: 600 }}>Bloqueado</span>
+                        : c.linea_credito > 0
+                          ? <span style={{ color: '#16A34A' }}>Activo</span>
+                          : <span style={{ color: '#6B7280' }}>Sin línea</span>
+                      }
+                    </td>
+                    <td>
+                      <button className="stf-btn stf-btn--small" onClick={() => abrirEditar(c)}>
+                        Editar línea
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {editando && (
+        <div className="stf-modal" onClick={() => setEditando(null)}>
+          <div className="stf-modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3>Línea de crédito — {editando.nombre}</h3>
+            <p style={{ margin: '8px 0 4px' }}>Línea actual: ${formatUSD(editando.linea_credito)} · Deuda: ${formatUSD(editando.deuda_total)}</p>
+            <form onSubmit={guardar}>
+              <div className="stf-form-row" style={{ marginTop: 8 }}>
+                <input
+                  className="stf-input"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  placeholder="Monto de la línea USD"
+                  value={monto}
+                  onChange={(e) => setMonto(e.target.value)}
+                  required
+                  autoFocus
+                />
+              </div>
+              <textarea
+                className="stf-input"
+                placeholder="Motivo (opcional)"
+                value={motivo}
+                onChange={(e) => setMotivo(e.target.value)}
+                rows={2}
+                style={{ marginTop: 8, width: '100%' }}
+              />
+              {error && <p style={{ color: '#DC2626', marginTop: 8 }}>{error}</p>}
+              <div className="stf-acciones" style={{ marginTop: 14 }}>
+                <button className="stf-btn" onClick={() => setEditando(null)} disabled={guardando}>Cancelar</button>
+                <button className="stf-btn stf-btn--primary" type="submit" disabled={guardando}>
+                  {guardando ? 'Guardando...' : 'Guardar línea'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
@@ -657,6 +833,9 @@ function StaffCredito() {
           )}
         </>
       )}
+
+      {/* Tab LÍNEA DE CRÉDITO — aprobar/ajustar línea manualmente */}
+      {tab === 'linea' && <TabLinea />}
 
       {/* Tab COBROS — registrar abonos + historial */}
       {tab === 'cobros' && <TabCobros />}

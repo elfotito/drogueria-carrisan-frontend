@@ -24,6 +24,7 @@ import StaffCredito from './StaffCredito'
 import StaffTesoreria from './StaffTesoreria'
 import StaffReportesFinancieros from './StaffReportesFinancieros'
 import StaffClientes from './StaffClientes'
+import StaffChat from './StaffChat'
 
 export const STAFF_PAGINAS = {
   pedidos: StaffPedidos,
@@ -41,4 +42,5 @@ export const STAFF_PAGINAS = {
   tesoreria: StaffTesoreria,
   'reportes-financieros': StaffReportesFinancieros,
   clientes: StaffClientes,
+  chat: StaffChat,
 }

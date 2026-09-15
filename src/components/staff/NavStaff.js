@@ -12,7 +12,7 @@ import {
   LayoutDashboard, PackageCheck, ClipboardList, ShoppingCart,
   Landmark, TrendingUp, Truck, Receipt, Banknote, CalendarX2,
   Inbox, FileText, Megaphone, MapPin, BadgeDollarSign, Users,
-  Shield, BarChart3,
+  Shield, BarChart3, MessageSquare,
 } from 'lucide-react'
 
 const ROLES_TODOS = ['vendedor', 'despachador', 'almacenista', 'contabilidad', 'administrador', 'director', 'admin']
@@ -120,6 +120,14 @@ export const MODULOS = {
           icono: Users,
           texto: 'Clientes',
           desc: 'Consulta y gestión de clientes',
+          roles: ['vendedor', 'administrador', 'director', 'admin'],
+        },
+        {
+          id: 'chat',
+          to: '/staff/chat',
+          icono: MessageSquare,
+          texto: 'Comunicaciones',
+          desc: 'Mensajes con clientes: conversaciones y respuestas',
           roles: ['vendedor', 'administrador', 'director', 'admin'],
         },
         {

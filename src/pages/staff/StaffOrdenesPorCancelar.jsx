@@ -53,6 +53,19 @@ function StaffOrdenesPorCancelar() {
     }
   }
 
+  async function confirmarPago(orden) {
+    if (!window.confirm(`¿Confirmar que el cliente pagó la orden #${orden.id} (${formatUSD(orden.total_usd)} USD)? El pago se marcará como verificado sin comprobante.`)) return
+    setProcesando(orden.id)
+    try {
+      await staffApi.patch(`/staff/contabilidad/ordenes/${orden.id}/confirmar-pago`)
+      await cargar()
+    } catch (err) {
+      setError(err.response?.data?.error || 'No se pudo confirmar el pago')
+    } finally {
+      setProcesando(null)
+    }
+  }
+
   return (
     <LayoutDepartamento departamento="finanzas" activo="ordenes-por-cancelar" titulo="En espera de pago">
       {error && <p style={{ color: '#DC2626', marginBottom: 8 }}>{error}</p>}
@@ -80,6 +93,14 @@ function StaffOrdenesPorCancelar() {
                   <td>{o.estado_pago === 'reportado' ? 'Pago reportado' : 'Esperando pago'}</td>
                   <td>{formatFecha(o.created_at)}</td>
                   <td>
+                    <button
+                      className="stf-btn stf-btn--small stf-btn--success"
+                      onClick={() => confirmarPago(o)}
+                      disabled={procesando === o.id}
+                      style={{ marginRight: 6 }}
+                    >
+                      {procesando === o.id ? 'Procesando...' : 'Pago verificado'}
+                    </button>
                     <button
                       className="stf-btn stf-btn--small stf-btn--danger"
                       onClick={() => cancelar(o)}
