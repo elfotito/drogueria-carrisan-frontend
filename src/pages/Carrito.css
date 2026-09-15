@@ -8,9 +8,9 @@
 ;
   background: #FFFFFF
 ;
-  padding-bottom: 96px
+padding-bottom: 301px
 ;
- /* espacio para bottombar sticky en mobile */  font-family: 'Inter', sans-serif
+ /* espacio para bottombar sticky en mobile (96px base + 205px para que no tape el cupón) */  font-family: 'Inter', sans-serif
 ;
 }
 .carrito-error 

@@ -76,6 +76,11 @@ export function EnvioProvider({ children }) {
 
   const opcionActual = opcionesEnvio.find(op => op.id === tipoEnvio);
 
+  // El costo de envío solo aplica al delivery (tarifas). Retiro en depósito y
+  // envío nacional NO se cobran al cliente, así que el costo derivado siempre
+  // es 0 para esos tipos aunque `getCostoDelivery` devuelva una tarifa.
+  const costoEnvio = tipoEnvio === 'delivery' ? costoEnvioActual : 0;
+
   // Cargar direcciones según tipo seleccionado
   const cargarDirecciones = useCallback(async (tipo) => {
     if (!tipo || tipo === 'retiro') {
@@ -173,7 +178,7 @@ export function EnvioProvider({ children }) {
     cargarDirecciones,
     guardarDireccion,
     eliminarDireccion,
-    costoEnvio: costoEnvioActual,
+    costoEnvio,
     tarifas
   };
 

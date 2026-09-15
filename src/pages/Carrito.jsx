@@ -348,6 +348,13 @@ function Carrito() {
   // la compra queda bloqueada (solo quitando productos o contactando a la
   // empresa). Sin línea (o con crédito suspendido), se paga de contado.
   const totalConEnvio = total + costoEnvio
+  // El envío solo muestra monto en delivery (tiene tarifas). En retiro y envío
+  // nacional el campo de costo se deja en blanco (no se cobra, aunque el total
+  // lógicamente lo sume como 0).
+  const esDelivery = tipoEnvio === 'delivery'
+  const textoCostoEnvio = esDelivery
+    ? (costoEnvio === 0 ? 'Gratis' : `$${formatUSD(costoEnvio)}`)
+    : ''
   const tieneLineaCredito = lineaCredito > 0
   const creditoHabilitado = tieneLineaCredito && saldoDisponible !== null && ordenesVencidas === 0 && !creditoBloqueado
   const creditoApto = creditoHabilitado && saldoDisponible >= totalConEnvio
@@ -471,8 +478,8 @@ function Carrito() {
 
         <div className="cart-summary__row">
           <span>{opcionActual?.label || 'Envío'}</span>
-          <span className={costoEnvio === 0 ? 'cart-summary__gratis' : ''}>
-            {costoEnvio === 0 ? 'Gratis' : `$${formatUSD(costoEnvio)}`}
+          <span className={esDelivery && costoEnvio === 0 ? 'cart-summary__gratis' : ''}>
+            {textoCostoEnvio}
           </span>
         </div>
 
@@ -623,11 +630,13 @@ function Carrito() {
                           📍 {direccionSeleccionada.nombre}
                         </span>
                       )}
-                      <span className={`delivery-card__badge delivery-card__badge--costo ${
-                        costoEnvio === 0 ? 'delivery-card__badge--gratis' : ''
-                      }`}>
-                        {costoEnvio === 0 ? '✓ Gratis' : `$${costoEnvio.toFixed(2)}`}
-                      </span>
+                      {esDelivery && (
+                        <span className={`delivery-card__badge delivery-card__badge--costo ${
+                          costoEnvio === 0 ? 'delivery-card__badge--gratis' : ''
+                        }`}>
+                          {costoEnvio === 0 ? '✓ Gratis' : `$${costoEnvio.toFixed(2)}`}
+                        </span>
+                      )}
                     </p>
                   )}
                 </div>
@@ -724,9 +733,11 @@ function Carrito() {
           <span className="carrito-bottombar__envio">
             {opcionActual?.icono && <span>{opcionActual.icono}</span>}
             <span>{opcionActual?.label || 'Por seleccionar'}</span>
-            <span className="carrito-bottombar__envio-costo">
-              {costoEnvio === 0 ? 'Gratis' : `$${formatUSD(costoEnvio)}`}
-            </span>
+            {esDelivery && (
+              <span className="carrito-bottombar__envio-costo">
+                {costoEnvio === 0 ? 'Gratis' : `$${formatUSD(costoEnvio)}`}
+              </span>
+            )}
           </span>
         </div>
         <div className="carrito-bottombar__fila carrito-bottombar__fila--total">
