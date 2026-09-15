@@ -1,0 +1,121 @@
+/* ============================================================
+   CategoriasCarruselCatalogo — carrusel compacto de /catalogo.
+   Chips pequeños (icono + nombre) con scroll horizontal y
+   flechas en desktop/tablet. Sin tarjeta "Ver todo".
+   ============================================================ */
+
+.ccc {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0 8px;
+}
+
+.ccc__fila {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scroll-behavior: smooth;
+  padding: 4px 2px;
+  flex: 1;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.ccc__fila::-webkit-scrollbar {
+  display: none;
+}
+
+.ccc__chip {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border: 1px solid #e3e4e5;
+  border-radius: 999px;
+  background: #FFFFFF;
+  color: #14182A;
+  font-family: 'Figtree', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.ccc__chip:hover {
+  background: #EFF4FB;
+  border-color: #B9C9E4;
+}
+
+.ccc__chip:focus-visible {
+  outline: 2px solid #1B4B8F;
+  outline-offset: 2px;
+}
+
+.ccc__chip--activo {
+  background: #1B4B8F;
+  border-color: #1B4B8F;
+  color: #FFFFFF;
+}
+
+.ccc__chip--activo .ccc__chip-icono {
+  color: #FFFFFF;
+}
+
+.ccc__chip--activo:hover {
+  background: #1A4380;
+  border-color: #1A4380;
+}
+
+.ccc__chip-icono {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  color: #1B4B8F;
+}
+
+.ccc__flecha {
+  display: none;
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid #e3e4e5;
+  background: #FFFFFF;
+  color: #14182A;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.ccc__flecha:hover {
+  background: #EFF4FB;
+  border-color: #1B4B8F;
+  color: #1B4B8F;
+}
+
+/* Table/desktop: mostrar flechas y chips un poco más grandes */
+@media (min-width: 768px) {
+  .ccc__flecha {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ccc__chip {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+  }
+
+  .ccc__chip-icono {
+    width: 16px;
+    height: 16px;
+  }
+}

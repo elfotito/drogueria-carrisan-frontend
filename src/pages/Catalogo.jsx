@@ -6,7 +6,7 @@ import ProductCardSkeleton from '../components/Productcardskeleton'
 import BottomNav from '../components/BottomNav'
 import InfiniteScrollLoader from '../components/InfiniteScrollLoader'
 import Footer from '../components/Footer'
-import CategoriasCarrusel from '../components/CategoriasCarrusel'
+import CategoriasCarruselCatalogo from '../components/CategoriasCarruselCatalogo'
 import './Catalogo.css'
 
 const PAGE_SIZE = 24
@@ -204,8 +204,8 @@ useEffect(() => {
 
   return (
     <div className="catalogo-layout">
-      {/* Carrusel de categorías — mismas categorías e iconos que Home, filtra abajo */}
-      <CategoriasCarrusel
+      {/* Carrusel compacto de categorías — chips que filtran la grilla en vivo */}
+      <CategoriasCarruselCatalogo
         categorias={categoriasDisponibles}
         activoId={categoriaActiva}
         onSeleccionar={seleccionarCategoria}

@@ -25,7 +25,11 @@ const EMOJIS_ENVIO = {
   default: '📲'
 };
 
-// Datos de departamentos y sus subcategorías
+// Datos de departamentos y sus subcategorías.
+// Línea Farmacia y Cuidado Personal usan las categorías reales de la tienda
+// (filtro `categoria` del catálogo, ver categoriasTienda.js en backend).
+// Línea Hospitalaria y Material Médico NO se tocan: el dueño las rehará
+// manualmente con categorías propias (uso quirúrgico).
 const DEPARTAMENTOS = [
   {
     id: 'hospitalaria',
@@ -42,10 +46,18 @@ const DEPARTAMENTOS = [
     nombre: 'Línea Farmacia',
     icono: '💊',
     subcategorias: [
-      { nombre: 'Antibióticos', ruta: '/catalogo?departamento=farmacia&categoria=antibioticos' },
-      { nombre: 'Pediátricos', ruta: '/catalogo?departamento=farmacia&categoria=pediatricos' },
-      { nombre: 'Antiflamatorios', ruta: '/catalogo?departamento=farmacia&categoria=antiflamatorios' },
-      { nombre: 'Cremas', ruta: '/catalogo?departamento=farmacia&categoria=cremas' },
+      { nombre: 'Analgésicos y antiinflamatorios', ruta: '/catalogo?categoria=analgesicos' },
+      { nombre: 'Cardiovascular', ruta: '/catalogo?categoria=cardiovascular' },
+      { nombre: 'Antidiabéticos', ruta: '/catalogo?categoria=antidiabeticos' },
+      { nombre: 'Estómago y digestión', ruta: '/catalogo?categoria=digestivo' },
+      { nombre: 'Sistema nervioso', ruta: '/catalogo?categoria=nervioso' },
+      { nombre: 'Alergia', ruta: '/catalogo?categoria=alergia' },
+      { nombre: 'Respiratorio', ruta: '/catalogo?categoria=respiratorio' },
+      { nombre: 'Tos, resfriado y garganta', ruta: '/catalogo?categoria=tos-resfriado' },
+      { nombre: 'Ojos y oídos', ruta: '/catalogo?categoria=ojos-oidos' },
+      { nombre: 'Antiinfecciosos', ruta: '/catalogo?categoria=antiinfecciosos' },
+      { nombre: 'Antiparasitarios', ruta: '/catalogo?categoria=antiparasitarios' },
+      { nombre: 'Hospitalario e insumos', ruta: '/catalogo?categoria=hospitalario' },
     ]
   },
   {
@@ -63,7 +75,10 @@ const DEPARTAMENTOS = [
     nombre: 'Cuidado Personal',
     icono: '🧴',
     subcategorias: [
-      { nombre: 'Cuidado Personal', ruta: '/catalogo?departamento=cuidado-personal' },
+      { nombre: 'Salud femenina', ruta: '/catalogo?categoria=salud-femenina' },
+      { nombre: 'Salud masculina y urológico', ruta: '/catalogo?categoria=salud-masculina' },
+      { nombre: 'Cuidado de la piel', ruta: '/catalogo?categoria=piel' },
+      { nombre: 'Vitaminas y suplementos', ruta: '/catalogo?categoria=vitaminas' },
     ]
   },
 ]
@@ -645,14 +660,12 @@ function Navbar() {
                         </button>
                       ))}
 
-                      {/* Botón "Ver todo" opcional */}
+                      {/* Botón "Ver todo" opcional → catálogo completo */}
                       <button
                         className="deptos-dropdown__sub-link deptos-dropdown__sub-link--ver-todo"
-                        onClick={() => handleSubcategoriaClick(
-                          `/catalogo?departamento=${deptoActivo}`
-                        )}
+                        onClick={() => handleSubcategoriaClick('/catalogo')}
                       >
-                        Ver todo en {DEPARTAMENTOS.find(d => d.id === deptoActivo)?.nombre}
+                        Ver todo el catálogo
                       </button>
                     </div>
                   )}
@@ -730,7 +743,7 @@ function Navbar() {
             <Link to="/ofertas" className="pill-link">Ofertas</Link>
             <Link to="/hospitalaria" className="pill-link">Hospitalaria</Link>
             <Link to="/farmacia" className="pill-link">Farmacia</Link>
-            <Link to="/catalogo?categoria=Pediatrico" className="pill-link">Para niños</Link>
+            <Link to="/catalogo?search=pediatrico" className="pill-link">Para niños</Link>
           </div>
         </nav>
       </header>
