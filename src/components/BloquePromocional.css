@@ -218,3 +218,30 @@
     padding: 26px;
   }
 }
+
+/* ---------- Móvil: en el bento de 1/2 columna los bloques quedan como
+   cuadros proporcionados (texto cabe en tiles angostos) ---------- */
+@media (max-width: 768px) {
+  .bloque-promocional--grande {
+    min-height: 180px;
+  }
+
+  .bloque-promocional__contenido,
+  .bloque-promocional--grande .bloque-promocional__contenido {
+    padding: 14px;
+    gap: 6px;
+  }
+
+  .bloque-promocional__titulo {
+    font-size: 0.95rem;
+    line-height: 1.2;
+  }
+
+  .bloque-promocional--grande .bloque-promocional__titulo {
+    font-size: 1.1rem;
+  }
+
+  .bloque-promocional__subtitulo {
+    font-size: 0.78rem;
+  }
+}

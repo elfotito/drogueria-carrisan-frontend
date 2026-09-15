@@ -20,11 +20,29 @@
 }
 
 /* ---------- Bloques promocionales (grid tipo bento) ---------- */
+/* Móvil: espejo del bento desktop en 2 columnas — los bloques quedan como
+   cuadros/tiles en vez de barras a ancho completo. */
 .home__bloques-promocionales {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas:
+    "a b"
+    "a c"
+    "d e";
   gap: 12px;
   padding: 20px 20px 0;
+}
+
+.home__bloque-a { grid-area: a; }
+.home__bloque-b { grid-area: b; }
+.home__bloque-c { grid-area: c; }
+.home__bloque-e { grid-area: e; }
+.home__bloque-d { grid-area: d; }
+
+/* En el bento el grid-area define filas/columnas; anulamos el `span 2` que
+   trae `grande` por defecto para que nunca fuerce filas fuera del template. */
+.home__bloques-promocionales .bloque-promocional--grande {
+  grid-row: auto;
 }
 
 /* ---------- Vitrina: carruseles + ads ---------- */
@@ -98,12 +116,6 @@
     padding: 32px 0 0;
     border-top: 1px solid rgba(35, 43, 69, 0.08);
   }
-
-  .home__bloque-a { grid-area: a; }
-  .home__bloque-b { grid-area: b; }
-  .home__bloque-c { grid-area: c; }
-  .home__bloque-e { grid-area: e; }
-  .home__bloque-d { grid-area: d; }
 
 
   .home__ads-pair {
