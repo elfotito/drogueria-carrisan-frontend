@@ -21,7 +21,6 @@ function PagosAdmin() {
   const [error, setError] = useState('')
   const [filtroEstado, setFiltroEstado] = useState('pendiente_verificacion')
   const [reporteAbierto, setReporteAbierto] = useState(null)
-  const [numeroFactura, setNumeroFactura] = useState('')
   const [notaRechazo, setNotaRechazo] = useState('')
   const [accionEnCurso, setAccionEnCurso] = useState(null) // 'verificar' | 'rechazar' | null
   const [procesando, setProcesando] = useState(false)
@@ -57,7 +56,6 @@ function PagosAdmin() {
   function abrirVerificar(reporte) {
     setReporteAbierto(reporte)
     setAccionEnCurso('verificar')
-    setNumeroFactura('')
   }
 
   function abrirRechazar(reporte) {
@@ -72,16 +70,10 @@ function PagosAdmin() {
   }
 
   async function confirmarVerificar() {
-    if (!numeroFactura.trim()) {
-      setError('Debes indicar el número de factura')
-      return
-    }
     setProcesando(true)
     setError('')
     try {
-      await api.patch(`/reportes-pago/${reporteAbierto.id}/verificar`, {
-        numero_factura: numeroFactura.trim(),
-      })
+      await api.patch(`/reportes-pago/${reporteAbierto.id}/verificar`)
       cerrarModal()
       await cargarReportes()
     } catch (err) {
@@ -245,24 +237,15 @@ function PagosAdmin() {
             <div className="pagos-modal-body">
               <h3>Verificar pago #{reporteAbierto.id}</h3>
               <p className="pagos-modal-info">
-                Esto creará la factura y el pago automáticamente, y avanzará la(s) orden(es){' '}
+                Se confirmará el pago y avanzará la(s) orden(es){' '}
                 {reporteAbierto.reporte_pago_ordenes?.map(v => `#${v.orden_id}`).join(', ')} a "Preparando".
+                La factura o recibo de cobro se genera aparte en Facturación.
               </p>
-              <div className="input-group">
-                <label>Número de factura *</label>
-                <input
-                  type="text"
-                  value={numeroFactura}
-                  onChange={(e) => setNumeroFactura(e.target.value)}
-                  placeholder="Ej: 00123"
-                  autoFocus
-                />
-              </div>
               {error && <p className="pagos-modal-error">{error}</p>}
               <div className="form-actions" style={{ marginTop: '1.5rem' }}>
                 <button className="btn-refrescar" onClick={cerrarModal} disabled={procesando}>Cancelar</button>
                 <button className="btn-primary" onClick={confirmarVerificar} disabled={procesando}>
-                  {procesando ? 'Verificando...' : 'Confirmar y generar factura'}
+                  {procesando ? 'Verificando...' : 'Confirmar pago'}
                 </button>
               </div>
             </div>
