@@ -1,15 +1,16 @@
 import { createContext, useContext, useState, useEffect } from 'react'
+import { safeGetItem, safeSetItem } from '../utils/safeStorage'
 
 const CartContext = createContext()
 
 export function CartProvider({ children }) {
   const [items, setItems] = useState(() => {
-    const guardado = localStorage.getItem('carrito')
+    const guardado = safeGetItem('carrito')
     return guardado ? JSON.parse(guardado) : []
   })
 
   useEffect(() => {
-    localStorage.setItem('carrito', JSON.stringify(items))
+    safeSetItem('carrito', JSON.stringify(items))
   }, [items])
 
   function addItem(producto, cantidad = 1) {

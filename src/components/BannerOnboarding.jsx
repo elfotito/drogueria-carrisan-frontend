@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Download, Bell, X } from 'lucide-react'
 import { usePush } from '../hooks/usePush'
+import { safeGetItem, safeSetItem } from '../utils/safeStorage'
 
 const STORAGE_KEYDismiss = 'carrisan_banner_onboarding_dismissed'
 
@@ -14,7 +15,7 @@ export default function BannerOnboarding() {
   const { soportado, suscrito, permiso, pidiendoPermiso, activar } = usePush()
 
   useEffect(() => {
-    if (yaInstalado() || localStorage.getItem(STORAGE_KEYDismiss) === '1') return
+    if (yaInstalado() || safeGetItem(STORAGE_KEYDismiss) === '1') return
 
     function onBeforeInstall(e) {
       e.preventDefault()
@@ -35,7 +36,7 @@ export default function BannerOnboarding() {
     if (visible && suscrito && deferredPrompt === null) {
       const timer = setTimeout(() => {
         setVisible(false)
-        localStorage.setItem(STORAGE_KEYDismiss, '1')
+        safeSetItem(STORAGE_KEYDismiss, '1')
       }, 3000)
       return () => clearTimeout(timer)
     }
@@ -49,7 +50,7 @@ export default function BannerOnboarding() {
     const { outcome } = await deferredPrompt.userChoice
     setDeferredPrompt(null)
     if (outcome === 'accepted') {
-      localStorage.setItem(STORAGE_KEYDismiss, '1')
+      safeSetItem(STORAGE_KEYDismiss, '1')
       setVisible(false)
     }
   }
@@ -60,7 +61,7 @@ export default function BannerOnboarding() {
 
   function handleCerrar() {
     setVisible(false)
-    localStorage.setItem(STORAGE_KEYDismiss, '1')
+    safeSetItem(STORAGE_KEYDismiss, '1')
   }
 
   const showInstalar = deferredPrompt && !yaInstalado()

@@ -25,6 +25,7 @@ import {
   Tooltip
 } from 'recharts';
 import { exportToExcel, exportToPdf } from '../../utils/exportUtils';
+import { safeGetItem } from '../../utils/safeStorage';
 
 const AZUL = '#0052DC';
 const INDIGO = '#1A1A3A';
@@ -62,7 +63,7 @@ export default function AnalyticsVentas() {
 
   useEffect(() => {
     let activo = true;
-    const token = localStorage.getItem('token');
+    const token = safeGetItem('token');
     const params = new URLSearchParams({ desde, hasta, agrupacion });
     fetch(`${import.meta.env.VITE_API_URL}/admin/analytics/ventas?${params}`, {
       headers: { Authorization: `Bearer ${token}` }

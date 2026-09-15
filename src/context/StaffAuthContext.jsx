@@ -1,6 +1,7 @@
 import { createContext, useContext, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import staffApi from '../api/staffAxios';
+import { safeGetItem, safeSetItem, safeRemoveItem } from '../utils/safeStorage';
 
 const StaffAuthContext = createContext();
 
@@ -15,16 +16,16 @@ function isTokenValid(token) {
 }
 
 export function StaffAuthProvider({ children }) {
-  const [token, setToken] = useState(() => localStorage.getItem('staff_token'));
+  const [token, setToken] = useState(() => safeGetItem('staff_token'));
   const [staff, setStaff] = useState(() => {
     if (!token) return null;
     if (!isTokenValid(token)) {
-      localStorage.removeItem('staff_token');
-      localStorage.removeItem('staff_user');
+      safeRemoveItem('staff_token');
+      safeRemoveItem('staff_user');
       return null;
     }
     try {
-      const guardado = localStorage.getItem('staff_user');
+      const guardado = safeGetItem('staff_user');
       if (guardado) {
         try { return JSON.parse(guardado); } catch { return jwtDecode(token); }
       }
@@ -39,8 +40,8 @@ export function StaffAuthProvider({ children }) {
   // login y también el registro staff (el backend devuelve token+staff y
   // así se evita un doble POST).
   function iniciarSesionConDatos({ token, staff }) {
-    localStorage.setItem('staff_token', token);
-    localStorage.setItem('staff_user', JSON.stringify(staff));
+    safeSetItem('staff_token', token);
+    safeSetItem('staff_user', JSON.stringify(staff));
     setToken(token);
     setStaff(staff);
     return staff;
@@ -52,8 +53,8 @@ export function StaffAuthProvider({ children }) {
   }
 
   function logoutStaff() {
-    localStorage.removeItem('staff_token');
-    localStorage.removeItem('staff_user');
+    safeRemoveItem('staff_token');
+    safeRemoveItem('staff_user');
     setToken(null);
     setStaff(null);
   }

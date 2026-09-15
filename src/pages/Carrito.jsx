@@ -305,9 +305,9 @@ function Carrito() {
 
   const [tasaVes, setTasaVes] = useState(null)
   const [saldoDisponible, setSaldoDisponible] = useState(null)
+  const [lineaCredito, setLineaCredito] = useState(0)
   const [ordenesVencidas, setOrdenesVencidas] = useState(0)
   const [creditoBloqueado, setCreditoBloqueado] = useState(false)
-  const [formaPago, setFormaPago] = useState('contado')
   const [error, setError] = useState('')
   const [envioExpandido, setEnvioExpandido] = useState(false)
   const [ofertas, setOfertas] = useState([])
@@ -336,11 +336,24 @@ function Carrito() {
       .get(`/clientes/${user.id}/estado-cuenta`)
       .then((res) => {
         setSaldoDisponible(res.data.resumen.saldo)
+        setLineaCredito(res.data.resumen.linea_credito || 0)
         setOrdenesVencidas(res.data.resumen.cantidad_ordenes_vencidas || 0)
         setCreditoBloqueado(res.data.resumen.credito_bloqueado || false)
       })
       .catch(() => setSaldoDisponible(null))
   }, [user?.id])
+
+  // Condición comercial auto-decidida: si el cliente tiene línea de crédito
+  // y el saldo cubre el pedido, la compra va a crédito; si lo sobrepasa,
+  // la compra queda bloqueada (solo quitando productos o contactando a la
+  // empresa). Sin línea (o con crédito suspendido), se paga de contado.
+  const totalConEnvio = total + costoEnvio
+  const tieneLineaCredito = lineaCredito > 0
+  const creditoHabilitado = tieneLineaCredito && saldoDisponible !== null && ordenesVencidas === 0 && !creditoBloqueado
+  const creditoApto = creditoHabilitado && saldoDisponible >= totalConEnvio
+  const superaLineaCredito = creditoHabilitado && saldoDisponible < totalConEnvio
+  const excedente = superaLineaCredito && saldoDisponible !== null ? totalConEnvio - saldoDisponible : 0
+  const formaPago = creditoApto ? 'credito' : 'contado'
 
   useEffect(() => {
     const opcionActual = opcionesEnvio?.find(op => op.id === tipoEnvio)
@@ -385,6 +398,11 @@ function Carrito() {
   function handleConfirmar() {
     setError('')
 
+    if (superaLineaCredito) {
+      setError('Superó su línea de crédito. Ajusta el monto de tu pedido o contacta a la empresa.')
+      return
+    }
+
     if (opcionActual?.requiereDireccion && !direccionSeleccionada) {
       setError('Debes seleccionar una dirección de entrega')
       setEnvioExpandido(true)
@@ -424,22 +442,7 @@ function Carrito() {
   }
 
   const cantidadArticulos = items.reduce((acc, item) => acc + item.cantidad, 0)
-  const totalConEnvio = total + costoEnvio
   const totalVes = tasaVes ? totalConEnvio * tasaVes : null
-
-  // El crédito solo se ofrece si el usuario tiene saldo suficiente para
-  // cubrir el total actual del carrito (incluyendo envío) Y no tiene
-  // órdenes vencidas pendientes de pago. Si el carrito cambia y deja de
-  // alcanzar (o aparece una orden vencida), volvemos automáticamente a
-  // 'contado' para no dejar seleccionada una opción que el backend
-  // rechazaría.
-  const creditoDisponible = saldoDisponible !== null && saldoDisponible >= totalConEnvio && ordenesVencidas === 0 && !creditoBloqueado
-
-  useEffect(() => {
-    if (formaPago === 'credito' && !creditoDisponible) {
-      setFormaPago('contado')
-    }
-  }, [creditoDisponible, formaPago])
 
 
   if (items.length === 0) {
@@ -490,6 +493,19 @@ function Carrito() {
           </div>
         </div>
 
+        {superaLineaCredito && (
+          <div className="cart-condicion-bloqueada">
+            <span className="cart-condicion-bloqueada__icono">⛔</span>
+            <div>
+              <strong>Superó su línea de crédito</strong>
+              <p>
+                Este pedido excede tu saldo disponible en <strong>${formatUSD(excedente)}</strong>. Ajusta el carrito o
+                comunícate con la empresa para ampliar tu línea.
+              </p>
+            </div>
+          </div>
+        )}
+
         {creditoBloqueado && (
           <div className="cart-alerta-vencidas">
             <span className="cart-alerta-vencidas__icono">⚠️</span>
@@ -512,29 +528,22 @@ function Carrito() {
           </div>
         )}
 
-        {creditoDisponible && (
-          <div className="cart-forma-pago">
-            <p className="cart-forma-pago__titulo">¿Cómo quieres pagar?</p>
-            <div className="cart-forma-pago__opciones">
-              <button
-                type="button"
-                className={`cart-forma-pago__opcion ${formaPago === 'contado' ? 'cart-forma-pago__opcion--activa' : ''}`}
-                onClick={() => setFormaPago('contado')}
-              >
-                <span className="cart-forma-pago__opcion-titulo">De contado</span>
-                <span className="cart-forma-pago__opcion-desc">Reportas tu pago cuando confirmemos el pedido</span>
-              </button>
-              <button
-                type="button"
-                className={`cart-forma-pago__opcion ${formaPago === 'credito' ? 'cart-forma-pago__opcion--activa' : ''}`}
-                onClick={() => setFormaPago('credito')}
-              >
-                <span className="cart-forma-pago__opcion-titulo">Con mi línea de crédito</span>
+        <div className="cart-forma-pago">
+          <p className="cart-forma-pago__titulo">Condición Comercial</p>
+          <div className="cart-forma-pago__opciones">
+            {creditoApto ? (
+              <div className="cart-forma-pago__opcion cart-forma-pago__opcion--activa cart-forma-pago__opcion--fija">
+                <span className="cart-forma-pago__opcion-titulo">Mi Línea de Crédito</span>
                 <span className="cart-forma-pago__opcion-desc">Saldo disponible: ${formatUSD(saldoDisponible)}</span>
-              </button>
-            </div>
+              </div>
+            ) : (
+              <div className="cart-forma-pago__opcion cart-forma-pago__opcion--activa cart-forma-pago__opcion--fija">
+                <span className="cart-forma-pago__opcion-titulo">Contado</span>
+                <span className="cart-forma-pago__opcion-desc">Debes cancelar el pedido cuando esté confirmado para su entrega</span>
+              </div>
+            )}
           </div>
-        )}
+        </div>
 
         {error && <p className="carrito-error carrito-error--sidebar">{error}</p>}
 
@@ -542,6 +551,7 @@ function Carrito() {
           type="button"
           className="carrito-bottombar__cta carrito-bottombar__cta--sidebar"
           onClick={handleConfirmar}
+          disabled={superaLineaCredito}
         >
           Confirmar pedido
         </button>
@@ -702,6 +712,9 @@ function Carrito() {
 
       {/* 🆕 Barra inferior SOLO para móvil */}
       <div className="carrito-bottombar carrito-bottombar--mobile">
+        {superaLineaCredito && (
+          <span className="carrito-bottombar__bloqueo">Superó su línea de crédito</span>
+        )}
         <div className="carrito-bottombar__total">
           <span className="carrito-bottombar__label">Total estimado</span>
           <span className="carrito-bottombar__value">${formatUSD(totalConEnvio)}</span>
@@ -710,6 +723,7 @@ function Carrito() {
           type="button"
           className="carrito-bottombar__cta"
           onClick={handleConfirmar}
+          disabled={superaLineaCredito}
         >
           Confirmar pedido
         </button>

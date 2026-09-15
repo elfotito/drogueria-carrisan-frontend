@@ -9,6 +9,7 @@ import { ChevronDown, Filter, CheckCheck } from 'lucide-react'
 import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
 import { NAV_NOTIFICACIONES } from '../components/paginas-principales/NavNotificaciones'
 import api from '../api/axios'
+import { safeGetItem, safeSetItem } from '../utils/safeStorage'
 import {
   CATEGORIAS,
   ORDEN_CATEGORIAS,
@@ -28,7 +29,7 @@ const CLAVE_SILENCIADAS = 'notif_categorias_silenciadas'
 
 function leerSilenciadas() {
   try {
-    return JSON.parse(localStorage.getItem(CLAVE_SILENCIADAS)) || []
+    return JSON.parse(safeGetItem(CLAVE_SILENCIADAS)) || []
   } catch {
     return []
   }
@@ -155,7 +156,7 @@ function Notificaciones() {
       ? [...silenciadas, categoriaId]
       : silenciadas.filter((c) => c !== categoriaId)
     setSilenciadas(nuevas)
-    localStorage.setItem(CLAVE_SILENCIADAS, JSON.stringify(nuevas))
+    safeSetItem(CLAVE_SILENCIADAS, JSON.stringify(nuevas))
   }
 
   function handleClick(notificacion) {

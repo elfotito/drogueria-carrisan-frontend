@@ -1,6 +1,7 @@
 import { createContext, useContext, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import api from '../api/axios';
+import { safeGetItem, safeSetItem, safeRemoveItem } from '../utils/safeStorage';
 
 const AuthContext = createContext();
 
@@ -16,13 +17,13 @@ function isTokenValid(token) {
 }
 
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState(() => localStorage.getItem('token'));
+  const [token, setToken] = useState(() => safeGetItem('token'));
   const [user, setUser] = useState(() => {
     if (!token) return null;
     try {
       const decoded = jwtDecode(token);
       if (decoded.exp * 1000 < Date.now()) return null;
-      const savedUser = localStorage.getItem('user');
+      const savedUser = safeGetItem('user');
       if (savedUser) {
         try { return JSON.parse(savedUser); } catch { return decoded; }
       }
@@ -45,8 +46,8 @@ export function AuthProvider({ children }) {
   async function login(email, password) {
     const { data } = await api.post('/auth/login', { email, password });
 
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('user', JSON.stringify(data.user));
+    safeSetItem('token', data.token);
+    safeSetItem('user', JSON.stringify(data.user));
 
     setToken(data.token);
     setUser(data.user);
@@ -57,8 +58,8 @@ export function AuthProvider({ children }) {
   }
 
   function logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    safeRemoveItem('token');
+    safeRemoveItem('user');
     setToken(null);
     setUser(null);
     setTokenExpirado(false);

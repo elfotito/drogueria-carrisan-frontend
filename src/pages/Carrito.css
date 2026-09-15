@@ -1799,3 +1799,86 @@
 ;
 }
 }
+
+/* ---------- Condición Comercial ---------- */
+.cart-forma-pago__opcion--fija 
+{
+ cursor: default
+;
+}
+.cart-condicion-bloqueada 
+{
+ display: flex
+;
+ align-items: flex-start
+;
+ gap: 10px
+;
+ background: #FDECEC
+;
+ border: 1px solid #F5C6C6
+;
+ border-radius: 10px
+;
+ padding: 12px
+;
+ margin: 12px 0
+;
+}
+.cart-condicion-bloqueada__icono 
+{
+ font-size: 1.2rem
+;
+ flex-shrink: 0
+;
+ margin-top: 1px
+;
+}
+.cart-condicion-bloqueada strong 
+{
+ font-family: 'Manrope', sans-serif
+;
+ font-weight: 700
+;
+ font-size: 0.82rem
+;
+ color: #B32727
+;
+ display: block
+;
+ margin-bottom: 4px
+;
+}
+.cart-condicion-bloqueada p 
+{
+ font-size: 0.75rem
+;
+ color: #5B6270
+;
+ margin: 0
+;
+ line-height: 1.4
+;
+}
+.carrito-bottombar__cta:disabled 
+{
+ opacity: 0.55
+;
+ cursor: not-allowed
+;
+}
+.carrito-bottombar__bloqueo 
+{
+ display: block
+;
+ font-size: 0.7rem
+;
+ font-weight: 700
+;
+ color: #B32727
+;
+ text-align: center
+;
+ padding: 0 12px 8px
+;
+}

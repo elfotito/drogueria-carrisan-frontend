@@ -4,6 +4,7 @@ import { Menu, X, ChevronRight, LogOut, LayoutDashboard, ShieldCheck } from 'luc
 import { useStaffAuth } from '../../context/StaffAuthContext'
 import staffApi from '../../api/staffAxios'
 import { DEPARTAMENTOS, MODULOS, ROLES_BRIDGE_ADMIN } from './NavStaff'
+import { safeSetItem } from '../../utils/safeStorage'
 import './LayoutDepartamento.css'
 
 // ---------------------------------------------------------------
@@ -53,8 +54,8 @@ function LayoutDepartamento({ departamento, activo, titulo, children }) {
     setEntrandoAAdmin(true)
     try {
       const { data } = await staffApi.post('/staff/admin-bridge')
-      localStorage.setItem('token', data.token)
-      localStorage.setItem('user', JSON.stringify(data.user))
+      safeSetItem('token', data.token)
+      safeSetItem('user', JSON.stringify(data.user))
       window.location.href = '/admin'
     } catch {
       setEntrandoAAdmin(false)

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { safeGetItem, safeRemoveItem } from '../utils/safeStorage';
 
 // Instancia separada de la de clientes: usa su propio token
 // ('staff_token') y su propio flujo de sesión vencida. Así un mismo
@@ -9,7 +10,7 @@ const staffApi = axios.create({
 });
 
 staffApi.interceptors.request.use((config) => {
-  const token = localStorage.getItem('staff_token');
+  const token = safeGetItem('staff_token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -23,8 +24,8 @@ staffApi.interceptors.response.use(
     const esRequestDeLogin = error.config?.url?.includes('/staff/login');
 
     if (esNoAutorizado && !esRequestDeLogin) {
-      localStorage.removeItem('staff_token');
-      localStorage.removeItem('staff_user');
+      safeRemoveItem('staff_token');
+      safeRemoveItem('staff_user');
       if (!window.location.pathname.startsWith('/staff/login')) {
         window.location.href = '/staff/login?expirado=1';
       }

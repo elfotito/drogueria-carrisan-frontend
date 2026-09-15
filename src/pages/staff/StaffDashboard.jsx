@@ -4,6 +4,7 @@ import { LogOut, ShieldCheck, ArrowRight, Landmark } from 'lucide-react'
 import { useStaffAuth } from '../../context/StaffAuthContext'
 import staffApi from '../../api/staffAxios'
 import { DEPARTAMENTOS, MODULOS, ROLES_BRIDGE_ADMIN } from '../../components/staff/NavStaff'
+import { safeSetItem } from '../../utils/safeStorage'
 import './StaffDashboard.css'
 
 const ICONOS_MAPA = {}
@@ -40,8 +41,8 @@ function StaffDashboard() {
     setEntrandoAAdmin(true)
     try {
       const { data } = await staffApi.post('/staff/admin-bridge')
-      localStorage.setItem('token', data.token)
-      localStorage.setItem('user', JSON.stringify(data.user))
+      safeSetItem('token', data.token)
+      safeSetItem('user', JSON.stringify(data.user))
       window.location.href = '/admin'
     } catch (err) {
       setErrorBridge(err.response?.data?.error || 'No se pudo entrar al panel administrativo')

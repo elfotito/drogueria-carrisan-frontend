@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { safeGetItem, safeRemoveItem } from '../utils/safeStorage';
 
 let loadingBarHooks = { start: () => {}, finish: () => {} }
 export function registerLoadingBar(hooks) { loadingBarHooks = hooks }
@@ -17,7 +18,7 @@ api.interceptors.response.use(
 )
 // Interceptor: agrega el token JWT automáticamente a cada request si existe
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
+  const token = safeGetItem('token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -39,7 +40,7 @@ api.interceptors.response.use(
     const esRequestDeLogin = error.config?.url?.includes('/auth/login');
 
     if (esNoAutorizado && !esRequestDeLogin) {
-      localStorage.removeItem('token');
+      safeRemoveItem('token');
       if (!window.location.pathname.startsWith('/login')) {
         window.location.href = '/login?expirado=1';
       }

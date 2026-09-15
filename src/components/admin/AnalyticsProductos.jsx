@@ -6,6 +6,7 @@ import {
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip
 } from 'recharts';
 import { exportToExcel, exportToPdf } from '../utils/exportUtils';
+import { safeGetItem } from '../../utils/safeStorage';
 
 const AZUL = '#0052DC';
 
@@ -38,7 +39,7 @@ export default function EstadisticasProductos() {
 
   useEffect(() => {
     let activo = true;
-    const token = localStorage.getItem('token');
+    const token = safeGetItem('token');
     const params = new URLSearchParams({ desde, hasta, limite: '10' });
     fetch(`${import.meta.env.VITE_API_URL}/admin/analytics/productos?${params}`, {
       headers: { Authorization: `Bearer ${token}` }

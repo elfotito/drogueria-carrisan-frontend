@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import './CookieConsent.css'
+import { safeGetItem, safeSetItem } from '../utils/safeStorage'
 
 const STORAGE_KEY = 'cookies_consent'
 
@@ -8,7 +9,7 @@ function CookieConsent() {
   const [saliendo, setSaliendo] = useState(false)
 
   useEffect(() => {
-    const yaRespondio = localStorage.getItem(STORAGE_KEY)
+    const yaRespondio = safeGetItem(STORAGE_KEY)
     if (!yaRespondio) {
       // pequeño delay para que la animación de entrada se note (no aparece de golpe al cargar)
       const timer = setTimeout(() => setVisible(true), 600)
@@ -17,7 +18,7 @@ function CookieConsent() {
   }, [])
 
   const responder = (valor) => {
-    localStorage.setItem(
+    safeSetItem(
       STORAGE_KEY,
       JSON.stringify({ estado: valor, fecha: new Date().toISOString() })
     )
