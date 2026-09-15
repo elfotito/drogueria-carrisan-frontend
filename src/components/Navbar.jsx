@@ -39,6 +39,7 @@ const DEPARTAMENTOS = [
       { nombre: 'Anestesia', ruta: '/catalogo?departamento=hospitalaria&categoria=anestesia' },
       { nombre: 'Antibióticos', ruta: '/catalogo?departamento=hospitalaria&categoria=antibioticos' },
       { nombre: 'Soluciones', ruta: '/catalogo?departamento=hospitalaria&categoria=soluciones' },
+      { nombre: 'Hospitalario e insumos', ruta: '/catalogo?categoria=hospitalario' },
     ]
   },
   {
@@ -57,7 +58,6 @@ const DEPARTAMENTOS = [
       { nombre: 'Ojos y oídos', ruta: '/catalogo?categoria=ojos-oidos' },
       { nombre: 'Antiinfecciosos', ruta: '/catalogo?categoria=antiinfecciosos' },
       { nombre: 'Antiparasitarios', ruta: '/catalogo?categoria=antiparasitarios' },
-      { nombre: 'Hospitalario e insumos', ruta: '/catalogo?categoria=hospitalario' },
     ]
   },
   {
@@ -660,12 +660,24 @@ function Navbar() {
                         </button>
                       ))}
 
-                      {/* Botón "Ver todo" opcional → catálogo completo */}
+                      {/* Botón "Ver todo" opcional → catálogo completo.
+                          En Línea Hospitalaria apunta a la categoría real `hospitalario`;
+                          en Línea Farmacia al filtro `linea=farmacia`. */}
                       <button
                         className="deptos-dropdown__sub-link deptos-dropdown__sub-link--ver-todo"
-                        onClick={() => handleSubcategoriaClick('/catalogo')}
+                        onClick={() => handleSubcategoriaClick(
+                          deptoActivo === 'hospitalaria'
+                            ? '/catalogo?categoria=hospitalario'
+                            : deptoActivo === 'farmacia'
+                              ? '/catalogo?linea=farmacia'
+                              : '/catalogo'
+                        )}
                       >
-                        Ver todo el catálogo
+                        {deptoActivo === 'hospitalaria'
+                          ? 'Ver toda la línea hospitalaria'
+                          : deptoActivo === 'farmacia'
+                            ? 'Ver toda la línea farmacia'
+                            : 'Ver todo el catálogo'}
                       </button>
                     </div>
                   )}

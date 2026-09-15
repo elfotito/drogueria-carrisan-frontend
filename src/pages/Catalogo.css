@@ -543,7 +543,7 @@
   z-index: 190;
 }
 
-.catalogo-filtros-modal {
+.cfm-sheet {
   display: none;
 }
 
@@ -552,74 +552,390 @@
     display: block;
   }
 
-  .catalogo-filtros-modal {
+  /* Bottom sheet propio de móvil: grip + título con contador, cuerpo scrollable
+     como tarjetas, y barra de acción fija con "Aplicar (n)". Nada que ver con el
+     sidebar desktop (acordeones finos). */
+  .cfm-sheet {
     display: flex;
     flex-direction: column;
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    max-height: 85vh;
+    max-height: 88vh;
     background: #FFFFFF;
-    border-radius: 20px 20px 0 0;
+    border-radius: 24px 24px 0 0;
     z-index: 200;
-    padding: 20px 20px 32px;
-    overflow-y: auto;
-    animation: catalogo-modal-slideup 0.25s ease-out;
+    box-shadow: 0 -12px 40px rgba(20, 24, 42, 0.16);
+    animation: catalogo-modal-slideup 0.28s cubic-bezier(0.32, 0.72, 0, 1);
   }
 
-  .catalogo-filtros-modal__header {
+  .cfm-sheet__grip {
+    flex: 0 0 auto;
+    width: 44px;
+    height: 5px;
+    border-radius: 999px;
+    background: #E3E6EC;
+    margin: 10px auto 6px;
+  }
+
+  .cfm-sheet__header {
+    flex: 0 0 auto;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    font-weight: 700;
-    font-size: 1rem;
-    margin-bottom: 16px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid #e3e4e5;
+    justify-content: space-between;
+    padding: 4px 20px 12px;
   }
 
-  .catalogo-filtros-modal__header button {
-    background: none;
+  .cfm-sheet__titulo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 800;
+    font-size: 1.15rem;
+    color: #14182A;
+  }
+
+  .cfm-sheet__contador {
+    min-width: 22px;
+    height: 22px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: #1B4B8F;
+    color: #FFFFFF;
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .cfm-sheet__cerrar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
     border: none;
-    font-size: 1.1rem;
+    background: #F3F5F8;
+    color: #5B6270;
+    font-size: 1rem;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .cfm-sheet__cerrar:active {
+    background: #E8EBF0;
+  }
+
+  .cfm-sheet__body {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 0 20px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Tarjeta de sección */
+  .cfm-seccion {
+    background: #F6F8FB;
+    border-radius: 16px;
+    padding: 14px;
+  }
+
+  .cfm-seccion__titulo {
+    margin: 0 0 10px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
     color: #5B6270;
   }
 
-  .catalogo-filtros-modal .btn-limpiar-filtros {
-    margin-bottom: 12px;
-  }
-
-  .catalogo-filtros-modal__apply {
+  .cfm-seccion__head {
     width: 100%;
-    margin-top: 20px;
-    padding: 14px;
-    background: #1B4B8F;
-    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    background: none;
     border: none;
-    border-radius: 12px;
+    padding: 0;
+    font-size: 0.98rem;
     font-weight: 700;
-    font-size: 0.9rem;
+    color: #14182A;
     cursor: pointer;
   }
 
-  .catalogo-filtros-modal__apply:hover {
-    background: #163c72;
+  .cfm-seccion__head:not(.cfm-seccion__head--fila) {
+    margin-bottom: 2px;
   }
 
-  .filtro-seccion__titulo {
-    display: block;
+  .cfm-seccion__label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-align: left;
+  }
+
+  .cfm-seccion__contador {
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: #1B4B8F;
+    color: #FFFFFF;
+    font-size: 0.7rem;
     font-weight: 700;
-    font-size: 1rem;
-    color: #1a1a1a;
-    margin-bottom: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  .catalogo-sort-modal-options {
+  .cfm-seccion__chevron {
+    flex: 0 0 auto;
+    color: #8A90A0;
+    transition: transform 0.18s ease;
+  }
+
+  .cfm-seccion__chevron--abierto {
+    transform: rotate(180deg);
+  }
+
+  .cfm-seccion__contenido {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .cfm-seccion__vacio {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #8A90A0;
+  }
+
+  .cfm-seccion__nota {
+    margin: 8px 0 0;
+    font-size: 0.82rem;
+    color: #5B6270;
+  }
+
+  /* Ordenar por — filas grandes tipo radio */
+  .cfm-sort {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .cfm-sort__opcion {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: none;
+    border: none;
+    padding: 8px 4px;
+    font-size: 0.92rem;
+    color: #232B45;
+    cursor: pointer;
+    text-align: left;
+    border-radius: 8px;
+  }
+
+  .cfm-sort__opcion--activa {
+    color: #1B4B8F;
+    font-weight: 700;
+  }
+
+  .cfm-sort__radio {
+    flex: 0 0 auto;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #C7CBD6;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.15s ease;
+  }
+
+  .cfm-sort__opcion--activa .cfm-sort__radio {
+    border-color: #1B4B8F;
+  }
+
+  .cfm-sort__radio-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #1B4B8F;
+  }
+
+  /* Chips seleccionables grandes (Laboratorio / Forma) */
+  .cfm-chips {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
+  }
+
+  .cfm-chip {
+    padding: 9px 14px;
+    border-radius: 999px;
+    border: 1.5px solid #D7DBE3;
+    background: #FFFFFF;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #232B45;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .cfm-chip--activo {
+    background: #1B4B8F;
+    border-color: #1B4B8F;
+    color: #FFFFFF;
+  }
+
+  .cfm-chip:active {
+    transform: scale(0.97);
+  }
+
+  /* Input de principio activo */
+  .cfm-input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid #D7DBE3;
+    border-radius: 12px;
+    background: #FFFFFF;
+    font-size: 0.9rem;
+    font-family: inherit;
+    color: #14182A;
+    outline: none;
+  }
+
+  .cfm-input:focus {
+    border-color: #1B4B8F;
+    box-shadow: 0 0 0 3px rgba(27, 75, 143, 0.12);
+  }
+
+  .cfm-input::placeholder {
+    color: #8A90A0;
+  }
+
+  /* Switch de disponibilidad */
+  .cfm-switch {
+    position: relative;
+    display: inline-flex;
+    flex: 0 0 auto;
+    cursor: pointer;
+  }
+
+  .cfm-switch input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .cfm-switch__track {
+    width: 46px;
+    height: 27px;
+    border-radius: 999px;
+    background: #D7DBE3;
+    position: relative;
+    transition: background 0.2s ease;
+  }
+
+  .cfm-switch__track::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 21px;
+    height: 21px;
+    border-radius: 50%;
+    background: #FFFFFF;
+    box-shadow: 0 1px 3px rgba(20, 24, 42, 0.25);
+    transition: transform 0.2s ease;
+  }
+
+  .cfm-switch input:checked + .cfm-switch__track {
+    background: #1B4B8F;
+  }
+
+  .cfm-switch input:checked + .cfm-switch__track::after {
+    transform: translateX(19px);
+  }
+
+  /* Rango de precio */
+  .cfm-precio {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .cfm-precio input {
+    flex: 1;
+    min-width: 0;
+    padding: 11px 12px;
+    border: 1.5px solid #D7DBE3;
+    border-radius: 12px;
+    background: #FFFFFF;
+    font-size: 0.9rem;
+    font-family: inherit;
+    color: #14182A;
+    text-align: center;
+    outline: none;
+  }
+
+  .cfm-precio input:focus {
+    border-color: #1B4B8F;
+    box-shadow: 0 0 0 3px rgba(27, 75, 143, 0.12);
+  }
+
+  .cfm-precio span {
+    flex: 0 0 auto;
+    color: #8A90A0;
+    font-size: 0.9rem;
+  }
+
+  /* Barra de acción fija */
+  .cfm-sheet__footer {
+    flex: 0 0 auto;
+    padding: 12px 20px calc(16px + env(safe-area-inset-bottom));
+    border-top: 1px solid #EEF0F3;
+    background: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .cfm-sheet__limpiar {
+    background: none;
+    border: none;
+    padding: 0;
+    color: #1B4B8F;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    align-self: center;
+  }
+
+  .cfm-sheet__aplicar {
+    width: 100%;
+    padding: 15px;
+    background: #1B4B8F;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 14px;
+    font-weight: 800;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+
+  .cfm-sheet__aplicar:active {
+    background: #163c72;
   }
 
   @keyframes catalogo-modal-slideup {

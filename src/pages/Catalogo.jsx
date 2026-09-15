@@ -17,6 +17,7 @@ function Catalogo() {
   const categoriaParam = searchParams.get('categoria') || ''
   const laboratorioParam = searchParams.get('laboratorio') || ''
   const moleculaParam = searchParams.get('molecula') || ''
+  const lineaParam = searchParams.get('linea') || ''
 
   const [productos, setProductos] = useState([])
   const [total, setTotal] = useState(0)
@@ -38,6 +39,7 @@ function Catalogo() {
   const [precioMax, setPrecioMax] = useState('')
   const [moleculaInput, setMoleculaInput] = useState(moleculaParam)
 const [moleculaActiva, setMoleculaActiva] = useState(moleculaParam)
+  const [lineaActiva, setLineaActiva] = useState(lineaParam)
   const [laboratoriosDisponibles, setLaboratoriosDisponibles] = useState([])
   const [formasDisponibles, setFormasDisponibles] = useState([])
   const [categoriasDisponibles, setCategoriasDisponibles] = useState([])
@@ -49,6 +51,17 @@ const [moleculaActiva, setMoleculaActiva] = useState(moleculaParam)
   )
   const nombreCategoriaActiva =
     categoriasLista.find((c) => c.id === categoriaActiva)?.nombre || categoriaActiva
+
+  // Etiqueta legible para el filtro por línea (param `?linea=`).
+  const LINEAS_TITULO = {
+    farmacia: 'Línea Farmacia',
+    hospitalaria: 'Línea Hospitalaria',
+    'material-medico': 'Material Médico',
+  }
+  const tituloSeccion =
+    searchTerm
+      ? `Resultados para "${searchTerm}"`
+      : `Resultados para "${lineaActiva ? LINEAS_TITULO[lineaActiva] || lineaActiva : categoriaActiva === 'todos' ? 'Catálogo' : nombreCategoriaActiva}"`
 
   const [seccionesAbiertas, setSeccionesAbiertas] = useState({
     laboratorio: false,
@@ -77,6 +90,13 @@ useEffect(() => {
   return () => clearTimeout(t)
 }, [moleculaInput])
 
+// Sincroniza la línea activa cuando la URL cambia (ej. /catalogo?linea=farmacia),
+// porque el componente no se remonta entre cambios de query del mismo path.
+useEffect(() => {
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  setLineaActiva(lineaParam)
+}, [lineaParam])
+
   // ── Metadata de filtros (laboratorios/formas/categorías) — un solo fetch ligero ──
   useEffect(() => {
     api
@@ -95,6 +115,7 @@ useEffect(() => {
   ) => {
     const params = { sort, page, limit }
     if (search) params.search = search
+    if (lineaActiva) params.linea = lineaActiva
     if (categoriaActiva !== 'todos') params.categoria = categoriaActiva
     if (laboratoriosActivos.length > 0) params.laboratorio = laboratoriosActivos.join(',')
     if (formasActivas.length > 0) params.forma = formasActivas.join(',')
@@ -103,7 +124,7 @@ useEffect(() => {
     if (precioMax !== '') params.precio_max = precioMax
     if (moleculaActiva) params.molecula = moleculaActiva
     return params
-  }, [searchTerm, sort, categoriaActiva, laboratoriosActivos, formasActivas, soloDisponibles, precioMin, precioMax, moleculaActiva])
+  }, [searchTerm, sort, categoriaActiva, lineaActiva, laboratoriosActivos, formasActivas, soloDisponibles, precioMin, precioMax, moleculaActiva])
 
   // Carga una página determinada. Si `reset` es true, reemplaza la lista
   // (primera página); si es false, agrega al final (infinite scroll).
@@ -136,7 +157,7 @@ useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     cargarPagina({ page: 1, reset: true })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchTerm, sort, categoriaActiva, laboratoriosActivos, formasActivas, soloDisponibles, precioMin, precioMax, moleculaActiva])
+  }, [searchTerm, sort, categoriaActiva, lineaActiva, laboratoriosActivos, formasActivas, soloDisponibles, precioMin, precioMax, moleculaActiva])
 
   // Tasa de cambio ves — global, se carga una sola vez.
   useEffect(() => {
@@ -178,6 +199,7 @@ useEffect(() => {
 
   function limpiarFiltros() {
     setCategoriaActiva('todos')
+    setLineaActiva('')
     setLaboratoriosActivos([])
     setFormasActivas([])
     setSoloDisponibles(false)
@@ -194,13 +216,24 @@ useEffect(() => {
   if (error) return <p className="catalogo-estado catalogo-error">{error}</p>
 
   const hayFiltrosActivos =
+    lineaActiva !== '' ||
     categoriaActiva !== 'todos' ||
     laboratoriosActivos.length > 0 ||
     formasActivas.length > 0 ||
     soloDisponibles ||
     precioMin !== '' ||
-    precioMax !== ''
+    precioMax !== '' ||
     moleculaActiva !== ''
+
+  const totalFiltrosActivos =
+    (lineaActiva !== '' ? 1 : 0) +
+    (categoriaActiva !== 'todos' ? 1 : 0) +
+    (sort !== 'relevancia' ? 1 : 0) +
+    laboratoriosActivos.length +
+    formasActivas.length +
+    (soloDisponibles ? 1 : 0) +
+    (precioMin !== '' || precioMax !== '' ? 1 : 0) +
+    (moleculaActiva !== '' ? 1 : 0)
 
   return (
     <div className="catalogo-layout">
@@ -214,11 +247,7 @@ useEffect(() => {
       <header className="catalogo-header">
         <div className="header-titles">
           <h1>
-            {searchTerm ? (
-              <>Resultados para "{searchTerm}"</>
-            ) : (
-              <>Resultados para "{categoriaActiva === 'todos' ? 'Catálogo' : nombreCategoriaActiva}"</>
-            )}
+            {tituloSeccion}
             {' '}
             <span>({total} artículos)</span>
           </h1>
@@ -451,176 +480,250 @@ useEffect(() => {
         </div>
       )}
 
-      {/* Modal filtros — solo mobile */}
+      {/* Modal filtros — solo mobile (bottom sheet propio, distinto al sidebar desktop) */}
       {!esDesktop && filtrosAbiertos && (
         <>
           <div className="catalogo-overlay" onClick={() => setFiltrosAbiertos(false)} />
-          <div className="catalogo-filtros-modal">
-            <div className="catalogo-filtros-modal__header">
-              <span>Filtros</span>
-              <button type="button" onClick={() => setFiltrosAbiertos(false)} aria-label="Cerrar filtros">✕</button>
-            </div>
+          <div className="cfm-sheet" role="dialog" aria-modal="true" aria-label="Filtros del catálogo">
+            <div className="cfm-sheet__grip" aria-hidden="true" />
 
-            {hayFiltrosActivos && (
-              <button type="button" className="btn-limpiar-filtros" onClick={limpiarFiltros}>
-                Limpiar filtros
-              </button>
-            )}
-
-            {/* Ordenar por */}
-            <div className="filtro-seccion">
-              <span className="filtro-seccion__titulo">Ordenar por</span>
-              <div className="catalogo-sort-modal-options">
-                {[
-                  { value: 'relevancia', label: 'Mejor coincidencia' },
-                  { value: 'nombre_asc', label: 'Nombre (A-Z)' },
-                  { value: 'precio_asc', label: 'Precio: menor a mayor' },
-                  { value: 'precio_desc', label: 'Precio: mayor a menor' },
-                ].map((opt) => (
-                  <button
-                    key={opt.value}
-                    type="button"
-                    className={`filtro-pill ${sort === opt.value ? 'active' : ''}`}
-                    onClick={() => setSort(opt.value)}
-                  >
-                    {opt.label}
-                  </button>
-                ))}
+            <div className="cfm-sheet__header">
+              <div className="cfm-sheet__titulo">
+                Filtros
+                {totalFiltrosActivos > 0 && (
+                  <span className="cfm-sheet__contador">{totalFiltrosActivos}</span>
+                )}
               </div>
-            </div>
-
-            {/* Principio activo —— modal mobile */}
-<div className="filtro-seccion">
-  <button className="filtro-accordion-btn" onClick={() => toggleSeccion('molecula')}>
-    <span>Principio activo</span>
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-      style={{ transform: seccionesAbiertas.molecula ? 'rotate(180deg)' : 'none' }}>
-      <polyline points="6 9 12 15 18 9"></polyline>
-    </svg>
-  </button>
-  {seccionesAbiertas.molecula && (
-    <div className="filtro-content">
-      <input
-        type="text"
-        placeholder="Ej. Paracetamol, Ibuprofeno..."
-        value={moleculaInput}
-        onChange={(e) => setMoleculaInput(e.target.value)}
-        className="filtro-molecula-input"
-      />
-    </div>
-  )}
-</div>
-
-            {/* Laboratorio */}
-            <div className="filtro-seccion">
-              <button className="filtro-accordion-btn" onClick={() => toggleSeccion('laboratorio')}>
-                <span>Laboratorio</span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-                  style={{ transform: seccionesAbiertas.laboratorio ? 'rotate(180deg)' : 'none' }}>
-                  <polyline points="6 9 12 15 18 9"></polyline>
+              <button
+                type="button"
+                className="cfm-sheet__cerrar"
+                onClick={() => setFiltrosAbiertos(false)}
+                aria-label="Cerrar filtros"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
                 </svg>
               </button>
-              {seccionesAbiertas.laboratorio && (
-                <div className="filtro-content">
-                  {laboratoriosDisponibles.length === 0 && (
-                    <p className="filtro-vacio">Sin datos aún</p>
-                  )}
-                  {laboratoriosDisponibles.map((lab) => (
-                    <button
-                      key={lab}
-                      className={`filtro-pill ${laboratoriosActivos.includes(lab) ? 'active' : ''}`}
-                      onClick={() => toggleEnArray(lab, laboratoriosActivos, setLaboratoriosActivos)}
-                    >
-                      {lab}
-                    </button>
-                  ))}
+            </div>
+
+            <div className="cfm-sheet__body">
+              {/* Ordenar por — filas tipo radio */}
+              <section className="cfm-seccion">
+                <h3 className="cfm-seccion__titulo">Ordenar por</h3>
+                <div className="cfm-sort">
+                  {[
+                    { value: 'relevancia', label: 'Mejor coincidencia' },
+                    { value: 'nombre_asc', label: 'Nombre (A-Z)' },
+                    { value: 'precio_asc', label: 'Precio: menor a mayor' },
+                    { value: 'precio_desc', label: 'Precio: mayor a menor' },
+                  ].map((opt) => {
+                    const activa = sort === opt.value
+                    return (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        className={`cfm-sort__opcion${activa ? ' cfm-sort__opcion--activa' : ''}`}
+                        onClick={() => setSort(opt.value)}
+                      >
+                        <span className="cfm-sort__radio" aria-hidden="true">
+                          {activa && <span className="cfm-sort__radio-dot" />}
+                        </span>
+                        {opt.label}
+                      </button>
+                    )
+                  })}
                 </div>
-              )}
-            </div>
+              </section>
 
-            {/* Forma */}
-            <div className="filtro-seccion">
-              <button className="filtro-accordion-btn" onClick={() => toggleSeccion('forma')}>
-                <span>Forma</span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-                  style={{ transform: seccionesAbiertas.forma ? 'rotate(180deg)' : 'none' }}>
-                  <polyline points="6 9 12 15 18 9"></polyline>
-                </svg>
-              </button>
-              {seccionesAbiertas.forma && (
-                <div className="filtro-content">
-                  {formasDisponibles.length === 0 && (
-                    <p className="filtro-vacio">Sin datos aún</p>
-                  )}
-                  {formasDisponibles.map((forma) => (
-                    <button
-                      key={forma}
-                      className={`filtro-pill ${formasActivas.includes(forma) ? 'active' : ''}`}
-                      onClick={() => toggleEnArray(forma, formasActivas, setFormasActivas)}
-                    >
-                      {forma}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
+              {/* Principio activo */}
+              <section className="cfm-seccion">
+                <button
+                  type="button"
+                  className="cfm-seccion__head"
+                  onClick={() => toggleSeccion('molecula')}
+                  aria-expanded={seccionesAbiertas.molecula}
+                >
+                  <span className="cfm-seccion__label">
+                    Principio activo
+                    {moleculaActiva !== '' && <span className="cfm-seccion__contador">1</span>}
+                  </span>
+                  <svg
+                    className={`cfm-seccion__chevron${seccionesAbiertas.molecula ? ' cfm-seccion__chevron--abierto' : ''}`}
+                    width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                  >
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </button>
+                {seccionesAbiertas.molecula && (
+                  <div className="cfm-seccion__contenido">
+                    <input
+                      type="text"
+                      placeholder="Ej. Paracetamol, Ibuprofeno..."
+                      value={moleculaInput}
+                      onChange={(e) => setMoleculaInput(e.target.value)}
+                      className="cfm-input"
+                    />
+                  </div>
+                )}
+              </section>
 
-            {/* Disponibilidad */}
-            <div className="filtro-seccion">
-              <button className="filtro-accordion-btn" onClick={() => toggleSeccion('disponibilidad')}>
-                <span>Disponibilidad</span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-                  style={{ transform: seccionesAbiertas.disponibilidad ? 'rotate(180deg)' : 'none' }}>
-                  <polyline points="6 9 12 15 18 9"></polyline>
-                </svg>
-              </button>
-              {seccionesAbiertas.disponibilidad && (
-                <div className="filtro-content">
-                  <label className="filtro-checkbox">
+              {/* Laboratorio */}
+              <section className="cfm-seccion">
+                <button
+                  type="button"
+                  className="cfm-seccion__head"
+                  onClick={() => toggleSeccion('laboratorio')}
+                  aria-expanded={seccionesAbiertas.laboratorio}
+                >
+                  <span className="cfm-seccion__label">
+                    Laboratorio
+                    {laboratoriosActivos.length > 0 && (
+                      <span className="cfm-seccion__contador">{laboratoriosActivos.length}</span>
+                    )}
+                  </span>
+                  <svg
+                    className={`cfm-seccion__chevron${seccionesAbiertas.laboratorio ? ' cfm-seccion__chevron--abierto' : ''}`}
+                    width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                  >
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </button>
+                {seccionesAbiertas.laboratorio && (
+                  <div className="cfm-seccion__contenido">
+                    {laboratoriosDisponibles.length === 0 && (
+                      <p className="cfm-seccion__vacio">Sin datos aún</p>
+                    )}
+                    <div className="cfm-chips">
+                      {laboratoriosDisponibles.map((lab) => (
+                        <button
+                          key={lab}
+                          type="button"
+                          className={`cfm-chip ${laboratoriosActivos.includes(lab) ? 'cfm-chip--activo' : ''}`}
+                          onClick={() => toggleEnArray(lab, laboratoriosActivos, setLaboratoriosActivos)}
+                        >
+                          {lab}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </section>
+
+              {/* Forma */}
+              <section className="cfm-seccion">
+                <button
+                  type="button"
+                  className="cfm-seccion__head"
+                  onClick={() => toggleSeccion('forma')}
+                  aria-expanded={seccionesAbiertas.forma}
+                >
+                  <span className="cfm-seccion__label">
+                    Forma
+                    {formasActivas.length > 0 && (
+                      <span className="cfm-seccion__contador">{formasActivas.length}</span>
+                    )}
+                  </span>
+                  <svg
+                    className={`cfm-seccion__chevron${seccionesAbiertas.forma ? ' cfm-seccion__chevron--abierto' : ''}`}
+                    width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                  >
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </button>
+                {seccionesAbiertas.forma && (
+                  <div className="cfm-seccion__contenido">
+                    {formasDisponibles.length === 0 && (
+                      <p className="cfm-seccion__vacio">Sin datos aún</p>
+                    )}
+                    <div className="cfm-chips">
+                      {formasDisponibles.map((forma) => (
+                        <button
+                          key={forma}
+                          type="button"
+                          className={`cfm-chip ${formasActivas.includes(forma) ? 'cfm-chip--activo' : ''}`}
+                          onClick={() => toggleEnArray(forma, formasActivas, setFormasActivas)}
+                        >
+                          {forma}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </section>
+
+              {/* Disponibilidad — switch */}
+              <section className="cfm-seccion">
+                <div className="cfm-seccion__head cfm-seccion__head--fila">
+                  <span className="cfm-seccion__label">
+                    Disponibilidad
+                    {soloDisponibles && <span className="cfm-seccion__contador">1</span>}
+                  </span>
+                  <label className="cfm-switch">
                     <input
                       type="checkbox"
                       checked={soloDisponibles}
                       onChange={(e) => setSoloDisponibles(e.target.checked)}
                     />
-                    Solo productos disponibles
+                    <span className="cfm-switch__track" aria-hidden="true" />
                   </label>
                 </div>
-              )}
+                <p className="cfm-seccion__nota">Solo productos disponibles</p>
+              </section>
+
+              {/* Precio */}
+              <section className="cfm-seccion">
+                <button
+                  type="button"
+                  className="cfm-seccion__head"
+                  onClick={() => toggleSeccion('precio')}
+                  aria-expanded={seccionesAbiertas.precio}
+                >
+                  <span className="cfm-seccion__label">
+                    Precio (USD)
+                    {(precioMin !== '' || precioMax !== '') && <span className="cfm-seccion__contador">1</span>}
+                  </span>
+                  <svg
+                    className={`cfm-seccion__chevron${seccionesAbiertas.precio ? ' cfm-seccion__chevron--abierto' : ''}`}
+                    width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                  >
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </button>
+                {seccionesAbiertas.precio && (
+                  <div className="cfm-seccion__contenido">
+                    <div className="cfm-precio">
+                      <input
+                        type="number"
+                        placeholder="Mín"
+                        value={precioMin}
+                        onChange={(e) => setPrecioMin(e.target.value)}
+                        min="0"
+                      />
+                      <span>—</span>
+                      <input
+                        type="number"
+                        placeholder="Máx"
+                        value={precioMax}
+                        onChange={(e) => setPrecioMax(e.target.value)}
+                        min="0"
+                      />
+                    </div>
+                  </div>
+                )}
+              </section>
             </div>
 
-            {/* Precio */}
-            <div className="filtro-seccion">
-              <button className="filtro-accordion-btn" onClick={() => toggleSeccion('precio')}>
-                <span>Precio (USD)</span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-                  style={{ transform: seccionesAbiertas.precio ? 'rotate(180deg)' : 'none' }}>
-                  <polyline points="6 9 12 15 18 9"></polyline>
-                </svg>
+            <div className="cfm-sheet__footer">
+              {hayFiltrosActivos && (
+                <button type="button" className="cfm-sheet__limpiar" onClick={limpiarFiltros}>
+                  Limpiar todo
+                </button>
+              )}
+              <button type="button" className="cfm-sheet__aplicar" onClick={() => setFiltrosAbiertos(false)}>
+                Aplicar filtros{totalFiltrosActivos > 0 ? ` (${totalFiltrosActivos})` : ''}
               </button>
-              {seccionesAbiertas.precio && (
-                <div className="filtro-precio-rango">
-                  <input
-                    type="number"
-                    placeholder="Mín"
-                    value={precioMin}
-                    onChange={(e) => setPrecioMin(e.target.value)}
-                    min="0"
-                  />
-                  <span>—</span>
-                  <input
-                    type="number"
-                    placeholder="Máx"
-                    value={precioMax}
-                    onChange={(e) => setPrecioMax(e.target.value)}
-                    min="0"
-                  />
-                </div>
-              )}
             </div>
-
-            <button type="button" className="catalogo-filtros-modal__apply" onClick={() => setFiltrosAbiertos(false)}>
-              Aplicar filtros
-            </button>
           </div>
         </>
       )}
