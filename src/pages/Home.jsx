@@ -11,7 +11,7 @@ import InfiniteScrollLoader from '../components/InfiniteScrollLoader'
 import Footer from '../components/Footer'
 import BottomNav from '../components/BottomNav'
 import CookieConsent from '../components/CookieConsent'
-import { agruparPorLinea } from '../utils/agruparPorLinea'
+import { agruparEspecifico } from '../utils/agruparEspecifico'
 import BloquePromocional from '../components/BloquePromocional'
 import SeccionPromocional from '../components/SeccionPromocional'
 import './Home.css'
@@ -113,7 +113,7 @@ function Home() {
         const activos = lista.filter((p) => p.activo)
         setTodosProductos(activos)
         setOfertas(activos.filter((p) => p.descuento_activo).slice(0, 12))
-        setSecciones(agruparPorLinea(activos))
+        setSecciones(agruparEspecifico(activos))
       })
       .catch((err) => console.error(err))
       .finally(() => setCargandoVitrina(false))
