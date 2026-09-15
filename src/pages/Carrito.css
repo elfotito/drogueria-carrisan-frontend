@@ -1932,3 +1932,51 @@ padding-bottom: 301px
  padding: 0 12px 8px
 ;
 }
+.cart-cupon__aplicado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.cart-cupon__aplicado-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.cart-cupon__aplicado-nombre {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #0052DC;
+}
+.cart-cupon__aplicado-descuento {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0D9373;
+}
+.cart-cupon__quitar {
+  background: none;
+  border: none;
+  color: #A9AC9F;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 4px;
+}
+.cart-cupon__quitar:hover {
+  color: #C0392B;
+}
+.cart-cupon__error {
+  margin: 8px 0 0;
+  font-size: 0.75rem;
+  color: #C0392B;
+  font-weight: 600;
+}
+.cart-summary__row--cupon {
+  color: #0D9373;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.carrito-bottombar__value--cupon {
+  color: #0D9373;
+}

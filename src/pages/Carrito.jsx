@@ -119,7 +119,7 @@ function DireccionSelector({
           agencia_preferida: ''
         })
       }, 1500)
-    } catch (error) {
+    } catch {
       setError('Error al guardar la dirección')
     } finally {
       setGuardando(false)
@@ -284,6 +284,201 @@ function DireccionSelector({
 }
 
 
+// Resumen del pedido (columna derecha del carrito, sidebar)
+function ResumenPedido({
+  cantidadArticulos,
+  total,
+  opcionActual,
+  esDelivery,
+  costoEnvio,
+  textoCostoEnvio,
+  totalConEnvio,
+  totalVes,
+  superaLineaCredito,
+  excedente,
+  creditoBloqueado,
+  ordenesVencidas,
+  creditoHabilitado,
+  saldoDisponible,
+  cuponAplicado,
+  descuentoCupon,
+  codigoCuponInput,
+  setCodigoCuponInput,
+  verificandoCupon,
+  errorCupon,
+  aplicarCupon,
+  quitarCupon,
+  error,
+  handleConfirmar
+}) {
+  return (
+    <div className="cart-resumen-sidebar">
+      <div className="cart-resumen-sticky">
+        <h2 className="cart-summary__title">Resumen del pedido</h2>
+
+        <div className="cart-summary__row">
+          <span>Subtotal ({cantidadArticulos} {cantidadArticulos === 1 ? 'artículo' : 'artículos'})</span>
+          <span>${formatUSD(total)}</span>
+        </div>
+
+        <div className="cart-summary__row">
+          <span>{opcionActual?.label || 'Envío'}</span>
+          <span className={esDelivery && costoEnvio === 0 ? 'cart-summary__gratis' : ''}>
+            {textoCostoEnvio}
+          </span>
+        </div>
+
+        {opcionActual?.id === 'envio_nacional' && (
+          <div className="cart-summary__row cart-summary__row--muted">
+            <span>Envío nacional</span>
+            <span>Pago en destino</span>
+          </div>
+        )}
+
+        {cuponAplicado && (
+          <div className="cart-summary__row cart-summary__row--cupon">
+            <span>Cupón {cuponAplicado.codigo}</span>
+            <span>-${formatUSD(descuentoCupon)}</span>
+          </div>
+        )}
+
+        <div className="cart-summary__divider" />
+
+        <div className="cart-summary__row cart-summary__row--total">
+          <span>Total estimado</span>
+          <div className="cart-summary__total-values">
+            <span className="cart-summary__total-usd">${formatUSD(totalConEnvio)}</span>
+            {totalVes && <span className="cart-summary__total-ves">Bs. {formatVES(totalVes)}</span>}
+          </div>
+        </div>
+
+        {superaLineaCredito && (
+          <div className="cart-condicion-bloqueada">
+            <span className="cart-condicion-bloqueada__icono">⛔</span>
+            <div>
+              <strong>Superó su línea de crédito</strong>
+              <p>
+                Este pedido excede tu saldo disponible en <strong>${formatUSD(excedente)}</strong>. Ajusta el carrito o
+                comunícate con la empresa para ampliar tu línea.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {creditoBloqueado && (
+          <div className="cart-alerta-vencidas">
+            <span className="cart-alerta-vencidas__icono">⚠️</span>
+            <div>
+              <strong>Tu línea de crédito está suspendida</strong>
+              <p>No puedes pagar a crédito hasta que la empresa regularice tu cuenta. Podés seguir comprando de contado.</p>
+              <Link to="/ayuda" className="cart-alerta-vencidas__link">Contactar a la empresa →</Link>
+            </div>
+          </div>
+        )}
+
+        {ordenesVencidas > 0 && (
+          <div className="cart-alerta-vencidas">
+            <span className="cart-alerta-vencidas__icono">⚠️</span>
+            <div>
+              <strong>Tenés {ordenesVencidas} {ordenesVencidas === 1 ? 'orden vencida' : 'órdenes vencidas'}</strong>
+              <p>Tu línea de crédito está pausada hasta que regularices tu cuenta. Podés seguir comprando de contado.</p>
+              <Link to="/estado-cuenta" className="cart-alerta-vencidas__link">Ir a reportar pago →</Link>
+            </div>
+          </div>
+        )}
+
+        <div className="cart-forma-pago">
+          <p className="cart-forma-pago__titulo">Condición Comercial</p>
+          <div className="cart-forma-pago__opciones">
+            {creditoHabilitado ? (
+              <div className="cart-forma-pago__opcion cart-forma-pago__opcion--activa cart-forma-pago__opcion--fija">
+                <span className="cart-forma-pago__opcion-titulo">Mi Línea de Crédito</span>
+                <span className="cart-forma-pago__opcion-desc">Saldo disponible: ${formatUSD(saldoDisponible)}</span>
+              </div>
+            ) : (
+              <div className="cart-forma-pago__opcion cart-forma-pago__opcion--activa cart-forma-pago__opcion--fija">
+                <span className="cart-forma-pago__opcion-titulo">Contado</span>
+                <span className="cart-forma-pago__opcion-desc">Debes cancelar el pedido cuando esté confirmado para su entrega</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {error && <p className="carrito-error carrito-error--sidebar">{error}</p>}
+
+        <button
+          type="button"
+          className="carrito-bottombar__cta carrito-bottombar__cta--sidebar"
+          onClick={handleConfirmar}
+          disabled={superaLineaCredito}
+        >
+          Confirmar pedido
+        </button>
+
+        <div className="cart-resumen-seguridad">
+          <span>🔒 Compra segura</span>
+          <p>Tus datos están protegidos</p>
+        </div>
+
+        {/* Cupón de descuento */}
+        <div className="cart-cupon">
+          {cuponAplicado ? (
+            <div className="cart-cupon__aplicado">
+              <div className="cart-cupon__aplicado-info">
+                <span className="cart-cupon__aplicado-nombre">Cupón {cuponAplicado.codigo}</span>
+                <span className="cart-cupon__aplicado-descuento">-${formatUSD(descuentoCupon)}</span>
+              </div>
+              <button type="button" className="cart-cupon__quitar" onClick={quitarCupon}>Quitar</button>
+            </div>
+          ) : (
+            <>
+              <p className="cart-cupon__titulo">¿Tenés un cupón de descuento?</p>
+              <div className="cart-cupon__row">
+                <input
+                  type="text"
+                  className="cart-cupon__input"
+                  placeholder="Ingresá tu código"
+                  value={codigoCuponInput}
+                  onChange={(e) => setCodigoCuponInput(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && aplicarCupon()}
+                  disabled={verificandoCupon}
+                />
+                <button
+                  type="button"
+                  className="cart-cupon__btn"
+                  onClick={aplicarCupon}
+                  disabled={verificandoCupon}
+                >
+                  {verificandoCupon ? 'Verificando…' : 'Aplicar'}
+                </button>
+              </div>
+              {errorCupon && <p className="cart-cupon__error">{errorCupon}</p>}
+            </>
+          )}
+        </div>
+
+        {/* Beneficios */}
+        <div className="cart-benefits">
+          <div className="cart-benefits__item">
+            <span className="cart-benefits__icon">🚚</span>
+            <div className="cart-benefits__text">
+              <strong>Envío prioritario</strong>
+              Despacho el mismo día para pedidos antes de las 2:00 PM.
+            </div>
+          </div>
+          <div className="cart-benefits__item">
+            <span className="cart-benefits__icon">🛡️</span>
+            <div className="cart-benefits__text">
+              <strong>Calidad certificada</strong>
+              Todos los productos cuentan con registro sanitario vigente.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function Carrito() {
   const { items, updateCantidad, removeItem, clearCart, total } = useCart()
   const { user } = useAuth()
@@ -296,9 +491,6 @@ function Carrito() {
     direccionSeleccionada,
     setDireccionSeleccionada,
     agenciaSeleccionada,
-    setAgenciaSeleccionada,
-    agencias,
-    loading,
     guardarDireccion,
     costoEnvio
   } = useEnvio()
@@ -315,6 +507,10 @@ function Carrito() {
   const [cargandoCarruseles, setCargandoCarruseles] = useState(true)
   const [tieneSubUsuarios, setTieneSubUsuarios] = useState(false)
   const [modalConfirmarAbierto, setModalConfirmarAbierto] = useState(false)
+  const [codigoCuponInput, setCodigoCuponInput] = useState('')
+  const [cuponAplicado, setCuponAplicado] = useState(null)
+  const [verificandoCupon, setVerificandoCupon] = useState(false)
+  const [errorCupon, setErrorCupon] = useState('')
   
   const navigate = useNavigate()
 
@@ -347,7 +543,16 @@ function Carrito() {
   // y el saldo cubre el pedido, la compra va a crédito; si lo sobrepasa,
   // la compra queda bloqueada (solo quitando productos o contactando a la
   // empresa). Sin línea (o con crédito suspendido), se paga de contado.
-  const totalConEnvio = total + costoEnvio
+  const descuentoCupon = cuponAplicado
+    ? Math.min(
+        cuponAplicado.tipo === 'porcentaje'
+          ? (total * Number(cuponAplicado.valor)) / 100
+          : Number(cuponAplicado.valor),
+        total
+      )
+    : 0
+  const totalConDescuento = Math.round((total - descuentoCupon) * 100) / 100
+  const totalConEnvio = totalConDescuento + costoEnvio
   // El envío solo muestra monto en delivery (tiene tarifas). En retiro y envío
   // nacional el campo de costo se deja en blanco (no se cobra, aunque el total
   // lógicamente lo sume como 0).
@@ -362,12 +567,9 @@ function Carrito() {
   const excedente = superaLineaCredito && saldoDisponible !== null ? totalConEnvio - saldoDisponible : 0
   const formaPago = creditoApto ? 'credito' : 'contado'
 
-  useEffect(() => {
-    const opcionActual = opcionesEnvio?.find(op => op.id === tipoEnvio)
-    if (opcionActual?.requiereDireccion && !direccionSeleccionada) {
-      setEnvioExpandido(true)
-    }
-  }, [tipoEnvio, direccionSeleccionada, opcionesEnvio])
+  // El panel de envío se mantiene abierto mientras el tipo seleccionado exija
+  // una dirección y aún no se haya elegido (derivado, evita setState-en-effect).
+  const envioAbierto = envioExpandido || (opcionActual?.requiereDireccion && !direccionSeleccionada)
 
   // Cargar productos para los carruseles
   useEffect(() => {
@@ -425,6 +627,31 @@ function Carrito() {
     setModalConfirmarAbierto(true)
   }
 
+  async function aplicarCupon() {
+    const codigo = codigoCuponInput.trim().toUpperCase()
+    if (!codigo) return
+    setVerificandoCupon(true)
+    setErrorCupon('')
+    try {
+      const { data } = await api.post('/cupones/verificar', { codigo })
+      if (data.valido) {
+        setCuponAplicado(data.cupon)
+        setCodigoCuponInput('')
+      } else {
+        setErrorCupon(data.error || 'Cupón no válido')
+      }
+    } catch (err) {
+      setErrorCupon(err.response?.data?.error || 'No pudimos verificar el cupón')
+    } finally {
+      setVerificandoCupon(false)
+    }
+  }
+
+  function quitarCupon() {
+    setCuponAplicado(null)
+    setErrorCupon('')
+  }
+
   // Invocado por ConfirmarPedidoModal: si la cuenta tiene sub-usuarios
   // activos, solo se llama después de verificar el PIN — nunca antes.
   async function crearOrden(subUsuarioIdResuelto) {
@@ -438,6 +665,7 @@ function Carrito() {
       agencia_envio: agenciaSeleccionada || null,
       forma_pago: formaPago,
       sub_usuario_id: subUsuarioIdResuelto,
+      codigo_cupon: cuponAplicado?.codigo || null,
     }
     await api.post('/orders', payload)
   }
@@ -465,143 +693,6 @@ function Carrito() {
     )
   }
 
-  // 🆕 Componente del resumen (sidebar derecho)
-  const ResumenPedido = () => (
-    <div className="cart-resumen-sidebar">
-      <div className="cart-resumen-sticky">
-        <h2 className="cart-summary__title">Resumen del pedido</h2>
-
-        <div className="cart-summary__row">
-          <span>Subtotal ({cantidadArticulos} {cantidadArticulos === 1 ? 'artículo' : 'artículos'})</span>
-          <span>${formatUSD(total)}</span>
-        </div>
-
-        <div className="cart-summary__row">
-          <span>{opcionActual?.label || 'Envío'}</span>
-          <span className={esDelivery && costoEnvio === 0 ? 'cart-summary__gratis' : ''}>
-            {textoCostoEnvio}
-          </span>
-        </div>
-
-        {opcionActual?.id === 'envio_nacional' && (
-          <div className="cart-summary__row cart-summary__row--muted">
-            <span>Envío nacional</span>
-            <span>Pago en destino</span>
-          </div>
-        )}
-
-        <div className="cart-summary__divider" />
-
-        <div className="cart-summary__row cart-summary__row--total">
-          <span>Total estimado</span>
-          <div className="cart-summary__total-values">
-            <span className="cart-summary__total-usd">${formatUSD(totalConEnvio)}</span>
-            {totalVes && <span className="cart-summary__total-ves">Bs. {formatVES(totalVes)}</span>}
-          </div>
-        </div>
-
-        {superaLineaCredito && (
-          <div className="cart-condicion-bloqueada">
-            <span className="cart-condicion-bloqueada__icono">⛔</span>
-            <div>
-              <strong>Superó su línea de crédito</strong>
-              <p>
-                Este pedido excede tu saldo disponible en <strong>${formatUSD(excedente)}</strong>. Ajusta el carrito o
-                comunícate con la empresa para ampliar tu línea.
-              </p>
-            </div>
-          </div>
-        )}
-
-        {creditoBloqueado && (
-          <div className="cart-alerta-vencidas">
-            <span className="cart-alerta-vencidas__icono">⚠️</span>
-            <div>
-              <strong>Tu línea de crédito está suspendida</strong>
-              <p>No puedes pagar a crédito hasta que la empresa regularice tu cuenta. Podés seguir comprando de contado.</p>
-              <Link to="/ayuda" className="cart-alerta-vencidas__link">Contactar a la empresa →</Link>
-            </div>
-          </div>
-        )}
-
-        {ordenesVencidas > 0 && (
-          <div className="cart-alerta-vencidas">
-            <span className="cart-alerta-vencidas__icono">⚠️</span>
-            <div>
-              <strong>Tenés {ordenesVencidas} {ordenesVencidas === 1 ? 'orden vencida' : 'órdenes vencidas'}</strong>
-              <p>Tu línea de crédito está pausada hasta que regularices tu cuenta. Podés seguir comprando de contado.</p>
-              <Link to="/estado-cuenta" className="cart-alerta-vencidas__link">Ir a reportar pago →</Link>
-            </div>
-          </div>
-        )}
-
-        <div className="cart-forma-pago">
-          <p className="cart-forma-pago__titulo">Condición Comercial</p>
-          <div className="cart-forma-pago__opciones">
-            {creditoApto ? (
-              <div className="cart-forma-pago__opcion cart-forma-pago__opcion--activa cart-forma-pago__opcion--fija">
-                <span className="cart-forma-pago__opcion-titulo">Mi Línea de Crédito</span>
-                <span className="cart-forma-pago__opcion-desc">Saldo disponible: ${formatUSD(saldoDisponible)}</span>
-              </div>
-            ) : (
-              <div className="cart-forma-pago__opcion cart-forma-pago__opcion--activa cart-forma-pago__opcion--fija">
-                <span className="cart-forma-pago__opcion-titulo">Contado</span>
-                <span className="cart-forma-pago__opcion-desc">Debes cancelar el pedido cuando esté confirmado para su entrega</span>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {error && <p className="carrito-error carrito-error--sidebar">{error}</p>}
-
-        <button
-          type="button"
-          className="carrito-bottombar__cta carrito-bottombar__cta--sidebar"
-          onClick={handleConfirmar}
-          disabled={superaLineaCredito}
-        >
-          Confirmar pedido
-        </button>
-
-        <div className="cart-resumen-seguridad">
-          <span>🔒 Compra segura</span>
-          <p>Tus datos están protegidos</p>
-        </div>
-
-        {/* Cupón de descuento */}
-        <div className="cart-cupon">
-          <p className="cart-cupon__titulo">¿Tenés un cupón de descuento?</p>
-          <div className="cart-cupon__row">
-            <input
-              type="text"
-              className="cart-cupon__input"
-              placeholder="Ingresá tu código"
-            />
-            <button type="button" className="cart-cupon__btn">Aplicar</button>
-          </div>
-        </div>
-
-        {/* Beneficios */}
-        <div className="cart-benefits">
-          <div className="cart-benefits__item">
-            <span className="cart-benefits__icon">🚚</span>
-            <div className="cart-benefits__text">
-              <strong>Envío prioritario</strong>
-              Despacho el mismo día para pedidos antes de las 2:00 PM.
-            </div>
-          </div>
-          <div className="cart-benefits__item">
-            <span className="cart-benefits__icon">🛡️</span>
-            <div className="cart-benefits__text">
-              <strong>Calidad certificada</strong>
-              Todos los productos cuentan con registro sanitario vigente.
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-
   return (
     <div className="carrito-page">
       <div className="carrito-container">
@@ -620,7 +711,7 @@ function Carrito() {
                 <span className="delivery-card__header-icon">📦</span>
                 <div className="delivery-card__header-text">
                   <h2>Método de envío</h2>
-                  {!envioExpandido && opcionActual && (
+                  {!envioAbierto && opcionActual && (
                     <p className="delivery-card__resumen">
                       <span className="delivery-card__badge delivery-card__badge--tipo">
                         {opcionActual.icono} {opcionActual.label}
@@ -641,7 +732,7 @@ function Carrito() {
                   )}
                 </div>
                 <svg 
-                  className={`delivery-card__chevron ${envioExpandido ? 'rotated' : ''}`}
+                  className={`delivery-card__chevron ${envioAbierto ? 'rotated' : ''}`}
                   width="20" height="20" viewBox="0 0 24 24" fill="none" 
                   stroke="currentColor" strokeWidth="2"
                 >
@@ -649,7 +740,7 @@ function Carrito() {
                 </svg>
               </button>
 
-              {envioExpandido && (
+              {envioAbierto && (
                 <div className="delivery-card__body">
                   <div className="delivery-tabs">
                     {opcionesEnvio?.map((opcion) => (
@@ -715,7 +806,32 @@ function Carrito() {
           </div>
 
           {/* Columna derecha: Resumen sticky */}
-          <ResumenPedido />
+          <ResumenPedido
+            cantidadArticulos={cantidadArticulos}
+            total={total}
+            opcionActual={opcionActual}
+            esDelivery={esDelivery}
+            costoEnvio={costoEnvio}
+            textoCostoEnvio={textoCostoEnvio}
+            totalConEnvio={totalConEnvio}
+            totalVes={totalVes}
+            superaLineaCredito={superaLineaCredito}
+            excedente={excedente}
+            creditoBloqueado={creditoBloqueado}
+            ordenesVencidas={ordenesVencidas}
+            creditoHabilitado={creditoHabilitado}
+            saldoDisponible={saldoDisponible}
+            cuponAplicado={cuponAplicado}
+            descuentoCupon={descuentoCupon}
+            codigoCuponInput={codigoCuponInput}
+            setCodigoCuponInput={setCodigoCuponInput}
+            verificandoCupon={verificandoCupon}
+            errorCupon={errorCupon}
+            aplicarCupon={aplicarCupon}
+            quitarCupon={quitarCupon}
+            error={error}
+            handleConfirmar={handleConfirmar}
+          />
         </div>
       </div>
 
@@ -740,6 +856,12 @@ function Carrito() {
             )}
           </span>
         </div>
+        {cuponAplicado && (
+          <div className="carrito-bottombar__fila">
+            <span className="carrito-bottombar__label">Cupón {cuponAplicado.codigo}</span>
+            <span className="carrito-bottombar__value carrito-bottombar__value--cupon">-${formatUSD(descuentoCupon)}</span>
+          </div>
+        )}
         <div className="carrito-bottombar__fila carrito-bottombar__fila--total">
           <span className="carrito-bottombar__label">Total estimado</span>
           <span className="carrito-bottombar__value">${formatUSD(totalConEnvio)}</span>
