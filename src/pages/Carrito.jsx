@@ -23,8 +23,8 @@ function CartLine({ item, tasaVes, onUpdateCantidad, onRemove }) {
   return (
     <div className="cart-line">
       <div className="cart-line__media">
-        {producto.imagen ? (
-          <img src={producto.imagen} alt={producto.nombre_comercial} />
+        {producto.foto_url || producto.imagen ? (
+          <img src={producto.foto_url || producto.imagen} alt={producto.nombre_comercial} />
         ) : (
           <div className="cart-line__media-placeholder">Sin imagen</div>
         )}
@@ -715,7 +715,21 @@ function Carrito() {
         {superaLineaCredito && (
           <span className="carrito-bottombar__bloqueo">Superó su línea de crédito</span>
         )}
-        <div className="carrito-bottombar__total">
+        <div className="carrito-bottombar__fila">
+          <span className="carrito-bottombar__label">Subtotal ({cantidadArticulos} {cantidadArticulos === 1 ? 'artículo' : 'artículos'})</span>
+          <span className="carrito-bottombar__value">${formatUSD(total)}</span>
+        </div>
+        <div className="carrito-bottombar__fila">
+          <span className="carrito-bottombar__label">Envío</span>
+          <span className="carrito-bottombar__envio">
+            {opcionActual?.icono && <span>{opcionActual.icono}</span>}
+            <span>{opcionActual?.label || 'Por seleccionar'}</span>
+            <span className="carrito-bottombar__envio-costo">
+              {costoEnvio === 0 ? 'Gratis' : `$${formatUSD(costoEnvio)}`}
+            </span>
+          </span>
+        </div>
+        <div className="carrito-bottombar__fila carrito-bottombar__fila--total">
           <span className="carrito-bottombar__label">Total estimado</span>
           <span className="carrito-bottombar__value">${formatUSD(totalConEnvio)}</span>
         </div>
@@ -727,6 +741,7 @@ function Carrito() {
         >
           Confirmar pedido
         </button>
+        <span className="carrito-bottombar__seguridad">🔒 Compra segura · Tus datos están protegidos</span>
       </div>
 
       {modalConfirmarAbierto && (
