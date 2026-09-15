@@ -256,6 +256,7 @@ const LEGACY_ESTADOS = {
   en_preparacion: 'preparando',
   finalizado: 'entregado',
   procesando: 'preparando',
+  cancelada: 'cancelado',
 }
 
 export function normalizarEstado(estado) {

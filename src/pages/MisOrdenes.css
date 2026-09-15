@@ -55,47 +55,98 @@
   white-space: nowrap;
 }
 
-/* --- Tabs de filtro --- */
-.mo-tabs {
+/* --- Pestañas principales: Activos / Historial --- */
+.mo-grupos {
   display: flex;
   gap: 8px;
-  overflow-x: auto;
-  padding-bottom: 4px;
-  margin-bottom: 18px;
-  scrollbar-width: none;
+  margin-bottom: 14px;
 }
 
-.mo-tabs::-webkit-scrollbar {
-  display: none;
-}
-
-.mo-tab {
+.mo-grupo {
+  flex: 1;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-  padding: 8px 14px;
-  border-radius: 999px;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 14px;
+  border-radius: 12px;
   border: 1px solid var(--mo-border);
   background: var(--mo-surface);
   color: var(--mo-text-muted);
-  font-size: 0.85rem;
-  font-weight: 600;
+  font-size: 0.9rem;
+  font-weight: 700;
   cursor: pointer;
   transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 }
 
-.mo-tab:hover {
+.mo-grupo:hover {
   border-color: var(--mo-brand);
 }
 
-.mo-tab--activo {
+.mo-grupo--activo {
   background: var(--mo-brand);
   border-color: var(--mo-brand);
   color: #fff;
 }
 
-.mo-tab__count {
+.mo-grupo__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  background: rgba(0, 0, 0, 0.08);
+  color: inherit;
+}
+
+.mo-grupo--activo .mo-grupo__count {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* --- Pills de filtro dentro de cada tab --- */
+.mo-filtros {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  margin-bottom: 16px;
+  scrollbar-width: none;
+}
+
+.mo-filtros::-webkit-scrollbar {
+  display: none;
+}
+
+.mo-filtro {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  padding: 7px 13px;
+  border-radius: 999px;
+  border: 1px solid var(--mo-border);
+  background: var(--mo-surface);
+  color: var(--mo-text-muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.mo-filtro:hover {
+  border-color: var(--mo-brand);
+}
+
+.mo-filtro--activo {
+  background: var(--mo-brand);
+  border-color: var(--mo-brand);
+  color: #fff;
+}
+
+.mo-filtro__count {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -108,47 +159,118 @@
   color: inherit;
 }
 
-.mo-tab--activo .mo-tab__count {
+.mo-filtro--activo .mo-filtro__count {
   background: rgba(255, 255, 255, 0.25);
 }
 
-/* --- Grid de Ã³rdenes --- */
-.mo-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 16px;
-}
-
-.mo-card {
-  background: var(--mo-surface);
-  border: 1px solid var(--mo-border);
-  border-radius: 14px;
-  padding: 16px;
+/* --- Lista de órdenes (filas compactas) --- */
+.mo-lista {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.mo-card__top {
+.mo-fila {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
+  gap: 14px;
+  background: var(--mo-surface);
+  border: 1px solid var(--mo-border);
+  border-radius: 12px;
+  padding: 13px 16px;
+}
+
+.mo-fila__main {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.mo-fila__id {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
 }
 
-.mo-card__numero {
+.mo-fila__numero {
   margin: 0;
-  font-size: 0.94rem;
+  font-size: 0.92rem;
   font-weight: 700;
   color: var(--mo-text);
 }
 
-.mo-card__fecha {
-  margin: 2px 0 0;
-  font-size: 0.78rem;
+.mo-fila__badges {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.mo-fila__fecha {
+  margin: 0;
+  font-size: 0.76rem;
   color: var(--mo-text-muted);
 }
 
+.mo-fila__comprador,
+.mo-fila__cliente {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin: 2px 0 0;
+  font-size: 0.8rem;
+  color: var(--mo-text-muted);
+}
+
+.mo-fila__comprador svg {
+  flex-shrink: 0;
+  color: var(--mo-accent);
+}
+
+.mo-fila__comprador strong,
+.mo-fila__cliente strong {
+  color: var(--mo-text);
+  font-weight: 600;
+}
+
+.mo-fila__side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.mo-fila__total {
+  margin: 0;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--mo-text);
+  white-space: nowrap;
+}
+
+.mo-fila__ver {
+  padding: 7px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--mo-brand);
+  background: #fff;
+  color: var(--mo-brand);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.mo-fila__ver:hover {
+  background: var(--mo-brand);
+  color: #fff;
+}
+
+/* --- Badges de estado --- */
 .mo-badge {
   flex-shrink: 0;
   padding: 4px 10px;
@@ -159,121 +281,18 @@
 }
 
 .mo-badge--pedido_creado { background: #eaf0ff; color: var(--mo-brand); }
-.mo-badge--procesando { background: #fef3c7; color: #b45309; }
 .mo-badge--preparando { background: #e0e7ff; color: #4338ca; }
 .mo-badge--enviado { background: var(--mo-accent-light); color: var(--mo-accent); }
 .mo-badge--entregado { background: #dcfce7; color: #15803d; }
 .mo-badge--listo_para_retiro { background: #cffafe; color: #0e7490; }
 .mo-badge--retirado { background: #dcfce7; color: #15803d; }
 .mo-badge--cancelado { background: #fee2e2; color: #dc2626; }
+.mo-badge--pago { background: #fef3c7; color: #b45309; }
 .mo-badge--neutro { background: #f1f0eb; color: var(--mo-text-muted); }
 
-/* --- Progreso (puntos conectados) --- */
-.mo-progreso {
-  display: flex;
-  align-items: center;
-}
-
-.mo-progreso__paso {
-  display: flex;
-  align-items: center;
-  flex: 1;
-}
-
-.mo-progreso__paso:last-child {
-  flex: 0;
-}
-
-.mo-progreso__punto {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: var(--mo-border);
-  flex-shrink: 0;
-}
-
-.mo-progreso__punto--activo {
-  background: var(--mo-brand);
-}
-
-.mo-progreso__linea {
-  flex: 1;
-  height: 2px;
-  background: var(--mo-border);
-  margin: 0 4px;
-}
-
-.mo-progreso__linea--activa {
-  background: var(--mo-brand);
-}
-
-/* --- Info de envÃ­o --- */
-.mo-card__envio {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.82rem;
-  color: var(--mo-text-muted);
-}
-
-.mo-card__envio svg {
-  color: var(--mo-text-muted);
-  flex-shrink: 0;
-}
-
-.mo-card__cliente {
-  margin: 0;
-  font-size: 0.82rem;
-  color: var(--mo-text-muted);
-}
-
-.mo-card__cliente strong {
-  color: var(--mo-text);
-}
-
-/* --- Total + botÃ³n --- */
-.mo-card__bottom {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-top: 4px;
-  padding-top: 10px;
-  border-top: 1px solid var(--mo-border);
-}
-
-.mo-card__total {
-  margin: 0;
-  font-size: 0.82rem;
-  color: var(--mo-text-muted);
-}
-
-.mo-card__total span {
-  font-size: 0.98rem;
-  font-weight: 700;
-  color: var(--mo-text);
-}
-
-.mo-card__ver-btn {
-  padding: 7px 14px;
-  border-radius: 8px;
-  border: 1px solid var(--mo-brand);
-  background: #fff;
-  color: var(--mo-brand);
-  font-size: 0.82rem;
-  font-weight: 700;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-
-.mo-card__ver-btn:hover {
-  background: var(--mo-brand);
-  color: #fff;
-}
-
-/* --- Skeleton de carga --- */
-.mo-card--skeleton {
+/* --- Skeleton de carga (filas) --- */
+.mo-fila--skeleton {
+  align-items: stretch;
   gap: 12px;
 }
 
@@ -285,16 +304,17 @@
   animation: mo-shimmer 1.4s ease infinite;
 }
 
-.mo-skeleton-line--sm { width: 40%; }
-.mo-skeleton-line--md { width: 70%; height: 16px; }
-.mo-skeleton-line--btn { width: 100%; height: 34px; margin-top: 8px; }
+.mo-skeleton-line--numero { width: 45%; height: 14px; }
+.mo-skeleton-line--fecha { width: 30%; }
+.mo-skeleton-line--total { width: 70%; height: 14px; }
+.mo-skeleton-line--btn { width: 100%; height: 32px; }
 
 @keyframes mo-shimmer {
   0% { background-position: 100% 50%; }
   100% { background-position: 0 50%; }
 }
 
-/* --- Estado vacÃ­o --- */
+/* --- Estado vacío --- */
 .mo-vacio {
   display: flex;
   flex-direction: column;
@@ -349,7 +369,15 @@
 }
 
 @media (max-width: 640px) {
-  .mo-grid {
-    grid-template-columns: 1fr;
+  .mo-fila {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .mo-fila__side {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
   }
 }

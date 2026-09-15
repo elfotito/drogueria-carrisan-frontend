@@ -2,10 +2,20 @@ import { useState, useEffect, useMemo } from 'react'
 import api from '../api/axios'
 import { useAuth } from '../context/AuthContext'
 import { Link, useNavigate } from 'react-router-dom'
-import { Package, Truck, Store, Boxes, ArrowRight } from 'lucide-react'
+import { Package, ArrowRight, User } from 'lucide-react'
 import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
-import { getEtapas, getEstadoConfig, getLabelEstado, normalizarEstado, ESTADOS_ORDEN } from '../config/estadosOrden'
+import { getEstadoConfig, getLabelEstado, normalizarEstado } from '../config/estadosOrden'
 import './MisOrdenes.css'
+
+// ---------------------------------------------------------------
+// Mis Órdenes — dos niveles:
+//   1. Grupos: Activos (pedido_creado, preparando, listo_para_retiro,
+//      enviado) vs Historial (entregado, retirado, cancelado).
+//   2. Dentro de cada grupo, pills de filtro sobre esas ordenes.
+// "Pendiente de Pago" es una CONDICIÓN del pago (contado no verificado),
+// no un order.status — por eso no vive en estadosOrden.js (ver la regla
+// ORDER STATUS ≠ PAYMENT STATUS en el AGENTS raíz).
+// ---------------------------------------------------------------
 
 // Badge de estado. Labels vienen de la ÚNICA fuente de verdad
 // (src/config/estadosOrden.js); la clase CSS local es solo un hook de
@@ -17,44 +27,55 @@ function getEstadoBadge(estado) {
   return { label: getLabelEstado(normalizado, { rol: 'cliente' }), clase: `mo-badge--${normalizado}` }
 }
 
-// Órdenes viejas sin tipo_envio se tratan como delivery (línea histórica).
-const fulfillmentDe = (orden) => orden?.tipo_envio || 'delivery'
+// Estados que ya cerraron su ciclo: viven en la pestaña Historial.
+const ESTADOS_HISTORIAL = new Set(['entregado', 'retirado', 'cancelado'])
+const esHistorial = (orden) => ESTADOS_HISTORIAL.has(normalizarEstado(orden.estado))
 
-function OrdenCardSkeleton() {
+// Contado cuya aprobación abrió la ventana de pago y todavía no se pagó.
+// estado_pago: esperando / reportado / rechazado ⇒ pendiente; verificado
+// (o NULL en crédito) ⇒ no aplica.
+function requierePago(orden) {
+  if (orden.forma_pago !== 'contado') return false
+  const ep = orden.estado_pago
+  return ep !== null && ep !== '' && ep !== 'verificado'
+}
+
+// Pills por grupo. El orden de definición es el orden de la UI y religa el
+// ciclo de vida (todas la tests se evalúan sobre el estado NORMALIZADO).
+const FILTROS_ACTIVOS = [
+  { id: 'pedido_creado', label: 'Orden Creada', test: (o) => normalizarEstado(o.estado) === 'pedido_creado' },
+  { id: 'pendiente_pago', label: 'Pendiente de Pago', test: requierePago },
+  { id: 'preparando', label: 'Preparando', test: (o) => normalizarEstado(o.estado) === 'preparando' },
+  { id: 'enviado', label: 'Enviados', test: (o) => normalizarEstado(o.estado) === 'enviado' },
+  { id: 'listo_para_retiro', label: 'Listo para retiro', test: (o) => normalizarEstado(o.estado) === 'listo_para_retiro' },
+]
+
+const FILTROS_HISTORIAL = [
+  { id: 'entregado', label: 'Entregados', test: (o) => ['entregado', 'retirado'].includes(normalizarEstado(o.estado)) },
+  { id: 'cancelado', label: 'Cancelados', test: (o) => normalizarEstado(o.estado) === 'cancelado' },
+]
+
+const GRUPOS = [
+  { id: 'activos', label: 'Activos', esDeGrupo: (o) => !esHistorial(o) },
+  { id: 'historial', label: 'Historial', esDeGrupo: esHistorial },
+]
+
+function OrdenFilaSkeleton() {
   return (
-    <div className="mo-card mo-card--skeleton">
-      <div className="mo-skeleton-line mo-skeleton-line--sm" />
-      <div className="mo-skeleton-line mo-skeleton-line--md" />
-      <div className="mo-skeleton-line mo-skeleton-line--sm" />
-      <div className="mo-skeleton-line mo-skeleton-line--btn" />
+    <div className="mo-fila mo-fila--skeleton">
+      <div className="mo-fila__main">
+        <div className="mo-skeleton-line mo-skeleton-line--numero" />
+        <div className="mo-skeleton-line mo-skeleton-line--fecha" />
+      </div>
+      <div className="mo-fila__side">
+        <div className="mo-skeleton-line mo-skeleton-line--total" />
+        <div className="mo-skeleton-line mo-skeleton-line--btn" />
+      </div>
     </div>
   )
 }
 
-// Indicador visual de avance (puntos conectados), derivado del fulfillment
-// method (ver getEtapas en estadosOrden.js). Si el estado de la orden no
-// pertenece a esa línea (p.ej. cancelado o uno legacy), no se muestra —
-// el badge de arriba sigue funcionando igual.
-function ProgresoOrden({ orden }) {
-  const etapas = getEtapas(fulfillmentDe(orden))
-  const pasoActual = etapas.findIndex((e) => e.id === normalizarEstado(orden.estado))
-  if (pasoActual === -1) return null
-
-  return (
-    <div className="mo-progreso">
-      {etapas.map((etapa, i) => (
-        <div className="mo-progreso__paso" key={etapa.id}>
-          <span className={`mo-progreso__punto ${i <= pasoActual ? 'mo-progreso__punto--activo' : ''}`} />
-          {i < etapas.length - 1 && (
-            <span className={`mo-progreso__linea ${i < pasoActual ? 'mo-progreso__linea--activa' : ''}`} />
-          )}
-        </div>
-      ))}
-    </div>
-  )
-}
-
-function OrdenCard({ orden, esAdmin, onVerDetalle }) {
+function OrdenFila({ orden, esAdmin, onVerDetalle }) {
   const estadoBadge = getEstadoBadge(orden.estado)
   const fecha = new Date(orden.created_at).toLocaleDateString('es-VE', {
     day: '2-digit',
@@ -62,50 +83,39 @@ function OrdenCard({ orden, esAdmin, onVerDetalle }) {
     year: 'numeric',
   })
 
-  const envioInfo = useMemo(() => {
-    switch (orden.tipo_envio) {
-      case 'retiro':
-        return { Icono: Store, texto: 'Retiro en tienda' }
-      case 'delivery':
-        return {
-          Icono: Truck,
-          texto: orden.users?.delivery_gratis
-            ? 'Delivery (¡Gratis!)'
-            : `Delivery (+$${orden.costo_envio_usd?.toFixed(2) || '8.00'})`,
-        }
-      case 'envio_nacional':
-        return { Icono: Boxes, texto: `Envío Nac. (${orden.agencia_envio || 'N/A'})` }
-      default:
-        return { Icono: Package, texto: 'Sin especificar' }
-    }
-  }, [orden.tipo_envio, orden.costo_envio_usd, orden.agencia_envio, orden.users?.delivery_gratis])
+  const comprador = orden.sub_usuarios?.nombre
 
   return (
-    <div className="mo-card">
-      <div className="mo-card__top">
-        <div>
-          <p className="mo-card__numero">Orden #{orden.id}</p>
-          <p className="mo-card__fecha">{fecha}</p>
+    <div className="mo-fila">
+      <div className="mo-fila__main">
+        <div className="mo-fila__id">
+          <p className="mo-fila__numero">Orden #{orden.id}</p>
+          <div className="mo-fila__badges">
+            <span className={`mo-badge ${estadoBadge.clase}`}>{estadoBadge.label}</span>
+            {requierePago(orden) && <span className="mo-badge mo-badge--pago">Pago pendiente</span>}
+          </div>
         </div>
-        <span className={`mo-badge ${estadoBadge.clase}`}>{estadoBadge.label}</span>
+        <p className="mo-fila__fecha">{fecha}</p>
+
+        {comprador && (
+          <p className="mo-fila__comprador">
+            <User size={13} />
+            Realizado por: <strong>{comprador}</strong>
+          </p>
+        )}
+
+        {esAdmin && orden.users?.nombre && (
+          <p className="mo-fila__cliente">
+            Cliente: <strong>{orden.users.nombre}</strong>
+          </p>
+        )}
       </div>
 
-      <ProgresoOrden orden={orden} />
-
-      <div className="mo-card__envio">
-        <envioInfo.Icono size={16} />
-        <span>{envioInfo.texto}</span>
-      </div>
-
-      {esAdmin && orden.users?.nombre && (
-        <p className="mo-card__cliente">Cliente: <strong>{orden.users.nombre}</strong></p>
-      )}
-
-      <div className="mo-card__bottom">
-        <p className="mo-card__total">
-          Total: <span>${orden.total_usd.toFixed(2)}</span>
+      <div className="mo-fila__side">
+        <p className="mo-fila__total">
+          {orden.total_usd?.toFixed(2) ? `$${orden.total_usd.toFixed(2)}` : '—'}
         </p>
-        <button type="button" className="mo-card__ver-btn" onClick={() => onVerDetalle(orden)}>
+        <button type="button" className="mo-fila__ver" onClick={() => onVerDetalle(orden)}>
           Ver detalle
         </button>
       </div>
@@ -117,8 +127,9 @@ function MisOrdenes() {
   const [ordenes, setOrdenes] = useState([])
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
+  const [grupo, setGrupo] = useState('activos')
+  const [filtro, setFiltro] = useState('todos')
   const navigate = useNavigate()
-  const [filtroEstado, setFiltroEstado] = useState('todos')
   const { user } = useAuth()
 
   useEffect(() => {
@@ -137,42 +148,30 @@ function MisOrdenes() {
     cargarOrdenes()
   }, [])
 
-  // Tabs dinámicos: "Todos" + un tab por cada estado que exista realmente
-  // en las órdenes cargadas (legacy normalizados al set actual), ordenados
-  // según el ciclo de vida (orden de ESTADOS_ORDEN en estadosOrden.js).
-  const tabs = useMemo(() => {
-    const estadosPresentes = [...new Set(ordenes.map((o) => normalizarEstado(o.estado)))]
-    const ordenEtapas = Object.keys(ESTADOS_ORDEN).filter((id) => !ESTADOS_ORDEN[id].legacy)
+  // Cambiar de grupo resetea el filtro — cada tab trae sus propias pills.
+  function cambiarGrupo(g) {
+    setGrupo(g)
+    setFiltro('todos')
+  }
 
-    const tabsEstados = estadosPresentes
-      .sort((a, b) => {
-        const ia = ordenEtapas.indexOf(a)
-        const ib = ordenEtapas.indexOf(b)
-        if (ia === -1 && ib === -1) return 0
-        if (ia === -1) return 1
-        if (ib === -1) return -1
-        return ia - ib
-      })
-      .map((estado) => ({
-        id: estado,
-        label: getEstadoBadge(estado).label,
-        count: ordenes.filter((o) => normalizarEstado(o.estado) === estado).length,
-      }))
+  const grupoActivo = GRUPOS.find((g) => g.id === grupo)
 
-    return [{ id: 'todos', label: 'Todos', count: ordenes.length }, ...tabsEstados]
-  }, [ordenes])
+  const ordenesDelGrupo = useMemo(
+    () => ordenes.filter((o) => grupoActivo.esDeGrupo(o)),
+    [ordenes, grupoActivo]
+  )
+
+  const filtrosDelGrupo = grupo === 'activos' ? FILTROS_ACTIVOS : FILTROS_HISTORIAL
 
   const ordenesFiltradas = useMemo(() => {
-    if (filtroEstado === 'todos') return ordenes
-    return ordenes.filter((o) => normalizarEstado(o.estado) === filtroEstado)
-  }, [ordenes, filtroEstado])
+    if (filtro === 'todos') return ordenesDelGrupo
+    const f = filtrosDelGrupo.find((x) => x.id === filtro)
+    return f ? ordenesDelGrupo.filter(f.test) : []
+  }, [ordenesDelGrupo, filtro, filtrosDelGrupo])
 
   // Cuántas órdenes propias (no aplica a la vista admin) están esperando
   // pago o fueron rechazadas — para ofrecer el acceso directo a /pagos.
-  const ordenesPendientesPago = useMemo(
-    () => ordenes.filter((o) => o.forma_pago === 'contado' && ['esperando', 'rechazado'].includes(o.estado_pago)),
-    [ordenes]
-  )
+  const ordenesPendientesPago = useMemo(() => ordenes.filter(requierePago), [ordenes])
 
   const titulo = user?.es_admin ? 'Todas las Órdenes' : 'Mis Órdenes'
   const subtitulo = user?.es_admin
@@ -196,26 +195,10 @@ function MisOrdenes() {
           </button>
         )}
 
-        {!cargando && ordenes.length > 0 && (
-          <div className="mo-tabs">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                type="button"
-                className={`mo-tab ${filtroEstado === tab.id ? 'mo-tab--activo' : ''}`}
-                onClick={() => setFiltroEstado(tab.id)}
-              >
-                {tab.label}
-                <span className="mo-tab__count">{tab.count}</span>
-              </button>
-            ))}
-          </div>
-        )}
-
         {cargando ? (
-          <div className="mo-grid">
+          <div className="mo-lista">
             {Array.from({ length: 4 }).map((_, i) => (
-              <OrdenCardSkeleton key={i} />
+              <OrdenFilaSkeleton key={i} />
             ))}
           </div>
         ) : ordenes.length === 0 ? (
@@ -227,19 +210,73 @@ function MisOrdenes() {
             <p>Cuando confirmes un pedido, aparecerá aquí.</p>
             <Link to="/catalogo" className="mo-vacio__cta">Ir al catálogo</Link>
           </div>
-        ) : ordenesFiltradas.length === 0 ? (
-          <p className="mo-vacio-filtro">No hay órdenes con este estado.</p>
         ) : (
-          <div className="mo-grid">
-            {ordenesFiltradas.map((orden) => (
-              <OrdenCard
-                key={orden.id}
-                orden={orden}
-                esAdmin={user?.es_admin}
-                onVerDetalle={() => navigate(`/orders/${orden.id}`)}
-              />
-            ))}
-          </div>
+          <>
+            <div className="mo-grupos">
+              {GRUPOS.map((g) => {
+                const conteo = ordenes.filter(g.esDeGrupo).length
+                return (
+                  <button
+                    key={g.id}
+                    type="button"
+                    className={`mo-grupo ${grupo === g.id ? 'mo-grupo--activo' : ''}`}
+                    onClick={() => cambiarGrupo(g.id)}
+                  >
+                    {g.label}
+                    <span className="mo-grupo__count">{conteo}</span>
+                  </button>
+                )
+              })}
+            </div>
+
+            {ordenesDelGrupo.length > 0 && (
+              <div className="mo-filtros">
+                <button
+                  type="button"
+                  className={`mo-filtro ${filtro === 'todos' ? 'mo-filtro--activo' : ''}`}
+                  onClick={() => setFiltro('todos')}
+                >
+                  Todos
+                  <span className="mo-filtro__count">{ordenesDelGrupo.length}</span>
+                </button>
+                {filtrosDelGrupo.map((f) => {
+                  const conteo = ordenesDelGrupo.filter(f.test).length
+                  return (
+                    <button
+                      key={f.id}
+                      type="button"
+                      className={`mo-filtro ${filtro === f.id ? 'mo-filtro--activo' : ''}`}
+                      onClick={() => setFiltro(f.id)}
+                    >
+                      {f.label}
+                      <span className="mo-filtro__count">{conteo}</span>
+                    </button>
+                  )
+                })}
+              </div>
+            )}
+
+            {ordenesDelGrupo.length === 0 ? (
+              <p className="mo-vacio-filtro">
+                {grupo === 'activos'
+                  ? 'No tenés órdenes en curso por ahora.'
+                  : 'Aún no tenés órdenes completadas.'}
+              </p>
+            ) : ordenesFiltradas.length === 0 ? (
+              <p className="mo-vacio-filtro">No hay órdenes con este filtro.</p>
+            ) : (
+              <div className="mo-lista">
+                {ordenesFiltradas.map((orden) => (
+                  <OrdenFila
+                    key={orden.id}
+                    orden={orden}
+                    esAdmin={user?.es_admin}
+                    onVerDetalle={() => navigate(`/orders/${orden.id}`)}
+                  />
+                ))}
+              </div>
+            )}
+          </>
         )}
       </div>
     </LayoutPaginaPrincipal>
