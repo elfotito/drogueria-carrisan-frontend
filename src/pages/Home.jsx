@@ -3,7 +3,8 @@ import { useAuth } from '../context/AuthContext'
 import api from '../api/axios'
 import HeroCarrusel from '../components/HeroCarrusel'
 import HomeCarrusel from '../components/HomeCarrusel'
-import { ExploraCategorias, ExploraLaboratorios } from '../components/ExploraCarrusel'
+import { ExploraLaboratorios } from '../components/ExploraCarrusel'
+import CategoriasCarrusel from '../components/CategoriasCarrusel'
 import SeccionesCarrusel from '../components/SeccionesCarrusel'
 import AdBanner from '../components/AdBanner'
 import AdCard from '../components/AdCard'
@@ -188,7 +189,7 @@ function Home() {
       {/* ── Vitrina: carruseles fijos + ads ── */}
       <div className="home__vitrina">
         {/* ── Explorá por categoría (colocado justo tras el hero) ── */}
-        <ExploraCategorias />
+        <CategoriasCarrusel />
 
         <HomeCarrusel
           titulo="Ofertas destacadas"

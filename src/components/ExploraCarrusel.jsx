@@ -2,20 +2,11 @@ import { useRef } from 'react'
 import { Link } from 'react-router-dom'
 import './ExploraCarrusel.css'
 
-// ── DATA — Editá acá para agregar/quitar categorías o laboratorios ──
+// ── DATA — Editá acá para agregar/quitar laboratorios ──
 // Cada item: { imagen: 'URL', nombre: 'Etiqueta', link: '/catalogo?param=valor' }
+// Las CATEGORÍAS ya no viven acá: ver CategoriasCarrusel.jsx (dinámicas desde
+// /products/metadata, con los 16 iconos de categorias_tienda).
 const BASE_IMG = 'https://fqeshthtycmzgyibiurq.supabase.co/storage/v1/object/public/crsnimages'
-
-const CATEGORIAS = [
-  { imagen: `${BASE_IMG}/medicamentos.png`, nombre: 'Analgésicos', link: '/catalogo?categoria=Analgésicos' },
-  { imagen: `${BASE_IMG}/ampollas.png`, nombre: 'Inyectables', link: '/catalogo?categoria=Inyectables' },
-  { imagen: `${BASE_IMG}/quirofano.png`, nombre: 'Hospitalaria', link: '/catalogo?categoria=Hospitalaria' },
-  { imagen: `${BASE_IMG}/ampolla.jpg`, nombre: 'Antibióticos', link: '/catalogo?categoria=Antibióticos' },
-  { imagen: `${BASE_IMG}/repartidor.jpg`, nombre: 'Cuidado Personal', link: '/catalogo?categoria=Cuidado Personal' },
-  { imagen: `${BASE_IMG}/medicamentos.png`, nombre: 'Vitaminas', link: '/catalogo?categoria=Vitaminas' },
-  { imagen: `${BASE_IMG}/ampollas.png`, nombre: 'Infantil', link: '/catalogo?categoria=Infantil' },
-  { imagen: `${BASE_IMG}/quirofano.png`, nombre: 'Primeros Auxilios', link: '/catalogo?categoria=Primeros Auxilios' },
-]
 
 const LABORATORIOS = [
   { imagen: `${BASE_IMG}/medicamentos.png`, nombre: 'Bayer', link: '/catalogo?laboratorio=Bayer' },
@@ -70,17 +61,7 @@ function FilaExploracion({ titulo, verTodoTo, items }) {
   )
 }
 
-// ── Componentes separados: podés colocarlos en distintas partes ──
-function ExploraCategorias() {
-  return (
-    <FilaExploracion
-      titulo="Explorá por categoría"
-      verTodoTo="/catalogo"
-      items={CATEGORIAS}
-    />
-  )
-}
-
+// ── Componente: fila de laboratorios ──
 function ExploraLaboratorios() {
   return (
     <FilaExploracion
@@ -91,5 +72,5 @@ function ExploraLaboratorios() {
   )
 }
 
-export default ExploraCategorias
-export { ExploraCategorias, ExploraLaboratorios }
+export default ExploraLaboratorios
+export { ExploraLaboratorios }

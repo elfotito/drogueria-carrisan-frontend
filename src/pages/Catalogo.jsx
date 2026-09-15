@@ -1,24 +1,15 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
-import {
-  Pill, HeartPulse, Activity, Utensils, Citrus, Brain, Flower2, Wind,
-  Thermometer, HandHeart, Eye, ShieldPlus, Bug, Venus, Mars, Cross, LayoutGrid,
-} from 'lucide-react'
 import api from '../api/axios'
 import ProductCard from '../components/ProductCard'
 import ProductCardSkeleton from '../components/Productcardskeleton'
 import BottomNav from '../components/BottomNav'
 import InfiniteScrollLoader from '../components/InfiniteScrollLoader'
 import Footer from '../components/Footer'
+import CategoriasCarrusel from '../components/CategoriasCarrusel'
 import './Catalogo.css'
 
 const PAGE_SIZE = 24
-
-// Mapeo icono (nombre Lucide guardado en categorias_tienda) → componente.
-const ICONOS_CATEGORIAS = {
-  Pill, HeartPulse, Activity, Utensils, Citrus, Brain, Flower2, Wind,
-  Thermometer, HandHeart, Eye, ShieldPlus, Bug, Venus, Mars, Cross, LayoutGrid,
-}
 
 function Catalogo() {
   const [searchParams] = useSearchParams()
@@ -60,7 +51,6 @@ const [moleculaActiva, setMoleculaActiva] = useState(moleculaParam)
     categoriasLista.find((c) => c.id === categoriaActiva)?.nombre || categoriaActiva
 
   const [seccionesAbiertas, setSeccionesAbiertas] = useState({
-    categoria: true,
     laboratorio: false,
     forma: false,
     disponibilidad: false,
@@ -68,7 +58,7 @@ const [moleculaActiva, setMoleculaActiva] = useState(moleculaParam)
     molecula: moleculaParam !== '',
   })
 
-  const carruselRef = useRef(null)
+  const mainRef = useRef(null)
 
 const [esDesktop, setEsDesktop] = useState(
   typeof window !== 'undefined' ? window.innerWidth > 768 : true
@@ -196,9 +186,9 @@ useEffect(() => {
     setMoleculaInput('')
   }
 
-  function scrollCarrusel(direccion) {
-    if (!carruselRef.current) return
-    carruselRef.current.scrollBy({ left: direccion * 220, behavior: 'smooth' })
+  function seleccionarCategoria(id) {
+    setCategoriaActiva(id)
+    mainRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
   if (error) return <p className="catalogo-estado catalogo-error">{error}</p>
@@ -214,35 +204,12 @@ useEffect(() => {
 
   return (
     <div className="catalogo-layout">
-      {/* Carrusel de categorías — solo mobile */}
-      {!esDesktop && (
-        <div className="catalogo-carrusel-wrap">
-          <div className="catalogo-carrusel" ref={carruselRef}>
-            {categoriasLista.map((cat) => {
-              const Icono = ICONOS_CATEGORIAS[cat.icono] || LayoutGrid
-              return (
-                <button
-                  key={cat.id}
-                  type="button"
-                  className={`carrusel-item ${categoriaActiva === cat.id ? 'carrusel-item--activo' : ''}`}
-                  onClick={() => setCategoriaActiva(cat.id)}
-                >
-                  <span className="carrusel-item__icono"><Icono size={20} strokeWidth={2} /></span>
-                  <span className="carrusel-item__label">{cat.nombre}</span>
-                </button>
-              )
-            })}
-          </div>
-          <button
-            type="button"
-            className="catalogo-carrusel-flecha"
-            onClick={() => scrollCarrusel(1)}
-            aria-label="Ver más categorías"
-          >
-            ›
-          </button>
-        </div>
-      )}
+      {/* Carrusel de categorías — mismas categorías e iconos que Home, filtra abajo */}
+      <CategoriasCarrusel
+        categorias={categoriasDisponibles}
+        activoId={categoriaActiva}
+        onSeleccionar={seleccionarCategoria}
+      />
 
       <header className="catalogo-header">
         <div className="header-titles">
@@ -309,30 +276,6 @@ useEffect(() => {
                 Limpiar filtros
               </button>
             )}
-
-            {/* Categoría */}
-            <div className="filtro-seccion">
-              <button className="filtro-accordion-btn" onClick={() => toggleSeccion('categoria')}>
-                <span>Categoría</span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-                  style={{ transform: seccionesAbiertas.categoria ? 'rotate(180deg)' : 'none' }}>
-                  <polyline points="6 9 12 15 18 9"></polyline>
-                </svg>
-              </button>
-              {seccionesAbiertas.categoria && (
-                <div className="filtro-content">
-                  {categoriasLista.map((cat) => (
-                    <button
-                      key={cat.id}
-                      className={`filtro-pill ${categoriaActiva === cat.id ? 'active' : ''}`}
-                      onClick={() => setCategoriaActiva(cat.id)}
-                    >
-                      {cat.nombre}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
 
 <div className="filtro-seccion">
   <button className="filtro-accordion-btn" onClick={() => toggleSeccion('molecula')}>
@@ -464,7 +407,7 @@ useEffect(() => {
           </aside>
         )}
 
-        <main className="catalogo-main-content">
+        <main className="catalogo-main-content" ref={mainRef}>
           {cargando ? (
             <div className="product-grid">
               {Array.from({ length: 8 }).map((_, i) => (
@@ -546,30 +489,7 @@ useEffect(() => {
               </div>
             </div>
 
-            {/* Categoría */}
-            <div className="filtro-seccion">
-              <button className="filtro-accordion-btn" onClick={() => toggleSeccion('categoria')}>
-                <span>Categoría</span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-                  style={{ transform: seccionesAbiertas.categoria ? 'rotate(180deg)' : 'none' }}>
-                  <polyline points="6 9 12 15 18 9"></polyline>
-                </svg>
-              </button>
-              {seccionesAbiertas.categoria && (
-                <div className="filtro-content">
-                  {categoriasLista.map((cat) => (
-                    <button
-                      key={cat.id}
-                      className={`filtro-pill ${categoriaActiva === cat.id ? 'active' : ''}`}
-                      onClick={() => setCategoriaActiva(cat.id)}
-                    >
-                      {cat.nombre}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
+            {/* Principio activo —— modal mobile */}
 <div className="filtro-seccion">
   <button className="filtro-accordion-btn" onClick={() => toggleSeccion('molecula')}>
     <span>Principio activo</span>

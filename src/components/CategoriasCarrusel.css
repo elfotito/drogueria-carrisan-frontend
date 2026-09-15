@@ -1,0 +1,67 @@
+/* ============================================================
+   CategoriasCarrusel — variante con ícono (Lucide) de ExploraCarrusel.
+   Reutiliza la estructura y el CSS base de ExploraCarrusel.css:
+   la tarjeta cambia la imagen por un tile de ícono en color de marca.
+   ============================================================ */
+
+.cat-car__tile {
+  background: #EFF4FB;
+  color: #1B4B8F;
+  transition: background 0.15s ease, color 0.15s ease, border 0.15s ease;
+}
+
+.explora-carrusel__card:hover .cat-car__tile {
+  background: #DFE9F6;
+}
+
+.cat-car__icono {
+  display: block;
+  width: 42%;
+  height: 42%;
+  color: #1B4B8F;
+}
+
+/* Modo botón (selección en catálogo): quitar defaults de <button> */
+.cat-car__btn {
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: center;
+}
+
+.cat-car__activo .cat-car__tile {
+  background: #1B4B8F;
+}
+
+.cat-car__activo .cat-car__icono {
+  color: #FFFFFF;
+}
+
+.cat-car__btn:focus-visible {
+  outline: 2px solid #1B4B8F;
+  outline-offset: 2px;
+  border-radius: 12px;
+}
+
+.cat-car__ver-todo {
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* Nombre de categoría activa destacado */
+.cat-car__activo .explora-carrusel__card-nombre {
+  color: #1B4B8F;
+}
+
+/* Tablet / desktop: el ícono puede ser un poco más grande */
+@media (min-width: 768px) {
+  .cat-car__icono {
+    width: 38%;
+    height: 38%;
+  }
+}
