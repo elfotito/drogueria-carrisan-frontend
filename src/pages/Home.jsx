@@ -90,6 +90,7 @@ function Home() {
   const [ofertas, setOfertas] = useState([])
   const [todosProductos, setTodosProductos] = useState([])
   const [secciones, setSecciones] = useState([])
+  const [seccionesLab, setSeccionesLab] = useState([])
   const [cargandoVitrina, setCargandoVitrina] = useState(true)
 
   // Estado del infinite scroll
@@ -98,6 +99,8 @@ function Home() {
   const [seccionesDinamicas, setSeccionesDinamicas] = useState([])
 
   const productosIniciales = todosProductos.slice(0, PRODUCTOS_POR_CARGA)
+  const labSuperior = seccionesLab[0]
+  const labInferior = seccionesLab[1]
 
   // ── Carga inicial ───────────────────────────────────────────
   useEffect(() => {
@@ -114,6 +117,19 @@ function Home() {
         setTodosProductos(activos)
         setOfertas(activos.filter((p) => p.descuento_activo).slice(0, 12))
         setSecciones(agruparEspecifico(activos))
+
+        const gruposLab = activos.reduce((acc, p) => {
+          if (!p.laboratorio) return acc
+          acc[p.laboratorio] = acc[p.laboratorio] || []
+          acc[p.laboratorio].push(p)
+          return acc
+        }, {})
+        const seccionesLabTop = Object.entries(gruposLab)
+          .filter(([, items]) => items.length >= 2)
+          .sort((a, b) => b[1].length - a[1].length)
+          .slice(0, 2)
+          .map(([lab, items]) => ({ lab, productos: items.slice(0, 9) }))
+        setSeccionesLab(seccionesLabTop)
       })
       .catch((err) => console.error(err))
       .finally(() => setCargandoVitrina(false))
@@ -169,11 +185,11 @@ function Home() {
         <HeroCarrusel slides={HERO_SLIDES} intervaloMs={5000} />
       </section>
 
-      {/* ── Explorá por categoría (colocado justo tras el hero) ── */}
-      <ExploraCategorias />
-  
       {/* ── Vitrina: carruseles fijos + ads ── */}
       <div className="home__vitrina">
+        {/* ── Explorá por categoría (colocado justo tras el hero) ── */}
+        <ExploraCategorias />
+
         <HomeCarrusel
           titulo="Ofertas destacadas"
           subtitulo="Precios con descuento activo"
@@ -260,10 +276,10 @@ function Home() {
         textoCta="Comprar ahora"
         linkCta="/hospitalaria"
         linkImagen="/hospitalaria"
-        productos={ofertas}
+        productos={labSuperior ? labSuperior.productos : ofertas}
         tasaVes={tasa}
-        tituloCarrusel="Más vendidos"
-        verTodoTo="/catalogo"
+        tituloCarrusel={labSuperior ? `Productos ${labSuperior.lab}` : 'Más vendidos'}
+        verTodoTo={labSuperior ? `/catalogo?laboratorio=${encodeURIComponent(labSuperior.lab)}` : '/catalogo'}
         cargando={cargandoVitrina}
       />
 
@@ -276,10 +292,11 @@ function Home() {
           textoCta="Conocer más"
           linkCta="/ayuda"
           linkImagen="/ayuda"
-          productos={productosIniciales}
+          productos={labInferior ? labInferior.productos : productosIniciales}
           tasaVes={tasa}
-          tituloCarrusel="Recomendados para ti"
-          verTodoTo="/catalogo"
+          tituloCarrusel={labInferior ? `Productos ${labInferior.lab}` : 'Recomendados para ti'}
+          verTodoTo={labInferior ? `/catalogo?laboratorio=${encodeURIComponent(labInferior.lab)}` : '/catalogo'}
+          cargando={cargandoVitrina}
         />
 
 

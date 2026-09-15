@@ -1,5 +1,9 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
+import {
+  Pill, HeartPulse, Activity, Utensils, Citrus, Brain, Flower2, Wind,
+  Thermometer, HandHeart, Eye, ShieldPlus, Bug, Venus, Mars, Cross, LayoutGrid,
+} from 'lucide-react'
 import api from '../api/axios'
 import ProductCard from '../components/ProductCard'
 import ProductCardSkeleton from '../components/Productcardskeleton'
@@ -10,14 +14,11 @@ import './Catalogo.css'
 
 const PAGE_SIZE = 24
 
-const categoriasFiltro = [
-  { id: 'todos', nombre: 'Todo', icono: '🗂️' },
-  { id: 'Analgésicos', nombre: 'Analgésicos', icono: '💊' },
-  { id: 'Cuidado Personal', nombre: 'Cuidado Personal', icono: '🧴' },
-  { id: 'Vitaminas', nombre: 'Vitaminas', icono: '🍊' },
-  { id: 'Infantil', nombre: 'Infantil', icono: '🧸' },
-  { id: 'Primeros Auxilios', nombre: 'Primeros Auxilios', icono: '🩹' },
-]
+// Mapeo icono (nombre Lucide guardado en categorias_tienda) → componente.
+const ICONOS_CATEGORIAS = {
+  Pill, HeartPulse, Activity, Utensils, Citrus, Brain, Flower2, Wind,
+  Thermometer, HandHeart, Eye, ShieldPlus, Bug, Venus, Mars, Cross, LayoutGrid,
+}
 
 function Catalogo() {
   const [searchParams] = useSearchParams()
@@ -48,6 +49,15 @@ function Catalogo() {
 const [moleculaActiva, setMoleculaActiva] = useState(moleculaParam)
   const [laboratoriosDisponibles, setLaboratoriosDisponibles] = useState([])
   const [formasDisponibles, setFormasDisponibles] = useState([])
+  const [categoriasDisponibles, setCategoriasDisponibles] = useState([])
+
+  // Lista de pills: "Todo" + las categorías reales desde /products/metadata
+  const categoriasLista = useMemo(
+    () => [{ id: 'todos', nombre: 'Todo', icono: 'LayoutGrid' }, ...categoriasDisponibles],
+    [categoriasDisponibles]
+  )
+  const nombreCategoriaActiva =
+    categoriasLista.find((c) => c.id === categoriaActiva)?.nombre || categoriaActiva
 
   const [seccionesAbiertas, setSeccionesAbiertas] = useState({
     categoria: true,
@@ -77,13 +87,14 @@ useEffect(() => {
   return () => clearTimeout(t)
 }, [moleculaInput])
 
-  // ── Metadata de filtros (laboratorios/formas) — un solo fetch ligero ──
+  // ── Metadata de filtros (laboratorios/formas/categorías) — un solo fetch ligero ──
   useEffect(() => {
     api
       .get('/products/metadata')
       .then((res) => {
         setLaboratoriosDisponibles(res.data.laboratorios || [])
         setFormasDisponibles(res.data.formas || [])
+        setCategoriasDisponibles(res.data.categorias || [])
       })
       .catch((err) => console.error('Error al cargar metadata de filtros:', err))
   }, [])
@@ -94,7 +105,7 @@ useEffect(() => {
   ) => {
     const params = { sort, page, limit }
     if (search) params.search = search
-    if (categoriaActiva !== 'todos') params.linea = categoriaActiva
+    if (categoriaActiva !== 'todos') params.categoria = categoriaActiva
     if (laboratoriosActivos.length > 0) params.laboratorio = laboratoriosActivos.join(',')
     if (formasActivas.length > 0) params.forma = formasActivas.join(',')
     if (soloDisponibles) params.disponible = 'true'
@@ -207,17 +218,20 @@ useEffect(() => {
       {!esDesktop && (
         <div className="catalogo-carrusel-wrap">
           <div className="catalogo-carrusel" ref={carruselRef}>
-            {categoriasFiltro.map((cat) => (
-              <button
-                key={cat.id}
-                type="button"
-                className={`carrusel-item ${categoriaActiva === cat.id ? 'carrusel-item--activo' : ''}`}
-                onClick={() => setCategoriaActiva(cat.id)}
-              >
-                <span className="carrusel-item__icono">{cat.icono}</span>
-                <span className="carrusel-item__label">{cat.nombre}</span>
-              </button>
-            ))}
+            {categoriasLista.map((cat) => {
+              const Icono = ICONOS_CATEGORIAS[cat.icono] || LayoutGrid
+              return (
+                <button
+                  key={cat.id}
+                  type="button"
+                  className={`carrusel-item ${categoriaActiva === cat.id ? 'carrusel-item--activo' : ''}`}
+                  onClick={() => setCategoriaActiva(cat.id)}
+                >
+                  <span className="carrusel-item__icono"><Icono size={20} strokeWidth={2} /></span>
+                  <span className="carrusel-item__label">{cat.nombre}</span>
+                </button>
+              )
+            })}
           </div>
           <button
             type="button"
@@ -236,7 +250,7 @@ useEffect(() => {
             {searchTerm ? (
               <>Resultados para "{searchTerm}"</>
             ) : (
-              <>Resultados para "{categoriaActiva === 'todos' ? 'Catálogo' : categoriaActiva}"</>
+              <>Resultados para "{categoriaActiva === 'todos' ? 'Catálogo' : nombreCategoriaActiva}"</>
             )}
             {' '}
             <span>({total} artículos)</span>
@@ -307,7 +321,7 @@ useEffect(() => {
               </button>
               {seccionesAbiertas.categoria && (
                 <div className="filtro-content">
-                  {categoriasFiltro.map((cat) => (
+                  {categoriasLista.map((cat) => (
                     <button
                       key={cat.id}
                       className={`filtro-pill ${categoriaActiva === cat.id ? 'active' : ''}`}
@@ -543,7 +557,7 @@ useEffect(() => {
               </button>
               {seccionesAbiertas.categoria && (
                 <div className="filtro-content">
-                  {categoriasFiltro.map((cat) => (
+                  {categoriasLista.map((cat) => (
                     <button
                       key={cat.id}
                       className={`filtro-pill ${categoriaActiva === cat.id ? 'active' : ''}`}
