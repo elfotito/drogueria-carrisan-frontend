@@ -1,0 +1,239 @@
+.cup-page {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.cup-error {
+  background: #FDF2F2;
+  border: 1px solid #F5C6C6;
+  color: #C0392B;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.cup-kpis {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.cup-kpi {
+  background: #FFFFFF;
+  border: 1px solid #E7E5DE;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cup-kpi__valor {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--ldep-color, #2563EB);
+}
+
+.cup-kpi__label {
+  font-size: 0.8rem;
+  color: #6B7280;
+}
+
+.cup-kpi--usados .cup-kpi__valor { color: #6B7280; }
+
+.cup-layout {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 18px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .cup-layout { grid-template-columns: 1fr; }
+}
+
+.cup-panel {
+  background: #FFFFFF;
+  border: 1px solid #E7E5DE;
+  border-radius: 12px;
+  padding: 18px;
+}
+
+.cup-panel__titulo {
+  margin: 0 0 14px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1A1A3A;
+}
+
+.cup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cup-form__row { display: flex; flex-direction: column; gap: 6px; }
+.cup-form__campo { display: flex; flex-direction: column; gap: 6px; }
+
+.cup-form__label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.cup-form__ayuda {
+  margin: 0;
+  font-size: 0.72rem;
+  color: #B45309;
+}
+
+.cup-tipo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.cup-seg {
+  padding: 9px 0;
+  border: 1.5px solid #E7E5DE;
+  background: #FFF;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.cup-seg--activo {
+  border-color: var(--ldep-color, #2563EB);
+  background: var(--ldep-color-soft, #EFF6FF);
+  color: var(--ldep-color, #2563EB);
+}
+
+.cup-input,
+.cup-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1.5px solid #E7E5DE;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-family: inherit;
+  color: #333;
+  background: #FFF;
+}
+
+.cup-input:focus,
+.cup-textarea:focus {
+  outline: none;
+  border-color: var(--ldep-color, #2563EB);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.cup-textarea { resize: vertical; }
+
+.cup-btn {
+  padding: 12px;
+  background: var(--ldep-color, #2563EB);
+  color: #FFF;
+  font-weight: 700;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: filter 0.15s ease;
+}
+
+.cup-btn:hover:not(:disabled) { filter: brightness(0.92); }
+.cup-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.cup-vacio { color: #6B7280; font-size: 0.85rem; }
+
+.cup-tabla-wrap { overflow-x: auto; }
+
+.cup-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.cup-tabla th,
+.cup-tabla td {
+  text-align: left;
+  padding: 10px 10px;
+  border-bottom: 1px solid #F0EFE9;
+  white-space: nowrap;
+}
+
+.cup-tabla th {
+  font-weight: 700;
+  color: #6B7280;
+  background: #FAFAF7;
+}
+
+.cup-tabla__acciones { text-align: right !important; }
+
+.cup-tabla__codigo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cup-codigo {
+  font-family: monospace;
+  font-weight: 700;
+  color: var(--ldep-color, #2563EB);
+  letter-spacing: 0.5px;
+}
+
+.cup-copiar {
+  background: none;
+  border: none;
+  color: #6B7280;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+}
+
+.cup-tabla__delete {
+  background: none;
+  border: 1px solid #E7E5DE;
+  color: #C0392B;
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.cup-tabla__delete:hover {
+  background: #C0392B;
+  color: #FFF;
+  border-color: #C0392B;
+}
+
+.cup-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.cup-badge--usado { background: #F3F4F6; color: #6B7280; }
+.cup-badge--vigente { background: #E8F5F1; color: #0D9373; }
+.cup-badge--vencido { background: #FDF2F2; color: #C0392B; }
+.cup-badge--inactivo { background: #F3F4F6; color: #9CA3AF; }
+
+.cup-nota {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #6B7280;
+}

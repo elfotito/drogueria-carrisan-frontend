@@ -12,7 +12,7 @@ import {
   LayoutDashboard, PackageCheck, ClipboardList, ShoppingCart,
   Landmark, TrendingUp, Truck, Receipt, Banknote, CalendarX2,
   Inbox, FileText, Megaphone, MapPin, BadgeDollarSign, Users,
-  Shield, BarChart3, MessageSquare,
+  Shield, BarChart3, MessageSquare, Gift,
 } from 'lucide-react'
 
 const ROLES_TODOS = ['vendedor', 'despachador', 'almacenista', 'contabilidad', 'administrador', 'director', 'admin']
@@ -168,6 +168,14 @@ export const MODULOS = {
           icono: BadgeDollarSign,
           texto: 'Precios',
           desc: 'Fija precios del catálogo con filtros (línea, forma, laboratorio, ATC)',
+          roles: ['administrador', 'director', 'admin'],
+        },
+        {
+          id: 'cupones',
+          to: '/staff/cupones',
+          icono: Gift,
+          texto: 'Cupones',
+          desc: 'Genera códigos giftcard de descuento por % o monto',
           roles: ['administrador', 'director', 'admin'],
         },
       ],
