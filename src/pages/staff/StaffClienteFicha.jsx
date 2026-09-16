@@ -6,6 +6,7 @@ import staffApi from '../../api/staffAxios'
 import LayoutDepartamento from '../../components/staff/LayoutDepartamento'
 import StaffTabs from '../../components/staff/StaffTabs'
 import { normalizarEstado, getEstadoConfig, getLabelEstado, FULFILLMENT_METHODS } from '../../config/estadosOrden'
+import { resumirHorario } from '../../utils/horario'
 import './StaffComercial.css'
 import './StaffTesoreria.css'
 import './StaffClientes.css'
@@ -61,7 +62,7 @@ function TabResumen({ cliente, perfil, credito }) {
               <div className="sc-perfil-item"><label>Dirección fiscal</label><span>{perfil.direccion_fiscal || '—'}</span></div>
               <div className="sc-perfil-item"><label>Representante</label><span>{perfil.nombre_representante || '—'}</span></div>
               <div className="sc-perfil-item"><label>Tel. representante</label><span>{perfil.telefono_representante || '—'}</span></div>
-              <div className="sc-perfil-item"><label>Horario</label><span>{perfil.horario_recepcion || '—'}</span></div>
+              <div className="sc-perfil-item"><label>Horario</label><span>{resumirHorario(perfil.horario_recepcion).join(' — ') || '—'}</span></div>
             </>}
             {cliente.tipo_usuario === 'profesional' && <>
               <div className="sc-perfil-item"><label>Profesión</label><span>{perfil.profesion || '—'}</span></div>

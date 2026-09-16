@@ -3,6 +3,7 @@ import { Phone, MessageCircle } from 'lucide-react'
 import staffApi from '../../api/staffAxios'
 import LayoutDepartamento from '../../components/staff/LayoutDepartamento'
 import { exportarGuiaDespacho } from '../../utils/exportUtils'
+import { resumirHorario } from '../../utils/horario'
 import './StaffEnvios.css'
 
 function telAEnlace(tel) {
@@ -114,6 +115,13 @@ function StaffEnvios() {
                   )}
                   {dir?.nota_entrega && <p className="se-nota">Nota: {dir.nota_entrega}</p>}
                   {!esNacional && dir?.telefono_contacto && <p className="se-num-ausente">Contacto: {dir.telefono_contacto}</p>}
+                  {resumirHorario(orden.horario_recepcion).length > 0 && (
+                    <div className="se-horario">
+                      {resumirHorario(orden.horario_recepcion).map((linea) => (
+                        <p key={linea}>{linea}</p>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <ul className="se-card-items">

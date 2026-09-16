@@ -685,6 +685,54 @@
   color: #1B4B8F
 ;
 }
+/* ---------------------------------------------------------   Horario de recepción--------------------------------------------------------- */.direcciones-horario 
+{
+  display: flex
+;
+  flex-direction: column
+;
+  gap: 16px
+;
+}
+.direcciones-horario__preview 
+{
+  background: #F5F4EF
+;
+  border: 1px solid #E7E5DE
+;
+  border-radius: 14px
+;
+  padding: 14px 16px
+;
+  display: flex
+;
+  flex-direction: column
+;
+  gap: 4px
+;
+  color: #14182A
+;
+  font-size: 0.88rem
+;
+}
+.direcciones-horario__preview strong 
+{
+  font-size: 0.8rem
+;
+  text-transform: uppercase
+;
+  letter-spacing: 0.04em
+;
+  color: #5B6270
+;
+  margin-bottom: 2px
+;
+}
+.direcciones-horario__guardar 
+{
+  align-self: flex-start
+;
+}
 /* ---------------------------------------------------------   Responsive--------------------------------------------------------- */@media (max-width: 560px) 
 {
   .direccion-campo__fila 

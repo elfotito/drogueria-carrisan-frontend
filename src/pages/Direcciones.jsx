@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react'
 import api from '../api/axios'
+import { useAuth } from '../context/AuthContext'
+import SelectorHorarioSemanal from '../components/registro/SelectorHorarioSemanal'
+import { resumirHorario } from '../utils/horario'
 import './Direcciones.css'
 
 const CIUDADES_DELIVERY = ['Valencia', 'Naguanagua', 'San Diego', 'Guacara', 'Los Guayos']
@@ -59,6 +62,8 @@ function DireccionCardSkeleton() {
 }
 
 function Direcciones() {
+  const { user } = useAuth()
+  const esInstitucional = user?.tipo_usuario === 'institucional'
   const [direccionesDelivery, setDireccionesDelivery] = useState([])
   const [direccionesNacional, setDireccionesNacional] = useState([])
   const [tabActiva, setTabActiva] = useState('delivery')
@@ -69,10 +74,45 @@ function Direcciones() {
   const [mensaje, setMensaje] = useState(null) // { tipo: 'exito' | 'error', texto }
   const [cargando, setCargando] = useState(true)
 
+  // Horario de recepción (solo clientes institucionales)
+  const [horario, setHorario] = useState(null)
+  const [perfilCargado, setPerfilCargado] = useState(false)
+  const [horarioGuardando, setHorarioGuardando] = useState(false)
+  const [horarioMensaje, setHorarioMensaje] = useState(null)
+
   useEffect(() => {
     cargarTodas()
+    if (esInstitucional) cargarPerfil()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  async function cargarPerfil() {
+    try {
+      const { data } = await api.get('/perfil')
+      setHorario(data?.horario_recepcion || null)
+    } catch (err) {
+      console.error('Error cargando perfil:', err)
+      setHorarioMensaje({ tipo: 'error', texto: 'No se pudo cargar tu horario de recepción' })
+    } finally {
+      setPerfilCargado(true)
+    }
+  }
+
+  async function guardarHorario() {
+    if (!esInstitucional || !horario) return
+    setHorarioGuardando(true)
+    setHorarioMensaje(null)
+    try {
+      await api.patch('/perfil/horario', { horario_recepcion: horario })
+      setHorarioMensaje({ tipo: 'exito', texto: 'Horario de recepción guardado' })
+      setTimeout(() => setHorarioMensaje(null), 3000)
+    } catch (err) {
+      setHorarioMensaje({ tipo: 'error', texto: err.response?.data?.error || 'Error al guardar el horario' })
+      console.error(err)
+    } finally {
+      setHorarioGuardando(false)
+    }
+  }
 
   async function cargarTodas() {
     setCargando(true)
@@ -208,48 +248,107 @@ function Direcciones() {
                 </span>
               </button>
             ))}
-          </div>
-
-          <p className="direcciones-descripcion">{tipoActivo?.descripcion}</p>
-
-          <div className="direcciones-lista">
-            {cargando ? (
-              Array.from({ length: 2 }).map((_, i) => <DireccionCardSkeleton key={i} />)
-            ) : direccionesActuales.length === 0 ? (
-              <div className="direcciones-vacio">
-                <span className="direcciones-vacio__icon">📍</span>
-                <p>No tienes direcciones de {tabActiva === 'delivery' ? 'delivery' : 'envío nacional'} guardadas</p>
-              </div>
-            ) : (
-              direccionesActuales.map((dir) => (
-                <div key={dir.id} className="direccion-card">
-                  <div className="direccion-card__info">
-                    <h3 className="direccion-card__nombre">{dir.nombre}</h3>
-                    <p className="direccion-card__direccion">{dir.direccion}</p>
-                    <div className="direccion-card__meta">
-                      {dir.ciudad && <span>📍 {dir.ciudad}, {dir.estado}</span>}
-                      {dir.telefono_contacto && <span>📞 {dir.telefono_contacto}</span>}
-                      {dir.agencia_preferida && <span>🚚 {dir.agencia_preferida}</span>}
-                    </div>
-                    {dir.referencia && <p className="direccion-card__referencia">📝 {dir.referencia}</p>}
-                  </div>
-                  <div className="direccion-card__acciones">
-                    <button onClick={() => handleEditar(dir)} className="direccion-card__accion" aria-label="Editar dirección">
-                      <IconoEditar />
-                    </button>
-                    <button onClick={() => handleEliminar(dir.id)} className="direccion-card__accion direccion-card__accion--eliminar" aria-label="Eliminar dirección">
-                      <IconoEliminar />
-                    </button>
-                  </div>
-                </div>
-              ))
+            {esInstitucional && (
+              <button
+                type="button"
+                className={`direccion-tab ${tabActiva === 'horario' ? 'direccion-tab--activo' : ''}`}
+                onClick={() => handleChangeTab('horario')}
+              >
+                <span>🕐</span> Horario de recepción
+              </button>
             )}
           </div>
 
-          {!mostrarForm && !cargando && (
-            <button onClick={handleAgregar} className="direcciones-agregar-btn">
-              + Agregar dirección de {tabActiva === 'delivery' ? 'delivery' : 'envío nacional'}
-            </button>
+          {tabActiva === 'horario' ? (
+            <p className="direcciones-descripcion">
+              Los días y horas en que tu sede recibe los pedidos. El equipo de despacho lo consulta antes de salir a entregar.
+            </p>
+          ) : (
+            <p className="direcciones-descripcion">{tipoActivo?.descripcion}</p>
+          )}
+
+          {tabActiva === 'horario' ? (
+            <div className="direcciones-horario">
+              {!perfilCargado ? (
+                <div className="direcciones-vacio">
+                  <p>Cargando tu horario…</p>
+                </div>
+              ) : (
+                <>
+                  {horarioMensaje && (
+                    <div className={`direccion-mensaje direccion-mensaje--${horarioMensaje.tipo}`}>
+                      {horarioMensaje.texto}
+                    </div>
+                  )}
+
+                  {resumirHorario(horario).length > 0 && (
+                    <div className="direcciones-horario__preview">
+                      <strong>Horario actual</strong>
+                      {resumirHorario(horario).map((linea) => (
+                        <span key={linea}>{linea}</span>
+                      ))}
+                    </div>
+                  )}
+
+                  <SelectorHorarioSemanal
+                    key={perfilCargado ? 'cargado' : 'vacio'}
+                    value={horario}
+                    onChange={setHorario}
+                  />
+
+                  <button
+                    type="button"
+                    className="btn btn--primario direcciones-horario__guardar"
+                    onClick={guardarHorario}
+                    disabled={horarioGuardando}
+                  >
+                    {horarioGuardando ? 'Guardando…' : 'Guardar horario'}
+                  </button>
+                </>
+              )}
+            </div>
+          ) : (
+            <>
+              <div className="direcciones-lista">
+                {cargando ? (
+                  Array.from({ length: 2 }).map((_, i) => <DireccionCardSkeleton key={i} />)
+                ) : direccionesActuales.length === 0 ? (
+                  <div className="direcciones-vacio">
+                    <span className="direcciones-vacio__icon">📍</span>
+                    <p>No tienes direcciones de {tabActiva === 'delivery' ? 'delivery' : 'envío nacional'} guardadas</p>
+                  </div>
+                ) : (
+                  direccionesActuales.map((dir) => (
+                    <div key={dir.id} className="direccion-card">
+                      <div className="direccion-card__info">
+                        <h3 className="direccion-card__nombre">{dir.nombre}</h3>
+                        <p className="direccion-card__direccion">{dir.direccion}</p>
+                        <div className="direccion-card__meta">
+                          {dir.ciudad && <span>📍 {dir.ciudad}, {dir.estado}</span>}
+                          {dir.telefono_contacto && <span>📞 {dir.telefono_contacto}</span>}
+                          {dir.agencia_preferida && <span>🚚 {dir.agencia_preferida}</span>}
+                        </div>
+                        {dir.referencia && <p className="direccion-card__referencia">📝 {dir.referencia}</p>}
+                      </div>
+                      <div className="direccion-card__acciones">
+                        <button onClick={() => handleEditar(dir)} className="direccion-card__accion" aria-label="Editar dirección">
+                          <IconoEditar />
+                        </button>
+                        <button onClick={() => handleEliminar(dir.id)} className="direccion-card__accion direccion-card__accion--eliminar" aria-label="Eliminar dirección">
+                          <IconoEliminar />
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              {!mostrarForm && !cargando && (
+                <button onClick={handleAgregar} className="direcciones-agregar-btn">
+                  + Agregar dirección de {tabActiva === 'delivery' ? 'delivery' : 'envío nacional'}
+                </button>
+              )}
+            </>
           )}
         </div>
       </div>

@@ -621,6 +621,18 @@
   gap: 0.75rem;
 }
 
+.registro-campo-triple {
+  display: grid;
+  grid-template-columns: 0.9fr 1.05fr 1.05fr;
+  gap: 0.75rem;
+}
+
+@media (max-width: 600px) {
+  .registro-campo-triple {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 480px) {
   .registro-campo-doble {
     grid-template-columns: 1fr;
@@ -879,6 +891,65 @@
   flex-shrink: 0;
 }
 
+/* ---------- Texto de ayuda bajo inputs ---------- */
+
+.registro-ayuda {
+  font-size: 0.8rem;
+  color: #6B7280;
+  margin-top: 0.35rem;
+  line-height: 1.45;
+}
+
+/* ---------- Secciones de documentos (paso 2 registro) ---------- */
+
+.registro-seccion-documentos--separada {
+  margin-top: 1.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid #E5E7EB;
+}
+
+.registro-seccion-explicacion {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: #6B7280;
+  margin: 0 0 1.25rem;
+  background: #F9FAFB;
+  border: 1px solid #E5E7EB;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+}
+
+.registro-planilla-fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 0 0 1rem;
+  flex-wrap: wrap;
+}
+
+.registro-btn-planilla {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.9rem;
+  border: 1px solid #0052DC;
+  border-radius: 8px;
+  color: #0052DC;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: #fff;
+  cursor: pointer;
+  text-decoration: none;
+  flex-shrink: 0;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.registro-btn-planilla:hover {
+  background: #0052DC;
+  color: #fff;
+}
+
 /* ---------- Pantalla final: éxito + notificaciones push ---------- */
 
 .auth-exito-icono {
@@ -977,6 +1048,14 @@
 .registro-checkbox a {
   color: #0052DC;
   text-decoration: underline;
+}
+
+.registro-checkbox--error {
+  color: #DC2626;
+}
+
+.registro-checkbox--error a {
+  color: #DC2626;
 }
 
 .auth-push-pregunta {
@@ -1091,6 +1170,20 @@
   flex-direction: column;
   gap: 1.25rem;
   margin-bottom: 1.5rem;
+}
+
+.registro-notif-nota {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: #6B7280;
+  margin: 0;
+}
+
+.registro-notif-nota svg {
+  color: #0052DC;
+  flex-shrink: 0;
 }
 
 .registro-notif-grupo {

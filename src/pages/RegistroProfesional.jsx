@@ -40,7 +40,6 @@ function RegistroProfesional() {
     titulo: '',
     nombre: '',
     apellido: '',
-    numeroCedula: '',
     especialidad: '',
     rifPrefijo: 'V',
     rifDigitos: '',
@@ -98,7 +97,6 @@ function RegistroProfesional() {
     if (!form.titulo.trim()) nuevosErrores.titulo = 'Campo requerido'
     if (!form.nombre.trim()) nuevosErrores.nombre = 'Campo requerido'
     if (!form.apellido.trim()) nuevosErrores.apellido = 'Campo requerido'
-    if (!form.numeroCedula.trim()) nuevosErrores.numeroCedula = 'Campo requerido'
 
     const rifCheck = validarRifMedico(form.rifPrefijo, form.rifDigitos)
     if (!rifCheck.valido) nuevosErrores.rif = rifCheck.error
@@ -174,7 +172,6 @@ function RegistroProfesional() {
           titulo: form.titulo.trim(),
           nombre: form.nombre.trim(),
           apellido: form.apellido.trim(),
-          numero_cedula: form.numeroCedula.trim(),
           especialidad: form.especialidad || null,
           rif: rifFormateado,
           rif_archivo_url: rifArchivoUrl,
@@ -262,7 +259,34 @@ function RegistroProfesional() {
                 {errores.profesion && <span id="profesion-error" className="registro-error-texto" role="alert">{errores.profesion}</span>}
               </div>
 
-              <div className="registro-campo-doble">
+              {especialidadesDisponibles.length > 0 && (
+                <div className="registro-campo">
+                  <label htmlFor="especialidad">Especialidad</label>
+                  <select
+                    id="especialidad"
+                    value={form.especialidad}
+                    onChange={(e) => actualizarCampo('especialidad', e.target.value)}
+                  >
+                    <option value="">Selecciona una especialidad</option>
+                    {especialidadesDisponibles.map((esp) => (
+                      <option key={esp} value={esp}>{esp}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              {esProfesionOtro && (
+                <div className="registro-campo">
+                  <label htmlFor="especialidadLibre">Especialidad (opcional)</label>
+                  <input
+                    id="especialidadLibre"
+                    value={form.especialidad}
+                    onChange={(e) => actualizarCampo('especialidad', e.target.value)}
+                  />
+                </div>
+              )}
+
+              <div className="registro-campo-triple">
                 <div className="registro-campo">
                   <label htmlFor="titulo">Título</label>
                   {esProfesionOtro || !TITULOS_POR_DEFECTO[form.profesion] ? (
@@ -293,22 +317,6 @@ function RegistroProfesional() {
                 </div>
 
                 <div className="registro-campo">
-                  <label htmlFor="numeroCedula">Número de cédula</label>
-                  <input
-                    id="numeroCedula"
-                    inputMode="numeric"
-                    value={form.numeroCedula}
-                    onChange={(e) => actualizarCampo('numeroCedula', e.target.value.replace(/\D/g, ''))}
-                    className={errores.numeroCedula ? 'registro-input--error' : ''}
-                    aria-invalid={!!errores.numeroCedula}
-                    aria-describedby={errores.numeroCedula ? 'numeroCedula-error' : undefined}
-                  />
-                  {errores.numeroCedula && <span id="numeroCedula-error" className="registro-error-texto" role="alert">{errores.numeroCedula}</span>}
-                </div>
-              </div>
-
-              <div className="registro-campo-doble">
-                <div className="registro-campo">
                   <label htmlFor="nombre">Nombre</label>
                   <input
                     id="nombre"
@@ -320,6 +328,7 @@ function RegistroProfesional() {
                   />
                   {errores.nombre && <span id="nombre-error" className="registro-error-texto" role="alert">{errores.nombre}</span>}
                 </div>
+
                 <div className="registro-campo">
                   <label htmlFor="apellido">Apellido</label>
                   <input
@@ -334,40 +343,13 @@ function RegistroProfesional() {
                 </div>
               </div>
 
-              {especialidadesDisponibles.length > 0 && (
-                <div className="registro-campo">
-                  <label htmlFor="especialidad">Especialidad</label>
-                  <select
-                    id="especialidad"
-                    value={form.especialidad}
-                    onChange={(e) => actualizarCampo('especialidad', e.target.value)}
-                  >
-                    <option value="">Selecciona una especialidad</option>
-                    {especialidadesDisponibles.map((esp) => (
-                      <option key={esp} value={esp}>{esp}</option>
-                    ))}
-                  </select>
-                </div>
-              )}
-
-              {esProfesionOtro && (
-                <div className="registro-campo">
-                  <label htmlFor="especialidadLibre">Especialidad (opcional)</label>
-                  <input
-                    id="especialidadLibre"
-                    value={form.especialidad}
-                    onChange={(e) => actualizarCampo('especialidad', e.target.value)}
-                  />
-                </div>
-              )}
-
               <div className="registro-campo">
-                <label htmlFor="rif">RIF</label>
+                <label htmlFor="rif">Cédula de Identidad</label>
                 <div className="registro-campo-rif">
                   <select
                     value={form.rifPrefijo}
                     onChange={(e) => actualizarCampo('rifPrefijo', e.target.value)}
-                    aria-label="Prefijo de RIF"
+                    aria-label="Prefijo de cédula de identidad"
                     style={{ width: '70px', flexShrink: 0 }}
                   >
                     {PREFIJOS_RIF.map((p) => (
