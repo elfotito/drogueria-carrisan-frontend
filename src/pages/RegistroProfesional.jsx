@@ -4,6 +4,7 @@ import SelectorEstadoCiudad from '../components/registro/SelectorEstadoCiudad'
 import SubidaArchivoDrive from '../components/registro/SubidaArchivoDrive'
 import Stepper from '../components/registro/Stepper'
 import TurnstileWidget from '../components/registro/TurnstileWidget'
+import PasswordStrength from '../components/registro/PasswordStrength'
 import {
   PROFESIONES,
   TITULOS_POR_DEFECTO,
@@ -65,26 +66,6 @@ function RegistroProfesional() {
 
   const especialidadesDisponibles = obtenerEspecialidades(form.profesion)
   const esProfesionOtro = form.profesion === 'otro'
-
-  function calcularFortalezaPassword(pwd) {
-    if (!pwd || pwd.length === 0) return { puntaje: 0, texto: '', color: '' }
-    let puntaje = 0
-    if (pwd.length >= 8) puntaje++
-    if (/[A-Z]/.test(pwd)) puntaje++
-    if (/[a-z]/.test(pwd)) puntaje++
-    if (/[0-9]/.test(pwd)) puntaje++
-    if (/[^A-Za-z0-9]/.test(pwd)) puntaje++
-
-    let texto, color
-    if (puntaje <= 1) { texto = 'Débil'; color = '#e53e3e' }
-    else if (puntaje <= 3) { texto = 'Media'; color = '#ed8936' }
-    else if (puntaje === 4) { texto = 'Fuerte'; color = '#38a169' }
-    else { texto = 'Muy fuerte'; color = '#276749' }
-
-    return { puntaje, texto, color }
-  }
-
-  const fortalezaPassword = calcularFortalezaPassword(password)
 
   function actualizarCampo(campo, valor) {
     setForm((prev) => ({ ...prev, [campo]: valor }))
@@ -240,6 +221,7 @@ function RegistroProfesional() {
           <img src={logo} alt="Logo" className="logologin" />
         </Link>
 
+        <div className="auth-card">
         <h1 className="auth-title">Registro Profesional de la Salud</h1>
         <p className="auth-subtitle">Médicos, enfermeros, bionalistas y demás profesionales de la salud</p>
 
@@ -593,22 +575,7 @@ function RegistroProfesional() {
                   </button>
                 </div>
                 {errores.password && <span id="password-error" className="registro-error-texto" role="alert">{errores.password}</span>}
-                {password.length > 0 && !errores.password && (
-                  <div role="status" aria-live="polite" style={{ marginTop: '8px' }}>
-                    <div
-                      style={{
-                        height: '4px',
-                        borderRadius: '2px',
-                        transition: 'all 0.3s',
-                        background: fortalezaPassword.color,
-                        width: `${(fortalezaPassword.puntaje / 5) * 100}%`
-                      }}
-                    />
-                    <div style={{ marginTop: '4px', fontSize: '12px', color: fortalezaPassword.color }}>
-                      {fortalezaPassword.texto === 'Media' ? 'Media' : fortalezaPassword.texto}
-                    </div>
-                  </div>
-                )}
+                {password.length > 0 && !errores.password && <PasswordStrength password={password} />}
               </div>
 
               <div className="registro-campo">
@@ -682,6 +649,7 @@ function RegistroProfesional() {
           >
             {paso === 2 ? (cargando ? 'Creando cuenta...' : 'Crear cuenta') : 'Siguiente'}
           </button>
+        </div>
         </div>
       </main>
 

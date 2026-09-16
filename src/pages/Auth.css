@@ -1,5 +1,30 @@
-/* ---------- Encabezados ---------- */
-.auth-card h1 {
+/* ---------- Tarjeta contenedora (login, registro, recuperar) ---------- */
+.auth-card {
+  width: 100%;
+  background: #fff;
+  border: 1px solid #E5E7EB;
+  border-radius: 18px;
+  box-shadow: 0 4px 20px rgba(17, 24, 39, 0.06);
+  padding: 28px;
+  box-sizing: border-box;
+}
+
+/* Card más angosta centrada — se usa en el paso de contraseña del login */
+.auth-card--angosto {
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 20px;
+  }
+}
+
+/* Encabezados dentro de la card legacy (Recuperarpassword sigue usando h1
+   directo); los títulos modernos (.auth-title) no se pisan. */
+.auth-card > h1:not(.auth-title) {
   font-family: 'Manrope', sans-serif;
   font-weight: 800;
   font-size: 1.4rem;
@@ -342,19 +367,18 @@
 
 .auth-input-group input {
   height: 48px;
-  color: #000;
-  border: 1px solid #000000;
+  color: #14182A;
+  border: 1px solid #D1D5DB;
   background-color: #FFFFFF;
-  border-radius: 4px;
+  border-radius: 10px;
   padding: 0 16px;
   font-size: 16px;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.15s ease;
 }
 
 .auth-input-group input:focus {
-  border-color: #0071ce;
-  box-shadow: 0 0 0 1px #0071ce;
+  border-color: #0052DC;
 }
 
 /* Honeypot oculta */
@@ -428,13 +452,15 @@
   text-decoration: underline;
 }
 
-/* Tarjeta Promocional Inferior */
+/* Tarjeta Promocional Inferior (card separada debajo del login) */
 .auth-promo-card {
   background-color: #f2f8fd;
   width: 100%;
-  border-radius: 8px;
+  border: 1px solid #dbeafe;
+  border-radius: 18px;
   padding: 24px 20px;
   text-align: center;
+  margin-top: 16px;
 }
 
 .auth-promo-title {
@@ -539,14 +565,14 @@
 /* Móvil (pantallas pequeñas) */
 @media (max-width: 767px) {
   .logologin {
-    height: 120px; /* Como pediste para móvil */
+    height: 80px;
   }
 }
 
 /* Móvil muy pequeño (opcional) */
 @media (max-width: 480px) {
   .logologin {
-    height: 100px;
+    height: 72px;
   }
 }
 

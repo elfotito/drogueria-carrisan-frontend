@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import SelectorEstadoCiudad from '../components/registro/SelectorEstadoCiudad'
 import Stepper from '../components/registro/Stepper'
 import TurnstileWidget from '../components/registro/TurnstileWidget'
+import PasswordStrength from '../components/registro/PasswordStrength'
 import { validarEmail, validarTelefonoVenezuela, validarPassword } from '../utils/validadores'
 import { useAuth } from '../context/AuthContext'
 import api from '../api/axios'
@@ -48,20 +49,6 @@ function RegistroHonorifico() {
   const [registroCompleto, setRegistroCompleto] = useState(false)
   const [mostrarPassword, setMostrarPassword] = useState(false)
   const [mostrarConfirmarPassword, setMostrarConfirmarPassword] = useState(false)
-
-  function calcularFuerzaPassword(pw) {
-    let score = 0
-    if (pw.length >= 8) score++
-    if (/[A-Z]/.test(pw)) score++
-    if (/[a-z]/.test(pw)) score++
-    if (/[0-9]/.test(pw)) score++
-    if (/[^A-Za-z0-9]/.test(pw)) score++
-
-    if (score <= 1) return { width: '20%', color: '#e53e3e', label: 'Débil' }
-    if (score <= 3) return { width: '60%', color: '#dd6b20', label: 'Media' }
-    if (score === 4) return { width: '80%', color: '#38a169', label: 'Fuerte' }
-    return { width: '100%', color: '#276749', label: 'Muy fuerte' }
-  }
 
   function actualizarCampo(campo, valor) {
     setForm((prev) => ({ ...prev, [campo]: valor }))
@@ -210,32 +197,34 @@ function RegistroHonorifico() {
             <img src={logo} alt="Logo" className="logologin" />
           </Link>
 
-          <h1 className="auth-title">Código de invitación</h1>
-          <p className="auth-subtitle">
-            El registro Honorífico es exclusivo para quienes ya forman parte de nuestra comunidad.
-            Ingresa el código que te compartimos.
-          </p>
+          <div className="auth-card">
+            <h1 className="auth-title">Código de invitación</h1>
+            <p className="auth-subtitle">
+              El registro Honorífico es exclusivo para quienes ya forman parte de nuestra comunidad.
+              Ingresa el código que te compartimos.
+            </p>
 
-          <form onSubmit={verificarCodigo} className="auth-form">
-            <div className="registro-campo">
-              <label htmlFor="codigo">Código de invitación</label>
-              <input
-                id="codigo"
-                value={codigo}
-                onChange={(e) => setCodigo(e.target.value)}
-                placeholder="Ej: CARRISAN2026"
-                className={errorCodigo ? 'registro-input--error' : ''}
-                aria-invalid={!!errorCodigo}
-                aria-describedby={errorCodigo ? 'codigo-error' : undefined}
-                autoFocus
-              />
-              {errorCodigo && <span id="codigo-error" className="registro-error-texto" role="alert">{errorCodigo}</span>}
-            </div>
+            <form onSubmit={verificarCodigo} className="auth-form">
+              <div className="registro-campo">
+                <label htmlFor="codigo">Código de invitación</label>
+                <input
+                  id="codigo"
+                  value={codigo}
+                  onChange={(e) => setCodigo(e.target.value)}
+                  placeholder="Ej: CARRISAN2026"
+                  className={errorCodigo ? 'registro-input--error' : ''}
+                  aria-invalid={!!errorCodigo}
+                  aria-describedby={errorCodigo ? 'codigo-error' : undefined}
+                  autoFocus
+                />
+                {errorCodigo && <span id="codigo-error" className="registro-error-texto" role="alert">{errorCodigo}</span>}
+              </div>
 
-            <button type="submit" className="auth-btn-primary" disabled={verificandoCodigo}>
-              {verificandoCodigo ? 'Verificando...' : 'Verificar código'}
-            </button>
-          </form>
+              <button type="submit" className="auth-btn-primary" disabled={verificandoCodigo}>
+                {verificandoCodigo ? 'Verificando...' : 'Verificar código'}
+              </button>
+            </form>
+          </div>
         </main>
       </div>
     )
@@ -248,6 +237,7 @@ function RegistroHonorifico() {
           <img src={logo} alt="Logo" className="logologin" />
         </Link>
 
+        <div className="auth-card">
         <h1 className="auth-title">Completa tu registro</h1>
         <p className="auth-subtitle">Código verificado — ya podés completar tus datos</p>
 
@@ -464,35 +454,7 @@ function RegistroHonorifico() {
                     )}
                   </button>
                 </div>
-                {password.length > 0 && (() => {
-                  const fuerza = calcularFuerzaPassword(password)
-                  return (
-                    <span id="password-fortaleza" className="registro-password-fortaleza" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '6px' }}>
-                      <span
-                        style={{
-                          flex: 1,
-                          height: '4px',
-                          borderRadius: '2px',
-                          background: '#e2e8f0',
-                          overflow: 'hidden',
-                          display: 'block'
-                        }}
-                      >
-                        <span
-                          style={{
-                            display: 'block',
-                            height: '100%',
-                            width: fuerza.width,
-                            background: fuerza.color,
-                            borderRadius: '2px',
-                            transition: 'all 0.3s'
-                          }}
-                        />
-                      </span>
-                      <span style={{ fontSize: '12px', color: fuerza.color, whiteSpace: 'nowrap' }}>{fuerza.label}</span>
-                    </span>
-                  )
-                })()}
+                {password.length > 0 && <PasswordStrength password={password} id="password-fortaleza" />}
                 {errores.password && <span id="password-error" className="registro-error-texto" role="alert">{errores.password}</span>}
               </div>
 
@@ -567,6 +529,7 @@ function RegistroHonorifico() {
           >
             {paso === 1 ? (cargando ? 'Creando cuenta...' : 'Crear cuenta') : 'Siguiente'}
           </button>
+        </div>
         </div>
       </main>
 

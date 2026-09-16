@@ -94,61 +94,63 @@ function Login() {
 
         {paso === 'email' ? (
           <div key="paso-email" className={`auth-paso auth-paso--${direccionSlide}`}>
-            <h1 className="auth-title">Iniciar sesión</h1>
-            <p className="auth-subtitle">
-              Ingresá tu correo. Te ayudaremos a continuar con tu cuenta o crear una nueva.
-            </p>
+            <div className="auth-card">
+              <h1 className="auth-title">Iniciar sesión</h1>
+              <p className="auth-subtitle">
+                Ingresá tu correo. Te ayudaremos a continuar con tu cuenta o crear una nueva.
+              </p>
 
-            <form className="auth-form" onSubmit={handleContinuar}>
-              <div className="auth-input-group">
-                <label htmlFor="email">Correo electrónico</label>
-                <input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  autoComplete="email"
-                  autoFocus
-                  placeholder="tu@correo.com"
-                  required
-                />
-              </div>
+              <form className="auth-form" onSubmit={handleContinuar}>
+                <div className="auth-input-group">
+                  <label htmlFor="email">Correo electrónico</label>
+                  <input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    autoComplete="email"
+                    autoFocus
+                    placeholder="tu@correo.com"
+                    required
+                  />
+                </div>
 
-              {/* Honeypot oculta para anti-spam */}
-              <div className="auth-honeypot" aria-hidden="true">
-                <label htmlFor="sitio_web">Sitio web</label>
-                <input
-                  id="sitio_web"
-                  name="sitio_web"
-                  type="text"
-                  tabIndex="-1"
-                  autoComplete="off"
-                  value={honeypot}
-                  onChange={(e) => setHoneypot(e.target.value)}
-                />
-              </div>
+                {/* Honeypot oculta para anti-spam */}
+                <div className="auth-honeypot" aria-hidden="true">
+                  <label htmlFor="sitio_web">Sitio web</label>
+                  <input
+                    id="sitio_web"
+                    name="sitio_web"
+                    type="text"
+                    tabIndex="-1"
+                    autoComplete="off"
+                    value={honeypot}
+                    onChange={(e) => setHoneypot(e.target.value)}
+                  />
+                </div>
 
-              <button
-                type="submit"
-                className={`auth-btn-primary${mostrarCheck ? ' auth-btn-primary--exito' : ''}`}
-                disabled={cargando || mostrarCheck}
-              >
-                {mostrarCheck ? (
-                  <svg className="auth-btn-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" aria-hidden="true">
-                    <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                ) : cargando ? 'Verificando...' : 'Continuar'}
-              </button>
-            </form>
+                <button
+                  type="submit"
+                  className={`auth-btn-primary${mostrarCheck ? ' auth-btn-primary--exito' : ''}`}
+                  disabled={cargando || mostrarCheck}
+                >
+                  {mostrarCheck ? (
+                    <svg className="auth-btn-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" aria-hidden="true">
+                      <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  ) : cargando ? 'Verificando...' : 'Continuar'}
+                </button>
+              </form>
 
-            <p className="auth-privacy-text">
-              Proteger tu información personal es nuestra prioridad.<br />
-              <Link to="/privacidad" style={{ color: '#1B4B8F', textDecoration: 'none' }}>
-                Ve nuestras políticas de privacidad
-              </Link>
-            </p>
+              <p className="auth-privacy-text">
+                Proteger tu información personal es nuestra prioridad.<br />
+                <Link to="/privacidad" style={{ color: '#1B4B8F', textDecoration: 'none' }}>
+                  Ve nuestras políticas de privacidad
+                </Link>
+              </p>
+            </div>
 
-            {/* Tarjeta promocional mejorada */}
+            {/* Tarjeta promocional — card separada debajo del login */}
             <div className="auth-promo-card">
               <h2 className="auth-promo-title">
                 ¿No tienes cuenta aún?
@@ -167,81 +169,83 @@ function Login() {
           </div>
         ) : (
           <div key="paso-password" className={`auth-paso auth-paso--${direccionSlide}`}>
-            <h1 className="auth-title">Ingresá tu contraseña</h1>
+            <div className="auth-card auth-card--angosto">
+              <h1 className="auth-title">Ingresá tu contraseña</h1>
 
-            <div className="auth-email-confirmado">
-              <span>{email}</span>
-              <button
-                type="button"
-                className="auth-link-btn"
-                onClick={() => {
-                  setDireccionSlide('atras')
-                  setPaso('email')
-                  setPassword('')
-                  setError('')
-                }}
-              >
-                Cambiar
-              </button>
-            </div>
+              <div className="auth-email-confirmado">
+                <span>{email}</span>
+                <button
+                  type="button"
+                  className="auth-link-btn"
+                  onClick={() => {
+                    setDireccionSlide('atras')
+                    setPaso('email')
+                    setPassword('')
+                    setError('')
+                  }}
+                >
+                  Cambiar
+                </button>
+              </div>
 
-            <form className="auth-form" onSubmit={handleIngresar}>
-              <div className="auth-input-group">
-                <label htmlFor="password">Contraseña</label>
-                <div style={{ position: 'relative' }}>
-                  <input
-                    id="password"
-                    type={mostrarPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    autoComplete="current-password"
-                    autoFocus
-                    placeholder="••••••••"
-                    required
-                  />
-                  <button
-                    type="button"
-                    aria-label={mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-                    aria-pressed={mostrarPassword}
-                    onClick={() => setMostrarPassword((prev) => !prev)}
-                    style={{
-                      position: 'absolute',
-                      right: '12px',
-                      top: '50%',
-                      transform: 'translateY(-50%)',
-                      background: 'none',
-                      border: 'none',
-                      cursor: 'pointer',
-                      padding: '4px',
-                    }}
-                  >
-                    {mostrarPassword ? (
-                      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
-                        <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
-                        <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24" />
-                        <line x1="1" y1="1" x2="23" y2="23" />
-                      </svg>
-                    ) : (
-                      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                        <circle cx="12" cy="12" r="3" />
-                      </svg>
-                    )}
-                  </button>
+              <form className="auth-form" onSubmit={handleIngresar}>
+                <div className="auth-input-group">
+                  <label htmlFor="password">Contraseña</label>
+                  <div style={{ position: 'relative' }}>
+                    <input
+                      id="password"
+                      type={mostrarPassword ? 'text' : 'password'}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      autoComplete="current-password"
+                      autoFocus
+                      placeholder="••••••••"
+                      required
+                    />
+                    <button
+                      type="button"
+                      aria-label={mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                      aria-pressed={mostrarPassword}
+                      onClick={() => setMostrarPassword((prev) => !prev)}
+                      style={{
+                        position: 'absolute',
+                        right: '12px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        padding: '4px',
+                      }}
+                    >
+                      {mostrarPassword ? (
+                        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
+                          <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
+                          <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24" />
+                          <line x1="1" y1="1" x2="23" y2="23" />
+                        </svg>
+                      ) : (
+                        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                          <circle cx="12" cy="12" r="3" />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
                 </div>
-              </div>
 
-              <div className="auth-olvido-wrapper">
-                <Link to="/recuperar" className="auth-olvido">
-                  ¿Olvidaste tu contraseña?
-                </Link>
-              </div>
+                <div className="auth-olvido-wrapper">
+                  <Link to="/recuperar" className="auth-olvido">
+                    ¿Olvidaste tu contraseña?
+                  </Link>
+                </div>
 
-              <button type="submit" className="auth-btn-primary" disabled={cargando}>
-                {cargando ? 'Ingresando...' : 'Ingresar'}
-              </button>
-            </form>
+                <button type="submit" className="auth-btn-primary" disabled={cargando}>
+                  {cargando ? 'Ingresando...' : 'Ingresar'}
+                </button>
+              </form>
+            </div>
           </div>
         )}
       </main>

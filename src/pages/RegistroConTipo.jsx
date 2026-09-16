@@ -66,6 +66,7 @@ function RegistroConTipo() {
           <img src={logo} alt="Logo" className="logologin" />
         </Link>
 
+        <div className="auth-card">
         <h1 className="auth-title">¿Cuál es tu tipo de cliente?</h1>
         <p className="auth-subtitle">
           Selecciona la opción que mejor describe tu perfil para completar tu registro
@@ -125,6 +126,7 @@ function RegistroConTipo() {
         >
           Siguiente
         </button>
+        </div>
       </main>
 
       <footer className="auth-footer">

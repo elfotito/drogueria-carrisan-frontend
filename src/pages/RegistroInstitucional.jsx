@@ -5,6 +5,7 @@ import SelectorHorarioSemanal from '../components/registro/SelectorHorarioSemana
 import SubidaArchivoDrive from '../components/registro/SubidaArchivoDrive'
 import Stepper from '../components/registro/Stepper'
 import TurnstileWidget from '../components/registro/TurnstileWidget'
+import PasswordStrength from '../components/registro/PasswordStrength'
 import { TIPOS_INSTITUCION } from '../data/tiposInstitucion'
 import {
   validarEmail,
@@ -127,16 +128,6 @@ function RegistroInstitucional() {
     return Object.keys(nuevosErrores).length === 0
   }
 
-  function calcularFortalezaPassword(pass) {
-    let puntaje = 0
-    if (pass.length >= 8) puntaje += 1
-    if (/[A-Z]/.test(pass)) puntaje += 1
-    if (/[a-z]/.test(pass)) puntaje += 1
-    if (/[0-9]/.test(pass)) puntaje += 1
-    if (/[^A-Za-z0-9]/.test(pass)) puntaje += 1
-    return puntaje
-  }
-
   function handleSiguiente() {
     let valido = false
     if (paso === 0) valido = validarPaso0()
@@ -227,6 +218,7 @@ function RegistroInstitucional() {
           <img src={logo} alt="Logo" className="logologin" />
         </Link>
 
+        <div className="auth-card">
         <h1 className="auth-title">Registro Institucional</h1>
         <p className="auth-subtitle">Clínicas, farmacias, centros quirúrgicos y demás instituciones de salud</p>
 
@@ -546,31 +538,7 @@ function RegistroInstitucional() {
                     )}
                   </button>
                 </div>
-                {password.length >= 1 && (() => {
-                  const puntaje = calcularFortalezaPassword(password)
-                  const { color, etiqueta, ancho } = puntaje <= 1
-                    ? { color: '#DC2626', etiqueta: 'Débil', ancho: 20 }
-                    : puntaje <= 3
-                    ? { color: '#F59E0B', etiqueta: 'Media', ancho: 60 }
-                    : puntaje === 4
-                    ? { color: '#10B981', etiqueta: 'Fuerte', ancho: 80 }
-                    : { color: '#059669', etiqueta: 'Muy fuerte', ancho: 100 }
-                  return (
-                    <div className="registro-password-fortaleza">
-                      <div
-                        className="registro-password-fortaleza-barra"
-                        role="progressbar"
-                        aria-label="Fortaleza de la contraseña"
-                        aria-valuenow={puntaje}
-                        aria-valuemin={0}
-                        aria-valuemax={5}
-                        aria-valuetext={etiqueta}
-                        style={{ height: '4px', borderRadius: '2px', background: color, width: `${ancho}%`, transition: 'all 0.3s' }}
-                      />
-                      <span className="registro-password-fortaleza-texto" style={{ color }}>{etiqueta}</span>
-                    </div>
-                  )
-                })()}
+                {password.length >= 1 && <PasswordStrength password={password} />}
                 {errores.password && <span id="password-error" className="registro-error-texto" role="alert">{errores.password}</span>}
               </div>
 
@@ -632,6 +600,7 @@ function RegistroInstitucional() {
           >
             {paso === 2 ? (cargando ? 'Creando cuenta...' : 'Crear cuenta') : 'Siguiente'}
           </button>
+        </div>
         </div>
       </main>
 
