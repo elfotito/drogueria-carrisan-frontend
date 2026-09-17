@@ -22,6 +22,7 @@ function SubidaArchivoDrive({ tipoDocumento, etiqueta, obligatorio = false, onSu
   const [archivo, setArchivo] = useState(null)
   const [subiendo, setSubiendo] = useState(false)
   const [subido, setSubido] = useState(false)
+  const [progreso, setProgreso] = useState(0)
   const [error, setError] = useState('')
   const inputRef = useRef(null)
 
@@ -40,6 +41,7 @@ function SubidaArchivoDrive({ tipoDocumento, etiqueta, obligatorio = false, onSu
 
     setError('')
     setArchivo(file)
+    setProgreso(0)
     setSubiendo(true)
 
     try {
@@ -47,7 +49,13 @@ function SubidaArchivoDrive({ tipoDocumento, etiqueta, obligatorio = false, onSu
       formData.append('archivo', file)
       formData.append('tipo_documento', tipoDocumento)
 
-      const { data } = await api.post('/uploads/registro', formData)
+      const { data } = await api.post('/uploads/registro', formData, {
+        onUploadProgress: (evento) => {
+          if (!evento.total) return
+          setProgreso(Math.round((evento.loaded / evento.total) * 100))
+        },
+      })
+      setProgreso(100)
       setSubido(true)
       onSubida(data.url)
     } catch (err) {
@@ -61,10 +69,13 @@ function SubidaArchivoDrive({ tipoDocumento, etiqueta, obligatorio = false, onSu
   function quitarArchivo() {
     setArchivo(null)
     setSubido(false)
+    setProgreso(0)
     setError('')
     if (inputRef.current) inputRef.current.value = ''
     onQuitar?.()
   }
+
+  const progresoVisible = Math.min(progreso, 90)
 
   return (
     <div className="subida-archivo">
@@ -90,17 +101,37 @@ function SubidaArchivoDrive({ tipoDocumento, etiqueta, obligatorio = false, onSu
         </label>
       ) : (
         <div className={`subida-archivo-preview${subido ? ' subida-archivo-preview--ok' : ''}`}>
-          <span className="subida-archivo-nombre">{archivo.name}</span>
-          {subiendo ? (
-            <span className="subida-archivo-estado">Subiendo...</span>
-          ) : subido ? (
-            <>
-              <svg className="subida-archivo-check" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="3">
-                <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              <button type="button" onClick={quitarArchivo} className="subida-archivo-quitar">Quitar</button>
-            </>
-          ) : null}
+          <div className="subida-archivo-preview-fila">
+            <span className="subida-archivo-nombre">{archivo.name}</span>
+            {subiendo ? (
+              <span className="subida-archivo-estado">
+                <span className="subida-archivo-spinner" aria-hidden="true" />
+                Subiendo...
+              </span>
+            ) : subido ? (
+              <>
+                <svg className="subida-archivo-check" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="3">
+                  <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                <button type="button" onClick={quitarArchivo} className="subida-archivo-quitar">Quitar</button>
+              </>
+            ) : null}
+          </div>
+          {subiendo && (
+            <div
+              className="subida-archivo-barra"
+              role="progressbar"
+              aria-label="Subiendo archivo"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={progresoVisible}
+            >
+              <span
+                className={`subida-archivo-barra__relleno${progreso > 0 ? '' : ' subida-archivo-barra__relleno--indeterminada'}`}
+                style={progreso > 0 ? { width: `${progresoVisible}%` } : undefined}
+              />
+            </div>
+          )}
         </div>
       )}
 

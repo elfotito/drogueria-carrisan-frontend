@@ -350,6 +350,9 @@ function RegistroInstitucional() {
                   aria-describedby={errores.direccion_fiscal ? 'direccion_fiscal-error' : undefined}
                 />
                 {errores.direccion_fiscal && <span id="direccion_fiscal-error" className="registro-error-texto" role="alert">{errores.direccion_fiscal}</span>}
+                <p className="registro-ayuda">
+                  Debe ser la dirección que aparece en tu RIF. La dirección de entrega la agregarás cuando realices tu primer pedido.
+                </p>
               </div>
 
               <SelectorEstadoCiudad

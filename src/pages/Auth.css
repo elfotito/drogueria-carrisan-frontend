@@ -856,18 +856,96 @@
 
 .subida-archivo-preview {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
+  flex-direction: column;
+  gap: 0.55rem;
   padding: 0.7rem 0.9rem;
   border: 1px solid #D1D5DB;
   border-radius: 10px;
   font-size: 0.85rem;
 }
 
+.subida-archivo-preview-fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
 .subida-archivo-preview--ok {
   border-color: #12A594;
   background: #F0FDFA;
+}
+
+.subida-archivo-estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #6B7280;
+  flex-shrink: 0;
+}
+
+.subida-archivo-spinner {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 2px solid #DBEAFE;
+  border-top-color: #0052DC;
+  animation: subida-archivo-girar 0.7s linear infinite;
+}
+
+@keyframes subida-archivo-girar {
+  to { transform: rotate(360deg); }
+}
+
+.subida-archivo-barra {
+  position: relative;
+  width: 100%;
+  height: 4px;
+  border-radius: 999px;
+  background: #E5E7EB;
+  overflow: hidden;
+}
+
+.subida-archivo-barra__relleno {
+  position: relative;
+  display: block;
+  height: 100%;
+  width: 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #0052DC, #12A594);
+  transition: width 0.25s ease;
+  overflow: hidden;
+}
+
+.subida-archivo-barra__relleno::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+  animation: subida-archivo-brillo 1.1s linear infinite;
+}
+
+.subida-archivo-barra__relleno--indeterminada {
+  width: 40%;
+  animation: subida-archivo-indeterminada 1.1s ease-in-out infinite;
+}
+
+@keyframes subida-archivo-brillo {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes subida-archivo-indeterminada {
+  0% { transform: translateX(-120%); }
+  100% { transform: translateX(260%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .subida-archivo-spinner,
+  .subida-archivo-barra__relleno,
+  .subida-archivo-barra__relleno::after {
+    animation-duration: 2.4s;
+  }
 }
 
 .subida-archivo-nombre {
