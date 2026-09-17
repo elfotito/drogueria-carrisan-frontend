@@ -86,17 +86,17 @@ function Terminos() {
         </svg>
       </button>
 
+      {indiceAbierto && (
+        <aside className="terminos-indice terminos-indice--mobile terminos-mobile-only">
+          <IndiceLinks onNavigate={() => setIndiceAbierto(false)} />
+        </aside>
+      )}
+
       <div className="terminos-layout">
         <aside className="terminos-indice terminos-desktop-only">
           <p className="terminos-indice__titulo">Índice</p>
           <IndiceLinks />
         </aside>
-
-        {indiceAbierto && (
-          <aside className="terminos-indice terminos-indice--mobile terminos-mobile-only">
-            <IndiceLinks onNavigate={() => setIndiceAbierto(false)} />
-          </aside>
-        )}
 
         <div className="terminos-contenido">
           <section id="aceptacion" className="terminos-seccion">

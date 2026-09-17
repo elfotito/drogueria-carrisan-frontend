@@ -49,9 +49,12 @@ function RegistroProfesional() {
     telCodigo: '414',
     telDigitos: ''
   })
+  const [cedulaArchivoUrl, setCedulaArchivoUrl] = useState('')
   const [rifArchivoUrl, setRifArchivoUrl] = useState('')
   const [certificadoUrl, setCertificadoUrl] = useState('')
   const [aceptaTerminos, setAceptaTerminos] = useState(false)
+  const [aceptaPrivacidad, setAceptaPrivacidad] = useState(false)
+  const [aceptaComercial, setAceptaComercial] = useState(false)
   const [notifSistema, setNotifSistema] = useState(true)
   const [notifPromociones, setNotifPromociones] = useState(true)
   const [password, setPassword] = useState('')
@@ -89,6 +92,18 @@ function RegistroProfesional() {
     setPaso((prev) => prev - 1)
   }
 
+  function irAtras() {
+    if (paso > 0) {
+      retrocederPaso()
+      return
+    }
+    if (typeof window.history.state?.idx === 'number' && window.history.state.idx > 0) {
+      navigate(-1)
+    } else {
+      navigate('/registro')
+    }
+  }
+
   function validarPaso0() {
     const nuevosErrores = {}
 
@@ -118,6 +133,7 @@ function RegistroProfesional() {
 
   function validarPaso1() {
     const nuevosErrores = {}
+    if (!cedulaArchivoUrl) nuevosErrores.cedula_archivo = 'Debes subir la cédula de identidad'
     if (!rifArchivoUrl) nuevosErrores.rif_archivo = 'Debes subir el RIF en PDF'
     setErrores(nuevosErrores)
     return Object.keys(nuevosErrores).length === 0
@@ -125,7 +141,7 @@ function RegistroProfesional() {
 
   function validarPaso2() {
     const nuevosErrores = {}
-    if (!aceptaTerminos) nuevosErrores.terminos = 'Debes aceptar los términos para continuar'
+    if (!aceptaTerminos || !aceptaPrivacidad || !aceptaComercial) nuevosErrores.terminos = 'Debes aceptar los 3 términos para continuar'
     if (!validarPassword(password).valido) nuevosErrores.password = validarPassword(password).error || 'La contraseña no es válida'
     if (password !== confirmarPassword) nuevosErrores.confirmarPassword = 'Las contraseñas no coinciden'
     if (!turnstileToken) nuevosErrores.turnstile = 'Completa la verificación de seguridad'
@@ -175,6 +191,7 @@ function RegistroProfesional() {
           especialidad: form.especialidad || null,
           rif: rifFormateado,
           rif_archivo_url: rifArchivoUrl,
+          cedula_archivo_url: cedulaArchivoUrl,
           certificado_acreditacion_url: certificadoUrl || null,
           direccion_fiscal: form.direccion_fiscal.trim() || null
         },
@@ -428,6 +445,16 @@ function RegistroProfesional() {
               <h3 className="registro-seccion-titulo-paso">Documentos requeridos</h3>
 
               <SubidaArchivoDrive
+                tipoDocumento="cedula_identidad"
+                etiqueta="Cédula de Identidad"
+                obligatorio
+                aceptaImagenes
+                onSubida={setCedulaArchivoUrl}
+                onQuitar={() => setCedulaArchivoUrl('')}
+              />
+              {errores.cedula_archivo && <span className="registro-error-texto" role="alert">{errores.cedula_archivo}</span>}
+
+              <SubidaArchivoDrive
                 tipoDocumento="rif"
                 etiqueta="RIF"
                 obligatorio
@@ -497,22 +524,43 @@ function RegistroProfesional() {
                 </div>
               </div>
 
-              <label className="registro-checkbox">
+              <label className={`registro-checkbox${errores.terminos && !aceptaTerminos ? ' registro-checkbox--error' : ''}`}>
                 <input
                   type="checkbox"
                   checked={aceptaTerminos}
                   onChange={(e) => setAceptaTerminos(e.target.checked)}
                 />
                 <span>
-                  Acepto la <Link to="/privacidad">política de privacidad</Link> y
-                  los <Link to="/terminos">términos de uso</Link>
+                  He leído y acepto los <Link to="/terminos">Términos y Condiciones</Link>
                 </span>
               </label>
-              {errores.terminos && <span className="registro-error-texto" role="alert">{errores.terminos}</span>}
+
+              <label className={`registro-checkbox${errores.terminos && !aceptaPrivacidad ? ' registro-checkbox--error' : ''}`}>
+                <input
+                  type="checkbox"
+                  checked={aceptaPrivacidad}
+                  onChange={(e) => setAceptaPrivacidad(e.target.checked)}
+                />
+                <span>
+                  He leído y acepto la <Link to="/privacidad">Política de Privacidad</Link>
+                </span>
+              </label>
+
+              <label className={`registro-checkbox${errores.terminos && !aceptaComercial ? ' registro-checkbox--error' : ''}`}>
+                <input
+                  type="checkbox"
+                  checked={aceptaComercial}
+                  onChange={(e) => setAceptaComercial(e.target.checked)}
+                />
+                <span>
+                  He leído y acepto la <Link to="/terminoscomerciales">Política Comercial</Link>
+                </span>
+              </label>
+              {errores.terminos && <span id="terminos-error" className="registro-error-texto" role="alert">{errores.terminos}</span>}
 
               <div className="registro-campo">
                 <label htmlFor="password">Contraseña</label>
-                <div style={{ position: 'relative' }}>
+                <div className="registro-input-con-toggle" style={{ position: 'relative' }}>
                   <input
                     id="password"
                     type={mostrarPassword ? 'text' : 'password'}
@@ -523,25 +571,13 @@ function RegistroProfesional() {
                     className={errores.password ? 'registro-input--error' : ''}
                     aria-invalid={!!errores.password}
                     aria-describedby={errores.password ? 'password-error' : undefined}
-                    style={{ paddingRight: '44px' }}
                   />
                   <button
                     type="button"
                     onClick={() => setMostrarPassword((prev) => !prev)}
                     aria-label={mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
                     aria-pressed={mostrarPassword}
-                    style={{
-                      position: 'absolute',
-                      right: '8px',
-                      top: '50%',
-                      transform: 'translateY(-50%)',
-                      border: 'none',
-                      background: 'transparent',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      padding: '4px'
-                    }}
+                    className="registro-password-toggle"
                   >
                     {mostrarPassword ? (
                       <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
@@ -562,7 +598,7 @@ function RegistroProfesional() {
 
               <div className="registro-campo">
                 <label htmlFor="confirmar-password">Confirmar contraseña</label>
-                <div style={{ position: 'relative' }}>
+                <div className="registro-input-con-toggle" style={{ position: 'relative' }}>
                   <input
                     id="confirmar-password"
                     type={mostrarPassword ? 'text' : 'password'}
@@ -573,25 +609,13 @@ function RegistroProfesional() {
                     className={errores.confirmarPassword ? 'registro-input--error' : ''}
                     aria-invalid={!!errores.confirmarPassword}
                     aria-describedby={errores.confirmarPassword ? 'confirmar-password-error' : undefined}
-                    style={{ paddingRight: '44px' }}
                   />
                   <button
                     type="button"
                     onClick={() => setMostrarPassword((prev) => !prev)}
                     aria-label={mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
                     aria-pressed={mostrarPassword}
-                    style={{
-                      position: 'absolute',
-                      right: '8px',
-                      top: '50%',
-                      transform: 'translateY(-50%)',
-                      border: 'none',
-                      background: 'transparent',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      padding: '4px'
-                    }}
+                    className="registro-password-toggle"
                   >
                     {mostrarPassword ? (
                       <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
@@ -618,11 +642,9 @@ function RegistroProfesional() {
         </div>
 
         <div className="registro-nav-botones">
-          {paso > 0 && (
-            <button type="button" className="registro-btn-atras" onClick={retrocederPaso}>
-              ← Anterior
-            </button>
-          )}
+          <button type="button" className="registro-btn-atras" onClick={irAtras}>
+            ← Atrás
+          </button>
           <button
             type="button"
             className="registro-btn-siguiente"

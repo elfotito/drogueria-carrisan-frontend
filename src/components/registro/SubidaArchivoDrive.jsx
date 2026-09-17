@@ -15,10 +15,11 @@ import api from '../../api/axios'
  *  - tipoDocumento: string identificador ('rif' | 'permiso_sanitario' | ...)
  *  - etiqueta: texto mostrado al usuario (ej: "RIF")
  *  - obligatorio: si true, muestra asterisco y estilo de requerido
+ *  - aceptaImagenes: si true, acepta PDF o imagen (JPG/PNG/WEBP). Default: solo PDF
  *  - onSubida(url): callback cuando la subida termina bien
  *  - onQuitar(): callback cuando el usuario quita el archivo ya subido
  */
-function SubidaArchivoDrive({ tipoDocumento, etiqueta, obligatorio = false, onSubida, onQuitar }) {
+function SubidaArchivoDrive({ tipoDocumento, etiqueta, obligatorio = false, aceptaImagenes = false, onSubida, onQuitar }) {
   const [archivo, setArchivo] = useState(null)
   const [subiendo, setSubiendo] = useState(false)
   const [subido, setSubido] = useState(false)
@@ -30,8 +31,11 @@ function SubidaArchivoDrive({ tipoDocumento, etiqueta, obligatorio = false, onSu
     const file = e.target.files?.[0]
     if (!file) return
 
-    if (file.type !== 'application/pdf') {
-      setError('Solo se aceptan archivos PDF')
+    const tiposAceptados = aceptaImagenes
+      ? ['application/pdf', 'image/jpeg', 'image/png', 'image/webp']
+      : ['application/pdf']
+    if (!tiposAceptados.includes(file.type)) {
+      setError(aceptaImagenes ? 'Solo se aceptan PDF o imágenes (JPG, PNG, WEBP)' : 'Solo se aceptan archivos PDF')
       return
     }
     if (file.size > 2 * 1024 * 1024) {
@@ -89,7 +93,7 @@ function SubidaArchivoDrive({ tipoDocumento, etiqueta, obligatorio = false, onSu
           <input
             ref={inputRef}
             type="file"
-            accept="application/pdf"
+            accept={aceptaImagenes ? 'application/pdf,image/jpeg,image/png,image/webp' : 'application/pdf'}
             onChange={manejarSeleccion}
             hidden
           />
@@ -97,7 +101,7 @@ function SubidaArchivoDrive({ tipoDocumento, etiqueta, obligatorio = false, onSu
             <path d="M12 16V4M12 4l-4 4M12 4l4 4" strokeLinecap="round" strokeLinejoin="round" />
             <path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          <span>Subir PDF</span>
+          <span>{aceptaImagenes ? 'Subir PDF o imagen' : 'Subir PDF'}</span>
         </label>
       ) : (
         <div className={`subida-archivo-preview${subido ? ' subida-archivo-preview--ok' : ''}`}>

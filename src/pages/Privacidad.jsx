@@ -81,17 +81,17 @@ function Privacidad() {
         </svg>
       </button>
 
+      {indiceAbierto && (
+        <aside className="privacidad-indice privacidad-indice--mobile privacidad-mobile-only">
+          <IndiceLinks onNavigate={() => setIndiceAbierto(false)} />
+        </aside>
+      )}
+
       <div className="privacidad-layout">
         <aside className="privacidad-indice privacidad-desktop-only">
           <p className="privacidad-indice__titulo">Índice</p>
           <IndiceLinks />
         </aside>
-
-        {indiceAbierto && (
-          <aside className="privacidad-indice privacidad-indice--mobile privacidad-mobile-only">
-            <IndiceLinks onNavigate={() => setIndiceAbierto(false)} />
-          </aside>
-        )}
 
         <div className="privacidad-contenido">
           <section id="alcance" className="privacidad-seccion">

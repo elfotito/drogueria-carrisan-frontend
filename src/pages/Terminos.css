@@ -119,8 +119,9 @@
   color: #0052DC;
 }
 
-/* Índice mobile: caja abierta debajo del toggle, grid de 2 columnas */
+/* Índice mobile: caja abierta debajo del toggle, grid de 1 columna */
 .terminos-indice--mobile {
+  width: 100%;
   max-width: 900px;
   margin: 0 auto 16px;
   background: #FFFFFF;

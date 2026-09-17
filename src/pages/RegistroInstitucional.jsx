@@ -81,6 +81,18 @@ function RegistroInstitucional() {
     setPaso((prev) => prev - 1)
   }
 
+  function irAtras() {
+    if (paso > 0) {
+      retrocederPaso()
+      return
+    }
+    if (typeof window.history.state?.idx === 'number' && window.history.state.idx > 0) {
+      navigate(-1)
+    } else {
+      navigate('/registro')
+    }
+  }
+
   function validarPaso0() {
     const nuevosErrores = {}
 
@@ -645,11 +657,9 @@ function RegistroInstitucional() {
         </div>
 
         <div className="registro-nav-botones">
-          {paso > 0 && (
-            <button type="button" className="registro-btn-atras" onClick={retrocederPaso}>
-              ← Anterior
-            </button>
-          )}
+          <button type="button" className="registro-btn-atras" onClick={irAtras}>
+            ← Atrás
+          </button>
           <button
             type="button"
             className="registro-btn-siguiente"

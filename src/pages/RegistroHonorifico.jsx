@@ -11,7 +11,22 @@ import logo from '../assets/minilogo color sin fondo.png'
 import './Auth.css'
 
 const CODIGOS_TELEFONO = ['414', '424', '412', '422', '416', '426']
-const TRATAMIENTOS = ['Sr.', 'Sra.', 'Lic.', 'Lcda.']
+const TRATAMIENTOS = [
+  'Sr.',
+  'Sra.',
+  'Dr.',
+  'Dra.',
+  'Lic.',
+  'Lcda.',
+  'Abg.',
+  'Abgda.',
+  'Ing.',
+  'Arq.',
+  'Arqta.',
+  'TSU',
+  'Prof.',
+  'Profa.'
+]
 const PASOS = ['Datos', 'Confirmación']
 
 function RegistroHonorifico() {
@@ -38,6 +53,8 @@ function RegistroHonorifico() {
     ciudad: ''
   })
   const [aceptaTerminos, setAceptaTerminos] = useState(false)
+  const [aceptaPrivacidad, setAceptaPrivacidad] = useState(false)
+  const [aceptaComercial, setAceptaComercial] = useState(false)
   const [notifSistema, setNotifSistema] = useState(true)
   const [notifPromociones, setNotifPromociones] = useState(true)
   const [password, setPassword] = useState('')
@@ -84,6 +101,18 @@ function RegistroHonorifico() {
     setPaso((prev) => prev - 1)
   }
 
+  function irAtras() {
+    if (paso > 0) {
+      retrocederPaso()
+      return
+    }
+    if (typeof window.history.state?.idx === 'number' && window.history.state.idx > 0) {
+      navigate(-1)
+    } else {
+      navigate('/registro')
+    }
+  }
+
   function validarPaso0() {
     const nuevosErrores = {}
 
@@ -103,7 +132,7 @@ function RegistroHonorifico() {
 
   function validarPaso1() {
     const nuevosErrores = {}
-    if (!aceptaTerminos) nuevosErrores.terminos = 'Debes aceptar los términos para continuar'
+    if (!aceptaTerminos || !aceptaPrivacidad || !aceptaComercial) nuevosErrores.terminos = 'Debes aceptar los 3 términos para continuar'
     const pwCheck = validarPassword(password)
     if (!pwCheck.valido) nuevosErrores.password = pwCheck.error
     if (password !== confirmarPassword) nuevosErrores.confirmarPassword = 'Las contraseñas no coinciden'
@@ -164,7 +193,7 @@ function RegistroHonorifico() {
 
   if (registroCompleto) {
     const nombrePila = form.nombre.split(' ')[0]
-    const terminacionGenero = /^(Sra\.|Lcda\.|Dra\.)/.test(form.tratamiento) ? 'a' : 'o'
+    const terminacionGenero = /^(Sra\.|Lcda\.|Dra\.|Abgda\.|Arqta\.|Profa\.)/.test(form.tratamiento) ? 'a' : 'o'
 
     return (
       <div className="auth-page">
@@ -260,7 +289,7 @@ function RegistroHonorifico() {
                 {errores.email && <span id="email-error" className="registro-error-texto" role="alert">{errores.email}</span>}
               </div>
 
-              <div className="registro-campo-doble">
+              <div className="registro-campo-triple">
                 <div className="registro-campo">
                   <label htmlFor="tratamiento">Tratamiento</label>
                   <select
@@ -273,35 +302,6 @@ function RegistroHonorifico() {
                     ))}
                   </select>
                 </div>
-                <div className="registro-campo">
-                  <label htmlFor="telefono">Teléfono</label>
-                  <div className="registro-campo-telefono">
-                    <select
-                      value={form.telCodigo}
-                      onChange={(e) => actualizarCampo('telCodigo', e.target.value)}
-                      aria-label="Código de teléfono"
-                    >
-                      {CODIGOS_TELEFONO.map((c) => (
-                        <option key={c} value={c}>0{c}</option>
-                      ))}
-                    </select>
-                    <input
-                      id="telefono"
-                      inputMode="numeric"
-                      maxLength={7}
-                      placeholder="1234567"
-                      value={form.telDigitos}
-                      onChange={(e) => actualizarCampo('telDigitos', e.target.value.replace(/\D/g, ''))}
-                      className={errores.telefono ? 'registro-input--error' : ''}
-                      aria-invalid={!!errores.telefono}
-                      aria-describedby={errores.telefono ? 'telefono-error' : undefined}
-                    />
-                  </div>
-                  {errores.telefono && <span id="telefono-error" className="registro-error-texto" role="alert">{errores.telefono}</span>}
-                </div>
-              </div>
-
-              <div className="registro-campo-doble">
                 <div className="registro-campo">
                   <label htmlFor="nombre">Nombre</label>
                   <input
@@ -326,6 +326,33 @@ function RegistroHonorifico() {
                   />
                   {errores.apellido && <span id="apellido-error" className="registro-error-texto" role="alert">{errores.apellido}</span>}
                 </div>
+              </div>
+
+              <div className="registro-campo">
+                <label htmlFor="telefono">Teléfono</label>
+                <div className="registro-campo-telefono">
+                  <select
+                    value={form.telCodigo}
+                    onChange={(e) => actualizarCampo('telCodigo', e.target.value)}
+                    aria-label="Código de teléfono"
+                  >
+                    {CODIGOS_TELEFONO.map((c) => (
+                      <option key={c} value={c}>0{c}</option>
+                    ))}
+                  </select>
+                  <input
+                    id="telefono"
+                    inputMode="numeric"
+                    maxLength={7}
+                    placeholder="1234567"
+                    value={form.telDigitos}
+                    onChange={(e) => actualizarCampo('telDigitos', e.target.value.replace(/\D/g, ''))}
+                    className={errores.telefono ? 'registro-input--error' : ''}
+                    aria-invalid={!!errores.telefono}
+                    aria-describedby={errores.telefono ? 'telefono-error' : undefined}
+                  />
+                </div>
+                {errores.telefono && <span id="telefono-error" className="registro-error-texto" role="alert">{errores.telefono}</span>}
               </div>
 
               <SelectorEstadoCiudad
@@ -391,24 +418,43 @@ function RegistroHonorifico() {
                 </div>
               </div>
 
-              <label className="registro-checkbox">
+              <label className={`registro-checkbox${errores.terminos && !aceptaTerminos ? ' registro-checkbox--error' : ''}`}>
                 <input
                   type="checkbox"
                   checked={aceptaTerminos}
                   onChange={(e) => setAceptaTerminos(e.target.checked)}
-                  aria-invalid={!!errores.terminos}
-                  aria-describedby={errores.terminos ? 'terminos-error' : undefined}
                 />
                 <span>
-                  Acepto la <Link to="/privacidad">política de privacidad</Link> y
-                  los <Link to="/terminos">términos de uso</Link>
+                  He leído y acepto los <Link to="/terminos">Términos y Condiciones</Link>
+                </span>
+              </label>
+
+              <label className={`registro-checkbox${errores.terminos && !aceptaPrivacidad ? ' registro-checkbox--error' : ''}`}>
+                <input
+                  type="checkbox"
+                  checked={aceptaPrivacidad}
+                  onChange={(e) => setAceptaPrivacidad(e.target.checked)}
+                />
+                <span>
+                  He leído y acepto la <Link to="/privacidad">Política de Privacidad</Link>
+                </span>
+              </label>
+
+              <label className={`registro-checkbox${errores.terminos && !aceptaComercial ? ' registro-checkbox--error' : ''}`}>
+                <input
+                  type="checkbox"
+                  checked={aceptaComercial}
+                  onChange={(e) => setAceptaComercial(e.target.checked)}
+                />
+                <span>
+                  He leído y acepto la <Link to="/terminoscomerciales">Política Comercial</Link>
                 </span>
               </label>
               {errores.terminos && <span id="terminos-error" className="registro-error-texto" role="alert">{errores.terminos}</span>}
 
               <div className="registro-campo">
                 <label htmlFor="password">Contraseña</label>
-                <div style={{ position: 'relative' }}>
+                <div className="registro-input-con-toggle" style={{ position: 'relative' }}>
                   <input
                     id="password"
                     type={mostrarPassword ? 'text' : 'password'}
@@ -427,19 +473,7 @@ function RegistroHonorifico() {
                     onClick={() => setMostrarPassword((prev) => !prev)}
                     aria-label={mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
                     aria-pressed={mostrarPassword}
-                    style={{
-                      position: 'absolute',
-                      right: '10px',
-                      top: '50%',
-                      transform: 'translateY(-50%)',
-                      background: 'none',
-                      border: 'none',
-                      cursor: 'pointer',
-                      padding: '4px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      color: '#6b7280'
-                    }}
+                    className="registro-password-toggle"
                   >
                     {mostrarPassword ? (
                       <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
@@ -460,7 +494,7 @@ function RegistroHonorifico() {
 
               <div className="registro-campo">
                 <label htmlFor="confirmar-password">Confirmar contraseña</label>
-                <div style={{ position: 'relative' }}>
+                <div className="registro-input-con-toggle" style={{ position: 'relative' }}>
                   <input
                     id="confirmar-password"
                     type={mostrarConfirmarPassword ? 'text' : 'password'}
@@ -477,19 +511,7 @@ function RegistroHonorifico() {
                     onClick={() => setMostrarConfirmarPassword((prev) => !prev)}
                     aria-label={mostrarConfirmarPassword ? 'Ocultar confirmación de contraseña' : 'Mostrar confirmación de contraseña'}
                     aria-pressed={mostrarConfirmarPassword}
-                    style={{
-                      position: 'absolute',
-                      right: '10px',
-                      top: '50%',
-                      transform: 'translateY(-50%)',
-                      background: 'none',
-                      border: 'none',
-                      cursor: 'pointer',
-                      padding: '4px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      color: '#6b7280'
-                    }}
+                    className="registro-password-toggle"
                   >
                     {mostrarConfirmarPassword ? (
                       <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
@@ -516,11 +538,9 @@ function RegistroHonorifico() {
         </div>
 
         <div className="registro-nav-botones">
-          {paso > 0 && (
-            <button type="button" className="registro-btn-atras" onClick={retrocederPaso}>
-              ← Anterior
-            </button>
-          )}
+          <button type="button" className="registro-btn-atras" onClick={irAtras}>
+            ← Atrás
+          </button>
           <button
             type="button"
             className="registro-btn-siguiente"
