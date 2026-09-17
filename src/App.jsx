@@ -23,6 +23,7 @@ import RegistroInvita from './pages/RegistroInvita'
 import RegistroInstitucional from './pages/RegistroInstitucional'
 import RegistroProfesional from './pages/RegistroProfesional'
 import RegistroHonorifico from './pages/RegistroHonorifico'
+import RequiereInvitacion from './components/registro/RequiereInvitacion'
 import Carrito from './pages/Carrito'
 import MisOrdenes from './pages/MisOrdenes'
 import Admin from './pages/Admin'
@@ -34,6 +35,7 @@ import MisItems from './pages/MisItems'
 import Notificaciones from './pages/Notificaciones'
 import Terminos from './pages/Terminos'
 import Privacidad from './pages/Privacidad'
+import TerminosComerciales from './pages/TerminosComerciales'
 import EstadoCuenta from './pages/EstadoCuenta'
 import ProductoDetalle from './pages/ProductoDetalle'
 import ListaDetalle from './pages/ListaDetalle'
@@ -158,8 +160,8 @@ function App() {
                 <Route path="/registro/invita" element={<RegistroInvita />} />
                 <Route path="/registro/finalizar" element={<Registro />} />
                 <Route path="/registro/institucional" element={<RegistroInstitucional />} />
-                <Route path="/registro/profesional" element={<RegistroProfesional />} />
-                <Route path="/registro/honorifico" element={<RegistroHonorifico />} />
+                <Route path="/registro/profesional" element={<RequiereInvitacion><RegistroProfesional /></RequiereInvitacion>} />
+                <Route path="/registro/honorifico" element={<RequiereInvitacion><RegistroHonorifico /></RequiereInvitacion>} />
                 <Route path="/carrito" element={<PrivateRoute><Carrito /></PrivateRoute>} />
                 <Route path="/orders" element={<PrivateRoute><MisOrdenes /></PrivateRoute>} />
                 <Route path="/orders/:id" element={<PrivateRoute><OrdenDetalle /></PrivateRoute>} />
@@ -177,6 +179,7 @@ function App() {
                 <Route path="/notificaciones" element={<PrivateRoute><Notificaciones /></PrivateRoute>} />
                 <Route path="/terminos" element={<Terminos />} />
                 <Route path="/privacidad" element={<Privacidad />} />
+                <Route path="/terminoscomerciales" element={<TerminosComerciales />} />
                 <Route path="/mantenimiento" element={<Mantenimiento />} />
                 <Route path="/estado-cuenta" element={<PrivateRouteSensible><EstadoCuenta /></PrivateRouteSensible>} />
                 <Route path="/producto/:id" element={<ProductoDetalle />} />

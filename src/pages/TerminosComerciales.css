@@ -1,0 +1,274 @@
+/* ============================================
+   Política Comercial — Línea de Crédito B2B
+   mismo patrón de layout que Terminos.css / Privacidad.css
+   Paleta: Azul #0052DC · Índigo #1A1A3A · Paper #FBFAF7
+   ============================================ */
+
+
+.comercial-page {
+  background: var(--paper);
+  min-height: 100vh;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 24px 16px 60px;
+}
+
+.comercial-header {
+  max-width: 900px;
+  margin: 0 auto 16px;
+}
+
+.comercial-header h1 {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.5rem;
+  color: #1A1A3A;
+  margin: 0 0 6px;
+}
+
+.comercial-header__fecha {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: #74767c;
+  margin: 0;
+}
+
+/* ---------- Aviso destacado superior ---------- */
+.comercial-aviso {
+  max-width: 900px;
+  margin: 0 auto 16px;
+  background: #E9EFFC;
+  border: 1px solid #0052DC;
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.88rem;
+  color: #1A1A3A;
+  line-height: 1.5;
+}
+
+/* ---------- Toggle del índice (solo mobile) ---------- */
+.comercial-indice__toggle {
+  max-width: 900px;
+  margin: 0 auto 12px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #FFFFFF;
+  border: 1px solid #e3e4e5;
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #1A1A3A;
+  cursor: pointer;
+}
+
+.comercial-indice__toggle svg {
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.comercial-indice__toggle svg.rotado {
+  transform: rotate(180deg);
+}
+
+/* ---------- Layout general: índice + contenido ---------- */
+.comercial-layout {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+}
+
+/* ---------- Índice ---------- */
+.comercial-indice__titulo {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #74767c;
+  margin: 0 0 10px;
+}
+
+.comercial-indice__lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.comercial-indice__lista a {
+  display: block;
+  padding: 7px 10px;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #464646;
+  text-decoration: none;
+  line-height: 1.35;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.comercial-indice__lista a:hover {
+  background: #E9EFFC;
+  color: #0052DC;
+}
+
+/* Índice mobile: caja abierta debajo del toggle, grid de 1 columna */
+.comercial-indice--mobile {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto 16px;
+  background: #FFFFFF;
+  border: 1px solid #e3e4e5;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.comercial-indice--mobile .comercial-indice__lista {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2px;
+}
+
+/* ---------- Contenido ---------- */
+.comercial-contenido {
+  flex: 1;
+  min-width: 0;
+  max-width: 900px;
+  margin: 0 auto;
+  background: #FFFFFF;
+  border: 1px solid #e3e4e5;
+  border-radius: 16px;
+  padding: 24px 20px;
+}
+
+.comercial-seccion {
+  scroll-margin-top: 90px; /* offset para que el ancla no quede tapada */
+  padding: 20px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.comercial-seccion:first-child {
+  padding-top: 0;
+}
+
+.comercial-seccion:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.comercial-seccion h2 {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: #1A1A3A;
+  margin: 0 0 10px;
+}
+
+.comercial-seccion h3 {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: #1A1A3A;
+  margin: 16px 0 6px;
+}
+
+.comercial-seccion p {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  color: #464646;
+  line-height: 1.6;
+  margin: 0 0 12px;
+}
+
+.comercial-seccion p:last-child {
+  margin-bottom: 0;
+}
+
+.comercial-seccion a {
+  color: #0052DC;
+  font-weight: 600;
+}
+
+.comercial-lista {
+  margin: 0 0 12px;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.comercial-lista li {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  color: #464646;
+  line-height: 1.55;
+}
+
+.comercial-lista li:last-child {
+  margin-bottom: 0;
+}
+
+/* ---------- Caja destacada dentro de una sección ---------- */
+.comercial-destacado {
+  background: #F5F5F7;
+  border-left: 3px solid #1A1A3A;
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.87rem;
+  color: #1A1A3A;
+  line-height: 1.55;
+  margin: 0 0 12px;
+}
+
+/* ---------- Visibilidad responsive ---------- */
+.comercial-desktop-only {
+  display: none;
+}
+
+.comercial-mobile-only {
+  display: flex;
+}
+
+@media (min-width: 900px) {
+  .comercial-desktop-only {
+    display: block;
+  }
+
+  .comercial-mobile-only {
+    display: none !important;
+  }
+
+  .comercial-page {
+    padding: 40px 40px 80px;
+  }
+
+  .comercial-header h1 {
+    font-size: 2rem;
+  }
+
+  .comercial-indice {
+    flex: 0 0 260px;
+    position: sticky;
+    top: 130px; /* debajo del navbar desktop (fila principal + secundaria) */
+  }
+
+  .comercial-contenido {
+    margin: 0;
+    padding: 36px 40px;
+  }
+
+  .comercial-seccion h2 {
+    font-size: 1.2rem;
+  }
+}

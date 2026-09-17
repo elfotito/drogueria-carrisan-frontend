@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
 import logo from '../assets/minilogo color sin fondo.png'
 import api from '../api/axios'
+import EnlaceInvalido from '../components/registro/EnlaceInvalido'
 import './Auth.css'
 import './RegistroInvita.css'
 
@@ -37,8 +38,15 @@ function RegistroInvita() {
     }
   }, [token])
 
+  // Reenvía el token (?t=) al formulario: es lo que el guard RequiereInvitacion
+  // valida para no mostrar la pantalla "Enlace no válido". Si se perdiera aquí,
+  // los formularios de profesional/honorífico quedarían inaccesibles.
   function enlacePerfil(ruta) {
-    return email ? `${ruta}?email=${encodeURIComponent(email)}` : ruta
+    const params = new URLSearchParams()
+    if (token) params.set('t', token)
+    if (email) params.set('email', email)
+    const qs = params.toString()
+    return qs ? `${ruta}?${qs}` : ruta
   }
 
   return (
@@ -56,37 +64,7 @@ function RegistroInvita() {
             </div>
           )}
 
-          {estado === 'invalido' && (
-            <div className="reg-invita__invalido">
-              <span className="reg-invita__icono-candado" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none">
-                  <rect
-                    x="5"
-                    y="11"
-                    width="14"
-                    height="9"
-                    rx="2"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                  />
-                  <path
-                    d="M8 11V7a4 4 0 0 1 8 0v4"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </span>
-              <h1 className="auth-title">Enlace no válido o no autorizado</h1>
-              <p className="reg-invita__invalido-texto">
-                El enlace de invitación que intentaste usar no está activo. Si crees que es un
-                error, solicita uno nuevo directamente con la Droguería Carrisan.
-              </p>
-              <Link to="/" className="auth-submit reg-invita__invalido-btn">
-                Volver al inicio
-              </Link>
-            </div>
-          )}
+          {estado === 'invalido' && <EnlaceInvalido />}
 
           {estado === 'ok' && (
             <>

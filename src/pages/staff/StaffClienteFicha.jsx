@@ -498,6 +498,10 @@ function StaffClienteFicha() {
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
   const [crearModal, setCrearModal] = useState(false)
+  const [etiquetas, setEtiquetas] = useState([])
+  const [editandoEtiqueta, setEditandoEtiqueta] = useState(false)
+  const [etiquetaDraft, setEtiquetaDraft] = useState('')
+  const [guardandoEtiqueta, setGuardandoEtiqueta] = useState(false)
 
   useEffect(() => {
     let vivo = true
@@ -507,6 +511,7 @@ function StaffClienteFicha() {
         setCliente(data.cliente)
         setPerfil(data.perfil)
         setCredito(data.credito)
+        setEtiquetas(data.etiquetas || [])
       })
       .catch((err) => {
         if (!vivo) return
@@ -515,6 +520,30 @@ function StaffClienteFicha() {
       .finally(() => { if (vivo) setCargando(false) })
     return () => { vivo = false }
   }, [id])
+
+  function iniciarEdicionEtiqueta() {
+    setEtiquetaDraft(cliente?.etiqueta || '')
+    setEditandoEtiqueta(true)
+  }
+
+  async function guardarEtiqueta() {
+    setGuardandoEtiqueta(true)
+    try {
+      const { data } = await staffApi.patch(`/staff/clientes/${id}`, { etiqueta: etiquetaDraft })
+      setCliente((prev) => ({ ...prev, etiqueta: data.cliente?.etiqueta ?? null }))
+      if (Array.isArray(data.etiquetas)) setEtiquetas(data.etiquetas)
+      setEditandoEtiqueta(false)
+    } catch (err) {
+      window.alert(err.response?.data?.error || 'Error al guardar la etiqueta')
+    } finally {
+      setGuardandoEtiqueta(false)
+    }
+  }
+
+  function porcentajeDeEtiqueta(etiqueta) {
+    const e = (etiquetas || []).find((x) => x.etiqueta === etiqueta)
+    return e ? Number(e.porcentaje) : null
+  }
 
   const tabs = [
     { id: 'resumen', texto: 'Resumen' },
@@ -550,7 +579,32 @@ function StaffClienteFicha() {
             <h2 className="sc-ficha__nombre">{cliente?.nombre || 'Sin nombre'}</h2>
             <div className="sc-ficha__badges">
               <span className="sc-badge sc-badge--tipo">{cliente?.tipo_usuario}</span>
-              {cliente?.etiqueta && <span className="sc-badge sc-badge--tipo">{cliente.etiqueta}</span>}
+              <span className="sc-badge sc-badge--tipo">
+                {cliente?.etiqueta || 'Sin etiqueta'}
+                {(() => {
+                  const p = porcentajeDeEtiqueta(cliente?.etiqueta)
+                  return p != null ? (p > 0 ? ` · −${p}%` : ` · +${-p}%`) : ''
+                })()}
+              </span>
+              {editandoEtiqueta && (
+                <span className="sc-etiqueta-editor">
+                  <select value={etiquetaDraft} onChange={(e) => setEtiquetaDraft(e.target.value)}>
+                    <option value="">— Sin etiqueta —</option>
+                    {etiquetas.map((e) => (
+                      <option key={e.etiqueta} value={e.etiqueta}>
+                        {e.etiqueta} · {Number(e.porcentaje) > 0 ? `−${e.porcentaje}%` : `+${-Number(e.porcentaje)}%`}
+                      </option>
+                    ))}
+                  </select>
+                  <button className="sc-btn" onClick={guardarEtiqueta} disabled={guardandoEtiqueta}>
+                    {guardandoEtiqueta ? 'Guardando...' : 'Guardar'}
+                  </button>
+                  <button className="sc-btn sc-btn--outline" onClick={() => setEditandoEtiqueta(false)}>Cancelar</button>
+                </span>
+              )}
+              {!editandoEtiqueta && (
+                <button className="sc-etiqueta-editar" onClick={iniciarEdicionEtiqueta}>✎ Cambiar etiqueta</button>
+              )}
               {!cliente?.activo && <span className="sc-badge sc-badge--bloqueado">Inactivo</span>}
               {credito?.credito_bloqueado && <span className="sc-badge sc-badge--bloqueado">Crédito bloqueado</span>}
             </div>

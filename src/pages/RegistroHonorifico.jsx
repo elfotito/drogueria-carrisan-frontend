@@ -54,7 +54,6 @@ function RegistroHonorifico() {
   })
   const [aceptaTerminos, setAceptaTerminos] = useState(false)
   const [aceptaPrivacidad, setAceptaPrivacidad] = useState(false)
-  const [aceptaComercial, setAceptaComercial] = useState(false)
   const [notifSistema, setNotifSistema] = useState(true)
   const [notifPromociones, setNotifPromociones] = useState(true)
   const [password, setPassword] = useState('')
@@ -132,7 +131,7 @@ function RegistroHonorifico() {
 
   function validarPaso1() {
     const nuevosErrores = {}
-    if (!aceptaTerminos || !aceptaPrivacidad || !aceptaComercial) nuevosErrores.terminos = 'Debes aceptar los 3 términos para continuar'
+    if (!aceptaTerminos || !aceptaPrivacidad) nuevosErrores.terminos = 'Debes aceptar los términos y la política de privacidad'
     const pwCheck = validarPassword(password)
     if (!pwCheck.valido) nuevosErrores.password = pwCheck.error
     if (password !== confirmarPassword) nuevosErrores.confirmarPassword = 'Las contraseñas no coinciden'
@@ -437,17 +436,6 @@ function RegistroHonorifico() {
                 />
                 <span>
                   He leído y acepto la <Link to="/privacidad">Política de Privacidad</Link>
-                </span>
-              </label>
-
-              <label className={`registro-checkbox${errores.terminos && !aceptaComercial ? ' registro-checkbox--error' : ''}`}>
-                <input
-                  type="checkbox"
-                  checked={aceptaComercial}
-                  onChange={(e) => setAceptaComercial(e.target.checked)}
-                />
-                <span>
-                  He leído y acepto la <Link to="/terminoscomerciales">Política Comercial</Link>
                 </span>
               </label>
               {errores.terminos && <span id="terminos-error" className="registro-error-texto" role="alert">{errores.terminos}</span>}

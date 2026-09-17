@@ -20,6 +20,7 @@ function StaffClientes({ departamento = 'comercial', activo = 'clientes', titulo
   const [buscar, setBuscar] = useState('')
   const [tipo, setTipo] = useState('')
   const [etiqueta, setEtiqueta] = useState('')
+  const [etiquetas, setEtiquetas] = useState([])
   const debounceRef = useRef(null)
 
   useEffect(() => {
@@ -38,11 +39,12 @@ function StaffClientes({ departamento = 'comercial', activo = 'clientes', titulo
       if (tipo) params.tipo = tipo
       if (etiqueta) params.etiqueta = etiqueta
 
-      const { data } = await staffApi.get('/staff/clientes', { params })
-      setClientes(data?.clientes || [])
-      setTotal(data?.total || 0)
-      setPagina(data?.pagina || 1)
-      setTotalPaginas(data?.total_paginas || 1)
+const { data } = await staffApi.get('/staff/clientes', { params })
+        setClientes(data?.clientes || [])
+        setTotal(data?.total || 0)
+        setPagina(data?.pagina || 1)
+        setTotalPaginas(data?.total_paginas || 1)
+        setEtiquetas(data?.etiquetas || [])
     } catch {
       setClientes([])
     } finally {
@@ -68,9 +70,11 @@ function StaffClientes({ departamento = 'comercial', activo = 'clientes', titulo
         </select>
         <select className="sc-select" value={etiqueta} onChange={(e) => setEtiqueta(e.target.value)}>
           <option value="">Todas las etiquetas</option>
-          <option value="institucional">Institucional</option>
-          <option value="profesional">Profesional</option>
-          <option value="honorifico">Honorífico</option>
+          {etiquetas.map((e) => (
+            <option key={e.etiqueta} value={e.etiqueta}>
+              {e.etiqueta} · {Number(e.porcentaje) > 0 ? `−${e.porcentaje}%` : `+${-Number(e.porcentaje)}%`}
+            </option>
+          ))}
         </select>
       </div>
 
@@ -88,6 +92,7 @@ function StaffClientes({ departamento = 'comercial', activo = 'clientes', titulo
                   <th>RIF / Cédula</th>
                   <th>Teléfono</th>
                   <th>Tipo</th>
+                  <th>Etiqueta</th>
                   <th>Línea crédito</th>
                   <th>Deuda</th>
                   <th>Crédito</th>
@@ -104,6 +109,18 @@ function StaffClientes({ departamento = 'comercial', activo = 'clientes', titulo
                     <td>{c.rif_cedula || '—'}</td>
                     <td>{c.telefono || '—'}</td>
                     <td><span className="sc-badge sc-badge--tipo">{c.tipo_usuario || '—'}</span></td>
+                    <td>
+                      {c.etiqueta ? (
+                        <span className="sc-badge sc-badge--tipo">
+                          {c.etiqueta}
+                          {(() => {
+                            const eObj = etiquetas.find((x) => x.etiqueta === c.etiqueta)
+                            const p = eObj ? Number(eObj.porcentaje) : null
+                            return p != null ? (p > 0 ? ` · −${p}%` : ` · +${-p}%`) : ''
+                          })()}
+                        </span>
+                      ) : '—'}
+                    </td>
                     <td className="sc-money">{c.linea_credito > 0 ? `$${formatUSD(c.linea_credito)}` : '—'}</td>
                     <td className={`sc-money ${c.deuda_actual > 0 ? 'sc-money--warn' : ''}`}>
                       {c.deuda_actual > 0 ? `$${formatUSD(c.deuda_actual)}` : '$0'}
