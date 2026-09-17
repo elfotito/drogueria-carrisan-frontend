@@ -1,33 +1,44 @@
 /* ============================================================
-   RegistroConTipo — selector de tipo de usuario (3 tarjetas)
-   Desktop (>=768px): fila horizontal. Móvil: columna vertical.
+   RegistroConTipo — selector público de tipo de usuario.
+   Publico solo ve INSTITUCIONAL (normativa sanitaria) + panel
+   explicativo a la derecha. Desktop (>=900px): 2 columnas.
+   Móvil: tarjeta y panel apilados.
    ============================================================ */
 
 /* Esta página necesita más ancho que el login (440px)
-   para que las 3 tarjetas quepan cómodas en fila en desktop. */
+   para la tarjeta + el panel explicativo en desktop. */
 .auth-container.registro-tipo-container {
-  max-width: 440px;
+  max-width: 520px;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 900px) {
   .auth-container.registro-tipo-container {
     max-width: 820px;
   }
 }
 
-.registro-tipo__grid {
+/* ---------- Panel: tarjeta (izquierda) + información (derecha) ---------- */
+
+.registro-tipo__panel {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1rem;
+  gap: 1.25rem;
   width: 100%;
   margin-top: 1.5rem;
 }
 
-@media (min-width: 768px) {
-  .registro-tipo__grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.25rem;
+@media (min-width: 900px) {
+  .registro-tipo__panel {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 1.5rem;
+    align-items: start;
   }
+}
+
+.registro-tipo__izq {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
 }
 
 .registro-tipo__card {
@@ -60,26 +71,12 @@
   box-shadow: 0 8px 20px rgba(17, 24, 39, 0.1);
 }
 
-/* Paleta pastel por tipo, derivada de la paleta de marca */
+/* Paleta institucional (única tarjeta pública) */
 .registro-tipo__card--institucional {
   --acento: #0052dc;
   --fondo: #eaf1ff;
   --fondo-imagen: #dce8ff;
   --borde-imagen: rgba(0, 82, 220, 0.35);
-}
-
-.registro-tipo__card--profesional {
-  --acento: #0f9488;
-  --fondo: #e6f7f4;
-  --fondo-imagen: #d3f0ea;
-  --borde-imagen: rgba(15, 148, 136, 0.35);
-}
-
-.registro-tipo__card--honorifico {
-  --acento: #c2740d;
-  --fondo: #fff3e6;
-  --fondo-imagen: #ffe8cc;
-  --borde-imagen: rgba(194, 116, 13, 0.35);
 }
 
 /* ---------- Espacio para la ilustración (Tito la reemplaza por su imagen) ---------- */
@@ -153,5 +150,77 @@
 /* ---------- Botón Siguiente ---------- */
 
 .registro-tipo__siguiente {
-  margin-top: 1.75rem;
+  margin-top: 0;
+}
+
+/* ---------- Panel explicativo (normativa sanitaria) ---------- */
+
+.registro-tipo__info {
+  background: #f4f7fb;
+  border: 1px solid #dbe4f0;
+  border-radius: 18px;
+  padding: 1.25rem 1.3rem;
+}
+
+@media (min-width: 900px) {
+  .registro-tipo__info {
+    padding: 1.5rem;
+  }
+}
+
+.registro-tipo__info h2 {
+  margin: 0 0 0.7rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.registro-tipo__info-intro {
+  margin: 0 0 0.9rem;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: #374151;
+}
+
+.registro-tipo__info-lista {
+  margin: 0 0 0.9rem;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.registro-tipo__info-lista li {
+  position: relative;
+  padding-left: 1.4rem;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: #4b5563;
+}
+
+.registro-tipo__info-lista li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.32rem;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #0052dc;
+}
+
+.registro-tipo__info-lista strong {
+  display: block;
+  color: #1b4b8f;
+  font-weight: 700;
+}
+
+.registro-tipo__info-nota {
+  margin: 0;
+  padding-top: 0.75rem;
+  border-top: 1px solid #dbe4f0;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: #6b7280;
 }

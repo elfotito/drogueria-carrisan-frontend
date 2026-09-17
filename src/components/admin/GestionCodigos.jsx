@@ -22,6 +22,8 @@ import {
   Check,
   KeyRound,
   RefreshCcw,
+  Power,
+  ShieldCheck,
 } from 'lucide-react'
 import api from '../../api/axios'
 import { toaster } from '../ui/toaster'
@@ -57,16 +59,21 @@ function GestionCodigos() {
   const [tipo, setTipo] = useState('honorifico')
   const [rolStaff, setRolStaff] = useState('vendedor')
   const [copiado, setCopiado] = useState(null)
+  const [invita, setInvita] = useState({ habilitado: false, token: '' })
+  const [guardandoInvita, setGuardandoInvita] = useState(false)
+  const [enlaceCopiado, setEnlaceCopiado] = useState(false)
 
   // Fetch puro (sin setState) — reutilizable desde el efecto y los handlers.
   const obtenerDatos = useCallback(async () => {
-    const [listaRes, statsRes] = await Promise.all([
+    const [listaRes, statsRes, invitaRes] = await Promise.all([
       api.get('/admin/codigos-invitacion'),
       api.get('/admin/codigos-invitacion/estadisticas'),
+      api.get('/registro-invita/config'),
     ])
     return {
       codigos: listaRes.data.codigos || [],
       estadisticas: statsRes.data,
+      invita: invitaRes.data || { habilitado: false, token: '' },
     }
   }, [])
 
@@ -75,10 +82,11 @@ function GestionCodigos() {
   useEffect(() => {
     let activo = true
     obtenerDatos()
-      .then(({ codigos, estadisticas }) => {
+      .then(({ codigos, estadisticas, invita }) => {
         if (!activo) return
         setCodigos(codigos)
         setEstadisticas(estadisticas)
+        setInvita(invita)
       })
       .catch(() => {
         if (!activo) return
@@ -102,6 +110,7 @@ function GestionCodigos() {
       const datos = await obtenerDatos()
       setCodigos(datos.codigos)
       setEstadisticas(datos.estadisticas)
+      setInvita(datos.invita)
     } catch {
       toaster.create({
         title: 'Error',
@@ -170,6 +179,70 @@ function GestionCodigos() {
     if (c.usado) return 'usado'
     if (c.expira_en && new Date(c.expira_en) < new Date()) return 'expirado'
     return 'activo'
+  }
+
+  const enlaceInvita = invita.token
+    ? `${window.location.origin}/registro/invita?t=${invita.token}`
+    : ''
+
+  async function alternarInvita() {
+    const nuevo = !invita.habilitado
+    setGuardandoInvita(true)
+    try {
+      await api.post('/registro-invita/config', { habilitado: nuevo })
+      await recargar()
+      toaster.create({
+        title: nuevo ? 'Registro por invitación habilitado' : 'Registro por invitación deshabilitado',
+        description: nuevo
+          ? 'El enlace con el token vigente vuelve a funcionar.'
+          : 'Ningún enlace de invitación funciona mientras esté apagado.',
+        type: 'success',
+      })
+    } catch {
+      toaster.create({
+        title: 'Error',
+        description: 'No se pudo cambiar el estado del registro por invitación',
+        type: 'error',
+      })
+    } finally {
+      setGuardandoInvita(false)
+    }
+  }
+
+  async function regenerarTokenInvita() {
+    const ok = window.confirm(
+      'El enlace de invitación actual dejará de funcionar al instante. ¿Generar un token nuevo?'
+    )
+    if (!ok) return
+    setGuardandoInvita(true)
+    try {
+      await api.post('/registro-invita/config', { regenerar: true })
+      await recargar()
+      toaster.create({
+        title: 'Token regenerado',
+        description: 'El enlace anterior dejó de funcionar. Copia el nuevo enlace.',
+        type: 'success',
+      })
+    } catch {
+      toaster.create({
+        title: 'Error',
+        description: 'No se pudo regenerar el token',
+        type: 'error',
+      })
+    } finally {
+      setGuardandoInvita(false)
+    }
+  }
+
+  async function copiarEnlaceInvita() {
+    if (!enlaceInvita) return
+    try {
+      await navigator.clipboard.writeText(enlaceInvita)
+      setEnlaceCopiado(true)
+      setTimeout(() => setEnlaceCopiado(false), 2000)
+    } catch {
+      /* clipboard no disponible */
+    }
   }
 
   if (cargando) {
@@ -277,6 +350,68 @@ function GestionCodigos() {
             variant="outline"
             onClick={recargar}
           />
+        </Flex>
+      </Box>
+
+      {/* Registro por invitación (Profesional y Honorífico) */}
+      <Box bg="white" border="1px" borderColor="gray.200" borderRadius="lg" p={5} mb={6} boxShadow="sm">
+        <Flex align="center" gap={2} mb={2} wrap="wrap">
+          <ShieldCheck size={20} color={AZUL} />
+          <Text fontWeight="600" fontSize="md">Registro por invitación (Profesional y Honorífico)</Text>
+          {invita.habilitado ? (
+            <Badge colorScheme="green">Habilitado</Badge>
+          ) : (
+            <Badge colorScheme="red">Deshabilitado</Badge>
+          )}
+        </Flex>
+        <Text color="gray.500" fontSize="sm" mb={4}>
+          Página exclusiva <Text as="span" fontFamily="mono">/registro/invita</Text> que solo funciona
+          con el token del enlace de abajo. Compártela por URL o QR con profesionales de la salud y
+          miembros honoríficos. Si la deshabilitas o regeneras el token, los enlaces anteriores dejan
+          de funcionar de inmediato.
+        </Text>
+
+        <Box
+          bg="gray.50"
+          border="1px"
+          borderColor="gray.200"
+          borderRadius="md"
+          px={3}
+          py={2}
+          mb={4}
+          overflowX="auto"
+        >
+          <Text fontFamily="mono" fontSize="sm" color="gray.700" whiteSpace="nowrap">
+            {enlaceInvita || '—'}
+          </Text>
+        </Box>
+
+        <Flex gap={3} wrap="wrap">
+          <Button
+            leftIcon={<Power size={18} />}
+            colorScheme={invita.habilitado ? 'red' : 'green'}
+            variant="outline"
+            onClick={alternarInvita}
+            isLoading={guardandoInvita}
+          >
+            {invita.habilitado ? 'Deshabilitar enlace' : 'Habilitar enlace'}
+          </Button>
+          <Button
+            leftIcon={enlaceCopiado ? <Check size={18} /> : <Copy size={18} />}
+            colorScheme="blue"
+            onClick={copiarEnlaceInvita}
+            isDisabled={!enlaceInvita}
+          >
+            {enlaceCopiado ? 'Enlace copiado' : 'Copiar enlace'}
+          </Button>
+          <Button
+            leftIcon={<RefreshCcw size={18} />}
+            variant="outline"
+            onClick={regenerarTokenInvita}
+            isLoading={guardandoInvita}
+          >
+            Regenerar token
+          </Button>
         </Flex>
       </Box>
 

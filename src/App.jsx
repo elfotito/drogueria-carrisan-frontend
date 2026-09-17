@@ -19,6 +19,7 @@ import Vademecum from './pages/Vademecum'
 import Login from './pages/Login'
 import RecuperarPassword from './pages/Recuperarpassword'
 import Registro from './pages/RegistroConTipo'
+import RegistroInvita from './pages/RegistroInvita'
 import RegistroInstitucional from './pages/RegistroInstitucional'
 import RegistroProfesional from './pages/RegistroProfesional'
 import RegistroHonorifico from './pages/RegistroHonorifico'
@@ -154,6 +155,7 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/recuperar" element={<RecuperarPassword />} />
                 <Route path="/registro" element={<Registro />} />
+                <Route path="/registro/invita" element={<RegistroInvita />} />
                 <Route path="/registro/finalizar" element={<Registro />} />
                 <Route path="/registro/institucional" element={<RegistroInstitucional />} />
                 <Route path="/registro/profesional" element={<RegistroProfesional />} />

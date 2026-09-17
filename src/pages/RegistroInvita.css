@@ -1,0 +1,191 @@
+/* ============================================================
+   RegistroInvita — registro por invitación (profesional/honorífico)
+   Página exclusiva: solo accesible con ?t=<token> válido.
+   ============================================================ */
+
+.auth-container.reg-invita-container {
+  max-width: 440px;
+}
+
+@media (min-width: 640px) {
+  .auth-container.reg-invita-container {
+    max-width: 780px;
+  }
+}
+
+/* ---------- Cargando ---------- */
+
+.reg-invita__cargando {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 2.5rem 1rem;
+}
+
+.reg-invita__spinner {
+  width: 34px;
+  height: 34px;
+  border: 3px solid #e5e7eb;
+  border-top-color: #0052dc;
+  border-radius: 50%;
+  animation: regInvitaGira 0.8s linear infinite;
+}
+
+@keyframes regInvitaGira {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.reg-invita__cargando p {
+  margin: 0;
+  color: #4b5563;
+  font-size: 0.9rem;
+}
+
+/* ---------- Enlace inválido / no autorizado ---------- */
+
+.reg-invita__invalido {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 1rem 0.5rem;
+}
+
+.reg-invita__icono-candado {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  margin-bottom: 1rem;
+  border-radius: 50%;
+  background: #f3f4f6;
+  color: #9ca3af;
+}
+
+.reg-invita__icono-candado svg {
+  width: 32px;
+  height: 32px;
+}
+
+.reg-invita__invalido-texto {
+  margin: 0 0 1.5rem;
+  color: #4b5563;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  max-width: 340px;
+}
+
+.reg-invita__invalido-btn {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ---------- Grid de tarjetas (2 perfiles) ---------- */
+
+.reg-invita__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  width: 100%;
+  margin-top: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .reg-invita__grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+}
+
+.reg-invita__card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 1.1rem;
+  border: 2px solid var(--acento);
+  border-radius: 18px;
+  background: var(--fondo);
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  transition: box-shadow 0.15s ease, transform 0.1s ease;
+}
+
+.reg-invita__card:hover {
+  box-shadow: 0 6px 18px rgba(17, 24, 39, 0.1);
+  transform: translateY(-2px);
+}
+
+.reg-invita__card:active {
+  transform: translateY(0) scale(0.99);
+}
+
+.reg-invita__card--profesional {
+  --acento: #0f9488;
+  --fondo: #e6f7f4;
+  --fondo-imagen: #d3f0ea;
+  --borde-imagen: rgba(15, 148, 136, 0.35);
+}
+
+.reg-invita__card--honorifico {
+  --acento: #c2740d;
+  --fondo: #fff3e6;
+  --fondo-imagen: #ffe8cc;
+  --borde-imagen: rgba(194, 116, 13, 0.35);
+}
+
+.reg-invita__imagen {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.reg-invita__imagen-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.reg-invita__cuerpo h3 {
+  margin: 0 0 0.3rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.reg-invita__cuerpo p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #4b5563;
+  line-height: 1.4;
+}
+
+.reg-invita__flecha {
+  position: absolute;
+  bottom: -8px;
+  right: 14px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--acento);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(17, 24, 39, 0.25);
+}
+
+.reg-invita__flecha svg {
+  width: 14px;
+  height: 14px;
+}
