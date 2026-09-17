@@ -49,8 +49,8 @@ function resaltarCoincidencia(nombre, query) {
   )
 }
 
-function BuscadorMovil({ onClose }) {
-  const [query, setQuery] = useState('')
+function BuscadorMovil({ onClose, queryInicial = '' }) {
+  const [query, setQuery] = useState(queryInicial)
   const [sugerencias, setSugerencias] = useState([])
   const [cargando, setCargando] = useState(false)
   const [recientes, setRecientes] = useState(leerRecientes)

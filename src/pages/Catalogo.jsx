@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
-import { useSearchParams, Link } from 'react-router-dom'
+import { useSearchParams, Link, useNavigate } from 'react-router-dom'
 import api from '../api/axios'
 import ProductCard from '../components/ProductCard'
 import ProductCardSkeleton from '../components/Productcardskeleton'
@@ -13,6 +13,7 @@ const PAGE_SIZE = 24
 
 function Catalogo() {
   const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
   const searchTerm = searchParams.get('search') || ''
   const categoriaParam = searchParams.get('categoria') || ''
   const laboratorioParam = searchParams.get('laboratorio') || ''
@@ -197,6 +198,13 @@ useEffect(() => {
     )
   }
 
+  function quitarBusqueda() {
+    const params = new URLSearchParams(searchParams)
+    params.delete('search')
+    const qs = params.toString()
+    navigate(qs ? `/catalogo?${qs}` : '/catalogo')
+  }
+
   function limpiarFiltros() {
     setCategoriaActiva('todos')
     setLineaActiva('')
@@ -206,6 +214,8 @@ useEffect(() => {
     setPrecioMin('')
     setPrecioMax('')
     setMoleculaInput('')
+    setMoleculaActiva('')
+    quitarBusqueda()
   }
 
   function seleccionarCategoria(id) {
@@ -214,6 +224,21 @@ useEffect(() => {
   }
 
   if (error) return <p className="catalogo-estado catalogo-error">{error}</p>
+
+  const filtrosActivos = []
+  if (searchTerm) filtrosActivos.push({ id: 'busqueda', tipo: 'Búsqueda', etiqueta: searchTerm, remover: quitarBusqueda })
+  if (categoriaActiva !== 'todos') filtrosActivos.push({ id: 'categoria', tipo: 'Categoría', etiqueta: nombreCategoriaActiva, remover: () => setCategoriaActiva('todos') })
+  if (lineaActiva) filtrosActivos.push({ id: 'linea', tipo: 'Línea', etiqueta: LINEAS_TITULO[lineaActiva] || lineaActiva, remover: () => setLineaActiva('') })
+  laboratoriosActivos.forEach((l) => filtrosActivos.push({ id: `lab-${l}`, tipo: 'Laboratorio', etiqueta: l, remover: () => toggleEnArray(l, laboratoriosActivos, setLaboratoriosActivos) }))
+  formasActivas.forEach((f) => filtrosActivos.push({ id: `forma-${f}`, tipo: 'Forma', etiqueta: f, remover: () => toggleEnArray(f, formasActivas, setFormasActivas) }))
+  if (soloDisponibles) filtrosActivos.push({ id: 'disponible', tipo: 'Disponible', etiqueta: 'Solo disponibles', remover: () => setSoloDisponibles(false) })
+  if (precioMin !== '' || precioMax !== '') {
+    const etiquetaPrecio = precioMin !== '' && precioMax !== ''
+      ? `$${precioMin} – $${precioMax}`
+      : precioMin !== '' ? `desde $${precioMin}` : `hasta $${precioMax}`
+    filtrosActivos.push({ id: 'precio', tipo: 'Precio', etiqueta: etiquetaPrecio, remover: () => { setPrecioMin(''); setPrecioMax('') } })
+  }
+  if (moleculaActiva) filtrosActivos.push({ id: 'molecula', tipo: 'Principio activo', etiqueta: moleculaActiva, remover: () => { setMoleculaInput(''); setMoleculaActiva('') } })
 
   const hayFiltrosActivos =
     lineaActiva !== '' ||
@@ -437,6 +462,23 @@ useEffect(() => {
         )}
 
         <main className="catalogo-main-content" ref={mainRef}>
+          {filtrosActivos.length > 0 && (
+            <div className="catalogo-filtros-activos">
+              {filtrosActivos.map((f) => (
+                <button key={f.id} type="button" className="catalogo-filtros-activos__chip" onClick={f.remover}>
+                  <span className="catalogo-filtros-activos__tipo">{f.tipo}:</span>
+                  <span className="catalogo-filtros-activos__valor">{f.etiqueta}</span>
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" aria-hidden="true">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              ))}
+              <button type="button" className="btn-limpiar-filtros catalogo-filtros-activos__limpiar" onClick={limpiarFiltros}>
+                Limpiar todo
+              </button>
+            </div>
+          )}
           {cargando ? (
             <div className="product-grid">
               {Array.from({ length: 8 }).map((_, i) => (

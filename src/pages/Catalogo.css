@@ -969,3 +969,64 @@
 .filtro-molecula-input::placeholder {
   color: #74767c;
 }
+
+/* ----------
+   Filtros activos — chips removibles (estilo Amazon)
+   ---------- */
+
+.catalogo-filtros-activos {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.catalogo-filtros-activos__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #EFF4FB;
+  border: 1px solid #B9C9E4;
+  border-radius: 999px;
+  padding: 6px 10px 6px 12px;
+  font-size: 0.82rem;
+  font-family: 'Inter', sans-serif;
+  color: #14182A;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.catalogo-filtros-activos__chip:hover {
+  background: #E2EAF7;
+  border-color: #1B4B8F;
+}
+
+.catalogo-filtros-activos__tipo {
+  color: #5B6270;
+  font-weight: 500;
+}
+
+.catalogo-filtros-activos__valor {
+  font-weight: 700;
+}
+
+.catalogo-filtros-activos__chip svg {
+  width: 10px;
+  height: 10px;
+  padding: 3px;
+  border-radius: 50%;
+  background: #1B4B8F;
+  color: #FFFFFF;
+  box-sizing: content-box;
+  flex: 0 0 auto;
+  transition: background 0.15s ease;
+}
+
+.catalogo-filtros-activos__chip:hover svg {
+  background: #163C72;
+}
+
+.catalogo-filtros-activos__limpiar {
+  padding: 0;
+}

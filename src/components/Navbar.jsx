@@ -240,6 +240,18 @@ function Navbar() {
     }
   }, [busqueda])
 
+  useEffect(() => {
+    const terminoUrl = new URLSearchParams(location.search).get('search')
+    if (terminoUrl && terminoUrl !== busqueda) {
+      busquedaEnviadaRef.current = true
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+      setSugerencias([])
+      setMostrarSugerencias(false)
+      setBusqueda(terminoUrl)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.search])
+
   // Cargar direcciones guardadas del usuario al montar
   useEffect(() => {
     if (user && tipoEnvio && tipoEnvio !== 'retiro') cargarDirecciones(tipoEnvio)
@@ -427,7 +439,7 @@ function Navbar() {
           </div>
 
           {buscadorMovilAbierto && (
-            <BuscadorMovil onClose={() => setBuscadorMovilAbierto(false)} />
+            <BuscadorMovil queryInicial={busqueda} onClose={() => setBuscadorMovilAbierto(false)} />
           )}
 
           {/* Acciones Derecha (Escritorio) */}
