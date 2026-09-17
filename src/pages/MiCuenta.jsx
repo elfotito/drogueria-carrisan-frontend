@@ -293,19 +293,20 @@ function MiniOrdenCard({ orden }) {
             {ETIQUETAS_ENVIO[orden.tipo_envio] || ETIQUETAS_ENVIO.retiro}
           </span>
         </div>
-        <span className="mini-orden-card__badge" style={{ color: estado.color, background: estado.bg }}>
-          {estado.label}
-        </span>
       </div>
 
       <div className="mini-orden-card__bottom">
         <div className="mini-orden-card__texto">
-          <span className="mini-orden-card__resena">{estado.resena}</span>
           <span className="mini-orden-card__monto">{formatearMonto(orden.total_usd)}</span>
         </div>
-        <span className="mini-orden-card__flecha">
-          <ChevronRight size={16} />
-        </span>
+        <div className="mini-orden-card__pie">
+          <span className="mini-orden-card__badge" style={{ color: estado.color, background: estado.bg }}>
+            {estado.label}
+          </span>
+          <span className="mini-orden-card__flecha">
+            <ChevronRight size={16} />
+          </span>
+        </div>
       </div>
     </Link>
   )

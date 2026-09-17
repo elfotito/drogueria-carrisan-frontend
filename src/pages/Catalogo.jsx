@@ -314,6 +314,7 @@ useEffect(() => {
             >
               <option value="relevancia">Mejor coincidencia</option>
               <option value="nombre_asc">Nombre (A-Z)</option>
+              <option value="nombre_desc">Nombre (Z-A)</option>
               <option value="precio_asc">Precio: menor a mayor</option>
               <option value="precio_desc">Precio: mayor a menor</option>
             </select>
@@ -557,6 +558,7 @@ useEffect(() => {
                   {[
                     { value: 'relevancia', label: 'Mejor coincidencia' },
                     { value: 'nombre_asc', label: 'Nombre (A-Z)' },
+                    { value: 'nombre_desc', label: 'Nombre (Z-A)' },
                     { value: 'precio_asc', label: 'Precio: menor a mayor' },
                     { value: 'precio_desc', label: 'Precio: mayor a menor' },
                   ].map((opt) => {
