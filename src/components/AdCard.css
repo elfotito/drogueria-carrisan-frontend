@@ -13,13 +13,94 @@
   color: inherit;
 }
 
-/* Imagen real */
+/* Imagen real — ratio fijo (4/3 móvil, 3/2 desktop) en vez de alto fijo */
 .ad-card__img {
   width: 100%;
-  height: 140px;
+  aspect-ratio: 4 / 3;
   object-fit: cover;
   display: block;
   border-radius: 14px 14px 0 0;
+}
+
+/* ── Variante con overlay (imagen + texto/CTA superpuestos) ── */
+.ad-card__con-overlay {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: 14px 14px 0 0;
+  overflow: hidden;
+}
+
+.ad-card__con-overlay .ad-card__img {
+  aspect-ratio: auto;
+  height: 100%;
+  border-radius: 0;
+  transition: transform 0.35s ease;
+}
+
+.ad-card__link:hover .ad-card__con-overlay .ad-card__img {
+  transform: scale(1.04);
+}
+
+/* Degradado oscuro hacia abajo (garantiza contraste del texto) */
+.ad-card__overlay-gradiente {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    rgba(15, 18, 33, 0.68) 0%,
+    rgba(15, 18, 33, 0.32) 45%,
+    rgba(15, 18, 33, 0) 75%
+  );
+}
+
+/* Texto + CTA superpuestos (patrón BloquePromocional) */
+.ad-card__overlay-contenido {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 16px;
+}
+
+.ad-card__overlay-titulo {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1.25;
+  color: #FBFAF7;
+  margin: 0;
+  text-shadow: 0 1px 8px rgba(15, 18, 33, 0.25);
+}
+
+.ad-card__overlay-subtitulo {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  color: rgba(251, 250, 247, 0.92);
+  margin: 0;
+}
+
+/* CTA: píldora blanca ("Shop now") */
+.ad-card__overlay-cta {
+  display: inline-block;
+  background: #FBFAF7;
+  color: #1A1A3A;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 0.78rem;
+  padding: 8px 16px;
+  border-radius: 999px;
+  margin-top: 4px;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.ad-card__link:hover .ad-card__overlay-cta {
+  background: #FFFFFF;
+  transform: translateY(-1px);
 }
 
 /* Placeholder */
@@ -28,7 +109,7 @@
   flex-direction: column;
   gap: 14px;
   padding: 20px 18px;
-  min-height: 140px;
+  aspect-ratio: 4 / 3;
   justify-content: center;
   border-radius: 14px;
   background: linear-gradient(135deg, #f5f7ff 0%, #eef5ff 100%);
@@ -96,12 +177,21 @@
 
 /* Desktop */
 @media (min-width: 769px) {
+  .ad-card__img,
+  .ad-card__con-overlay,
   .ad-card__placeholder {
-    padding: 24px 22px;
-    min-height: 160px;
+    aspect-ratio: 3 / 2;
   }
 
-  .ad-card__img {
-    height: 180px;
+  .ad-card__placeholder {
+    padding: 24px 22px;
+  }
+
+  .ad-card__overlay-contenido {
+    padding: 20px;
+  }
+
+  .ad-card__overlay-titulo {
+    font-size: 1.1rem;
   }
 }
