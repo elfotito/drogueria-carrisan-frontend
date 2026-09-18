@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext'
 import api from '../api/axios'
 import HeroCarrusel from '../components/HeroCarrusel'
 import HomeCarrusel from '../components/HomeCarrusel'
-import { ExploraLaboratorios } from '../components/ExploraCarrusel'
+import LaboratoriosCarrusel from '../components/LaboratoriosCarrusel'
 import CategoriasCarrusel from '../components/CategoriasCarrusel'
 import SeccionesCarrusel from '../components/SeccionesCarrusel'
 import AdBanner from '../components/AdBanner'
@@ -93,6 +93,7 @@ function Home() {
   const [ofertas, setOfertas] = useState([])
   const [todosProductos, setTodosProductos] = useState([])
   const [secciones, setSecciones] = useState([])
+  const [seccionesRollback2, setSeccionesRollback2] = useState([])
   const [seccionesLab, setSeccionesLab] = useState([])
   const [cargandoVitrina, setCargandoVitrina] = useState(true)
 
@@ -119,7 +120,10 @@ function Home() {
         const activos = lista.filter((p) => p.activo)
         setTodosProductos(activos)
         setOfertas(activos.filter((p) => p.descuento_activo).slice(0, 12))
-        setSecciones(agruparEspecifico(activos))
+        const rollback1 = agruparEspecifico(activos)
+        setSecciones(rollback1)
+        const idsRollback1 = new Set(rollback1.flatMap((s) => s.productos.map((p) => p.id)))
+        setSeccionesRollback2(agruparEspecifico(activos.filter((p) => !idsRollback1.has(p.id)), 6, 4))
 
         const gruposLab = activos.reduce((acc, p) => {
           if (!p.laboratorio) return acc
@@ -266,8 +270,8 @@ function Home() {
         />
 
 
-        {/* ── Explorá por laboratorio (sección aparte, más abajo) ── */}
-        <ExploraLaboratorios />
+        {/* ── Explorá por laboratorio (logos dinámicos, top labs) ── */}
+        <LaboratoriosCarrusel />
 
         {/* ── Sección promocional: imagen + carrusel (imagen a la izquierda) ── */}
       <SeccionPromocional
@@ -309,6 +313,12 @@ function Home() {
             { imagen: 'URL_2.gif', link: '/catalogo', alt: 'texto' },
             { imagen: 'URL_3.png', link: '/catalogo', alt: 'texto' },
           ]}
+        />
+
+        <SeccionesCarrusel
+          titulo="Más rollbacks"
+          secciones={seccionesRollback2}
+          cargando={cargandoVitrina}
         />
 
         <HomeCarrusel
