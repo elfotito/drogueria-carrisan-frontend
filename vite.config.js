@@ -51,15 +51,15 @@ export default defineConfig({
     }),
   ],
   build: {
-    chunkSizeWarningLimit: 1500, // 1.5 MB
+    chunkSizeWarningLimit: 1000, // 1 MB — alerta si una página ruta crece demasiado
     rollupOptions: {
       output: {
         manualChunks(id) {
           if (!id.includes('node_modules')) return
-          if (id.includes('react-router-dom') || id.includes('/react-dom/') || id.includes('/react/')) return 'vendor-react'
+          if (id.includes('/react-router') || id.includes('/react-dom/') || id.includes('/react/')) return 'vendor-react'
           if (id.includes('@chakra-ui') || id.includes('@emotion') || id.includes('framer-motion')) return 'vendor-chakra'
           if (id.includes('leaflet')) return 'vendor-leaflet'
-          if (id.includes('recharts')) return 'vendor-charts'
+          if (id.includes('recharts') || id.includes('victory-vendor')) return 'vendor-charts'
           if (id.includes('@dnd-kit')) return 'vendor-dnd'
           if (id.includes('xlsx')) return 'vendor-xlsx'
         },

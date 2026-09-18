@@ -1,77 +1,88 @@
+import { lazy, Suspense, useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
+import { Flex, Spinner } from '@chakra-ui/react'
 import { AuthProvider } from './context/AuthContext'
 import { CartProvider } from './context/CartContext'
 import { EnvioProvider } from './context/EnvioContext'
 import { FavoritosProvider } from './context/FavoritosContext'
 import { LoadingBarProvider, useLoadingBar } from './context/LoadingBarContext'
 import { registerLoadingBar } from './api/axios'
-import { useEffect } from 'react'
+import { StaffAuthProvider } from './context/StaffAuthContext'
 import TopLoadingBar from './components/TopLoadingBar'
 import Navbar from './components/Navbar'
 import ScrollToTop from './components/ScrollToTop'
 import ScrollToTopFloat from './components/ScrollToTopFloat'
 import PrivateRoute from './components/PrivateRoute'
 import PrivateRouteSensible from './components/PrivateRouteSensible'
-import Home from './pages/Home'
-import Catalogo from './pages/Catalogo'
-import RegistroInhrr from './pages/RegistroInhrr'
-import Vademecum from './pages/Vademecum'
-import Login from './pages/Login'
-import RecuperarPassword from './pages/Recuperarpassword'
-import Registro from './pages/RegistroConTipo'
-import RegistroInvita from './pages/RegistroInvita'
-import RegistroInstitucional from './pages/RegistroInstitucional'
-import RegistroProfesional from './pages/RegistroProfesional'
-import RegistroHonorifico from './pages/RegistroHonorifico'
+import PrivateRouteStaff from './components/PrivateRouteStaff'
 import RequiereInvitacion from './components/registro/RequiereInvitacion'
-import Carrito from './pages/Carrito'
-import MisOrdenes from './pages/MisOrdenes'
-import Admin from './pages/Admin'
-import QuienesSomos from './pages/QuienesSomos'
-import Ayuda from './pages/Ayuda'
-import Contacto from './pages/Contacto'
-import MiCuenta from './pages/MiCuenta'
-import MisItems from './pages/MisItems'
-import Notificaciones from './pages/Notificaciones'
-import Terminos from './pages/Terminos'
-import Privacidad from './pages/Privacidad'
-import TerminosComerciales from './pages/TerminosComerciales'
-import EstadoCuenta from './pages/EstadoCuenta'
-import ProductoDetalle from './pages/ProductoDetalle'
-import ListaDetalle from './pages/ListaDetalle'
-import Menu from './pages/Menu'
-import Ofertas from './pages/Ofertas'
-import LineaFarmacia from './pages/LineaFarmacia'
-import LineaHospitalaria from './pages/LineaHospitalaria'
-import OrdenDetalle from './pages/OrdenDetalle'
-import Direcciones from './pages/Direcciones'
-import Pagos from './pages/Pagos'
 import RootRedirect from './components/RootRedirect'
 import { Toaster } from './components/ui/toaster'
-import PagosEstadoCuenta from './pages/PagosEstadoCuenta'
-import FacturasEstadoCuenta from './pages/FacturasEstadoCuenta'
-import AmpliacionEstadoCuenta from './pages/AmpliacionEstadoCuenta'
-import ReportesEstadoCuenta from './pages/ReportesEstadoCuenta'
-import Cotizaciones from './pages/Cotizaciones'
-import Requerimientos from './pages/Requerimientos'
-import Documentos from './pages/Documentos'
-import ChatCentro from './pages/Chat'
-import SubUsuarios from'./pages/SubUsuarios'
-import Presupuesto from'./pages/Presupuesto'
-import Mantenimiento from './pages/Mantenimiento'
-import AnalyticsVentas from './components/admin/AnalyticsVentas'
-import { StaffAuthProvider } from './context/StaffAuthContext'
-import PrivateRouteStaff from './components/PrivateRouteStaff'
 import PwaScopeSwitcher from './components/PwaScopeSwitcher'
-import StaffLogin from './pages/staff/StaffLogin'
-import StaffRegistro from './pages/staff/StaffRegistro'
-import StaffDashboard from './pages/staff/StaffDashboard'
-import StaffDepartamento from './pages/staff/StaffDepartamento'
-import StaffModuloPlaceholder from './pages/staff/StaffModuloPlaceholder'
 import { STAFF_PAGINAS } from './pages/staff/STAFF_PAGINAS'
 import { DEPARTAMENTOS, MODULOS } from './components/staff/NavStaff'
-import StaffClienteFicha from './pages/staff/StaffClienteFicha'
 
+// Code-splitting por ruta: cada página se descarga al navegar a ella,
+// no al arrancar. El chunk inicial queda con providers/layouts compartidos.
+const Home = lazy(() => import('./pages/Home'))
+const Catalogo = lazy(() => import('./pages/Catalogo'))
+const RegistroInhrr = lazy(() => import('./pages/RegistroInhrr'))
+const Vademecum = lazy(() => import('./pages/Vademecum'))
+const Login = lazy(() => import('./pages/Login'))
+const RecuperarPassword = lazy(() => import('./pages/Recuperarpassword'))
+const Registro = lazy(() => import('./pages/RegistroConTipo'))
+const RegistroInvita = lazy(() => import('./pages/RegistroInvita'))
+const RegistroInstitucional = lazy(() => import('./pages/RegistroInstitucional'))
+const RegistroProfesional = lazy(() => import('./pages/RegistroProfesional'))
+const RegistroHonorifico = lazy(() => import('./pages/RegistroHonorifico'))
+const Carrito = lazy(() => import('./pages/Carrito'))
+const MisOrdenes = lazy(() => import('./pages/MisOrdenes'))
+const Admin = lazy(() => import('./pages/Admin'))
+const QuienesSomos = lazy(() => import('./pages/QuienesSomos'))
+const Ayuda = lazy(() => import('./pages/Ayuda'))
+const Contacto = lazy(() => import('./pages/Contacto'))
+const MiCuenta = lazy(() => import('./pages/MiCuenta'))
+const MisItems = lazy(() => import('./pages/MisItems'))
+const Notificaciones = lazy(() => import('./pages/Notificaciones'))
+const Terminos = lazy(() => import('./pages/Terminos'))
+const Privacidad = lazy(() => import('./pages/Privacidad'))
+const TerminosComerciales = lazy(() => import('./pages/TerminosComerciales'))
+const EstadoCuenta = lazy(() => import('./pages/EstadoCuenta'))
+const ProductoDetalle = lazy(() => import('./pages/ProductoDetalle'))
+const ListaDetalle = lazy(() => import('./pages/ListaDetalle'))
+const Menu = lazy(() => import('./pages/Menu'))
+const Ofertas = lazy(() => import('./pages/Ofertas'))
+const LineaFarmacia = lazy(() => import('./pages/LineaFarmacia'))
+const LineaHospitalaria = lazy(() => import('./pages/LineaHospitalaria'))
+const OrdenDetalle = lazy(() => import('./pages/OrdenDetalle'))
+const Direcciones = lazy(() => import('./pages/Direcciones'))
+const Pagos = lazy(() => import('./pages/Pagos'))
+const PagosEstadoCuenta = lazy(() => import('./pages/PagosEstadoCuenta'))
+const FacturasEstadoCuenta = lazy(() => import('./pages/FacturasEstadoCuenta'))
+const AmpliacionEstadoCuenta = lazy(() => import('./pages/AmpliacionEstadoCuenta'))
+const ReportesEstadoCuenta = lazy(() => import('./pages/ReportesEstadoCuenta'))
+const Cotizaciones = lazy(() => import('./pages/Cotizaciones'))
+const Requerimientos = lazy(() => import('./pages/Requerimientos'))
+const Documentos = lazy(() => import('./pages/Documentos'))
+const ChatCentro = lazy(() => import('./pages/Chat'))
+const SubUsuarios = lazy(() => import('./pages/SubUsuarios'))
+const Presupuesto = lazy(() => import('./pages/Presupuesto'))
+const Mantenimiento = lazy(() => import('./pages/Mantenimiento'))
+const AnalyticsVentas = lazy(() => import('./components/admin/AnalyticsVentas'))
+const StaffLogin = lazy(() => import('./pages/staff/StaffLogin'))
+const StaffRegistro = lazy(() => import('./pages/staff/StaffRegistro'))
+const StaffDashboard = lazy(() => import('./pages/staff/StaffDashboard'))
+const StaffDepartamento = lazy(() => import('./pages/staff/StaffDepartamento'))
+const StaffModuloPlaceholder = lazy(() => import('./pages/staff/StaffModuloPlaceholder'))
+const StaffClienteFicha = lazy(() => import('./pages/staff/StaffClienteFicha'))
+
+function PageLoading() {
+  return (
+    <Flex align="center" justify="center" minHeight="60vh">
+      <Spinner thickness="4px" color="#1B4B8F" size="lg" />
+    </Flex>
+  )
+}
 
 function LoadingBarBridge() {
   const bar = useLoadingBar()
@@ -147,61 +158,63 @@ function App() {
               <ScrollToTopFloat />
               <LoadingBarBridge />
               <Toaster />
-              <Routes>
-                <Route path="/" element={<RootRedirect />} />
-                <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
-                <Route path="/catalogo" element={<Catalogo />} />
-                <Route path="/registro-inhrr" element={<RegistroInhrr />} />
-                <Route path="/vademecum" element={<Vademecum />} />
-                <Route path="/vademecum/:id" element={<Vademecum />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/recuperar" element={<RecuperarPassword />} />
-                <Route path="/registro" element={<Registro />} />
-                <Route path="/registro/invita" element={<RegistroInvita />} />
-                <Route path="/registro/finalizar" element={<Registro />} />
-                <Route path="/registro/institucional" element={<RegistroInstitucional />} />
-                <Route path="/registro/profesional" element={<RequiereInvitacion><RegistroProfesional /></RequiereInvitacion>} />
-                <Route path="/registro/honorifico" element={<RequiereInvitacion><RegistroHonorifico /></RequiereInvitacion>} />
-                <Route path="/carrito" element={<PrivateRoute><Carrito /></PrivateRoute>} />
-                <Route path="/orders" element={<PrivateRoute><MisOrdenes /></PrivateRoute>} />
-                <Route path="/orders/:id" element={<PrivateRoute><OrdenDetalle /></PrivateRoute>} />
-                <Route path="/pagos" element={<PrivateRouteSensible><Pagos /></PrivateRouteSensible>} />
-                <Route path="/admin/*" element={<PrivateRoute adminOnly><Admin /></PrivateRoute>} />
-                <Route path="/staff/login" element={<StaffLogin />} />
-                <Route path="/staff/registro" element={<StaffRegistro />} />
-                <Route path="/staff/dashboard" element={<PrivateRouteStaff><StaffDashboard /></PrivateRouteStaff>} />
-                {RutasStaff()}
-                <Route path="/quienes-somos" element={<QuienesSomos />} />
-                <Route path="/ayuda" element={<Ayuda />} />
-                <Route path="/contacto" element={<Contacto />} />
-                <Route path="/cuenta" element={<PrivateRoute><MiCuenta /></PrivateRoute>} />
-                <Route path="/mis-items" element={<PrivateRoute><MisItems /></PrivateRoute>} />
-                <Route path="/notificaciones" element={<PrivateRoute><Notificaciones /></PrivateRoute>} />
-                <Route path="/terminos" element={<Terminos />} />
-                <Route path="/privacidad" element={<Privacidad />} />
-                <Route path="/terminoscomerciales" element={<TerminosComerciales />} />
-                <Route path="/mantenimiento" element={<Mantenimiento />} />
-                <Route path="/estado-cuenta" element={<PrivateRouteSensible><EstadoCuenta /></PrivateRouteSensible>} />
-                <Route path="/producto/:id" element={<ProductoDetalle />} />
-                <Route path="/listas/:id" element={<PrivateRoute><ListaDetalle /></PrivateRoute>} />
-                <Route path="/menu" element={<PrivateRoute><Menu /></PrivateRoute>} />
-                <Route path="/ofertas" element={<PrivateRoute><Ofertas /></PrivateRoute>} />
-                <Route path="/farmacia" element={<PrivateRoute><LineaFarmacia /></PrivateRoute>} />
-                <Route path="/hospitalaria" element={<PrivateRoute><LineaHospitalaria /></PrivateRoute>} />
-                <Route path="/direcciones" element={<PrivateRoute><Direcciones /></PrivateRoute>} />
-                <Route path="/estado-cuenta/pagos" element={<PrivateRouteSensible><PagosEstadoCuenta /></PrivateRouteSensible>} />
-                <Route path="/estado-cuenta/facturas" element={<PrivateRouteSensible><FacturasEstadoCuenta /></PrivateRouteSensible>} />
-                <Route path="/estado-cuenta/reportes" element={<PrivateRouteSensible><ReportesEstadoCuenta /></PrivateRouteSensible>} />
-                <Route path="/estado-cuenta/ampliacion" element={<PrivateRouteSensible><AmpliacionEstadoCuenta /></PrivateRouteSensible>} />
-                <Route path="/mis-solicitudes/cotizaciones" element={<PrivateRoute><Cotizaciones /></PrivateRoute>} />
-                <Route path="/mis-solicitudes/requerimientos" element={<PrivateRoute><Requerimientos /></PrivateRoute>} />
-                <Route path="/mis-solicitudes/documentos" element={<PrivateRoute><Documentos /></PrivateRoute>} />
-                <Route path="/chat" element={<ChatCentro />} />
-                <Route path="/chat/orden/:ordenId" element={<ChatCentro />} />
-                <Route path="/subusuarios" element={<SubUsuarios />} />
-                <Route path="/presupuesto" element={<Presupuesto />} />
-                <Route path="/analytics" element={<PrivateRoute adminOnly><AnalyticsVentas /></PrivateRoute>} />
-              </Routes>
+              <Suspense fallback={<PageLoading />}>
+                <Routes>
+                  <Route path="/" element={<RootRedirect />} />
+                  <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
+                  <Route path="/catalogo" element={<Catalogo />} />
+                  <Route path="/registro-inhrr" element={<RegistroInhrr />} />
+                  <Route path="/vademecum" element={<Vademecum />} />
+                  <Route path="/vademecum/:id" element={<Vademecum />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/recuperar" element={<RecuperarPassword />} />
+                  <Route path="/registro" element={<Registro />} />
+                  <Route path="/registro/invita" element={<RegistroInvita />} />
+                  <Route path="/registro/finalizar" element={<Registro />} />
+                  <Route path="/registro/institucional" element={<RegistroInstitucional />} />
+                  <Route path="/registro/profesional" element={<RequiereInvitacion><RegistroProfesional /></RequiereInvitacion>} />
+                  <Route path="/registro/honorifico" element={<RequiereInvitacion><RegistroHonorifico /></RequiereInvitacion>} />
+                  <Route path="/carrito" element={<PrivateRoute><Carrito /></PrivateRoute>} />
+                  <Route path="/orders" element={<PrivateRoute><MisOrdenes /></PrivateRoute>} />
+                  <Route path="/orders/:id" element={<PrivateRoute><OrdenDetalle /></PrivateRoute>} />
+                  <Route path="/pagos" element={<PrivateRouteSensible><Pagos /></PrivateRouteSensible>} />
+                  <Route path="/admin/*" element={<PrivateRoute adminOnly><Admin /></PrivateRoute>} />
+                  <Route path="/staff/login" element={<StaffLogin />} />
+                  <Route path="/staff/registro" element={<StaffRegistro />} />
+                  <Route path="/staff/dashboard" element={<PrivateRouteStaff><StaffDashboard /></PrivateRouteStaff>} />
+                  {RutasStaff()}
+                  <Route path="/quienes-somos" element={<QuienesSomos />} />
+                  <Route path="/ayuda" element={<Ayuda />} />
+                  <Route path="/contacto" element={<Contacto />} />
+                  <Route path="/cuenta" element={<PrivateRoute><MiCuenta /></PrivateRoute>} />
+                  <Route path="/mis-items" element={<PrivateRoute><MisItems /></PrivateRoute>} />
+                  <Route path="/notificaciones" element={<PrivateRoute><Notificaciones /></PrivateRoute>} />
+                  <Route path="/terminos" element={<Terminos />} />
+                  <Route path="/privacidad" element={<Privacidad />} />
+                  <Route path="/terminoscomerciales" element={<TerminosComerciales />} />
+                  <Route path="/mantenimiento" element={<Mantenimiento />} />
+                  <Route path="/estado-cuenta" element={<PrivateRouteSensible><EstadoCuenta /></PrivateRouteSensible>} />
+                  <Route path="/producto/:id" element={<ProductoDetalle />} />
+                  <Route path="/listas/:id" element={<PrivateRoute><ListaDetalle /></PrivateRoute>} />
+                  <Route path="/menu" element={<PrivateRoute><Menu /></PrivateRoute>} />
+                  <Route path="/ofertas" element={<PrivateRoute><Ofertas /></PrivateRoute>} />
+                  <Route path="/farmacia" element={<PrivateRoute><LineaFarmacia /></PrivateRoute>} />
+                  <Route path="/hospitalaria" element={<PrivateRoute><LineaHospitalaria /></PrivateRoute>} />
+                  <Route path="/direcciones" element={<PrivateRoute><Direcciones /></PrivateRoute>} />
+                  <Route path="/estado-cuenta/pagos" element={<PrivateRouteSensible><PagosEstadoCuenta /></PrivateRouteSensible>} />
+                  <Route path="/estado-cuenta/facturas" element={<PrivateRouteSensible><FacturasEstadoCuenta /></PrivateRouteSensible>} />
+                  <Route path="/estado-cuenta/reportes" element={<PrivateRouteSensible><ReportesEstadoCuenta /></PrivateRouteSensible>} />
+                  <Route path="/estado-cuenta/ampliacion" element={<PrivateRouteSensible><AmpliacionEstadoCuenta /></PrivateRouteSensible>} />
+                  <Route path="/mis-solicitudes/cotizaciones" element={<PrivateRoute><Cotizaciones /></PrivateRoute>} />
+                  <Route path="/mis-solicitudes/requerimientos" element={<PrivateRoute><Requerimientos /></PrivateRoute>} />
+                  <Route path="/mis-solicitudes/documentos" element={<PrivateRoute><Documentos /></PrivateRoute>} />
+                  <Route path="/chat" element={<ChatCentro />} />
+                  <Route path="/chat/orden/:ordenId" element={<ChatCentro />} />
+                  <Route path="/subusuarios" element={<SubUsuarios />} />
+                  <Route path="/presupuesto" element={<Presupuesto />} />
+                  <Route path="/analytics" element={<PrivateRoute adminOnly><AnalyticsVentas /></PrivateRoute>} />
+                </Routes>
+              </Suspense>
             </LoadingBarProvider>
           </EnvioProvider>
         </FavoritosProvider>

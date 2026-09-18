@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo } from 'react'
-import { jsPDF } from 'jspdf' // npm install jspdf
 import api from '../api/axios'
 import LayoutPaginaPrincipal from '../components/paginas-principales/Layoutpaginaprincipal'
 import { NAV_UNIFICADO } from '../components/paginas-principales/NavUnificado'
@@ -97,8 +96,10 @@ function useEstadoRif(solicitudes, solicitarRif) {
 
 // ── Referencia comercial: PDF armado en el navegador con los datos      ──
 // del cliente. El texto y la firma son siempre los mismos, solo cambia
-// el nombre y la cédula/RIF.
-function generarReferenciaPDF({ nombre, identificacion }) {
+// el nombre y la cédula/RIF. jsPDF se importa dinámico (se descarga solo
+// al generar la referencia, no en el bundle inicial).
+async function generarReferenciaPDF({ nombre, identificacion }) {
+  const { jsPDF } = await import('jspdf')
   const doc = new jsPDF({ unit: 'pt', format: 'letter' })
   const margenX = 72
   const anchoTexto = 468
@@ -318,7 +319,7 @@ function Documentos() {
         if (!nombre || !identificacion) {
           alert('Tu perfil no tiene registrada la cédula o RIF. Actualízalo antes de generar la referencia.')
         } else {
-          generarReferenciaPDF({ nombre, identificacion })
+          await generarReferenciaPDF({ nombre, identificacion })
         }
       }
 

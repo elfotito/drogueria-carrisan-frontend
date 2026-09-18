@@ -101,7 +101,7 @@ useEffect(() => {
   // ── Metadata de filtros (laboratorios/formas/categorías) — un solo fetch ligero ──
   useEffect(() => {
     api
-      .get('/products/metadata')
+      .get('/products/metadata', { params: { disponibles: 'true' } })
       .then((res) => {
         setLaboratoriosDisponibles(res.data.laboratorios || [])
         setFormasDisponibles(res.data.formas || [])
