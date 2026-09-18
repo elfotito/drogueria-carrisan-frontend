@@ -6,7 +6,7 @@ import { logoParaLaboratorio } from '../config/laboratoriosLogos'
 import './ExploraCarrusel.css'
 import './LaboratoriosCarrusel.css'
 
-const MAX_TILES = 12
+const MAX_TILES = 20
 
 // Carrusel "Explorá por laboratorio": mismo comportamiento visual que
 // CategoriasCarrusel pero con logos de marca (mapa en laboratoriosLogos.js).

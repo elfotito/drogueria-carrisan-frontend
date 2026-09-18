@@ -1,8 +1,8 @@
 // Logos de laboratorios para el carrusel "Explorá por laboratorio" (Home).
 //
-// LISTA REAL generada desde la BD (productos activos, 2026-09-18): son los 10
-// laboratorios con más productos de la tienda. Si la lista del txt de prompt
-// (data/prompts_banners_gpt.txt) cambia, esta debe cambiar igual.
+// LISTA REAL generada desde la BD (productos activos, 2026-09-18): top 20
+// laboratorios con más productos de la tienda (2 tandas de 10). Si la lista
+// del txt de prompt (data/prompts_banners_gpt.txt) cambia, esta debe cambiar igual.
 //
 // La BD guarda `productos.laboratorio` con el nombre completo y su variante legal
 // (ej. "MEGALABS S.A.", "LABORATORIOS LETI, S.A.V."). Cada clave de este mapa es
@@ -18,17 +18,29 @@
 const BASE_IMG = 'https://fqeshthtycmzgyibiurq.supabase.co/storage/v1/object/public/crsnimages'
 
 export const LOGOS_LABORATORIOS = {
-  // token:               registro BD que coincide          archivo logo       etiqueta
-  megalabs:           { logo: `${BASE_IMG}/logos/megalabs.png`,           nombre: 'MEGALABS' },
-  leti:               { logo: `${BASE_IMG}/logos/leti.png`,               nombre: 'LETI' },
-  calox:              { logo: `${BASE_IMG}/logos/calox.png`,              nombre: 'CALOX' },
-  siegfried:          { logo: `${BASE_IMG}/logos/siegfried.png`,          nombre: 'SIEGFRIED' },
-  valmor:             { logo: `${BASE_IMG}/logos/valmor.png`,             nombre: 'VALMOR' },
-  biotech:            { logo: `${BASE_IMG}/logos/biotech.png`,            nombre: 'BIOTECH' },
-  oftalmi:            { logo: `${BASE_IMG}/logos/oftalmi.png`,            nombre: 'L.O. OFTALMI' },
-  spefar:             { logo: `${BASE_IMG}/logos/spefar.png`,             nombre: 'SPEFAR' },
-  'farma s.a.':       { logo: `${BASE_IMG}/logos/farma.png`,              nombre: 'LABORATORIOS FARMA' },
-  vargas:             { logo: `${BASE_IMG}/logos/vargas.png`,             nombre: 'VARGAS' },
+  // ── Tanda 1 (top 10) ────────────────────────────────────────────────
+  // token:            registro BD que coincide         archivo logo     etiqueta
+  megalabs:         { logo: `${BASE_IMG}/logos/megalabs.png`,         nombre: 'MEGALABS' },
+  leti:             { logo: `${BASE_IMG}/logos/leti.png`,             nombre: 'LETI' },
+  calox:            { logo: `${BASE_IMG}/logos/calox.png`,            nombre: 'CALOX' },
+  siegfried:        { logo: `${BASE_IMG}/logos/siegfried.png`,        nombre: 'SIEGFRIED' },
+  valmor:           { logo: `${BASE_IMG}/logos/valmor.png`,           nombre: 'VALMOR' },
+  biotech:          { logo: `${BASE_IMG}/logos/biotech.png`,          nombre: 'BIOTECH' },
+  oftalmi:          { logo: `${BASE_IMG}/logos/oftalmi.png`,          nombre: 'L.O. OFTALMI' },
+  spefar:           { logo: `${BASE_IMG}/logos/spefar.png`,           nombre: 'SPEFAR' },
+  'farma s.a.':     { logo: `${BASE_IMG}/logos/farma.png`,            nombre: 'LABORATORIOS FARMA' },
+  vargas:           { logo: `${BASE_IMG}/logos/vargas.png`,           nombre: 'VARGAS' },
+  // ── Tanda 2 (puestos 11-20) ─────────────────────────────────────────
+  sante:            { logo: `${BASE_IMG}/logos/la sante.jpg`,            nombre: 'LA SANTE' },
+  kimiceg:          { logo: `${BASE_IMG}/logos/kimiceg.jpg`,          nombre: 'KIMICEG' },
+  cofasa:           { logo: `${BASE_IMG}/logos/cofasa.jpg`,           nombre: 'COFASA' },
+  elmor:            { logo: `${BASE_IMG}/logos/elmor.jpg`,            nombre: 'ELMOR' },
+  dollder:          { logo: `${BASE_IMG}/logos/dollder.jpg`,          nombre: 'DOLLDER' },
+  plusandex:        { logo: `${BASE_IMG}/logos/plusandex.png`,        nombre: 'PLUSANDEX' },
+  behrens:          { logo: `${BASE_IMG}/logos/behrens.webp`,          nombre: 'BEHRENS' },
+  ronava:           { logo: `${BASE_IMG}/logos/ronava.jpg`,           nombre: 'RONAVA' },
+  gema:             { logo: `${BASE_IMG}/logos/gema.png`,             nombre: 'GEMA LABS' },
+  intercaps:        { logo: `${BASE_IMG}/logos/intercaps.png`,        nombre: 'INTERCAPS' },
 }
 
 // Normaliza un nombre para la búsqueda de tokens (minúsculas + sin acentos).
