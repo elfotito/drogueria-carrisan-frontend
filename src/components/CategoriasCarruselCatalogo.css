@@ -80,6 +80,15 @@
   color: #1B4B8F;
 }
 
+/* Imagen conceptual en el chip (categoriasImagenes.js): thumbnail redondo. */
+.ccc__chip-img {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
 .ccc__flecha {
   display: none;
   flex: 0 0 auto;

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../api/axios'
 import { ICONOS_CATEGORIAS, ICONO_CATEGORIA_FALLBACK } from '../config/categoriasIconos'
+import { imagenParaCategoria } from '../config/categoriasImagenes'
 import './ExploraCarrusel.css'
 import './CategoriasCarrusel.css'
 
@@ -74,11 +75,21 @@ function CategoriasCarrusel({
       <div className="explora-carrusel__fila" ref={filaRef}>
         {lista.map((cat) => {
           const Icono = ICONOS_CATEGORIAS[cat.icono] || ICONO_CATEGORIA_FALLBACK
+          const imagen = imagenParaCategoria(cat.id)
           const activo = esSeleccion && activoId === cat.id
           const contenido = (
             <>
-              <div className="explora-carrusel__card-img-wrap cat-car__tile">
-                <Icono className="cat-car__icono" strokeWidth={1.6} aria-hidden="true" />
+              <div className={`explora-carrusel__card-img-wrap cat-car__tile${imagen ? ' has-img' : ''}`}>
+                {imagen ? (
+                  <img
+                    src={imagen}
+                    alt={cat.nombre}
+                    className="cat-car__img"
+                    loading="lazy"
+                  />
+                ) : (
+                  <Icono className="cat-car__icono" strokeWidth={1.6} aria-hidden="true" />
+                )}
               </div>
               <span className="explora-carrusel__card-nombre">{cat.nombre}</span>
             </>

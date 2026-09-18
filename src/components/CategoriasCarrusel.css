@@ -21,6 +21,33 @@
   color: #1B4B8F;
 }
 
+/* Imagen conceptual de categoría (categoriasImagenes.js) dentro del tile.
+   Mismo patrón de contenido que los logos de laboratorio: contain + white bg. */
+.cat-car__img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+
+/* Con imagen, el tile pasa a fondo blanco neutro (la foto es quien aporta color). */
+.cat-car__tile.has-img {
+  background: #FFFFFF;
+  border: 1px solid #F0F1F3;
+}
+
+.explora-carrusel__card:hover .cat-car__tile.has-img {
+  background: #FFFFFF;
+  border-color: #DFE9F6;
+}
+
+/* Modo selección con imagen activa: solo resalta el borde, sin teñir la foto. */
+.cat-car__activo .cat-car__tile.has-img {
+  background: #FFFFFF;
+  border-color: #1B4B8F;
+  box-shadow: 0 0 0 2px rgba(27, 75, 143, 0.35);
+}
+
 /* Modo botón (selección en catálogo): quitar defaults de <button> */
 .cat-car__btn {
   border: none;

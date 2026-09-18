@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { ICONOS_CATEGORIAS, ICONO_CATEGORIA_FALLBACK } from '../config/categoriasIconos'
+import { imagenParaCategoria } from '../config/categoriasImagenes'
 import './CategoriasCarruselCatalogo.css'
 
 // Carrusel compacto de categorías EXCLUSIVO del catálogo (/catalogo).
@@ -32,6 +33,7 @@ function CategoriasCarruselCatalogo({ categorias = [], activoId = 'todos', onSel
       <div className="ccc__fila" ref={filaRef}>
         {lista.map((cat) => {
           const Icono = ICONOS_CATEGORIAS[cat.icono] || ICONO_CATEGORIA_FALLBACK
+          const imagen = imagenParaCategoria(cat.id)
           const activa = activoId === cat.id
           return (
             <button
@@ -41,7 +43,11 @@ function CategoriasCarruselCatalogo({ categorias = [], activoId = 'todos', onSel
               onClick={() => onSeleccionar(cat.id)}
               aria-pressed={activa}
             >
-              <Icono className="ccc__chip-icono" strokeWidth={2} aria-hidden="true" />
+              {imagen ? (
+                <img src={imagen} alt={cat.nombre} className="ccc__chip-img" loading="lazy" />
+              ) : (
+                <Icono className="ccc__chip-icono" strokeWidth={2} aria-hidden="true" />
+              )}
               <span>{cat.nombre}</span>
             </button>
           )
