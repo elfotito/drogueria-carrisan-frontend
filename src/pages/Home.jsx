@@ -335,7 +335,7 @@ function Home() {
           />
         </div>
 
-
+        <NoticiasTeaser />
 
         {/* ── Secciones dinámicas (cargadas por infinite scroll) ── */}
         {seccionesDinamicas.map((seccion, idx) => (
@@ -372,8 +372,6 @@ function Home() {
             )}
           </div>
         ))}
-
-        <NoticiasTeaser />
 
         {/* ── Sentinel para infinite scroll ── */}
         {cargasRestantes > 0 && (
