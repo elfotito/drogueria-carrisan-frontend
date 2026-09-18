@@ -38,7 +38,7 @@ referencia: '',
       toaster.create({ title: 'Dirección guardada', type: 'success', duration: 2500 })
       onGuardada?.(nueva)
       onClose()
-    } catch (err) {
+    } catch {
       toaster.create({ title: 'No se pudo guardar la dirección', type: 'error', duration: 3000 })
     } finally {
       setGuardando(false)

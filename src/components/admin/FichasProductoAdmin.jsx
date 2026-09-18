@@ -95,7 +95,6 @@ function FichasProductoAdmin() {
 }
 
 function FichaProductoEditor({ producto, onVolver }) {
-  const [detalles, setDetalles] = useState(null)
   const [existeFicha, setExisteFicha] = useState(false)
   const [moleculas, setMoleculas] = useState([])
   const [cargando, setCargando] = useState(true)
@@ -136,7 +135,6 @@ function FichaProductoEditor({ producto, onVolver }) {
 
       if (resDetalles.status === 'fulfilled') {
         setExisteFicha(true)
-        setDetalles(resDetalles.value.data)
         setForm({
           indicaciones: resDetalles.value.data.indicaciones || '',
           contraindicaciones: resDetalles.value.data.contraindicaciones || '',

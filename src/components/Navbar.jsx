@@ -125,7 +125,6 @@ function Navbar() {
   const {
     tipoEnvio,
     cambiarTipoEnvio,
-    opcionesEnvio,
     direcciones,
     direccionSeleccionada,
     setDireccionSeleccionada,

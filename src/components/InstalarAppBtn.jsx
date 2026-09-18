@@ -18,10 +18,6 @@ function estaInstalado() {
   return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true
 }
 
-function esIOS() {
-  return /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
-}
-
 export default function InstalarAppBtn() {
   const [visible, setVisible] = useState(false)
   const [deferredPrompt, setDeferredPrompt] = useState(null)

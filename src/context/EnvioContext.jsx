@@ -123,40 +123,32 @@ export function EnvioProvider({ children }) {
 
   // Guardar nueva dirección
   const guardarDireccion = async (direccionData) => {
-    try {
-      const opcion = opcionesEnvio.find(op => op.id === tipoEnvio);
-      
-      const dataConTipo = {
-        ...direccionData,
-        tipo_direccion: opcion?.tipoDireccion || 'delivery'
-      };
-      
-      const { data } = await api.post('/direcciones', dataConTipo);
-      
-      if (opcion?.tipoDireccion) {
-        await cargarDirecciones(opcion.tipoDireccion);
-      }
-      
-      setDireccionSeleccionada(data);
-      return data;
-    } catch (error) {
-      throw error;
+    const opcion = opcionesEnvio.find(op => op.id === tipoEnvio);
+
+    const dataConTipo = {
+      ...direccionData,
+      tipo_direccion: opcion?.tipoDireccion || 'delivery'
+    };
+
+    const { data } = await api.post('/direcciones', dataConTipo);
+
+    if (opcion?.tipoDireccion) {
+      await cargarDirecciones(opcion.tipoDireccion);
     }
+
+    setDireccionSeleccionada(data);
+    return data;
   };
 
   // Eliminar dirección
   const eliminarDireccion = async (id) => {
-    try {
-      await api.delete(`/direcciones/${id}`);
-      if (direccionSeleccionada?.id === id) {
-        setDireccionSeleccionada(null);
-      }
-      const opcion = opcionesEnvio.find(op => op.id === tipoEnvio);
-      if (opcion?.tipoDireccion) {
-        await cargarDirecciones(opcion.tipoDireccion);
-      }
-    } catch (error) {
-      throw error;
+    await api.delete(`/direcciones/${id}`);
+    if (direccionSeleccionada?.id === id) {
+      setDireccionSeleccionada(null);
+    }
+    const opcion = opcionesEnvio.find(op => op.id === tipoEnvio);
+    if (opcion?.tipoDireccion) {
+      await cargarDirecciones(opcion.tipoDireccion);
     }
   };
 

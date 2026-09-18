@@ -9,11 +9,13 @@ import SeccionesCarrusel from '../components/SeccionesCarrusel'
 import AdBanner from '../components/AdBanner'
 import AdRotativo from '../components/AdRotativo'
 import AdCard from '../components/AdCard'
+import AdVideoBanner from '../components/AdVideoBanner'
 import InfiniteScrollLoader from '../components/InfiniteScrollLoader'
 import Footer from '../components/Footer'
 import BottomNav from '../components/BottomNav'
 import CookieConsent from '../components/CookieConsent'
 import { agruparEspecifico } from '../utils/agruparEspecifico'
+import { ADS } from '../config/adsImagenes'
 import BloquePromocional from '../components/BloquePromocional'
 import SeccionPromocional from '../components/SeccionPromocional'
 import NoticiasTeaser from '../components/NoticiasTeaser'
@@ -269,6 +271,13 @@ function Home() {
           cargando={cargandoVitrina}
         />
 
+        {/* ── Video banner promocional (debajo del primer rollback) ── */}
+        <AdVideoBanner
+          src="https://www.youtube.com/watch?v=vyjwd46gjqY"
+          poster=""
+          alt="Promoción exclusiva"
+          link="/catalogo"
+        />
 
         {/* ── Explorá por laboratorio (logos dinámicos, top labs) ── */}
         <LaboratoriosCarrusel />
@@ -330,19 +339,10 @@ function Home() {
           cargando={cargandoVitrina}
         />
         
-        <div className="home__ads-pair">
-          <AdCard
-            titulo="Nuevos productos"
-            subtitulo="Descubrí lo último que llegó"
-            variante="nuevo"
-            link="/catalogo"
-          />
-          <AdCard
-            titulo="Ofertas relámpago"
-            subtitulo="No te quedes sin el tuyo"
-            variante="oferta"
-            link="/catalogo"
-          />
+<div className="home__ads-pair">
+          {ADS.map((ad) => (
+            <AdCard key={ad.id} {...ad} />
+          ))}
         </div>
 
         <NoticiasTeaser />

@@ -74,7 +74,7 @@ function DeliveryAdmin() {
       })
       setEditandoId(null)
       await cargarDatos()
-    } catch (err) {
+    } catch {
       setError('Error al actualizar tarifa')
     }
   }
@@ -86,7 +86,7 @@ function DeliveryAdmin() {
         activo: !tarifa.activo,
       })
       await cargarDatos()
-    } catch (err) {
+    } catch {
       setError('Error al cambiar estado')
     }
   }
@@ -97,7 +97,7 @@ function DeliveryAdmin() {
     try {
       await api.delete(`/delivery-tarifas/${tarifa.id}`)
       await cargarDatos()
-    } catch (err) {
+    } catch {
       setError('Error al eliminar tarifa')
     }
   }

@@ -55,7 +55,7 @@ function Login() {
       } else {
         navigate(`/registro?email=${encodeURIComponent(emailLimpio)}`)
       }
-    } catch (err) {
+    } catch {
       setError('No se pudo verificar el correo. Intentá de nuevo.')
     } finally {
       setCargando(false)

@@ -117,7 +117,7 @@ function PinCheckout({ onResuelto, onDisponibilidad }) {
       const { data } = await api.post('/subusuarios/verificar', { pin: pinCompleto })
       setResultado(data)
       onResuelto?.(data.id)
-    } catch (err) {
+    } catch {
       setError('PIN incorrecto')
       setResultado(null)
       onResuelto?.(null)

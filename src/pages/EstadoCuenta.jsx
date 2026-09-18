@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import api from '../api/axios'
 import {
@@ -54,7 +54,6 @@ function claveGrupoFecha(fecha) {
 
 export default function EstadoCuenta() {
   const { user } = useAuth()
-  const navigate = useNavigate()
   const [datos, setDatos] = useState(null)
   const [comparativa, setComparativa] = useState(null)
   const [cargando, setCargando] = useState(true)
@@ -226,7 +225,7 @@ function ModalReportarPago({ ordenesDisponibles, onCerrar, onEnviar }) {
 
   // TODO: conectar con el mecanismo real de subida (Supabase Storage /
   // endpoint /upload propio) — debe devolver la URL pública del archivo.
-  async function subirComprobante(file) {
+  async function subirComprobante() {
     throw new Error('subirComprobante() no implementado todavía')
   }
 

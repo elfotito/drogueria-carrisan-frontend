@@ -19,10 +19,6 @@ import generarReporteEstadoCuentaPDF from '../utils/generarReporteEstadoCuentaPD
 // se refleja en pantalla, no solo dentro del PDF).
 // ---------------------------------------------------------------
 
-function formatUSD(valor) {
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(valor || 0)
-}
-
 const HOY = new Date().toISOString().split('T')[0]
 const HACE_30_DIAS = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
 

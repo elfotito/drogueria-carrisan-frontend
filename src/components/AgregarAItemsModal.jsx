@@ -19,7 +19,7 @@ function AgregarAItemsModal({ producto, onClose }) {
     try {
       const { data } = await api.get('/lists')
       setListas(data)
-    } catch (err) {
+    } catch {
       setError('No se pudieron cargar tus listas')
     } finally {
       setCargando(false)
@@ -63,7 +63,7 @@ function AgregarAItemsModal({ producto, onClose }) {
         setMensaje('')
         onClose()
       }, 1200)
-    } catch (err) {
+    } catch {
       setError('Error al crear la lista')
     } finally {
       setCreando(false)

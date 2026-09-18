@@ -3,6 +3,7 @@ import {
   Box, Table, Spinner, Text, Flex, Button, Badge
 } from '@chakra-ui/react';
 import { exportToExcel, exportToPdf } from '../utils/exportUtils';
+import api from '../../api/axios';
 
 const INDIGO = '#1A1A3A';
 
@@ -29,12 +30,8 @@ export default function EstadosCuentaClientes() {
     async function cargar() {
       setCargando(true);
       try {
-        const token = localStorage.getItem('token');
-        const res = await fetch(`${process.env.REACT_APP_API_URL}/admin/analytics/clientes`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        if (!res.ok) throw new Error('Error al cargar');
-        setClientes(await res.json());
+        const { data } = await api.get('/admin/analytics/clientes');
+        setClientes(data);
       } catch (err) {
         console.error(err);
         setError('No se pudo cargar el estado de cuenta de clientes.');

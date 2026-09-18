@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { useNavigate, useLocation, Link } from 'react-router-dom'
+import { useLocation, Link } from 'react-router-dom'
 import api from '../api/axios'
 import './Pagos.css'
 
@@ -37,7 +37,6 @@ function PasoIndicador({ pasoActual }) {
 }
 
 function Pagos() {
-  const navigate = useNavigate()
   const location = useLocation()
 
   const [ordenes, setOrdenes] = useState([])

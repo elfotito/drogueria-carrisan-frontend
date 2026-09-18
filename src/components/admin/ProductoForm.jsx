@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import api from '../../api/axios'
 import './ProductoForm.css'
 
@@ -53,7 +53,7 @@ function ProductoForm({ producto, marcas, onClose, onGuardado }) {
     try {
       new URL(string)
       return true
-    } catch (_) {
+    } catch {
       return false
     }
   }
