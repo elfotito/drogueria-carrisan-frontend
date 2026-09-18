@@ -7,6 +7,7 @@ import { ExploraLaboratorios } from '../components/ExploraCarrusel'
 import CategoriasCarrusel from '../components/CategoriasCarrusel'
 import SeccionesCarrusel from '../components/SeccionesCarrusel'
 import AdBanner from '../components/AdBanner'
+import AdRotativo from '../components/AdRotativo'
 import AdCard from '../components/AdCard'
 import InfiniteScrollLoader from '../components/InfiniteScrollLoader'
 import Footer from '../components/Footer'
@@ -302,11 +303,12 @@ function Home() {
         />
 
 
-        <AdBanner
-          titulo="Descuentos de temporada"
-          subtitulo="Aprovecha los mejores precios de la semana"
-          variante="oferta"
-          link="/catalogo"
+        <AdRotativo
+          ads={[
+            { imagen: 'URL_1.jpg', link: '/catalogo', alt: 'texto' },
+            { imagen: 'URL_2.gif', link: '/catalogo', alt: 'texto' },
+            { imagen: 'URL_3.png', link: '/catalogo', alt: 'texto' },
+          ]}
         />
 
         <HomeCarrusel
