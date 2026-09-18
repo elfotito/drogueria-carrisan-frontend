@@ -68,6 +68,7 @@ const ChatCentro = lazy(() => import('./pages/Chat'))
 const SubUsuarios = lazy(() => import('./pages/SubUsuarios'))
 const Presupuesto = lazy(() => import('./pages/Presupuesto'))
 const Mantenimiento = lazy(() => import('./pages/Mantenimiento'))
+const Noticias = lazy(() => import('./pages/Noticias'))
 const AnalyticsVentas = lazy(() => import('./components/admin/AnalyticsVentas'))
 const StaffLogin = lazy(() => import('./pages/staff/StaffLogin'))
 const StaffRegistro = lazy(() => import('./pages/staff/StaffRegistro'))
@@ -193,6 +194,7 @@ function App() {
                   <Route path="/privacidad" element={<Privacidad />} />
                   <Route path="/terminoscomerciales" element={<TerminosComerciales />} />
                   <Route path="/mantenimiento" element={<Mantenimiento />} />
+                  <Route path="/noticias" element={<Noticias />} />
                   <Route path="/estado-cuenta" element={<PrivateRouteSensible><EstadoCuenta /></PrivateRouteSensible>} />
                   <Route path="/producto/:id" element={<ProductoDetalle />} />
                   <Route path="/listas/:id" element={<PrivateRoute><ListaDetalle /></PrivateRoute>} />

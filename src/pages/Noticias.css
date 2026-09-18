@@ -1,0 +1,125 @@
+.noticias-pagina {
+  min-height: 100vh;
+  background: #FBFAF7;
+}
+
+.noticias-pagina__container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 16px 40px;
+}
+
+.noticias-pagina__header {
+  padding: 8px 4px 24px;
+}
+
+.noticias-pagina__titulo {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.6rem;
+  color: #1A1A3A;
+  margin: 0 0 6px;
+}
+
+.noticias-pagina__subtitulo {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  color: rgba(20, 24, 42, 0.6);
+  margin: 0;
+}
+
+.noticias-pagina__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.noticias-pagina__card {
+  display: flex;
+  gap: 14px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid rgba(35, 43, 69, 0.08);
+  text-decoration: none;
+  color: inherit;
+}
+
+.noticias-pagina__card--skeleton {
+  height: 120px;
+  background: linear-gradient(135deg, #f5f7ff 0%, #eef5ff 100%);
+}
+
+.noticias-pagina__img {
+  flex: 0 0 120px;
+  height: 120px;
+  object-fit: cover;
+  background: #eef5ff;
+}
+
+.noticias-pagina__img--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+}
+
+.noticias-pagina__texto {
+  padding: 12px 14px 12px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.noticias-pagina__fuente {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: #12A594;
+}
+
+.noticias-pagina__card-titulo {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  line-height: 1.35;
+  color: #1A1A3A;
+  margin: 0;
+}
+
+.noticias-pagina__resumen {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: rgba(20, 24, 42, 0.6);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.noticias-pagina__vacio {
+  font-family: 'Inter', sans-serif;
+  color: rgba(20, 24, 42, 0.6);
+  padding: 40px 4px;
+  text-align: center;
+}
+
+.noticias-pagina__espaciador {
+  height: 76px;
+}
+
+/* Desktop: grid de 2 columnas, cards con más aire */
+@media (min-width: 769px) {
+  .noticias-pagina__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .noticias-pagina__espaciador {
+    height: 0;
+  }
+}

@@ -241,8 +241,8 @@ function Navbar() {
   }, [busqueda])
 
   useEffect(() => {
-    const terminoUrl = new URLSearchParams(location.search).get('search')
-    if (terminoUrl && terminoUrl !== busqueda) {
+    const terminoUrl = new URLSearchParams(location.search).get('search') || ''
+    if (terminoUrl !== busqueda) {
       busquedaEnviadaRef.current = true
       if (debounceRef.current) clearTimeout(debounceRef.current)
       setSugerencias([])

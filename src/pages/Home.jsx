@@ -15,6 +15,7 @@ import CookieConsent from '../components/CookieConsent'
 import { agruparEspecifico } from '../utils/agruparEspecifico'
 import BloquePromocional from '../components/BloquePromocional'
 import SeccionPromocional from '../components/SeccionPromocional'
+import NoticiasTeaser from '../components/NoticiasTeaser'
 import './Home.css'
 
 // ── Constantes ──────────────────────────────────────────────────
@@ -369,6 +370,8 @@ function Home() {
             )}
           </div>
         ))}
+
+        <NoticiasTeaser />
 
         {/* ── Sentinel para infinite scroll ── */}
         {cargasRestantes > 0 && (
