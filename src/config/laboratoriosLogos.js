@@ -24,11 +24,11 @@ export const LOGOS_LABORATORIOS = {
   leti:             { logo: `${BASE_IMG}/logos/leti.png`,             nombre: 'LETI' },
   calox:            { logo: `${BASE_IMG}/logos/calox.png`,            nombre: 'CALOX' },
   siegfried:        { logo: `${BASE_IMG}/logos/siegfried.png`,        nombre: 'SIEGFRIED' },
-  valmor:           { logo: `${BASE_IMG}/logos/valmor.png`,           nombre: 'VALMOR' },
+  valmor:           { logo: `${BASE_IMG}/logos/valmorca.jpg`,           nombre: 'VALMOR' },
   biotech:          { logo: `${BASE_IMG}/logos/biotech.png`,          nombre: 'BIOTECH' },
   oftalmi:          { logo: `${BASE_IMG}/logos/oftalmi.png`,          nombre: 'L.O. OFTALMI' },
   spefar:           { logo: `${BASE_IMG}/logos/spefar.png`,           nombre: 'SPEFAR' },
-  'farma s.a.':     { logo: `${BASE_IMG}/logos/farma.png`,            nombre: 'LABORATORIOS FARMA' },
+  'farma s.a.':     { logo: `${BASE_IMG}/logos/farma.png`,            nombre: 'FARMA' },
   vargas:           { logo: `${BASE_IMG}/logos/vargas.png`,           nombre: 'VARGAS' },
   // ── Tanda 2 (puestos 11-20) ─────────────────────────────────────────
   sante:            { logo: `${BASE_IMG}/logos/la sante.jpg`,            nombre: 'LA SANTE' },
@@ -59,4 +59,18 @@ export function logoParaLaboratorio(laboratorio) {
   const norm = normalizarLab(laboratorio)
   const clave = Object.keys(LOGOS_LABORATORIOS).find((k) => norm.includes(k))
   return clave ? LOGOS_LABORATORIOS[clave] : null
+}
+
+// Nombre corto para mostrar bajo la tarjeta del carrusel.
+// Nunca toca la BD: es SOLO presentación. Si hay logo usa su etiqueta;
+// si no, limpia el registro BD para display ("LABORATORIOS LETI, S.A.V." →
+// "LETI", "LABORATORIO LA SANTE, C.A." → "LA SANTE").
+export function nombreVisible(laboratorio) {
+  const match = logoParaLaboratorio(laboratorio)
+  if (match) return match.nombre
+  const limpio = String(laboratorio || '')
+    .replace(/^lab(?:\.|oratorio|oratorios)\s+/i, '')
+    .replace(/\s*,\s*(?:C\.A\.|S\.A\.|S\.A\.V\.|S\.A\.I\.C\.|S\.A\.C\.I\.|L\.T\.D\.|Ltd\.?|LLC|Suc\.?)\s*$/i, '')
+    .trim()
+  return limpio || String(laboratorio || '')
 }

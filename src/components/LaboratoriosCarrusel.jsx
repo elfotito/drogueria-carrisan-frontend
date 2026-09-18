@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { FlaskConical } from 'lucide-react'
 import api from '../api/axios'
-import { logoParaLaboratorio } from '../config/laboratoriosLogos'
+import { logoParaLaboratorio, nombreVisible } from '../config/laboratoriosLogos'
 import './ExploraCarrusel.css'
 import './LaboratoriosCarrusel.css'
 
@@ -72,7 +72,7 @@ function LaboratoriosCarrusel({
                 {match ? (
                   <img
                     src={match.logo}
-                    alt={match.nombre}
+                    alt={nombreVisible(valor)}
                     className="lab-car__logo"
                     loading="lazy"
                   />
@@ -80,7 +80,7 @@ function LaboratoriosCarrusel({
                   <FlaskConical className="cat-car__icono" strokeWidth={1.6} aria-hidden="true" />
                 )}
               </div>
-              <span className="explora-carrusel__card-nombre">{match?.nombre || valor}</span>
+              <span className="explora-carrusel__card-nombre">{nombreVisible(valor)}</span>
             </Link>
           )
         })}
