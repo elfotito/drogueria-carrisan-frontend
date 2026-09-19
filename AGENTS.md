@@ -46,8 +46,8 @@ src/
 │   ├── FavoritosContext.jsx   # Lista de favoritos
 │   └── LoadingBarContext.jsx  # Barra de carga superior
 ├── hooks/                    # Custom hooks (useEsMobile, usePush)
-├── pages/                    # Paginas (~44 archivos)
-│   └── staff/                # StaffLogin, StaffDashboard (panel sin sidebar), StaffAlmacen, StaffDespacho, StaffOrdenes, StaffVentas, StaffCuentasPorCobrar, StaffPagos, StaffOrdenesPorCancelar (+ CSS por página)
+├── pages/                    # Paginas (~50+ archivos)
+│   └── staff/                # StaffLogin, StaffRegistro, StaffDashboard (panel sin sidebar), StaffDepartamento (hub), StaffPedidos, StaffEnvios, StaffOrdenes, StaffSolicitudes, StaffPresupuestos, StaffFacturacion, StaffCuentasPorCobrar, StaffOrdenesPorCancelar, StaffCredito, StaffTesoreria, StaffReportesFinancieros, StaffClientes, StaffClienteFicha, StaffChat, StaffCupones, StaffPromociones, StaffPrecios, StaffDirecciones, StaffModuloPlaceholder (+ CSS por página)
 ├── utils/                    # Helpers (validadores, generadores de PDF, etc.)
 ├── App.jsx                   # Router principal (Routes)
 ├── main.jsx                  # Entry point (BrowserRouter + Provider Chakra)
@@ -214,11 +214,11 @@ El personal de la empresa (vendedor, despachador, almacenista, contabilidad, adm
 
 - **LayoutStaff + NavStaff** (`src/components/staff/`): sidebar persistente (desktop ≥1024px) / drawer móvil. `NavStaff.js` define `ROLES_BRIDGE_ADMIN` (solo rol `admin` — el dueño) y las estructuras de departamentos. Cada ítem se filtra con `item.roles.includes(staff.rol)`. El `director` ve todos los módulos.
 
-- **Categorización por departamentos** (ver sección "Categorización por departamentos (staff)" abajo): el `StaffDashboard` ya NO usa sidebar — es un panel visual standalone con tarjetas de departamento. Las páginas de trabajo (`/staff/almacen`, `/staff/despacho`, `/staff/ventas`, `/staff/cuentas-por-cobrar`, `/staff/pagos`, `/staff/ordenes-por-cancelar`, `/staff/ordenes`) usan `LayoutDepartamento` (sidebar filtrado al departamento activo, con color propio por depto). `LayoutStaff` queda como legacy sin uso activo.
+- **Categorización por departamentos** (ver sección "Categorización por departamentos (staff)" abajo): el `StaffDashboard` ya NO usa sidebar — es un panel visual standalone con tarjetas de departamento. Las páginas de trabajo usan `LayoutDepartamento` (sidebar filtrado al departamento activo, con color propio por depto). `LayoutStaff` queda como legacy sin uso activo.
 
 - **Admin bridge**: POST `/staff/admin-bridge` devuelve un JWT de CLIENTE valido (mismo formato que `/auth/login`) para la cuenta `users` cuyo email coincida y tenga `es_admin=true`. El frontend escribe `token` + `user` en localStorage del cliente y hace `window.location.href='/admin'` (recarga completa a proposito — AuthContext ya montado no relee localStorage; un `navigate` no bastaria). El staff debe tener una cuenta cliente con `es_admin=true` con el MISMO email para poder entrar a `/admin`. El botón aparece en el dashboard (tarjeta "Panel administrativo") y también en el nav de `LayoutDepartamento` (grupo "Administración").
 
-- **PWA staff**: ver seccion PWA arriba. El swap requiere montar `<PwaScopeSwitcher/>`.
+- **PWA staff**: ver seccion PWA arriba. El swap lo hace `<PwaScopeSwitcher/>` montado en `App.jsx`.
 
 ## Categorización por departamentos (staff)
 
