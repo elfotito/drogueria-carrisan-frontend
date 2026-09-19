@@ -6,7 +6,8 @@ import './CarruselCortos.css'
 const construirEmbed = (id, conSonido) =>
   `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=${conSonido ? '0' : '1'}&loop=1&playlist=${id}&controls=0&modestbranding=1&rel=0&playsinline=1`
 
-const BANNER_TITULO = 'Mantente al día con lo último en el sector salud'
+const BANNER_TITULO = 'Tu dosis diaria de contenido'
+const BANNER_SUBTITULO = 'Consejos, novedades y curiosidades del sector farmacéutico'
 
 function CarruselCortos() {
   const [videos, setVideos] = useState([])
@@ -101,7 +102,7 @@ function CarruselCortos() {
         <aside className="cc__banner">
           <span className="cc__banner-chip"><Play size={13} /> Shorts</span>
           <h2 className="cc__banner-titulo">{BANNER_TITULO}</h2>
-          <p className="cc__banner-sub">Videos cortos de nuestro canal</p>
+          <p className="cc__banner-sub">{BANNER_SUBTITULO}</p>
         </aside>
 
         <div className="cc__lado">
