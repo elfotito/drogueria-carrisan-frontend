@@ -247,6 +247,13 @@
   object-fit: cover;
 }
 
+.cc-slide__video iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
 .cc-slide__thumb {
   filter: brightness(0.85);
 }

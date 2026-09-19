@@ -3,8 +3,97 @@ import { X, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Play, Volume2, Vo
 import api from '../api/axios'
 import './CarruselCortos.css'
 
-const construirEmbed = (id, conSonido) =>
-  `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=${conSonido ? '0' : '1'}&loop=1&playlist=${id}&controls=0&modestbranding=1&rel=0&playsinline=1`
+let promesaApiYT = null
+
+function cargaApiYT() {
+  if (!promesaApiYT) {
+    promesaApiYT = new Promise((resolve) => {
+      if (window.YT && window.YT.Player) {
+        resolve()
+        return
+      }
+      const previo = window.onYouTubeIframeAPIReady
+      window.onYouTubeIframeAPIReady = () => {
+        if (typeof previo === 'function') previo()
+        resolve()
+      }
+      const script = document.createElement('script')
+      script.src = 'https://www.youtube.com/iframe_api'
+      script.async = true
+      document.head.appendChild(script)
+    })
+  }
+  return promesaApiYT
+}
+
+// Player vía YouTube IFrame API: el sonido se cambia con mute()/unMute()
+// SIN recargar el video (un <iframe> con src distinto lo reinicia).
+function ShortsPlayer({ videoId, conSonido, jugadorRef }) {
+  const contenedorRef = useRef(null)
+  const conSonidoRef = useRef(false)
+  const videoIdRef = useRef(videoId)
+
+  useEffect(() => {
+    conSonidoRef.current = conSonido
+  }, [conSonido])
+
+  useEffect(() => {
+    videoIdRef.current = videoId
+  }, [videoId])
+
+  useEffect(() => {
+    let activo = true
+    const contenedor = contenedorRef.current
+    if (!contenedor) return undefined
+
+    cargaApiYT().then(() => {
+      if (!activo || !window.YT?.Player) return
+      const jugador = new window.YT.Player(contenedor, {
+        videoId: videoIdRef.current,
+        width: '100%',
+        height: '100%',
+        playerVars: {
+          autoplay: 1,
+          mute: 1,
+          loop: 1,
+          playlist: videoIdRef.current,
+          controls: 0,
+          modestbranding: 1,
+          rel: 0,
+          playsinline: 1,
+        },
+        events: {
+          onReady: () => {
+            const j = jugadorRef.current
+            if (!j) return
+            j.setVolume(100)
+            if (conSonidoRef.current) j.unMute()
+            else j.mute()
+            j.playVideo()
+          },
+        },
+      })
+      jugadorRef.current = jugador
+    })
+
+    return () => {
+      activo = false
+      if (jugadorRef.current) {
+        jugadorRef.current.destroy()
+        jugadorRef.current = null
+      }
+    }
+  }, [videoId, jugadorRef])
+
+  useEffect(() => {
+    const j = jugadorRef.current
+    if (!j || !j.getPlayerState) return
+    if (conSonido) j.unMute()
+    else j.mute()
+  }, [conSonido, jugadorRef])
+
+  return <div className="cc-slide__video" ref={contenedorRef} />
+}
 
 const BANNER_TITULO = 'Tu dosis diaria de contenido'
 const BANNER_SUBTITULO = 'Consejos, novedades y curiosidades del sector farmacéutico'
@@ -18,6 +107,7 @@ function CarruselCortos() {
   const [conSonido, setConSonido] = useState(false)
   const scrollerRef = useRef(null)
   const filaRef = useRef(null)
+  const jugadorRef = useRef(null)
 
   useEffect(() => {
     let activo = true
@@ -88,6 +178,16 @@ function CarruselCortos() {
   const scrollFila = (direccion) => {
     filaRef.current?.scrollBy({ left: direccion * 380, behavior: 'smooth' })
   }
+  const alternarSonido = () => {
+    const j = jugadorRef.current
+    if (j && !conSonido) {
+      j.setVolume(100)
+      j.unMute()
+    } else if (j) {
+      j.mute()
+    }
+    setConSonido((s) => !s)
+  }
 
   return (
     <section className="cc">
@@ -151,7 +251,7 @@ function CarruselCortos() {
           <button
             type="button"
             className="cc-modal__sonido"
-            onClick={() => setConSonido((s) => !s)}
+            onClick={alternarSonido}
             aria-label={conSonido ? 'Silenciar' : 'Activar sonido'}
           >
             {conSonido ? <Volume2 size={22} /> : <VolumeX size={22} />}
@@ -185,14 +285,7 @@ function CarruselCortos() {
             {videos.map((video, i) => (
               <div key={video.id} className={`cc-slide${i === idx ? ' cc-slide--activo' : ''}`}>
                 {i === idx ? (
-                  <iframe
-                    key={`${video.id}-${conSonido ? 'on' : 'muted'}`}
-                    src={construirEmbed(video.id, conSonido)}
-                    title={video.titulo}
-                    className="cc-slide__video"
-                    allow="autoplay; encrypted-media; fullscreen"
-                    allowFullScreen
-                  />
+                  <ShortsPlayer videoId={video.id} conSonido={conSonido} jugadorRef={jugadorRef} />
                 ) : (
                   <img src={video.thumb} alt={video.titulo} className="cc-slide__thumb" loading="lazy" />
                 )}
