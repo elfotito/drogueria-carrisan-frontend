@@ -4,7 +4,8 @@ import { BrowserRouter } from 'react-router-dom'
 import { Provider } from "./components/ui/provider"
 import ErrorBoundary from './components/ErrorBoundary'
 import './index.css'
-import './fonts.css' 
+import './fonts.css'
+import './tokens.css' 
 import App from './App.jsx'
 
 const CRASH_LOG_KEY = 'app_crash_log'

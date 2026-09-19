@@ -240,7 +240,7 @@ function BuscadorMovil({ onClose, queryInicial = '' }) {
                   >
                     <img
                       src={producto.foto_url || '/placeholder.png'}
-                      alt=""
+                      alt={producto.nombre_comercial}
                       className="buscador-movil__sugerencia-img"
                     />
                     <span className="buscador-movil__sugerencia-nombre">

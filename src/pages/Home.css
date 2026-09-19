@@ -30,7 +30,7 @@
     "a c"
     "d e";
   gap: 12px;
-  padding: 20px 20px 0;
+  padding: 0 20px;
 }
 
 .home__bloque-a { grid-area: a; }
@@ -46,15 +46,15 @@
   padding: 20px 16px 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--space-8);
 }
 
 /* ---------- Ads: par de cards lado a lado ---------- */
 .home__ads-pair {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin: 6px 0 10px;
+  gap: var(--space-3);
+  margin: 0 0 10px;
 }
 
 /* ---------- Bloques dinámicos (cargados al scrollear) ---------- */
@@ -97,8 +97,48 @@
   height: 92px;
 }
 
+/* ---------- Ronda final del infinite scroll: grilla en vez de shelf ----------
+   Rompe la monotonía de carruseles cerrando la página con un formato 2x2/4-col
+   de MiniPromoCard (mismo patrón compacto que "Rollbacks y más"). */
+.home__grilla {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.home__grilla-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.home__grilla-header h2 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--brand-navy);
+}
+
+.home__grilla-header a {
+  color: var(--brand-blue);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.home__grilla-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+}
+
 /* ---------- Tablet ancho: el dock sigue visible hasta 1023px ---------- */
 @media (min-width: 769px) {
+  .home__vitrina {
+    gap: var(--space-10);
+  }
+
   .home__bloques-promocionales {
     display: grid;
     grid-template-columns: 1.3fr 0.85fr 0.85fr 1fr;
@@ -107,18 +147,25 @@
       "a b b d"
       "a c e d";
     gap: 16px;
-    padding: 32px 0 0;
+    padding: 0;
     border-top: 1px solid rgba(35, 43, 69, 0.08);
   }
 
-
   .home__ads-pair {
     gap: 16px;
+  }
+
+  .home__grilla-grid {
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 
 /* ---------- Desktop real: acá el bottom nav ya no se muestra ---------- */
 @media (min-width: 1024px) {
+  .home__vitrina {
+    gap: var(--space-12);
+  }
+
   .home__espaciador {
     height: 24px;
   }

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import api from '../api/axios'
 import './NoticiasTeaser.css'
 
-const CANTIDAD_TEASER = 4
+const CANTIDAD_TEASER = 8
 
 function formatearFecha(fechaISO) {
   if (!fechaISO) return ''
@@ -62,7 +62,7 @@ function NoticiasTeaser() {
               {destacada.imagen ? (
                 <img
                   src={destacada.imagen}
-                  alt=""
+                  alt={destacada.titulo}
                   className="noticias-teaser__destacada-img"
                   loading="lazy"
                 />
@@ -95,7 +95,7 @@ function NoticiasTeaser() {
                 {noticia.imagen ? (
                   <img
                     src={noticia.imagen}
-                    alt=""
+                    alt={noticia.titulo}
                     className="noticias-teaser__item-img"
                     loading="lazy"
                   />

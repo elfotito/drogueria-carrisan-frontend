@@ -158,6 +158,7 @@ function Navbar() {
   const mobilePanelRef = useRef(null)
   const debounceRef = useRef(null)
   const busquedaEnviadaRef = useRef(false)
+  const busquedaUrlSyncRef = useRef(false)
 
   // useEffect para manejar clicks fuera de los paneles
   useEffect(() => {
@@ -220,6 +221,15 @@ function Navbar() {
       return
     }
 
+    // Si el término llegó por sync de URL (navegación al catálogo con ?search=),
+    // no disparar el fetch de sugerencias: eso reabriría el dropdown sin que el
+    // usuario esté escribiendo. El flag se reactiva con el próximo onChange.
+    if (busquedaUrlSyncRef.current) {
+      busquedaEnviadaRef.current = true
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+      return
+    }
+
     busquedaEnviadaRef.current = false
     if (debounceRef.current) clearTimeout(debounceRef.current)
     debounceRef.current = setTimeout(async () => {
@@ -242,6 +252,7 @@ function Navbar() {
   useEffect(() => {
     const terminoUrl = new URLSearchParams(location.search).get('search') || ''
     if (terminoUrl !== busqueda) {
+      busquedaUrlSyncRef.current = true
       busquedaEnviadaRef.current = true
       if (debounceRef.current) clearTimeout(debounceRef.current)
       setSugerencias([])
@@ -405,7 +416,10 @@ function Navbar() {
                 type="text"
                 placeholder="Buscar en Drogueria Carrisan"
                 value={busqueda}
-                onChange={(e) => setBusqueda(e.target.value)}
+                onChange={(e) => {
+                  busquedaUrlSyncRef.current = false
+                  setBusqueda(e.target.value)
+                }}
                 onFocus={handleSearchFocus}
               />
               <button type="submit" className="search-btn">

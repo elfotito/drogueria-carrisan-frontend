@@ -240,23 +240,36 @@ Desde 2026-09-04 el módulo staff se organiza en **3 departamentos**: `finanzas`
 |-------|----------|----------------|
 | **StaffDashboard** (`/staff/dashboard`) | `pages/staff/StaffDashboard.jsx` + `.css` | **Standalone, SIN sidebar.** Header con brand + usuario + logout, hero con gradiente corporativo (#1B4B8F) y tarjetas de departamento (un `Link` por depto → navega al **primer módulo accesible** del depto). Cada tarjeta lista chips con los módulos visibles para el rol. Tarjeta "Panel administrativo" aparte (solo roles bridge). |
 | **StaffDepartamento** (`/staff/finanzas` · `/staff/comercial` · `/staff/logistica`) | `pages/staff/StaffDepartamento.jsx` + `.css` | Hub/landing del depto. Reutiliza `LayoutDepartamento` (sin módulo activo) y muestra su hero (icono + nombre + color vía `--ldep-*`) + tarjetas de los módulos visibles para el rol (usa el campo `desc` de cada item). Sin módulos visibles → `<Navigate>` al dashboard. Los `Link` del `StaffDashboard` apuntan a estos hubs. |
-| **LayoutDepartamento** | `components/staff/LayoutDepartamento.jsx` + `.css` | `<LayoutDepartamento departamento="logistica" activo="almacen" titulo="...">`. Sidebar del depto (solo sus módulos, filtrados por rol) + header de depto (icono + nombre) + "Volver al dashboard" + botón bridge en el nav. Inyecta las variables CSS `--ldep-color`, `--ldep-color-strong`, `--ldep-color-soft` desde `DEPARTAMENTOS`. Drawer móvil igual que el LayoutStaff original. |
+| **LayoutDepartamento** | `components/staff/LayoutDepartamento.jsx` + `.css` | `<LayoutDepartamento departamento="logistica" activo="pedidos" titulo="...">`. Sidebar del depto (solo sus módulos, filtrados por rol) + header de depto (icono + nombre) + "Volver al dashboard" + botón bridge en el nav. Inyecta las variables CSS `--ldep-color`, `--ldep-color-strong`, `--ldep-color-soft` desde `DEPARTAMENTOS`. Drawer móvil igual que el LayoutStaff original. |
 
-### Rutas (sin cambios de path)
+### Rutas de módulos (generadas desde `MODULOS`)
 
-| Ruta | Layout | Departamento |
-|------|--------|--------------|
-| `/staff/dashboard` | ninguno (standalone) | — |
-| `/staff/finanzas` | LayoutDepartamento (`activo=""`) | Hub Finanzas |
-| `/staff/comercial` | LayoutDepartamento (`activo=""`) | Hub Comercial |
-| `/staff/logistica` | LayoutDepartamento (`activo=""`) | Hub Logística |
-| `/staff/almacen` | LayoutDepartamento | `logistica` (`activo="almacen"`) |
-| `/staff/despacho` | LayoutDepartamento | `logistica` (`activo="despacho"`) |
-| `/staff/ordenes` | LayoutDepartamento | `comercial` (`activo="ordenes"`) |
-| `/staff/ventas` | LayoutDepartamento | `finanzas` (`activo="ventas"`) |
-| `/staff/cuentas-por-cobrar` | LayoutDepartamento | `finanzas` (`activo="cuentas-por-cobrar"`) |
-| `/staff/pagos` | LayoutDepartamento | `finanzas` (`activo="pagos"`) |
-| `/staff/ordenes-por-cancelar` | LayoutDepartamento | `finanzas` (`activo="ordenes-por-cancelar"`) |
+| Ruta | Layout | Departamento | Módulo activo |
+|------|--------|--------------|---------------|
+| `/staff/dashboard` | ninguno (standalone) | — | — |
+| `/staff/finanzas` | LayoutDepartamento (`activo=""`) | Hub Finanzas | — |
+| `/staff/comercial` | LayoutDepartamento (`activo=""`) | Hub Comercial | — |
+| `/staff/logistica` | LayoutDepartamento (`activo=""`) | Hub Logística | — |
+| `/staff/ventas` | LayoutDepartamento | `finanzas` | `ventas` (Facturación — StaffFacturacion) |
+| `/staff/cuentas-por-cobrar` | LayoutDepartamento | `finanzas` | `cuentas-por-cobrar` (StaffCuentasPorCobrar) |
+| `/staff/ordenes-por-cancelar` | LayoutDepartamento | `finanzas` | `ordenes-por-cancelar` (StaffOrdenesPorCancelar) |
+| `/staff/credito` | LayoutDepartamento | `finanzas` | `credito` (StaffCredito) |
+| `/staff/tesoreria` | LayoutDepartamento | `finanzas` | `tesoreria` (StaffTesoreria) |
+| `/staff/reportes-financieros` | LayoutDepartamento | `finanzas` | `reportes-financieros` (StaffReportesFinancieros) |
+| `/staff/clientes` | LayoutDepartamento | `comercial` | `clientes` (StaffClientes) |
+| `/staff/clientes/:id` | LayoutDepartamento | `comercial` | Ficha de cliente (StaffClienteFicha) |
+| `/staff/chat` | LayoutDepartamento | `comercial` | `chat` (StaffChat — Comunicaciones) |
+| `/staff/ordenes` | LayoutDepartamento | `comercial` | `ordenes` (StaffOrdenes) |
+| `/staff/solicitudes` | LayoutDepartamento | `comercial` | `solicitudes` (StaffSolicitudes — kanban cotizaciones+requerimientos) |
+| `/staff/presupuestos` | LayoutDepartamento | `comercial` | `presupuestos` (StaffPresupuestos) |
+| `/staff/promociones` | LayoutDepartamento | `comercial` | `promociones` (StaffPromociones) |
+| `/staff/precios` | LayoutDepartamento | `comercial` | `precios` (StaffPrecios) |
+| `/staff/cupones` | LayoutDepartamento | `comercial` | `cupones` (StaffCupones) |
+| `/staff/pedidos` | LayoutDepartamento | `logistica` | `pedidos` (StaffPedidos — pipeline completo almacén) |
+| `/staff/envios` | LayoutDepartamento | `logistica` | `envios` (StaffEnvios — despacho) |
+| `/staff/direcciones` | LayoutDepartamento | `logistica` | `direcciones` (StaffDirecciones) |
+
+**OJO**: `/staff/pagos`, `/staff/almacen`, `/staff/despacho`, `/staff/cotizaciones`, `/staff/requerimientos` y `/staff/documentos` ya NO son rutas de navegación. Pagos→absorbidos en Cuentas por cobrar/Crédito, Almacen→`pedidos`, Despacho→`envios`, Cotizaciones/Requerimientos→`solicitudes`, Documentos→tab en la ficha de cliente. Los archivos `StaffAlmacen.jsx`, `StaffVentas.jsx`, `StaffPagos.jsx`, `StaffDespacho.jsx`, `StaffDocumentos.jsx` NO existen (eliminados).
 
 **Regla:** las páginas de trabajo usan `LayoutDepartamento` (nunca `LayoutStaff`). El `activo` del layout debe coincidir con el `id` del item en `MODULOS` para marcar el link activo del sidebar. Los roles finos por submódulo se definen en el campo `roles` de cada item (aún en evolución).
 
@@ -264,7 +277,7 @@ Desde 2026-09-04 el módulo staff se organiza en **3 departamentos**: `finanzas`
 
 - **Rutas staff generadas**: `<RutasStaff />` en `App.jsx` genera los hubs (`/staff/finanzas|comercial|logistica`) y las páginas de módulos a partir de `DEPARTAMENTOS`/`MODULOS`. El guard de rol sale de `item.roles`. **No se toca `App.jsx` al agregar un módulo.**
 - **STAFF_PAGINAS** (`src/pages/staff/STAFF_PAGINAS.js`): mapa `id → componente`. Si un módulo de `MODULOS` no está en el mapa, su ruta cae en **`StaffModuloPlaceholder`** (`src/pages/staff/StaffModuloPlaceholder.jsx`) — página "en construcción" envuelta en `LayoutDepartamento`, navegable desde hub y sidebar. Registra módulos planificados para que aparezcan como "en construcción".
-- **StaffTabs** (`src/components/staff/StaffTabs.jsx` + `.css`): tabs reutilizables para las páginas de trabajo. El color del tab activo usa `--ldep-color` (color del depto) — no fijes colores por página. `StaffAlmacen`, `StaffVentas` y `StaffPagos` ya lo usan.
+- **StaffTabs** (`src/components/staff/StaffTabs.jsx` + `.css`): tabs reutilizables para las páginas de trabajo. El color del tab activo usa `--ldep-color` (color del depto) — no fijes colores por página. Lo usan las páginas con tabs (StaffPedidos, StaffFacturacion, StaffCredito, etc.).
 - Receta completa en `analisis/plan-paginas-staff-departamentos.md` → sección "Cómo agregar un módulo (receta)".
 
 ## Paginas staff (dentro de /staff)
@@ -274,26 +287,33 @@ Desde 2026-09-04 el módulo staff se organiza en **3 departamentos**: `finanzas`
 | /staff/login | publico | — | funcional | Login interno (email+password), usa Auth.css |
 | /staff/registro | publico | — | funcional | Registro de personal con código de invitación staff (`StaffRegistro.jsx` + `StaffRegistro.css`): verifica el código via `/auth/verificar-codigo {tipo:'staff'}`, formula (email, nombre, password, Turnstile), POST `/staff/registro` → auto-login (iniciarSesionConDatos) → /staff/dashboard |
 | /staff/dashboard | PrivateRouteStaff | — | funcional | Panel visual standalone (sin sidebar): tarjetas de departamento + boton admin-bridge (`StaffDashboard.css`) |
-| /staff/almacen | roles: almacenista/administrador/director/admin | Logística | funcional | **2 tabs**: "Por revisar" (cola `pedido_creado`; stepper +/− de cantidades, toggle "Anular (agotado)" con nota, total recalculado en vivo; "Aprobar pedido"/"Cancelar pedido" con confirmación) y "Por preparar" (cola `preparando`+`procesando` legacy; badge `etiquetaEnvio`, badge "Pendiente de pago" si contado y `estado_pago !== 'verificado'`, dirección/agencia, items anulados tachados; botón "Marcar como enviado" (delivery) o "Marcar listo para retiro" (retiro) según `tipo_envio`, "Cancelar" con confirmación) (`StaffAlmacen.css`) |
-| /staff/ventas | roles: contabilidad/administrador/director/admin | Finanzas | funcional | Facturación: **2 tabs** "Facturas" (emitir + historial + botón **Anular**) y "Notas de crédito y débito" (emitir nota con `tipo`/`motivo`/`factura_referencia_id` + historial + anular). Requiere migración `012_facturas_tipo_notas.sql` en el backend (`StaffFinanzas.css`) |
+| /staff/finanzas · /staff/comercial · /staff/logistica | PrivateRouteStaff | — | funcional | Hubs de departamento (`StaffDepartamento`): hero del depto + tarjetas de módulos visibles por rol |
+| /staff/ventas | roles: contabilidad/administrador/director/admin | Finanzas | funcional | **Facturación** (`StaffFacturacion.jsx`): emitir facturas/recibos + notas de crédito y débito + historial + anular. Endpoints `/staff/contabilidad/facturas*` (migración `026_facturacion.sql`) |
 | /staff/cuentas-por-cobrar | roles: contabilidad/administrador/director/admin | Finanzas | funcional | Clientes con línea de crédito (línea/deuda/saldo) + estado de cuenta al detallar (órdenes pendientes, facturas, pagos) (`StaffFinanzas.css`) |
-| /staff/pagos | roles: contabilidad/administrador/director/admin | Finanzas | funcional | **2 tabs**: "Abonos" (registrar + historial de pagos) y "Reportes por verificar" (verificar/rechazar reportes de pago) (`StaffFinanzas.css`) |
-| /staff/ordenes-por-cancelar | roles: contabilidad/administrador/director/admin | Finanzas | funcional | Cola de órdenes contado en `preparando` (o legacy `procesando`) sin pago verificado; botón "Cancelar pedido" (antiguo tab "Por cobrar") (`StaffFinanzas.css`) |
-| /staff/despacho | roles: despachador/administrador/director/admin | Logística | funcional | Cola de ordenes 'enviado' + marcar entregado |
+| /staff/ordenes-por-cancelar | roles: contabilidad/administrador/director/admin | Finanzas | funcional | Cola de órdenes contado en `preparando` (o legacy `procesando`) sin pago verificado; botón "Cancelar pedido" (`StaffFinanzas.css`) |
+| /staff/credito | roles: contabilidad/administrador/director/admin | Finanzas | funcional | **Crédito y cobranza** (`StaffCredito.jsx`): aging report, notas de cobranza, recordatorios push, freeze de crédito. Migración `026_credito_cobranza.sql` (ver AGENTS raíz) |
+| /staff/tesoreria | roles: contabilidad/administrador/director/admin | Finanzas | funcional | **Tesorería** (`StaffTesoreria.jsx`): ingresos (read-only), egresos + salidas internas, por tercero, export PDF/CSV. Migraciones `027`/`028` |
+| /staff/reportes-financieros | roles: contabilidad/administrador/director/admin | Finanzas | funcional | **Reportes financieros** (`StaffReportesFinancieros.jsx`): panel + informe mensual PDF (Recharts), 6 bloques. Backend `/staff/reportes/resumen` |
+| /staff/clientes | roles: vendedor/administrador/director/admin | Comercial | funcional | **Clientes** (`StaffClientes.jsx`): lista con buscador/paginación server-side + ficha `StaffClienteFicha.jsx` con 4 tabs (Resumen, Pedidos, Presupuestos, Documentos). Ver AGENTS raíz |
+| /staff/clientes/:id | roles: vendedor/administrador/director/admin | Comercial | funcional | Ficha de cliente (`StaffClienteFicha.jsx`), ruta manual en `App.jsx` (NO generada por MODULOS): header con datos + botones "Crear orden" y "Crear presupuesto" + 4 tabs. Crédito read-only |
+| /staff/chat | roles: vendedor/administrador/director/admin | Comercial | funcional | **Comunicaciones** (`StaffChat.jsx` + `StaffChat.css`): lista plana de conversaciones + panel de chat, buscador client-side, refresco cada 30s. Backend `staff.chat.controller.js` |
 | /staff/ordenes | roles: vendedor/administrador/director/admin | Comercial | funcional | Crear orden a nombre de un cliente (buscar cliente, tipo de envio + direccion delivery, items, POST /staff/ordenes). CSS propio `StaffOrdenes.css`. |
-| /staff/cotizaciones | roles: vendedor/administrador/director/admin | Comercial | funcional | Migrado de `CotizacionesAdmin`: Kanban pendientes/cotizadas/rechazadas + responder con precio (`PATCH /staff/cotizaciones/:id/responder|rechazar`). El backend registra `staff_id` (auditoría) |
-| /staff/requerimientos | roles: vendedor/administrador/director/admin | Comercial | funcional | Migrado de `RequerimientosAdmin`: Kanban pendientes/respondidos + asignar producto/precio o rechazar items (`PATCH /staff/requerimientos/:id/responder`). El backend registra `staff_id` (auditoría) |
-| /staff/documentos | roles: vendedor/administrador/director/admin | Comercial | funcional | Migrado de `DocumentosAdmin`: Kanban pendientes/aprobadas/rechazadas de documentos de clientes (RIF, referencias, etc.); aprobar/rechazar. El backend registra `staff_id` (auditoría) |
+| /staff/solicitudes | roles: vendedor/administrador/director/admin | Comercial | funcional | **Solicitudes unificadas** (`StaffSolicitudes.jsx`): kanban de 2 tabs (cotizaciones + requerimientos). Endpoints `/staff/cotizaciones` y `/staff/requerimientos` (sin cambio de ruta) |
+| /staff/presupuestos | roles: vendedor/administrador/director/admin | Comercial | funcional | **Presupuestos** (`StaffPresupuestos.jsx`): crear/recotizar/conversión a pedido. Backend `GET /staff/presupuestos` + `GET /staff/productos` |
 | /staff/promociones | roles: vendedor/administrador/director/admin | Comercial | funcional | Versión limitada de `PromocionesAdmin` (endpoints `/staff/promociones/*` — nomenclatura unificada): crear/editar/eliminar plantillas + historial. **SIN envío masivo** (queda solo en `/admin`) |
-| /staff/direcciones | roles: despachador/administrador/director/admin | Logística | funcional | Direcciones de envío de clientes (las que el cliente gestiona en `/direcciones`) + direcciones de un cliente (`GET /staff/direcciones/cliente/:id`) para planificar despachos |
+| /staff/precios | roles: vendedor/administrador/director/admin | Comercial | funcional | **Precios** (`StaffPrecios.jsx`): grid con filtros + edición inline + lote + **importar precios de proveedor** (multipart). Ver sección "Importación multi-proveedor" del AGENTS raíz |
+| /staff/cupones | roles: admin/administrador/director | Comercial | funcional | **Cupones giftcard** (`StaffCupones.jsx`): genera códigos por % o monto. Migración `034_cupones_descuento.sql` |
+| /staff/pedidos | roles: almacenista/administrador/director/admin | Logística | funcional | **Pipeline completo del almacén** (`StaffPedidos.jsx`): tabs revisar/aprobar/preparar + retiros/incidencias/verificar-paquete/agencias. Sustituye a StaffAlmacen legacy. Migración `029_logistica.sql` |
+| /staff/envios | roles: despachador/administrador/director/admin | Logística | funcional | **Despacho** (`StaffEnvios.jsx`): cola de órdenes `enviado` + marcar `entregado`. Sustituye a StaffDespacho |
+| /staff/direcciones | roles: despachador/administrador/director/admin | Logística | funcional | Direcciones de envío de clientes + dirección de un cliente (`GET /staff/direcciones/cliente/:id`) para planificar despachos |
 
-**Migración Admin → Staff (IMPLEMENTADA — 2026-09-07):** los 5 módulos de la tabla de arriba (cotizaciones, requerimientos, documentos, promociones, direcciones) están **funcionales**. Las UIs se copiaron/adaptaron de `src/components/admin/` (mismos patrones Kanban `kb-*`, modales `odm-*`) pero sobre **staffApi** y endpoints **NUEVOS `/staff/*`** (sesión staff, `verifyStaffJWT` + `checkRolStaff`). NO se reutiliza `api` de clientes ni los endpoints admin. El panel `/admin` queda completo solo para el dueño vía bridge. La auditoría de acciones staff la registra el backend con `staff_id` (migración `015_staff_auditoria.sql`, ejecutar a mano en Supabase). Detalle en el AGENTS del backend.
+**Migración Admin → Staff (IMPLEMENTADA — 2026-09-07):** los módulos copiados del admin (cotizaciones, requerimientos, documentos, promociones, direcciones) están **funcionales** (ver tabla de arriba). Las UIs se adaptaron de `src/components/admin/` (mismos patrones Kanban `kb-*`, modales `odm-*`) pero sobre **staffApi** y endpoints **NUEVOS `/staff/*`** (sesión staff, `verifyStaffJWT` + `checkRolStaff`). NO se reutiliza `api` de clientes ni los endpoints admin. El panel `/admin` queda completo solo para el dueño vía bridge. La auditoría de acciones staff la registra el backend con `staff_id` (migración `015_staff_auditoria.sql`, ejecutar a mano en Supabase). Detalle en el AGENTS del backend.
 
-**Plan de módulos staff por rol (el módulo de aprobación/confirmación de órdenes YA está implementado):** ver `analisis/plan-modulos-staff-por-rol.md` (raíz del repo). Hubs por departamento ✅ (`analisis/plan-paginas-staff-departamentos.md`). **Migración Admin → Staff ✅ implementada** (los 5 módulos de la tabla de arriba están funcionales). **Inventario ⏸️ aplazado** hasta definir el flujo de trabajo en la empresa. Siguientes: Fase 2 Comercial (presupuestos, proveedores/compras), Fase 3 Finanzas (crédito y cobranza, cuentas por cobrar/pagar, tesorería), Fase 4 (precios, promociones, marketing — solo gestión). Los módulos nuevos se agregan como items en `MODULOS`. Principio: los endpoints NUEVOS de operación van bajo `/staff/*` (sesión staff); el panel `/admin` queda solo para el dueño vía bridge y sus funcionalidades se migran a staff con sesión y endpoints propios.
+**Plan de módulos staff por rol (el módulo de aprobación/confirmación de órdenes YA está implementado):** ver `analisis/plan-modulos-staff-por-rol.md` (raíz del repo). Hubs por departamento ✅ (`analisis/plan-paginas-staff-departamentos.md`). Migración Admin → Staff ✅ (2026-09-07). **Comercial unificado ✅ (2026-09-14)**: solicitudes (kanban 2 tabs) + presupuestos; **Clientes ✅ (2026-09-14)**: lista + ficha 4 tabs (`StaffClienteFicha`); **Logística unificada ✅ (2026-09-12)**: `pedidos` + `envios` + `direcciones`; **Finanzas ✅ (2026-09-10/11)**: ventas (facturación), cuentas-por-cobrar, ordenes-por-cancelar, crédito, tesorería, reportes-financieros; **Cupones ✅ (2026-09-15)**; **Chat ✅ (2026-09-15)**. Inventario ⏸️ aplazado hasta definir el flujo de trabajo en la empresa. Pendientes futuros: proveedores/compras. Los módulos nuevos se agregan como items en `MODULOS` (**no se toca App.jsx**, se generan solos). Principio: los endpoints NUEVOS de operación van bajo `/staff/*` (sesión staff); el panel `/admin` queda solo para el dueño vía bridge y sus funcionalidades se migran a staff con sesión y endpoints propios.
 
 La pagina de crear orden a cliente (StaffOrdenes) usa **staffApi** (no el `api` de clientes) y los endpoints `/staff/*`: `GET /staff/clientes?buscar=`, `GET /staff/clientes/:id/direcciones`, `POST /staff/ordenes`. El campo `creado_por_staff_id` lo agrega el backend, no el frontend. Los errores de validacion llegan estructurados (credito/stock) y se muestran como toast en pantalla.
 
-`StaffAlmacen.jsx`, `StaffVentas.jsx`, `StaffCuentasPorCobrar.jsx`, `StaffPagos.jsx` y `StaffOrdenesPorCancelar.jsx` usan **staffApi** (endpoints `/staff/almacen/*` y `/staff/contabilidad/*` — se conservan bajo `/staff/contabilidad/*` aunque las páginas de Finanzas se renombraron). Patrón compartido: helpers de formato (`formatUSD`, `formatFecha`) definidos al inicio del archivo, tabs con estado local en el componente padre, y un subcomponente por tab (`TabPorRevisar`, `TabPorPreparar`, `TabFacturas`, `TabAbonos`, etc.). Los "cancelar"/"destructivos" usan `window.confirm` (mismo patrón que el resto del staff). CSS plain por página (`StaffFinanzas.css` compartido por los 4 módulos de Finanzas).
+`StaffPedidos.jsx` (Logística), `StaffFacturacion.jsx`, `StaffCuentasPorCobrar.jsx`, `StaffOrdenesPorCancelar.jsx`, `StaffCredito.jsx`, `StaffTesoreria.jsx`, `StaffReportesFinancieros.jsx` (Finanzas) usan **staffApi** (endpoints `/staff/*`). Patrón compartido: helpers de formato (`formatUSD`, `formatFecha`) definidos al inicio del archivo, tabs con estado local en el componente padre, y un subcomponente por tab (`TabPorRevisar`, `TabPorPreparar`, `TabFacturas`, `TabAbonos`, etc.). Los "cancelar"/"destructivos" usan `window.confirm` (mismo patrón que el resto del staff). CSS plain por página (`StaffFinanzas.css` compartido por los módulos de Finanzas).
 
 ## Estados de órdenes — fuente única de verdad
 
@@ -317,7 +337,7 @@ La pagina de crear orden a cliente (StaffOrdenes) usa **staffApi** (no el `api` 
 5. **Las validaciones** estan en src/utils/validadores.js y se reusan en Login y todos los registros.
 6. **La ruta `/analytics` esta protegida** con `<PrivateRoute adminOnly>`. No quitar el guard.
 7. **Staff ≠ cliente.** No mezclar `useAuth`/`api` con `useStaffAuth`/`staffApi`. Usa `staffApi` para endpoints `/staff` y `api` para `/auth` y el resto. Nunca llamar `useAuth().login()` desde una pagina staff (eso seria el login de cliente, no staff).
-8. **PwaScopeSwitcher no esta montado** — no asumas que el swap de manifest staff funciona; requiere montarlo en App.jsx. Al montarlo, verificar que exista el componente (ver Error #1).
+8. **PwaScopeSwitcher ESTÁ montado** en `App.jsx` — no removerlo: el swap de manifest/titulo/icono staff (manifest-staff.json, scope /staff/) depende de él. Verifica que exista el componente (ver Error #1).
 
 ## Deuda de lint — backlog para otra sesión (2026-09-18)
 

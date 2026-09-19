@@ -221,6 +221,16 @@
   padding: 3px 8px;
 }
 
+.noticias-pagina__fuente-badge--ad {
+  background: #F59E0B;
+  color: #1A1A3A;
+}
+
+.noticias-pagina__card--ad {
+  background: #FFFBF0;
+  border-color: rgba(245, 158, 11, 0.25);
+}
+
 .noticias-pagina__texto {
   padding: 12px 14px 14px;
   display: flex;

@@ -92,7 +92,7 @@
 }
 
 .promocard__fav--activo {
-  color: #12A594;
+  color: var(--brand-teal);
 }
 
 .promocard__fav--pop {
@@ -109,7 +109,7 @@
 .promocard__btn-agregar {
   border: none;
   border-radius: 999px;
-  background: #0052dc;
+  background: var(--brand-blue);
   color: #FFFFFF;
   font-weight: 700;
   font-size: 0.8rem;
@@ -132,9 +132,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border: 1px solid #0052DC;
+  border: 1px solid var(--brand-blue);
   border-radius: 999px;
-  background: #0052dc;
+  background: var(--brand-blue);
   padding: 4px 5px;
   margin-bottom: 10px;
   box-sizing: border-box;
@@ -178,7 +178,7 @@
 }
 
 .promocard__precio-ahora {
-  color: #12A594;
+  color: var(--brand-teal);
   font-weight: 700;
   font-size: 1.3rem;
 }
@@ -202,7 +202,7 @@
 }
 
 .promocard__precio-ahora-label {
-  color: #12A594;
+  color: var(--brand-teal);
   font-size: 0.6em;
   font-weight: 800;
   text-transform: uppercase;

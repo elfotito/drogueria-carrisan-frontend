@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Exploración — Staff Dashboard (Droguería Carrisan)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --sd-bg:#f4f6fb; --sd-surface:#fff; --sd-border:#e5e7eb; --sd-text:#0f172a;
+  --sd-text-muted:#64748b; --sd-azul:#1B4B8F; --sd-azul2:#2563EB; --sd-teal:#0D9373;
+  --sd-naranja:#D97706; --sd-r:18px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Figtree','Inter',system-ui,sans-serif;background:var(--sd-bg);color:var(--sd-text)}
+.row{display:flex;gap:4px;align-items:center}
+.icono{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* ======== Barra de control (exploración) ======== */
+.ctl{position:sticky;top:0;z-index:60;background:#fff;border-bottom:1px solid var(--sd-border);
+  padding:10px 18px;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+.ctl__tit{font-weight:800;font-size:14px;color:var(--sd-azul)}
+.ctl__grupo{display:flex;align-items:center;gap:6px}
+.ctl__label{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--sd-text-muted)}
+.ctl-pills{display:flex;gap:6px;flex-wrap:wrap}
+.ctl-pill{border:1.5px solid var(--sd-border);background:#fff;color:var(--sd-text-muted);
+  border-radius:999px;padding:6px 12px;font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;transition:.15s}
+.ctl-pill:hover{border-color:var(--sd-azul2);color:var(--sd-azul)}
+.ctl-pill.is-on{background:var(--sd-azul);border-color:var(--sd-azul);color:#fff}
+.ctl-hint{font-size:12px;color:var(--sd-text-muted)}
+.ctl-hint b{color:var(--sd-text)}
+
+/* ======== Variantes (una visible a la vez) ======== */
+.var{display:none}
+.var.is-on{display:block}
+
+/* Preview de la página de notificaciones (compartida) */
+.modal{position:fixed;inset:0;background:rgba(15,23,42,.5);display:none;align-items:center;justify-content:center;z-index:80;padding:16px}
+.modal.is-on{display:flex}
+.modal-card{background:#fff;border-radius:22px;max-width:520px;width:100%;max-height:82vh;overflow:auto;box-shadow:0 30px 60px -20px rgba(15,23,42,.5)}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--sd-border);position:sticky;top:0;background:#fff}
+.modal-head h4{margin:0;font-size:17px;font-weight:800}
+.modal-close{border:1.5px solid var(--sd-border);background:#fff;border-radius:10px;width:32px;height:32px;cursor:pointer;color:var(--sd-text-muted)}
+.noti-list{padding:8px 0}
+.noti{display:flex;gap:12px;padding:12px 22px;border-bottom:1px solid #f1f5f9}
+.noti:last-child{border-bottom:0}
+.noti-dot{width:34px;height:34px;border-radius:11px;flex:none;display:flex;align-items:center;justify-content:center;color:#fff}
+.noti p{margin:0;font-size:13.5px;line-height:1.4}
+.noti .n-imp{font-weight:700}
+.noti .n-fecha{font-size:11.5px;color:var(--sd-text-muted);margin-top:2px}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute">
+<defs>
+<symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></symbol>
+<symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></symbol>
+<symbol id="i-users" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+<symbol id="i-cart" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></symbol>
+<symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+<symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></symbol>
+<symbol id="i-truck" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></symbol>
+<symbol id="i-box" viewBox="0 0 24 24"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+<symbol id="i-map" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></symbol>
+<symbol id="i-inbox" viewBox="0 0 24 24"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></symbol>
+<symbol id="i-bank" viewBox="0 0 24 24"><line x1="2" y1="20" x2="22" y2="20"/><path d="M4 10h16v7H4z"/><path d="M7 10V7h10v3"/><path d="M12 4l10 6H2z"/></symbol>
+<symbol id="i-dollar" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></symbol>
+<symbol id="i-bar" viewBox="0 0 24 24"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></symbol>
+<symbol id="i-dash" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></symbol>
+<symbol id="i-package" viewBox="0 0 24 24"><path d="M16.5 9.4L7.55 4.24"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" y1="22" x2="12" y2="12"/></symbol>
+</defs>
+</svg>
+
+<!-- ===== Barra de control ===== -->
+<header class="ctl">
+  <div class="ctl__tit">Exploración · Staff Dashboard</div>
+  <div class="ctl__grupo">
+    <span class="ctl__label">Variante</span>
+    <div class="ctl-pills" id="pillsVar">
+      <button class="ctl-pill is-on" data-var="1">1 · Saludo</button>
+      <button class="ctl-pill" data-var="2">2 · Cinta</button>
+      <button class="ctl-pill" data-var="3">3 · Rol primero</button>
+      <button class="ctl-pill" data-var="4">4 · Híbrido</button>
+      <button class="ctl-pill" data-var="5">5 · Muelle</button>
+    </div>
+  </div>
+  <div class="ctl__grupo">
+    <span class="ctl__label">Rol</span>
+    <div class="ctl-pills" id="pillsRol">
+      <button class="ctl-pill" data-rol="vendedor">Vendedor</button>
+      <button class="ctl-pill" data-rol="despachador">Despachador</button>
+      <button class="ctl-pill" data-rol="almacenista">Almacenista</button>
+      <button class="ctl-pill" data-rol="contabilidad">Contabilidad</button>
+    </div>
+  </div>
+  <div class="ctl__grupo">
+    <label class="row"><input type="checkbox" id="chkNuevas" checked /><span style="font-size:12.5px">Tengo notificaciones nuevas</span></label>
+  </div>
+  <div class="ctl-hint">Visor de exploración. Usa el switch <b>Variante</b> para comparar y <b>Rol</b> para ver cómo cambian los botones de acción. — <b>Antes</b> &amp; <b>Ahora</b> en cada tarjeta.</div>
+</header>
+
+<main>
+  <!-- ================== VARIANTE 1 ================== -->
+  <section class="var is-on" id="var1">
+    <div class="topbar">
+      <div class="row"><span class="logo">D</span><span class="brand">Droguería Carrisan</span></div>
+      <div class="row">
+        <span class="avatar">M</span>
+        <div class="us"><div class="us-nombre" data-nombre>Margarita</div><div class="us-rol" data-rol-txt>Vendedora</div></div>
+        <button class="btn-bridge row"><svg class="icono"><use href="#i-shield"/></svg><span>Admin</span></button>
+        <button class="campana" id="campana1"><svg class="icono"><use href="#i-bell"/></svg><span class="badge" id="badge1">3</span></button>
+        <button class="btn-ghost"><svg class="icono"><use href="#i-logout"/></svg></button>
+      </div>
+    </div>
+
+    <div class="hero" style="--hc:#1B4B8F">
+      <div class="hero-glow"></div>
+      <div class="hero-in">
+        <p class="eyebrow">Panel interno</p>
+        <div class="hero-tit-row">
+          <h1 class="hero-tit">Hola, <span data-nombre>Margarita</span></h1>
+          <div class="campana fab" id="campana2"><svg class="icono"><use href="#i-bell"/></svg><span class="badge">3</span></div>
+        </div>
+        <p class="hero-sub">Elige una acción para comenzar tu jornada.</p>
+      </div>
+      <!-- Botones de acceso rápido filtrados por rol (dentro del hero) -->
+      <div class="acc" data-acc></div>
+    </div>
+
+    <div class="deptos">
+      <div class="depto" style="--dc:#0D9373;--dcs:#d9efe8">
+        <div class="depto-cab"><span class="depto-ico"><svg class="icono"><use href="#i-dollar"/></svg></span><svg class="icono arr"><use href="#i-arrow"/></svg></div>
+        <h3 class="depto-tit">Finanzas</h3>
+        <p class="depto-desc">Facturación, cobranza y reportes</p>
+        <div class="chips" data-chips="finanzas"></div>
+      </div>
+      <div class="depto" style="--dc:#2563EB;--dcs:#dbeafe">
+        <div class="depto-cab"><span class="depto-ico"><svg class="icono"><use href="#i-cart"/></svg></span><svg class="icono arr"><use href="#i-arrow"/></svg></div>
+        <h3 class="depto-tit">Comercial</h3>
+        <p class="depto-desc">Ventas, pedidos y clientes</p>
+        <div class="chips" data-chips="comercial"></div>
+      </div>
+      <div class="depto" style="--dc:#D97706;--dcs:#fef3c7">
+        <div class="depto-cab"><span class="depto-ico"><svg class="icono"><use href="#i-truck"/></svg></span><svg class="icono arr"><use href="#i-arrow"/></svg></div>
+        <h3 class="depto-tit">Logística</h3>
+        <p class="depto-desc">Almacén, despacho y envíos</p>
+        <div class="chips" data-chips="logistica"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== VARIANTE 2 ================== -->
+  <section class="var" id="var2">
+    <div class="topbar">
+      <div class="row"><span class="logo">D</span><span class="brand">Droguería Carrisan</span></div>
+      <div class="row">
+        <span class="avatar">M</span>
+        <div class="us"><div class="us-nombre" data-nombre>Margarita</div><div class="us-rol" data-rol-txt>Vendedora</div></div>
+        <button class="btn-bridge row"><svg class="icono"><use href="#i-shield"/></svg><span>Admin</span></button>
+        <button class="campana" id="campana1"><svg class="icono"><use href="#i-bell"/></svg><span class="badge">3</span></button>
+        <button class="btn-ghost"><svg class="icono"><use href="#i-logout"/></svg></button>
+      </div>
+    </div>
+
+    <div class="topbar-linea"></div>
+
+    <!-- Saludo compacto + cinta de acciones -->
+    <div class="cinta-wrap">
+      <div class="saludo-compacto">
+        <p class="eyebrow">Panel interno</p>
+        <div class="row" style="gap:10px">
+          <h1 class="hero-tit" style="font-size:22px">Hola, <span data-nombre>Margarita</span></h1>
+          <button class="campana" id="campana2"><svg class="icono"><use href="#i-bell"/></svg><span class="badge">3</span></button>
+        </div>
+        <p class="hero-sub">Tus accesos rápidos están debajo.</p>
+      </div>
+      <div class="cinta" data-acc></div>
+    </div>
+
+    <div class="deptos">
+      <div class="depto" style="--dc:#0D9373;--dcs:#d9efe8">
+        <div class="depto-cab"><span class="depto-ico"><svg class="icono"><use href="#i-dollar"/></svg></span><svg class="icono arr"><use href="#i-arrow"/></svg></div>
+        <h3 class="depto-tit">Finanzas</h3>
+        <p class="depto-desc">Facturación, cobranza y reportes</p>
+        <div class="chips" data-chips="finanzas"></div>
+      </div>
+      <div class="depto" style="--dc:#2563EB;--dcs:#dbeafe">
+        <div class="depto-cab"><span class="depto-ico"><svg class="icono"><use href="#i-cart"/></svg></span><svg class="icono arr"><use href="#i-arrow"/></svg></div>
+        <h3 class="depto-tit">Comercial</h3>
+        <p class="depto-desc">Ventas, pedidos y clientes</p>
+        <div class="chips" data-chips="comercial"></div>
+      </div>
+      <div class="depto" style="--dc:#D97706;--dcs:#fef3c7">
+        <div class="depto-cab"><span class="depto-ico"><svg class="icono"><use href="#i-truck"/></svg></span><svg class="icono arr"><use href="#i-arrow"/></svg></div>
+        <h3 class="depto-tit">Logística</h3>
+        <p class="depto-desc">Almacén, despacho y envíos</p>
+        <div class="chips" data-chips="logistica"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== VARIANTE 3 ================== -->
+  <section class="var" id="var3">
+    <div class="topbar">
+      <div class="row"><span class="logo">D</span><span class="brand">Droguería Carrisan</span></div>
+      <div class="row">
+        <span class="avatar">M</span>
+        <div class="us"><div class="us-nombre" data-nombre>Margarita</div><div class="us-rol" data-rol-txt>Vendedora</div></div>
+        <button class="campana" id="campana1"><svg class="icono"><use href="#i-bell"/></svg><span class="badge">3</span></button>
+        <button class="btn-ghost"><svg class="icono"><use href="#i-logout"/></svg></button>
+      </div>
+    </div>
+
+    <!-- Hero = "tu departamento" con las acciones como el contenido -->
+    <div class="hero rol-hero" style="--hc:#2563EB">
+      <div class="hero-glow"></div>
+      <div class="hero-in">
+        <p class="eyebrow">Tu departamento · <span data-depto>Comercial</span></p>
+        <div class="hero-tit-row">
+          <h1 class="hero-tit">Hola, <span data-nombre>Margarita</span></h1>
+          <div class="campana fab" id="campana2"><svg class="icono"><use href="#i-bell"/></svg><span class="badge">3</span></div>
+        </div>
+        <p class="hero-sub">Todo tu trabajo, listo desde aquí.</p>
+      </div>
+      <div class="rol-grid" data-acc></div>
+    </div>
+
+    <div class="swap-deptos">
+      <span class="sw-label">Cambiar de área:</span>
+      <button class="sw-chip">Finanzas</button>
+      <button class="sw-chip is-on">Comercial</button>
+      <button class="sw-chip">Logística</button>
+    </div>
+  </section>
+
+  <!-- ================== VARIANTE 4 ================== -->
+  <section class="var" id="var4">
+    <div class="topbar">
+      <div class="row"><span class="logo">D</span><span class="brand">Droguería Carrisan</span></div>
+      <div class="row">
+        <span class="avatar">M</span>
+        <div class="us"><div class="us-nombre" data-nombre>Margarita</div><div class="us-rol" data-rol-txt>Vendedora</div></div>
+        <button class="campana" id="campana1"><svg class="icono"><use href="#i-bell"/></svg><span class="badge">3</span></button>
+        <button class="btn-ghost"><svg class="icono"><use href="#i-logout"/></svg></button>
+      </div>
+    </div>
+
+    <div class="hyb">
+      <div class="hyb-cab">
+        <div>
+          <p class="eyebrow">Panel interno</p>
+          <h1 class="hero-tit" style="font-size:24px">Hola, <span data-nombre>Margarita</span></h1>
+          <p class="hero-sub" style="margin:4px 0 0">Aquí está tu trabajo de hoy.</p>
+        </div>
+        <button class="campana" id="campana2"><svg class="icono"><use href="#i-bell"/></svg><span class="badge">3</span></button>
+      </div>
+
+      <div class="hyb-sec">
+        <div class="sec-tit">Tus accesos</div>
+        <div class="hyb-grid" data-acc></div>
+      </div>
+
+      <div class="hyb-sec">
+        <div class="sec-tit" style="margin-top:26px">Departamentos</div>
+        <div class="deptos" style="grid-template-columns:repeat(3,1fr)">
+          <div class="depto" style="--dc:#0D9373;--dcs:#d9efe8">
+            <div class="depto-cab"><span class="depto-ico"><svg class="icono"><use href="#i-dollar"/></svg></span><svg class="icono arr"><use href="#i-arrow"/></svg></div>
+            <h3 class="depto-tit">Finanzas</h3>
+            <p class="depto-desc">Facturación, cobranza y reportes</p>
+            <div class="chips" data-chips="finanzas"></div>
+          </div>
+          <div class="depto" style="--dc:#2563EB;--dcs:#dbeafe">
+            <div class="depto-cab"><span class="depto-ico"><svg class="icono"><use href="#i-cart"/></svg></span><svg class="icono arr"><use href="#i-arrow"/></svg></div>
+            <h3 class="depto-tit">Comercial</h3>
+            <p class="depto-desc">Ventas, pedidos y clientes</p>
+            <div class="chips" data-chips="comercial"></div>
+          </div>
+          <div class="depto" style="--dc:#D97706;--dcs:#fef3c7">
+            <div class="depto-cab"><span class="depto-ico"><svg class="icono"><use href="#i-truck"/></svg></span><svg class="icono arr"><use href="#i-arrow"/></svg></div>
+            <h3 class="depto-tit">Logística</h3>
+            <p class="depto-desc">Almacén, despacho y envíos</p>
+            <div class="chips" data-chips="logistica"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== VARIANTE 5 ================== -->
+  <section class="var" id="var5">
+    <div class="topbar">
+      <div class="row"><span class="logo">D</span><span class="brand">Droguería Carrisan</span></div>
+      <div class="row">
+        <span class="avatar">M</span>
+        <div class="us"><div class="us-nombre" data-nombre>Margarita</div><div class="us-rol" data-rol-txt>Vendedora</div></div>
+        <button class="campana" id="campana1"><svg class="icono"><use href="#i-bell"/></svg><span class="badge">3</span></button>
+        <button class="btn-ghost"><svg class="icono"><use href="#i-logout"/></svg></button>
+      </div>
+    </div>
+
+    <div class="muelle-body">
+      <div class="hero" style="--hc:#1B4B8F;margin:0">
+        <div class="hero-glow"></div>
+        <div class="hero-in">
+          <p class="eyebrow">Panel interno</p>
+          <div class="hero-tit-row">
+            <h1 class="hero-tit">Hola, <span data-nombre>Margarita</span></h1>
+            <button class="campana" id="campana2"><svg class="icono"><use href="#i-bell"/></svg><span class="badge">3</span></button>
+          </div>
+          <p class="hero-sub">Tu día, con todo a un toque.</p>
+        </div>
+      </div>
+
+      <div class="deptos">
+        <div class="depto" style="--dc:#0D9373;--dcs:#d9efe8">
+          <div class="depto-cab"><span class="depto-ico"><svg class="icono"><use href="#i-dollar"/></svg></span><svg class="icono arr"><use href="#i-arrow"/></svg></div>
+          <h3 class="depto-tit">Finanzas</h3>
+          <p class="depto-desc">Facturación, cobranza y reportes</p>
+          <div class="chips" data-chips="finanzas"></div>
+        </div>
+        <div class="depto" style="--dc:#2563EB;--dcs:#dbeafe">
+          <div class="depto-cab"><span class="depto-ico"><svg class="icono"><use href="#i-cart"/></svg></span><svg class="icono arr"><use href="#i-arrow"/></svg></div>
+          <h3 class="depto-tit">Comercial</h3>
+          <p class="depto-desc">Ventas, pedidos y clientes</p>
+          <div class="chips" data-chips="comercial"></div>
+        </div>
+        <div class="depto" style="--dc:#D97706;--dcs:#fef3c7">
+          <div class="depto-cab"><span class="depto-ico"><svg class="icono"><use href="#i-truck"/></svg></span><svg class="icono arr"><use href="#i-arrow"/></svg></div>
+          <h3 class="depto-tit">Logística</h3>
+          <p class="depto-desc">Almacén, despacho y envíos</p>
+          <div class="chips" data-chips="logistica"></div>
+        </div>
+      </div>
+
+      <!-- Dock fijo inferior (móvil) -->
+      <div class="dock" data-acc></div>
+    </div>
+  </section>
+</main>
+
+<!-- ===== Modal: página de notificaciones ===== -->
+<div class="modal" id="modalNotis" role="dialog" aria-modal="true">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h4>Notificaciones</h4>
+      <button class="modal-close" id="modalClose" aria-label="Cerrar">✕</button>
+    </div>
+    <div class="noti-list" id="notiList"></div>
+  </div>
+</div>
+
+<script>
+/* ===== Datos mock por rol ===== */
+const ROLES = {
+  vendedor: {
+    nombre:'Margarita', rolTxt:'Vendedora', depto:'Comercial', deptoColor:['#2563EB','#1D4ED8'],
+    // acciones visibles para este rol (acceso directo)
+    acc: [
+      {t:'Nuevo pedido', d:'Logística', i:'cart', c:'#2563EB'},
+      {t:'Cotización', d:'Comercial', i:'file', c:'#0d7482'},
+      {t:'Requerimiento', d:'Comercial', i:'inbox', c:'#7c3aed'},
+      {t:'Chat', d:'Comercial', i:'chat', c:'#0891b2'},
+      {t:'Clientes', d:'Comercial', i:'users', c:'#2563EB'},
+      {t:'Presupuesto', d:'Comercial', i:'dollar', c:'#059669'},
+    ],
+    chips: {
+      finanzas:['Cuentas por cobrar'], comercial:['Clientes','Pedidos','Chat','Solicitudes','Promociones'],
+      logistica:[]
+    },
+    notis:[
+      {i:'chat', c:'#0891b2', t:'Nueva conversación', m:'María Pérez te escribió hace 5 min', f:'Hoy · 09:41', imp:true},
+      {i:'inbox', c:'#7c3aed', t:'Nuevo requerimiento', m:'Clinica Santa Ana pide 2 box de suero', f:'Hoy · 08:52', imp:true},
+      {i:'file', c:'#0d7482', t:'Cotización respondida', m:'Recibiste una cotización de laboratorio LAM', f:'Ayer · 17:20', imp:false},
+      {i:'users', c:'#2563EB', t:'Cliente nuevo', m:'Dr. Rodrigo Fuenmayor se registró', f:'Ayer · 15:02', imp:false},
+    ]
+  },
+  despachador: {
+    nombre:'Andrés', rolTxt:'Despachador', depto:'Logística', deptoColor:['#D97706','#B45309'],
+    acc: [
+      {t:'Revisar pedidos', d:'Logística', i:'box', c:'#D97706'},
+      {t:'Despachar', d:'Logística', i:'truck', c:'#D97706'},
+      {t:'Preparar', d:'Logística', i:'package', c:'#C2410C'},
+      {t:'Envíos', d:'Logística', i:'truck', c:'#a16207'},
+      {t:'Retiros', d:'Logística', i:'map', c:'#0891b2'},
+      {t:'Incidencias', d:'Logística', i:'clock', c:'#dc2626'},
+    ],
+    chips: {finanzas:[], comercial:[], logistica:['Pedidos','Envíos','Direcciones']},
+    notis:[
+      {i:'box', c:'#D97706', t:'Pedido aprobado', m:'Orden #4521 lista para preparar', f:'Hoy · 09:10', imp:true},
+      {i:'truck', c:'#a16207', t:'Despacho pendiente', m:'3 paquetes esperando salida a ruta', f:'Hoy · 08:30', imp:true},
+      {i:'map', c:'#0891b2', t:'Dirección actualizada', m:'Cliente Carvajal cambió su dirección', f:'Ayer · 18:05', imp:false},
+    ]
+  },
+  almacenista: {
+    nombre:'Carlos', rolTxt:'Almacenista', depto:'Logística', deptoColor:['#D97706','#B45309'],
+    acc: [
+      {t:'Revisar', d:'Logística', i:'box', c:'#D97706'},
+      {t:'Aprobar', d:'Logística', i:'check', c:'#059669'},
+      {t:'Preparar', d:'Logística', i:'package', c:'#C2410C'},
+      {t:'Retiros', d:'Logística', i:'map', c:'#0891b2'},
+      {t:'Incidencias', d:'Logística', i:'clock', c:'#dc2626'},
+      {t:'Verificar paquete', d:'Logística', i:'check', c:'#0d9488'},
+    ],
+    chips: {finanzas:[], comercial:[], logistica:['Pedidos','Direcciones']},
+    notis:[
+      {i:'box', c:'#D97706', t:'Orden creada', m:'Nuevo pedido #4523 por revisar', f:'Hoy · 09:22', imp:true},
+      {i:'check', c:'#059669', t:'Pago verificado', m:'Cliente pagó la orden #4510', f:'Hoy · 08:55', imp:true},
+      {i:'clock', c:'#dc2626', t:'Stock bajo', m:'Paracetamol 500 mg casi agotado', f:'Ayer · 19:00', imp:false},
+    ]
+  },
+  contabilidad: {
+    nombre:'Sonia', rolTxt:'Contabilidad', depto:'Finanzas', deptoColor:['#0D9373','#0B7A5F'],
+    acc: [
+      {t:'Facturar', d:'Finanzas', i:'file', c:'#0D9373'},
+      {t:'Crédito', d:'Finanzas', i:'bank', c:'#0D9373'},
+      {t:'Tesorería', d:'Finanzas', i:'dollar', c:'#059669'},
+      {t:'Ctas. por cobrar', d:'Finanzas', i:'bar', c:'#0d7482'},
+      {t:'Ordenes por cancelar', d:'Finanzas', i:'clock', c:'#dc2626'},
+      {t:'Reportes', d:'Finanzas', i:'bar', c:'#2563EB'},
+    ],
+    chips: {finanzas:['Facturación','Crédito','Tesorería','Reportes'], comercial:[], logistica:[]},
+    notis:[
+      {i:'dollar', c:'#059669', t:'Pago reportado', m:'Cliente reportó pago de $120.00', f:'Hoy · 09:33', imp:true},
+      {i:'clock', c:'#dc2626', t:'Orden por cancelar', m:'Pedido #4515 sin pago confirmado', f:'Hoy · 08:15', imp:true},
+      {i:'bank', c:'#0D9373', t:'Vencimiento de crédito', m:'Cliente X cumple plazo mañana', f:'Ayer · 17:45', imp:true},
+    ]
+  }
+}
+
+const $ = (s, el=document) => el.querySelector(s)
+const $$ = (s, el=document) => [...el.querySelectorAll(s)]
+let rolActual = 'vendedor'
+
+const ICONO = (id) => `<svg class="icono"><use href="#i-${id}"/></svg>`
+
+// Renders de acciones según la variante (estructura distinta cada una)
+function renderAccV1(el){ // píldoras dentro del hero
+  const d = ROLES[rolActual]
+  el.innerHTML = d.acc.map((a,i)=>`
+    <button class="acc-pill" style="--ac:${a.c}" onclick="abrirModal()">
+      ${ICONO(a.i)}<span>${a.t}</span>
+    </button>`).join('')
+}
+function renderAccV2(el){ // cinta horizontal de tarjetas
+  const d = ROLES[rolActual]
+  el.innerHTML = d.acc.map((a,i)=>`
+    <button class="acc-tile" style="--ac:${a.c}" onclick="abrirModal()">
+      <span class="acc-tile-ico">${ICONO(a.i)}</span>
+      <span class="acc-tile-tx">${a.t}</span>
+    </button>`).join('')
+}
+function renderAccV3(el){ // grid grande dentro del hero
+  const d = ROLES[rolActual]
+  el.innerHTML = d.acc.map((a,i)=>`
+    <button class="acc-card" style="--ac:${a.c}" onclick="abrirModal()">
+      <span class="acc-card-ico">${ICONO(a.i)}</span>
+      <div><div class="acc-card-t">${a.t}</div><div class="acc-card-d">${a.d}</div></div>
+      <svg class="icono acc-card-arr"><use href="#i-arrow"/></svg>
+    </button>`).join('')
+}
+function renderAccV4(el){ // tarjetas con descripción
+  const d = ROLES[rolActual]
+  el.innerHTML = d.acc.map((a,i)=>`
+    <button class="acc-item" style="--ac:${a.c}" onclick="abrirModal()">
+      <span class="acc-item-ico">${ICONO(a.i)}</span>
+      <div class="acc-item-tx"><div class="acc-item-t">${a.t}</div><div class="acc-item-d">${a.d}</div></div>
+      <svg class="icono acc-item-arr"><use href="#i-arrow"/></svg>
+    </button>`).join('')
+}
+function renderAccV5(el){ // dock de iconos+texto
+  const d = ROLES[rolActual]
+  el.innerHTML = d.acc.map((a,i)=>`
+    <button class="acc-dock" style="--ac:${a.c}" onclick="abrirModal()">
+      <span class="acc-dock-ico">${ICONO(a.i)}</span>
+      <span class="acc-dock-tx">${a.t}</span>
+    </button>`).join('')
+}
+
+function renderChips(){
+  const d = ROLES[rolActual]
+  $$('[data-chips]').forEach(el=>{
+    const grupo = d.chips[el.dataset.chips]||[]
+    el.innerHTML = grupo.map(c=>`<span class="chip">${c}</span>`).join('')
+  })
+}
+
+function renderTextos(){
+  const d = ROLES[rolActual]
+  $$('[data-nombre]').forEach(el=>el.textContent = d.nombre)
+  $$('[data-rol-txt]').forEach(el=>el.textContent = d.rolTxt)
+  $$('[data-depto]').forEach(el=>el.textContent = d.depto)
+  // color hero rol-first
+  const rh = $('.rol-hero'); if(rh) rh.style.setProperty('--hc', d.deptoColor[0])
+}
+
+function renderTodo(){
+  renderTextos()
+  renderChips()
+  const rs = ROLES[rolActual]
+  renderAccV1($('#var1 [data-acc]'))
+  renderAccV2($('#var2 [data-acc]'))
+  renderAccV3($('#var3 [data-acc]'))
+  renderAccV4($('#var4 [data-acc]'))
+  renderAccV5($('#var5 [data-acc]'))
+  // badge notificaciones
+  const nNuevas = document.getElementById('chkNuevas').checked
+  const totalNuevas = rs.notis.filter(n=>n.imp).length
+  document.querySelectorAll('.campana .badge').forEach(b=>{
+    b.textContent = nNuevas ? totalNuevas : ''
+    b.classList.toggle('hide', !nNuevas)
+  })
+  renderNotiModal()
+}
+
+function renderNotiModal(){
+  const d = ROLES[rolActual]
+  document.getElementById('notiList').innerHTML =
+    d.notis.map(n=>`
+      <div class="noti">
+        <span class="noti-dot" style="background:${n.c}">${ICONO(n.i)}</span>
+        <div><p><span class="n-imp">${n.imp?'<b>'+n.t+'</b>':n.t}</span></p><p>${n.m}</p><p class="n-fecha">${n.f}</p></div>
+      </div>`).join('')
+}
+function abrirModal(){ document.getElementById('modalNotis').classList.add('is-on') }
+
+/* Switch variantes */
+const pillsVar = $$('#pillsVar .ctl-pill')
+pillsVar.forEach(p=>p.addEventListener('click',()=>{
+  pillsVar.forEach(x=>x.classList.remove('is-on')); p.classList.add('is-on')
+  $$('.var').forEach(v=>v.classList.remove('is-on'))
+  document.getElementById('var'+p.dataset.var).classList.add('is-on')
+}))
+/* Switch rol */
+const pillsRol = $$('#pillsRol .ctl-pill')
+pillsRol.forEach(p=>p.addEventListener('click',()=>{
+  pillsRol.forEach(x=>x.classList.remove('is-on')); p.classList.add('is-on')
+  rolActual = p.dataset.rol
+  renderTodo()
+}))
+/* Campantas + modal */
+document.querySelectorAll('.campana').forEach(c=>c.addEventListener('click',abrirModal))
+document.getElementById('modalClose').addEventListener('click',()=>document.getElementById('modalNotis').classList.remove('is-on'))
+document.getElementById('modalNotis').addEventListener('click',e=>{ if(e.target.id==='modalNotis') e.currentTarget.classList.remove('is-on') })
+document.getElementById('chkNuevas').addEventListener('change',renderTodo)
+
+renderTodo()
+</script>
+</body>
+</html>

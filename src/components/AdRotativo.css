@@ -42,6 +42,31 @@
   display: block;
 }
 
+/* Placeholder unificado: aparece si la creatividad no carga (URL rota) */
+.ad-rotativo__placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #f0f4ff 0%, #e8f4f0 100%);
+}
+
+.ad-rotativo__placeholder-icono {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.ad-rotativo__placeholder-texto {
+  margin: 0;
+  font-family: var(--font-heading, 'Manrope', sans-serif);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--brand-navy, #1A1A3A);
+}
+
 .ad-rotativo__dots {
   position: absolute;
   bottom: 10px;

@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import api from '../api/axios'
 import HeroCarrusel from '../components/HeroCarrusel'
 import HomeCarrusel from '../components/HomeCarrusel'
+import MiniPromoCard from '../components/MiniPromoCard'
 import LaboratoriosCarrusel from '../components/LaboratoriosCarrusel'
 import CategoriasCarrusel from '../components/CategoriasCarrusel'
 import SeccionesCarrusel from '../components/SeccionesCarrusel'
@@ -19,6 +21,7 @@ import { ADS } from '../config/adsImagenes'
 import BloquePromocional from '../components/BloquePromocional'
 import SeccionPromocional from '../components/SeccionPromocional'
 import NoticiasTeaser from '../components/NoticiasTeaser'
+import TrustBar from '../components/TrustBar'
 import './Home.css'
 
 // ── Constantes ──────────────────────────────────────────────────
@@ -167,7 +170,7 @@ function Home() {
       cargasRef.current += 1
       setCargasRestantes(MAX_CARGAS - cargasRef.current)
       setCargandoMas(false)
-    }, 800)
+    }, 200)
   }, [todosProductos])
 
   useEffect(() => {
@@ -196,6 +199,9 @@ function Home() {
 
       {/* ── Vitrina: carruseles fijos + ads ── */}
       <div className="home__vitrina">
+        {/* ── Barra de confianza (tras el hero): prueba social de la droguería ── */}
+        <TrustBar />
+
         {/* ── Explorá por categoría (colocado justo tras el hero) ── */}
         <CategoriasCarrusel />
 
@@ -309,11 +315,13 @@ function Home() {
 
 
         <AdRotativo
-          ads={[
-            { imagen: 'URL_1.jpg', link: '/catalogo', alt: 'texto' },
-            { imagen: 'URL_2.gif', link: '/catalogo', alt: 'texto' },
-            { imagen: 'URL_3.png', link: '/catalogo', alt: 'texto' },
-          ]}
+          ads={ADS.map((ad) => ({
+            imagen: ad.imagen,
+            link: ad.link,
+            alt: ad.alt,
+            titulo: ad.titulo,
+            subtitulo: ad.subtitulo,
+          }))}
         />
 
         <SeccionesCarrusel
@@ -341,41 +349,66 @@ function Home() {
 
         <NoticiasTeaser />
 
-        {/* ── Secciones dinámicas (cargadas por infinite scroll) ── */}
-        {seccionesDinamicas.map((seccion, idx) => (
-          <div key={seccion.id} className="home__bloque-dinamico">
-            {idx % 2 === 1 && (
-              <AdBanner
-                titulo="Promoción exclusiva"
-                subtitulo="Solo por tiempo limitado"
-                variante="nuevo"
-                link="/catalogo"
-              />
-            )}
-            <HomeCarrusel
-              titulo={seccion.titulo}
-              productos={seccion.productos}
-              tasaVes={tasa}
-              verTodoTo={seccion.verTodoTo}
-              cargando={false}
-            />
-            {idx % 2 === 0 && seccionesDinamicas.length > 1 && idx === seccionesDinamicas.length - 1 && (
-              <div className="home__ads-pair">
-                <AdCard
-                  titulo="Te puede interesar"
-                  subtitulo="Productos que otros compran"
-                  link="/catalogo"
+        {/* ── Secciones dinámicas (cargadas por infinite scroll) ──
+          Cada ronda del infinite scroll trae 2 secciones (ver SECCIONES_DINAMICAS).
+          Entre ambas se intercala UN momento editorial (no producto), alternando
+          formato por ronda para que no se sienta un shelf repetitivo. ── */}
+        {seccionesDinamicas.map((seccion, idx) => {
+          const rondaIdx = Math.floor(idx / 2)
+          const esMitadDeRonda = idx % 2 === 1
+
+          return (
+            <div key={seccion.id} className="home__bloque-dinamico">
+              {esMitadDeRonda && (
+                rondaIdx % 2 === 0 ? (
+                  <AdBanner
+                    titulo="Promoción exclusiva"
+                    subtitulo="Solo por tiempo limitado"
+                    variante="nuevo"
+                    link="/catalogo"
+                  />
+                ) : (
+                  <div className="home__ads-pair">
+                    <AdCard
+                      titulo="Te puede interesar"
+                      subtitulo="Productos que otros compran"
+                      link="/catalogo"
+                    />
+                    <AdCard
+                      titulo="Ofertas del día"
+                      subtitulo="Precios que no vas a encontrar mañana"
+                      variante="oferta"
+                      link="/catalogo"
+                    />
+                  </div>
+                )
+              )}
+
+              {/* Ronda final: grilla 2x2/4-col (rompe la monotonía del shelf) */}
+              {rondaIdx === 2 ? (
+                <section className="home__grilla">
+                  <div className="home__grilla-header">
+                    <h2>{seccion.titulo}</h2>
+                    <Link to={seccion.verTodoTo}>Ver todo</Link>
+                  </div>
+                  <div className="home__grilla-grid">
+                    {seccion.productos.slice(0, 4).map((producto) => (
+                      <MiniPromoCard key={producto.id} producto={producto} />
+                    ))}
+                  </div>
+                </section>
+              ) : (
+                <HomeCarrusel
+                  titulo={seccion.titulo}
+                  productos={seccion.productos}
+                  tasaVes={tasa}
+                  verTodoTo={seccion.verTodoTo}
+                  cargando={false}
                 />
-                <AdCard
-                  titulo="Ofertas del día"
-                  subtitulo="Precios que no vas a encontrar mañana"
-                  variante="oferta"
-                  link="/catalogo"
-                />
-              </div>
-            )}
-          </div>
-        ))}
+              )}
+            </div>
+          )
+        })}
 
         {/* ── Sentinel para infinite scroll ── */}
         {cargasRestantes > 0 && (

@@ -1,0 +1,35 @@
+/* ============================================================
+   DESIGN TOKENS — Droguería Carrisán
+   Única fuente de verdad de la marca para todo el sitio público.
+   Colores, escala de espaciado y radios. Las tipografías viven en
+   fonts.css (roles tipográficos).
+
+   Migración progresiva: cada CSS que reemplace un hex de marca por
+   var(--brand-*) reduce el ruido. No inventar nuevos hex: si falta
+   un token, agregarlo acá (no hardcodearlo en el componente).
+   ============================================================ */
+
+:root {
+  /* ── Paleta de marca ── */
+  --brand-blue: #0052DC;      /* azul principal (CTA, acentos) */
+  --brand-navy: #1A1A3A;      /* índigo profundo (títulos, fondos oscuros) */
+  --brand-teal: #12A594;      /* teal (precios, success, detalles) */
+  --brand-cream: #FBFAF7;     /* crema (fondos de soporte) */
+
+  /* ── Escala de espaciado (base 4) ── */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* ── Radios ── */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+}

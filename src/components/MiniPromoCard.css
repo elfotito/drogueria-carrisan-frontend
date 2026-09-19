@@ -74,7 +74,7 @@
 }
 
 .minipromocard__precio-ahora {
-  color: #12A594;
+  color: var(--brand-teal);
   font-weight: 700;
   font-size: 1.3rem;
 }
@@ -104,7 +104,7 @@
 }
 
 .minipromocard__precio-ahora-label {
-  color: #12A594;
+  color: var(--brand-teal);
   font-size: 0.6em;
   font-weight: 800;
   text-transform: uppercase;

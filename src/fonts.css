@@ -6,6 +6,11 @@
   --font-body-alt: 'Karla', sans-serif;                 /* Párrafos largos / formularios / notas */
   --font-ui: 'Figtree', sans-serif;                      /* Botones, labels, KPIs, navegación */
 
+  /* Stacks de marca — las familias que index.html carga para todo el público.
+     Los componentes declaran font-family con estas en primero lugar. */
+  --font-heading: 'Manrope', 'Bricolage Grotesque', sans-serif;
+  --font-text: 'Inter', 'Figtree', system-ui, sans-serif;
+
   /* Pesos sugeridos */
   --weight-display: 600;
   --weight-body: 400;
@@ -19,23 +24,23 @@ body {
 }
 
 h1 {
-  font-family: var(--font-titulo);
+  font-family: var(--font-heading);
   font-weight: 700;              /* 600-900 son los pesos con más carácter */
-  font-optical-sizing: auto;     /* Fraunces es variable — esto ajusta el detalle según el tamaño */
+  font-optical-sizing: auto;     /* Manrope es variable — esto ajusta el detalle según el tamaño */
   letter-spacing: -0.02em;       /* a tamaños grandes, ligeramente más apretado se ve más impactante */
   line-height: 1.1;
 }
 
 h2, h3, .subtitulo {
-  font-family: var(--font-texto);
+  font-family: var(--font-heading);
   font-weight: 600;
   line-height: 1.3;
 }
 
 .texto-largo, .descripcion-producto, p.parrafo {
-  font-family: var(--font-texto);
+  font-family: var(--font-text);
   font-weight: 400;
-  line-height: 1.65;              /* las serif necesitan más aire entre líneas que una sans */
+  line-height: 1.65;
 }
 
 /* Notificaciones y toda la UI funcional (botones, badges, nav, precios) */

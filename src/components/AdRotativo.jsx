@@ -24,6 +24,7 @@ function AdRotativo({ ads = [], intervalo = 6000, dots = true }) {
   const [orden] = useState(() => barajar(ads))
   const [indice, setIndice] = useState(0)
   const [pausado, setPausado] = useState(false)
+  const [rotos, setRotos] = useState(() => ads.map(() => false))
   const timerRef = useRef(null)
 
   useEffect(() => {
@@ -38,6 +39,16 @@ function AdRotativo({ ads = [], intervalo = 6000, dots = true }) {
 
   const mostrarDots = dots && orden.length > 1
 
+  // Si una creatividad no carga (URL rota o campaña sin subir), se marca —
+  // así mostramos un placeholder en vez de un icono de imagen rota.
+  const marcarRoto = (i) => {
+    setRotos((prev) => {
+      const copia = [...prev]
+      copia[i] = true
+      return copia
+    })
+  }
+
   return (
     <div
       className={`ad-rotativo ${mostrarDots ? 'ad-rotativo--dots' : ''}`}
@@ -47,12 +58,20 @@ function AdRotativo({ ads = [], intervalo = 6000, dots = true }) {
       {orden.map((item, i) => {
         const activo = i === indice
         const clase = `ad-rotativo__slide ${activo ? 'ad-rotativo__slide--activo' : ''}`
-        const imgEl = (
+        const contenido = rotos[i] ? (
+          <div className="ad-rotativo__placeholder" aria-hidden="true">
+            <span className="ad-rotativo__placeholder-icono">🏷️</span>
+            <p className="ad-rotativo__placeholder-texto">
+              {item.titulo || 'Próximamente'}
+            </p>
+          </div>
+        ) : (
           <img
             src={item.imagen}
             alt={item.alt || ''}
             className="ad-rotativo__img"
             loading={i === 0 ? 'eager' : 'lazy'}
+            onError={() => marcarRoto(i)}
           />
         )
 
@@ -64,11 +83,11 @@ function AdRotativo({ ads = [], intervalo = 6000, dots = true }) {
             aria-hidden={!activo}
             tabIndex={activo ? 0 : -1}
           >
-            {imgEl}
+            {contenido}
           </Link>
         ) : (
           <div key={`${item.imagen}-${i}`} className={clase} aria-hidden={!activo}>
-            {imgEl}
+            {contenido}
           </div>
         )
       })}

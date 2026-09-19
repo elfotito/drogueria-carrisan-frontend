@@ -319,7 +319,7 @@ function ProductoDetalle() {
                   onClick={() => setImagenActiva(i)}
                   aria-label={`Imagen ${i + 1} de ${galeria.length}`}
                 >
-                  <img src={url} alt="" />
+                  <img src={url} alt={`${producto.nombre_comercial} — imagen ${i + 1}`} />
                 </button>
               ))}
             </div>
