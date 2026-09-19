@@ -9,7 +9,7 @@ import SeccionesCarrusel from '../components/SeccionesCarrusel'
 import AdBanner from '../components/AdBanner'
 import AdRotativo from '../components/AdRotativo'
 import AdCard from '../components/AdCard'
-import AdVideoBanner from '../components/AdVideoBanner'
+import CarruselCortos from '../components/CarruselCortos'
 import InfiniteScrollLoader from '../components/InfiniteScrollLoader'
 import Footer from '../components/Footer'
 import BottomNav from '../components/BottomNav'
@@ -271,14 +271,6 @@ function Home() {
           cargando={cargandoVitrina}
         />
 
-        {/* ── Video banner promocional (debajo del primer rollback) ── */}
-        <AdVideoBanner
-          src="https://www.youtube.com/watch?v=vyjwd46gjqY"
-          poster=""
-          alt="Promoción exclusiva"
-          link="/catalogo"
-        />
-
         {/* ── Explorá por laboratorio (logos dinámicos, top labs) ── */}
         <LaboratoriosCarrusel />
 
@@ -344,6 +336,8 @@ function Home() {
             <AdCard key={ad.id} {...ad} />
           ))}
         </div>
+
+        <CarruselCortos />
 
         <NoticiasTeaser />
 
