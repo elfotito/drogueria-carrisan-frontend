@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
-import { X, ChevronUp, ChevronDown, Play, Volume2, VolumeX } from 'lucide-react'
+import { X, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Play, Volume2, VolumeX } from 'lucide-react'
 import api from '../api/axios'
 import './CarruselCortos.css'
 
 const construirEmbed = (id, conSonido) =>
   `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=${conSonido ? '0' : '1'}&loop=1&playlist=${id}&controls=0&modestbranding=1&rel=0&playsinline=1`
+
+const BANNER_TITULO = 'Mantente al día con lo último en el sector salud'
 
 function CarruselCortos() {
   const [videos, setVideos] = useState([])
@@ -14,6 +16,7 @@ function CarruselCortos() {
   const [idx, setIdx] = useState(0)
   const [conSonido, setConSonido] = useState(false)
   const scrollerRef = useRef(null)
+  const filaRef = useRef(null)
 
   useEffect(() => {
     let activo = true
@@ -81,28 +84,61 @@ function CarruselCortos() {
     if (i < 0 || i >= videos.length) return
     scrollerRef.current?.children[i]?.scrollIntoView({ behavior: 'smooth' })
   }
+  const scrollFila = (direccion) => {
+    filaRef.current?.scrollBy({ left: direccion * 380, behavior: 'smooth' })
+  }
 
   return (
     <section className="cc">
-      <div className="cc__header">
-        <h2 className="cc__titulo">Cortos</h2>
-        <span className="cc__subtitulo">Videos cortos de nuestra marca</span>
+      {/* Mini banner solo móvil */}
+      <div className="cc__mini">
+        <span className="cc__mini-ico"><Play size={15} /></span>
+        <span className="cc__mini-texto">{BANNER_TITULO}</span>
       </div>
 
-      <div className="cc__fila">
-        {videos.map((video, i) => (
+      <div className="cc__cuerpo">
+        {/* Banner lateral solo desktop */}
+        <aside className="cc__banner">
+          <span className="cc__banner-chip"><Play size={13} /> Shorts</span>
+          <h2 className="cc__banner-titulo">{BANNER_TITULO}</h2>
+          <p className="cc__banner-sub">Videos cortos de nuestro canal</p>
+        </aside>
+
+        <div className="cc__lado">
           <button
-            key={video.id}
             type="button"
-            className="cc__preview"
-            onClick={() => abrir(i)}
-            aria-label={`Reproducir ${video.titulo}`}
+            className="cc__flecha cc__flecha--prev"
+            onClick={() => scrollFila(-1)}
+            aria-label="Anterior"
           >
-            <img src={video.thumb} alt={video.titulo} className="cc__preview-img" loading="lazy" />
-            <span className="cc__preview-play"><Play size={20} /></span>
-            <span className="cc__preview-titulo">{video.titulo}</span>
+            <ChevronLeft size={22} />
           </button>
-        ))}
+
+          <div className="cc__fila" ref={filaRef}>
+            {videos.map((video, i) => (
+              <button
+                key={video.id}
+                type="button"
+                className="cc__preview"
+                onClick={() => abrir(i)}
+                aria-label={`Reproducir ${video.titulo}`}
+              >
+                <img src={video.thumb} alt={video.titulo} className="cc__preview-img" loading="lazy" />
+                <span className="cc__preview-play"><Play size={20} /></span>
+                <span className="cc__preview-titulo">{video.titulo}</span>
+              </button>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            className="cc__flecha cc__flecha--next"
+            onClick={() => scrollFila(1)}
+            aria-label="Siguiente"
+          >
+            <ChevronRight size={22} />
+          </button>
+        </div>
       </div>
 
       {abierto && (
@@ -118,6 +154,7 @@ function CarruselCortos() {
             aria-label={conSonido ? 'Silenciar' : 'Activar sonido'}
           >
             {conSonido ? <Volume2 size={22} /> : <VolumeX size={22} />}
+            <span className="cc-modal__sonido-label">{conSonido ? 'Silenciar' : 'Activar sonido'}</span>
           </button>
 
           {videos.length > 1 && (
