@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
-import { X, ChevronUp, ChevronDown, Play } from 'lucide-react'
+import { X, ChevronUp, ChevronDown, Play, Volume2, VolumeX } from 'lucide-react'
 import api from '../api/axios'
 import './CarruselCortos.css'
 
-const construirEmbed = (id) =>
-  `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=0&modestbranding=1&rel=0&playsinline=1`
+const construirEmbed = (id, conSonido) =>
+  `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=${conSonido ? '0' : '1'}&loop=1&playlist=${id}&controls=0&modestbranding=1&rel=0&playsinline=1`
 
 function CarruselCortos() {
   const [videos, setVideos] = useState([])
@@ -12,6 +12,7 @@ function CarruselCortos() {
   const [hayError, setHayError] = useState(false)
   const [abierto, setAbierto] = useState(false)
   const [idx, setIdx] = useState(0)
+  const [conSonido, setConSonido] = useState(false)
   const scrollerRef = useRef(null)
 
   useEffect(() => {
@@ -110,6 +111,15 @@ function CarruselCortos() {
             <X size={26} />
           </button>
 
+          <button
+            type="button"
+            className="cc-modal__sonido"
+            onClick={() => setConSonido((s) => !s)}
+            aria-label={conSonido ? 'Silenciar' : 'Activar sonido'}
+          >
+            {conSonido ? <Volume2 size={22} /> : <VolumeX size={22} />}
+          </button>
+
           {videos.length > 1 && (
             <>
               <button
@@ -138,7 +148,8 @@ function CarruselCortos() {
               <div key={video.id} className={`cc-slide${i === idx ? ' cc-slide--activo' : ''}`}>
                 {i === idx ? (
                   <iframe
-                    src={construirEmbed(video.id)}
+                    key={`${video.id}-${conSonido ? 'on' : 'muted'}`}
+                    src={construirEmbed(video.id, conSonido)}
                     title={video.titulo}
                     className="cc-slide__video"
                     allow="autoplay; encrypted-media; fullscreen"
